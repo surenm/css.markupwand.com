@@ -164,6 +164,7 @@ DEPENDENCIES
   json
   mongo
   mongoid
+  multi_json
   rails (= 3.2.0)
   resque
   sanitize
