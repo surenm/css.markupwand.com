@@ -30,6 +30,9 @@ LAYERBOUNDS
     
     s
   end
+  
+  def encloses?(other_layer)
+    return (self.top <= other_layer.top and self.left <= other_layer.left and self.bottom >= other_layer.bottom and self.right >= other_layer.right)
   end
   
   def height
