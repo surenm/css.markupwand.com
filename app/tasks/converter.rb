@@ -19,16 +19,25 @@ def read_file
   end
 end
 
-def parse_fonts(text_item)
+def parse_color(color_object)
+  red   = Integer (color_object['value']['red']['value'])
+  green = Integer (color_object['value']['grain']['value'])
+  blue  = Integer (color_object['value']['blue']['value'])
+  
+  red.to_s(16) + green.to_s(16) + blue.to_s(16)
+end
+
+def parse_text(text_item)
   #choose first one right now
   text_style = text_item['textKey']['value']['textStyleRange']['value'].first
   css        = {}
   css['font-family'] = text_style['value']['textStyle']['value']['fontName']['value']
-  css['font-size']   = text_style['value']['textStyle']['value']['size']['value']
+  css['font-size']   = text_style['value']['textStyle']['value']['size']['value'].to_s + 'pt'
   font_weight        = text_style['value']['textStyle']['value']['fontStyleName']['value']
   if not FONT_WEIGHT[font_weight].nil?
     css['font-weight'] = FONT_WEIGHT[font_weight]
   end
+  css['color'] = parse_color(text_style['value']['textStyle']['value']['color'])
   
   css
 end
@@ -36,9 +45,11 @@ end
 def parse_file(json)
   json.each do |item|
     if item.has_key? 'textKey'
-      puts item['name']['value']
-      fonts = parse_fonts(item)
+      puts "Text item: " +  item['name']['value']
+      fonts = parse_text(item)
       pp fonts
+    elsif item.has_key? 'smartObject'
+      puts "Smart Object: " + item['name']['value']
     end
   end
 end
