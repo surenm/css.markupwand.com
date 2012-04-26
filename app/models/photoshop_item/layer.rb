@@ -1,4 +1,4 @@
-class PhotoshopItem::LayerBounds
+class PhotoshopItem::Layer
   attr_reader :top, :bottom, :left, :right, :name
   
   def initialize(layer)    
@@ -12,22 +12,21 @@ class PhotoshopItem::LayerBounds
     @right  = value[:right][:value]    
   end
   
-  def <=>(other_layer_bounds)
-    if self.top < other_layer_bounds.top
+  def <=>(other_layer)
+    if self.top < other_layer.top
       return -1
     else
-      return self.left <=> other_layer_bounds.left
+      return self.left <=> other_layer.left
     end
   end
   
   def inspect
-    s = <<LAYERBOUNDS
-    Layer : #{@parent}
+    s = <<LAYER
+    Layer : #{@name}
     Start : #{@top}, #{@left}
     Width : #{self.width}
     Height: #{self.height}
-LAYERBOUNDS
-    
+LAYER
     s
   end
   
