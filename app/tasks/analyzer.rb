@@ -8,6 +8,8 @@ class Analyzer
     
     bounding_rectangles.sort!
     
+    # Find a grid map of enclosing rectangles
+    # grid[i][j] is true if i-th rectangle encloses j-th rectangle
     layers_count = bounding_rectangles.size
     grid = Array.new(layers_count) { Array.new }
     for i in 0..(layers_count-1)
@@ -18,9 +20,10 @@ class Analyzer
           grid[i].push j
         end
       end
-      #puts "#{i}: #{bounding_rectangles[i].name}: #{grid[i]}"
     end
     
+    # Build a tree adjancecy list out of the grid map
+    # grid[i][j] is true if j-th rectangle is a direct child of i-th rectangle
     for i in 0..(layers_count-1)
       items_to_delete = []
       grid[i].each do |child|
@@ -37,13 +40,10 @@ class Analyzer
     for i in 0..(layers_count-1)
       puts "#{i}: #{bounding_rectangles[i].name}: #{grid[i]}"
     end
-  
   end
-  
   
   def self.analyze(psd_json_data)
     layers = JSON.parse psd_json_data, :symbolize_names => true
-    
     dom_map = self.get_dom_map layers
     return true
   end
