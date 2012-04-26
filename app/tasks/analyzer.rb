@@ -15,15 +15,29 @@ class Analyzer
         first = bounding_rectangles[i]
         second = bounding_rectangles[j]
         if i != j and first.encloses? second
-          grid[i].push(j)
+          grid[i].push j
         end
       end
+      #puts "#{i}: #{bounding_rectangles[i].name}: #{grid[i]}"
     end
     
     for i in 0..(layers_count-1)
-      puts "#{bounding_rectangles[i].name}"
-      pp grid[i]
+      items_to_delete = []
+      grid[i].each do |child|
+        grid[child].each do |grand_child|
+          items_to_delete.push grand_child
+        end
+      end
+      
+      items_to_delete.each do |item|
+        grid[i].delete item
+      end
     end
+  
+    for i in 0..(layers_count-1)
+      puts "#{i}: #{bounding_rectangles[i].name}: #{grid[i]}"
+    end
+  
   end
   
   
