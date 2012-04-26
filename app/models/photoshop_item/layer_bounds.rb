@@ -1,11 +1,17 @@
 class PhotoshopItem::LayerBounds
-  def initialize(bounds_obj)
-    value = bounds_obj[:value]
+  attr_reader :top, :bottom, :left, :right, :name
+  
+  def initialize(layer)    
+    @bounds = layer[:bounds]
+    @name = layer[:name][:value]
 
+    value   = @bounds[:value]
     @top    = value[:top][:value]
     @bottom = value[:bottom][:value]
     @left   = value[:left][:value]
-    @right  = value[:left][:value]    
+    @right  = value[:right][:value]    
+  end
+  
   def <=>(other_layer_bounds)
     if self.top < other_layer_bounds.top
       return -1
