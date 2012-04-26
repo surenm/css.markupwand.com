@@ -32,11 +32,11 @@ LAYERBOUNDS
   end
   end
   
-  def get_height
+  def height
     @bottom - @top
   end
   
-  def get_width
+  def width
     @right - @left
   end
 end
