@@ -42,9 +42,17 @@ class Analyzer
     end
   end
   
+  def self.get_content(layers)
+    layers.collect do |layer_obj|
+      layer = PhotoshopItem::Layer.new layer_obj
+      layer.get_html_content
+    end
+  end
+  
   def self.analyze(psd_json_data)
     layers = JSON.parse psd_json_data, :symbolize_names => true
     dom_map = self.get_dom_map layers
+    content_map = self.get_content layers
     return true
   end
 end

@@ -41,4 +41,8 @@ LAYER
   def width
     @right - @left
   end
+  
+  def get_html_content
+    
+  end
 end
