@@ -3,7 +3,7 @@ require "pp"
 class Analyzer
   def self.get_dom_map(layers)
     bounding_rectangles = layers.collect do |layer|
-      PhotoshopItem::LayerBounds.new layer
+      PhotoshopItem::Layer.new layer
     end
     
     bounding_rectangles.sort!
