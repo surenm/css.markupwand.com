@@ -1,4 +1,6 @@
 class PhotoshopItem::Layer
+  include ActionView::Helpers::TagHelper
+  
   attr_reader :top, :bottom, :left, :right, :name, :layer
   attr_accessor :children
   
