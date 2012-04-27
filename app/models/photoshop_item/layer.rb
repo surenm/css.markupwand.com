@@ -60,7 +60,8 @@ LAYER
     if self.layer[:layerKind] == "LayerKind.TEXT"
       element = :div
       inner_html = self.layer[:textKey][:value][:textKey][:value]
-      style_string = ""
+      css = Converter::parse_text self.layer
+      style_string = Converter::to_style_string css
     elsif self.layer[:layerKind] == "LayerKind.SMARTOBJECT"
       element = :div
       inner_html = "Smart object"
