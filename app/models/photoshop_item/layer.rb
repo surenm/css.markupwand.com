@@ -22,10 +22,11 @@ class PhotoshopItem::Layer
   
   def inspect
     s = <<LAYER
-    Layer : #{@name}
-    Start : #{@top}, #{@left}
-    Width : #{self.width}
-    Height: #{self.height}
+    layer : #{self.name}
+    start : #{self.top}, #{self.left}
+    width : #{self.width}
+    height: #{self.height}
+    children: #{self.children}
 LAYER
     s
   end
