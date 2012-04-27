@@ -23,12 +23,12 @@ module Converter
     text_style = layer[:textKey][:value][:textStyleRange][:value].first
 
     css               = {}
-    css[:font-family] = text_style[:value][:textStyle][:value][:fontName][:value]
-    css[:font-size]   = text_style[:value][:textStyle][:value][:size][:value].to_s + 'pt'
+    css[:'font-family'] = text_style[:value][:textStyle][:value][:fontName][:value]
+    css[:'font-size']   = text_style[:value][:textStyle][:value][:size][:value].to_s + 'px'
     font_weight       = text_style[:value][:textStyle][:value][:fontStyleName][:value]
 
     if not FONT_WEIGHT[font_weight].nil?
-      css[:font-weight] = FONT_WEIGHT[font_weight]
+      css[:'font-weight'] = FONT_WEIGHT[font_weight]
     end
 
     css[:color] = parse_color(text_style[:value][:textStyle][:value][:color])
