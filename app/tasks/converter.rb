@@ -78,7 +78,9 @@ def parse_file(json)
   end
 end
 
-data = read_file()
-if data
-  parse_file(data)
+if __FILE__ == $0
+  data = read_file()
+  if data
+    parse_file(data)
+  end   
 end
