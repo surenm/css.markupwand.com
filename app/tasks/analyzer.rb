@@ -36,10 +36,12 @@ class Analyzer
         grid[i].delete item
       end
     end
-  
+
     for i in 0..(layers_count-1)
-      puts "#{i}: #{bounding_rectangles[i].name}: #{grid[i]}"
+      bounding_rectangles[i].children = grid[i]
     end
+    
+    return bounding_rectangles
   end
   
   def self.get_root_layer(dom_map)
