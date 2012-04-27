@@ -73,7 +73,9 @@ class Analyzer
     layers = JSON.parse psd_json_data, :symbolize_names => true
     dom_map = self.get_dom_map layers
     html = self.generate_html dom_map
-    pp html
-    return html
+    html_fptr = File.new '/tmp/result.html', 'w+'
+    html_fptr.write html
+    html_fptr.close
+    return true
   end
 end
