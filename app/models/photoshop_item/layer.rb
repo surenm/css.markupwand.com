@@ -55,11 +55,16 @@ LAYER
   end
   
   def render_to_html(dom_map, root = false)
-    puts "Generating html for #{self.name}"
+    #puts "Generating html for #{self.inspect}"
     html = ""
     if self.layer[:layerKind] == "LayerKind.TEXT"
-      #puts "Text layer"
+      element = :div
+      inner_html = self.layer[:textKey][:value][:textKey][:value]
+      style_string = ""
     elsif self.layer[:layerKind] == "LayerKind.SMARTOBJECT"
+      element = :div
+      inner_html = "Smart object"
+      style_string
       #puts "smart object layer"
     elsif self.layer[:layerKind] == "LayerKind.SOLIDFILL"
       css = Converter::parse_box self.layer
@@ -70,16 +75,19 @@ LAYER
         css.delete :height
         css.delete :'min-height'
       end
-    
-    
-      style_string = Converter::to_style_string css
-      html = content_tag element, nil, :style => style_string
+      style_string = Converter::to_style_string css  
     end
     
-    @children.each do |child_index|
-      child = dom_map.fetch child_index
-      child.render_to_html dom_map
+    if not @children.empty?
+      organize dom_map
+      children_dom = []
+      @children.each do |child_index|
+        child = dom_map.fetch child_index
+        children_dom.push(child.render_to_html dom_map)
+      end
+      inner_html = children_dom.join(" ")
     end
+    html = content_tag element, inner_html, {:style => style_string}, false
     
     return html
   end
