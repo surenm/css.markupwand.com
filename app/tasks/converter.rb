@@ -60,7 +60,6 @@ def parse_file(json)
       css = parse_text(item)
     elsif item.has_key? 'smartObject'
       puts "Smart Object: " + item['name']['value']
-      css = parse_box(item)
     else
       puts "Box item: " + item['name']['value']
       css = parse_box(item)
