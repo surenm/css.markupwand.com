@@ -46,7 +46,24 @@ class Analyzer
     layers.collect do |layer_obj|
       layer = PhotoshopItem::Layer.new layer_obj
       layer.get_html_content
+  def self.get_root_layer(dom_map)
+    root = nil
+    dom_map.each do |layer|
+      flag = true
+      dom_map.each do|inner_layer|
+        if not layer.encloses? inner_layer
+          flag = false
+          break
+        end
+      end
+      if flag
+        root = layer
+        break
+      end
     end
+    
+    return root
+  end
   end
   
   def self.analyze(psd_json_data)
