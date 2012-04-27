@@ -49,6 +49,14 @@ module Converter
 
     css
   end
+  
+  def Converter::to_style_string(css)
+    css_string = ""
+    css.each do |key,value|
+      css_string += "#{key}: #{value}; "
+    end
+    return css_string
+  end
 end
 
 def read_file
