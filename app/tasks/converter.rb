@@ -57,6 +57,13 @@ module Converter
     end
     return css_string
   end
+  
+  def Converter::get_image_path(layer)
+    file = layer[:smartObject][:value][:fileReference][:value]
+    
+    "/tmp/"+ file
+  end
+
 end
 
 def read_file

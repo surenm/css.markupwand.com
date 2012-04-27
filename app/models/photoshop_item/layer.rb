@@ -57,15 +57,17 @@ LAYER
   def render_to_html(dom_map, root = false)
     #puts "Generating html for #{self.inspect}"
     html = ""
+    
     if self.layer[:layerKind] == "LayerKind.TEXT"
       element = :div
       inner_html = self.layer[:textKey][:value][:textKey][:value]
       css = Converter::parse_text self.layer
       style_string = Converter::to_style_string css
     elsif self.layer[:layerKind] == "LayerKind.SMARTOBJECT"
-      element = :div
-      inner_html = "Smart object"
-      style_string
+      element = :img
+      inner_html = ''
+      image_path = Converter::get_image_path self.layer
+      style_string = ''
       #puts "smart object layer"
     elsif self.layer[:layerKind] == "LayerKind.SOLIDFILL"
       css = Converter::parse_box self.layer
@@ -88,7 +90,16 @@ LAYER
       end
       inner_html = children_dom.join(" ")
     end
-    html = content_tag element, inner_html, {:style => style_string}, false
+    
+    attributes = {}
+    attributes[:style] = style_string
+    
+    
+    if element == :img
+      html = "<img src='#{image_path}'>"
+    else
+      html = content_tag element, inner_html, {:style => style_string}, false
+    end
     
     return html
   end
