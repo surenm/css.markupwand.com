@@ -24,7 +24,7 @@ def parse_color(color_object)
   green = Integer (color_object['value']['grain']['value'])
   blue  = Integer (color_object['value']['blue']['value'])
   
-  red.to_s(16) + green.to_s(16) + blue.to_s(16)
+  '#' + red.to_s(16) + green.to_s(16) + blue.to_s(16)
 end
 
 def parse_text(text_item)
@@ -42,15 +42,31 @@ def parse_text(text_item)
   css
 end
 
+def parse_box(box_item)
+  puts box_item['name']['value']
+  css = {}
+  bounds = box_item['bounds']['value']
+  css['width'] = (bounds['right']['value'] - bounds['left']['value']).to_s + 'px'
+  css['min-height'] = (bounds['bottom']['value'] - bounds['top']['value']).to_s + 'px'
+  
+  css
+end
+
 def parse_file(json)
   json.each do |item|
+    css = {}
     if item.has_key? 'textKey'
       puts "Text item: " +  item['name']['value']
-      fonts = parse_text(item)
-      pp fonts
+      css = parse_text(item)
     elsif item.has_key? 'smartObject'
       puts "Smart Object: " + item['name']['value']
+      css = parse_box(item)
+    else
+      puts "Box item: " + item['name']['value']
+      css = parse_box(item)
     end
+    
+    pp css
   end
 end
 
