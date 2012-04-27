@@ -46,7 +46,6 @@ LAYER
     @right - @left
   end
   
-  def render_to_html
-    "Hello fucking world"
+  def render_to_html(dom_map, root = false)
   end
 end
