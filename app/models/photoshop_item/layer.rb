@@ -60,6 +60,11 @@ LAYER
       pp css
     end
     
+    @children.each do |child_index|
+      child = dom_map.fetch child_index
+      child.render_to_html dom_map
+    end
+    
     return ""
   end
 end
