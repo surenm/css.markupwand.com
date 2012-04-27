@@ -48,6 +48,7 @@ def parse_box(box_item)
   bounds = box_item['bounds']['value']
   css['width'] = (bounds['right']['value'] - bounds['left']['value']).to_s + 'px'
   css['min-height'] = (bounds['bottom']['value'] - bounds['top']['value']).to_s + 'px'
+  css['background-color'] = parse_color(box_item['adjustment']['value'].first['value']['color'])
   
   css
 end
