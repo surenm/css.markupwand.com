@@ -1,10 +1,11 @@
 class PhotoshopItem::Layer
-  attr_reader :top, :bottom, :left, :right, :name
+  attr_reader :top, :bottom, :left, :right, :name, :layer
   attr_accessor :children
   
   def initialize(layer)    
     @bounds = layer[:bounds]
-    @name = layer[:name][:value]
+    @name   = layer[:name][:value]
+    @layer  = layer
 
     value   = @bounds[:value]
     @top    = value[:top][:value]
