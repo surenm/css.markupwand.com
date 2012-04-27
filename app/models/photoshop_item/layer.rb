@@ -48,5 +48,18 @@ LAYER
   end
   
   def render_to_html(dom_map, root = false)
+    puts "Generating html for #{self.name}"
+    if self.layer[:layerKind] == "LayerKind.TEXT"
+      #puts "Text layer"
+    elsif self.layer[:layerKind] == "LayerKind.SMARTOBJECT"
+      #puts "smart object layer"
+    elsif self.layer[:layerKind] == "LayerKind.SOLIDFILL"
+      element = :div
+      element = :body if root
+      css = Converter::parse_box self.layer
+      pp css
+    end
+    
+    return ""
   end
 end
