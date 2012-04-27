@@ -74,6 +74,8 @@ LAYER
         css.delete :width
         css.delete :height
         css.delete :'min-height'
+        css[:margin] = "0 auto"
+        css[:width] = 960
       end
       style_string = Converter::to_style_string css  
     end

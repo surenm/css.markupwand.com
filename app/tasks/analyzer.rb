@@ -48,18 +48,20 @@ class Analyzer
     root = nil
     dom_map.each do |layer|
       flag = true
-      dom_map.each do|inner_layer|
+      
+      dom_map.each do |inner_layer|
         if not layer.encloses? inner_layer
           flag = false
           break
         end
       end
+      
       if flag
         root = layer
         break
       end
-    end
-    
+
+    end    
     return root
   end
   
