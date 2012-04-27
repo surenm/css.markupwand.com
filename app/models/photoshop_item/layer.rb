@@ -42,7 +42,7 @@ LAYER
     @right - @left
   end
   
-  def get_html_content
-    
+  def render_to_html
+    "Hello fucking world"
   end
 end
