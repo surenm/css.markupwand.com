@@ -49,6 +49,11 @@ LAYER
     @right - @left
   end
   
+  def organize(dom_map)
+    # Just organize by height alone
+    @children.sort! { |a, b| dom_map[a].top <=> dom_map[b].top }
+  end
+  
   def render_to_html(dom_map, root = false)
     puts "Generating html for #{self.name}"
     html = ""
