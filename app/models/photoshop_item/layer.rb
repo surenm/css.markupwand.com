@@ -1,5 +1,6 @@
 class PhotoshopItem::Layer
   attr_reader :top, :bottom, :left, :right, :name
+  attr_accessor :children
   
   def initialize(layer)    
     @bounds = layer[:bounds]
@@ -10,6 +11,8 @@ class PhotoshopItem::Layer
     @bottom = value[:bottom][:value]
     @left   = value[:left][:value]
     @right  = value[:right][:value]    
+
+    @children = []
   end
   
   def <=>(other_layer)
