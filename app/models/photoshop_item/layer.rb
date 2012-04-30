@@ -69,20 +69,32 @@ LAYER
     self.height * self.width
   end
   
-  def grouping(order, children)
-    pp "Sorting #{order} wise"
-    group = Hash.new
-    pp children
-    children.each do |child|
+  def regroup_vertically(dom, width, height)
+    return dom
+  end
+  
+  def regroup_horizontally(dom, width, height)
+    pp "Regrouping horizontally"
+    new_dom = []
+    begin
+      group = []
+      dom_element = dom.first
+      
+      new_dummy_element = dom_element.clone
+      new_dummy_element.right = new_dummy_element.left + width
             
-      key = Constants.round_to_nearest_five child.top if order == :horizontal
-      key = Constants.round_to_nearest_five child.left if order == :vertical
-
-      group[key] = PhotoshopItem::LayerGroup.new if group[key].nil?
-      group[key].add_layer child
-    end
-    pp group
-    return group
+      dom.each do |dom_element|
+        if new_dummy_element.encloses? dom_element
+          group.push dom_element
+        end
+      end
+      group.each do |item|
+        dom.delete item
+      end
+      new_dom.push group
+    end while not dom.empty?
+    
+    return new_dom
   end
   
   def organize(dom_map, width, height)
