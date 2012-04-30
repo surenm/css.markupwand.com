@@ -21,10 +21,10 @@ class PhotoshopItem::Layer
   end
   
   def <=>(other_layer)
-    if self.top < other_layer.top
-      return -1
-    else
+    if self.top == other_layer.top
       return self.left <=> other_layer.left
+    else
+      return self.top <=> other_layer.top
     end
   end
   
