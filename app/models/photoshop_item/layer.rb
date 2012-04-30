@@ -28,6 +28,17 @@ class PhotoshopItem::Layer
     end
   end
   
+  def ==(other_layer)
+    return (
+      self.top == other_layer.top and
+      self.left == other_layer.left and 
+      self.bottom == other_layer.bottom and 
+      self.right == other_layer.right and
+      self.name == other_layer.name and 
+      self.children == other_layer.children
+    )
+  end
+  
   def inspect
     s = <<LAYER
     layer : #{self.name}
