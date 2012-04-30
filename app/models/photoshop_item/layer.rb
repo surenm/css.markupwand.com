@@ -86,25 +86,25 @@ LAYER
   end
   
   def organize(dom_map, width, height)
+    pp "Beginning to organize"
     # Just organize by height alone
     @children.each do |child_index|
       @dom.push dom_map.fetch child_index
     end
+
+    @dom.sort!
     order = :horizontal
+    new_dom = @dom
     begin
-      children_group = new_children_group
-      new_children_group = grouping order, children_group
-  
-      if order == :horizontal
-        order == :vertical
-      elsif order == :vertical
-        order == :horizontal
+      @dom = new_dom
+      if order == :vertical
+        new_dom = regroup_vertically @dom, width, height
+        order = :horizontal
+      elsif order == :horizontal 
+        new_dom = regroup_horizontally @dom, width, height
+        order = :vertical
       end
-    end while children_group != new_children_group
-    
-      @children.sort! { |a, b| 
-        dom_map[a].top <=> dom_map[b].top
-    }
+    end while false
   end
   
   def render_to_html(dom_map, root = false)
