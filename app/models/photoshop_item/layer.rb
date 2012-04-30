@@ -7,6 +7,7 @@ class PhotoshopItem::Layer
   def initialize(layer)    
     @bounds = layer[:bounds]
     @name   = layer[:name][:value]
+    @kind   = layer[:layerKind]
     @layer  = layer
 
     value   = @bounds[:value]
