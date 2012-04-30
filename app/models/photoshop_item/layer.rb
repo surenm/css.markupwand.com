@@ -37,6 +37,9 @@ LAYER
     s
   end
   
+  # TODO: This is a hard limit encloses function. 
+  # This actually has to be something like if the areas intersect for more than 50% or so 
+  # then the bigger one encloses the smaller one.
   def encloses?(other_layer)
     return (self.top <= other_layer.top and self.left <= other_layer.left and self.bottom >= other_layer.bottom and self.right >= other_layer.right)
   end
