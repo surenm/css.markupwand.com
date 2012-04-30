@@ -1,8 +1,8 @@
 class PhotoshopItem::Layer
   include ActionView::Helpers::TagHelper
   
-  attr_reader :top, :bottom, :left, :right, :name, :layer
-  attr_accessor :children
+  attr_accessor :top, :bottom, :left, :right, :name, :layer, :children
+
   
   def initialize(layer)    
     @bounds = layer[:bounds]
@@ -49,9 +49,50 @@ LAYER
     @right - @left
   end
   
-  def organize(dom_map)
+  def area
+    self.height * self.width
+  end
+  
+  def grouping(order, children)
+    pp "Sorting #{order} wise"
+    group = Hash.new
+    pp children
+    children.each do |child|
+            
+      key = Constants.round_to_nearest_five child.top if order == :horizontal
+      key = Constants.round_to_nearest_five child.left if order == :vertical
+
+      group[key] = PhotoshopItem::LayerGroup.new if group[key].nil?
+      group[key].add_layer child
+    end
+    pp group
+    return group
+  end
+  
+  def organize(dom_map, width, height)
     # Just organize by height alone
-    @children.sort! { |a, b| dom_map[a].top <=> dom_map[b].top }
+    children_layers = []
+    @children.each do |child_index|
+      children_layers.push dom_map.fetch child_index
+    end
+    
+    children_group = children_layers
+    new_children_group = children_group
+    order = :horizontal
+    begin
+      children_group = new_children_group
+      new_children_group = grouping order, children_group
+  
+      if order == :horizontal
+        order == :vertical
+      elsif order == :vertical
+        order == :horizontal
+      end
+    end while children_group != new_children_group
+    
+      @children.sort! { |a, b| 
+        dom_map[a].top <=> dom_map[b].top
+    }
   end
   
   def render_to_html(dom_map, root = false)
@@ -71,6 +112,8 @@ LAYER
       #puts "smart object layer"
     elsif self.layer[:layerKind] == "LayerKind.SOLIDFILL"
       css = Converter::parse_box self.layer
+      width = self.width
+      height = self.height
       element = :div
       if root 
         element = :body
@@ -79,12 +122,13 @@ LAYER
         css.delete :'min-height'
         css[:margin] = "0 auto"
         css[:width] = 960
+        width = 960
       end
       style_string = Converter::to_style_string css  
     end
     
     if not @children.empty?
-      organize dom_map
+      organize dom_map, width, height
       children_dom = []
       @children.each do |child_index|
         child = dom_map.fetch child_index
