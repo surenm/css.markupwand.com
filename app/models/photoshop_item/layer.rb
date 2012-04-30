@@ -17,6 +17,7 @@ class PhotoshopItem::Layer
     @right  = value[:right][:value]    
 
     @children = []
+    @dom = []
   end
   
   def <=>(other_layer)
@@ -75,13 +76,9 @@ LAYER
   
   def organize(dom_map, width, height)
     # Just organize by height alone
-    children_layers = []
     @children.each do |child_index|
-      children_layers.push dom_map.fetch child_index
+      @dom.push dom_map.fetch child_index
     end
-    
-    children_group = children_layers
-    new_children_group = children_group
     order = :horizontal
     begin
       children_group = new_children_group
