@@ -40,7 +40,7 @@ class PhotoshopItem::Layer
   end
   
   def inspect
-    "layer : #{self.name}"
+    "#{self.name}: (#{self.top}, #{self.left}) - #{self.width} wide, #{self.height} high"
   end
   
   # TODO: This is a hard limit encloses function. 
@@ -64,7 +64,7 @@ class PhotoshopItem::Layer
       inner_html = ''
       image_path = Converter::get_image_path self.layer
       style_string = ''
-      #puts "smart object layer"
+
     elsif self.kind == "LayerKind.SOLIDFILL"
       css = Converter::parse_box self.layer
       width = self.width
