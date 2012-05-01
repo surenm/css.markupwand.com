@@ -48,8 +48,12 @@ class PhotoshopItem::Dom
        grid_row.each do |layer_index|
          grid_row_data.push layers[layer_index]
        end
-       row_dom = PhotoshopItem::Dom.new grid_row_data
-       grid_data.push row_dom
+       
+       # TODO: This might skip few independent layers. Add them as well.
+       if not grid_row_data.empty?
+         row_dom = PhotoshopItem::Dom.new grid_row_data
+         grid_data.push row_dom
+       end
      end
 
      dom = PhotoshopItem::Dom.new grid_data, :down
