@@ -54,18 +54,18 @@ class PhotoshopItem::Layer
     #puts "Generating html for #{self.inspect}"
     html = ""
     
-    if self.layer[:layerKind] == "LayerKind.TEXT"
+    if self.kind == "LayerKind.TEXT"
       element = :div
       inner_html = self.layer[:textKey][:value][:textKey][:value]
       css = Converter::parse_text self.layer
       style_string = Converter::to_style_string css
-    elsif self.layer[:layerKind] == "LayerKind.SMARTOBJECT"
+    elsif self.kind == "LayerKind.SMARTOBJECT"
       element = :img
       inner_html = ''
       image_path = Converter::get_image_path self.layer
       style_string = ''
       #puts "smart object layer"
-    elsif self.layer[:layerKind] == "LayerKind.SOLIDFILL"
+    elsif self.kind == "LayerKind.SOLIDFILL"
       css = Converter::parse_box self.layer
       width = self.width
       height = self.height
