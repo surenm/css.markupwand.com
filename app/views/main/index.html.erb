@@ -1,1 +1,8 @@
-hi
+<%= form_for @design_file do |f| %>
+<%= f.file_field :file %>
+<%= f.submit %>
+<% end %>
+
+<div id="drop-div" style="width: 200px; height: 200px; border: thin solid black;">
+    Drop files here!
+</div>

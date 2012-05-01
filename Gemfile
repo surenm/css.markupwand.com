@@ -31,3 +31,7 @@ gem 'compass', ">= 0.12.alpha.4"
 gem 'compass-rails'
 gem 'twitter-bootstrap-rails'
 gem 'haml'
+
+#File upload related gems
+gem 'carrierwave'
+gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
