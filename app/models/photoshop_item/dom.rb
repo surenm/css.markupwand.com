@@ -69,6 +69,7 @@ class PhotoshopItem::Dom
     @right = -Constants::INF
     
     fix_bounds
+    regroup!
   end
 
   def <=>(other_layer)
@@ -96,13 +97,11 @@ class PhotoshopItem::Dom
   end
   
   def regroup!
-    pp "Beginning to regroup..."
+    return if @children.empty?
 
-    @dom.sort!
     order = :down
-    new_dom = @dom
+    new_dom = @children
     begin
-      @dom = new_dom
       if order == :down
         new_dom = regroup_downwards
         order = :left
@@ -114,34 +113,34 @@ class PhotoshopItem::Dom
   end
   
   def regroup_downwards
-    pp "Regrouping horizontally"
-    new_dom = []
-    begin
+    @children.sort { |a, b| a.top <=> b.top }
+    
+=begin
       group = []
-      dom_element = @dom.first
+      dom_element = @children.first
       
       new_dummy_element = dom_element.clone
       new_dummy_element.right = new_dummy_element.left + width
             
-      @dom.each do |dom_element|
+      @children.each do |dom_element|
         if new_dummy_element.encloses? dom_element
           group.push dom_element
         end
       end
       
       group.each do |item|
-        @dom.delete item
+        @children.delete item
       end
       
       new_dom.push group
-    end while not @dom.empty?
-    
-    new_dom.sort!
-    return new_dom
+      pp @children.size, @children.empty?
+      pp new_dom
+=end
+    return
   end
   
   def regroup_leftwards
-    pp "Regrouping vertically"
+    return
   end
   
   def render_to_html
@@ -149,6 +148,6 @@ class PhotoshopItem::Dom
     @children.each do |child|
       html += child.render_to_html
     end
-    html
+    return html
   end
 end
