@@ -1,20 +1,20 @@
 window.onload =-> 
   parent.iframeLoaded();
 
-lastElement = null
-
 addHoverListeners =->
-  $('*').bind 'hover', ->
-    if lastElement
-      $(lastElement).removeClass 'goyaka-hover'
-    
+  $('body *').bind 'hover', ->
+    $('.goyaka-hover').removeClass 'goyaka-hover'
     $(this).addClass 'goyaka-hover'
     
-    lastElement = this
-  
-  
+addClickListeners =->
+  $('body *').bind 'click', ->
+    $('.goyaka-select').removeClass 'goyaka-select'
+    $(this).addClass 'goyaka-select'
+    return false
+    
 init =->
   addHoverListeners()
+  addClickListeners()
   
 $(document).ready ->
   init()
