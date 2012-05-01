@@ -1,8 +1,20 @@
-.editor-controls 
-  %div.usage-info 
-    %span.label.label-info Tip
-    %span.msg Click elements in the page to modify them
-
-  %h1 Editor  
+.editor-controls   
+  %div.edit-tags
+    %form
+      %div.tag-switch-block
+        %label{:for => 'tag-switcher'} Switch Tag
+        %select#tag-switcher
+          %option --
+          %option{:value => 'div'} DIV (Generic Container)
+          %option{:value => 'li'} LI (List Item)
+          %option{:value => 'input'} INPUT (Form Control)
+          %option{:value => 'img'} IMG (Embedded Image)
+      
+      %div.xpath-block
+        %label{:for => 'xpath'} XPath
+        %value#item-xpath -
+        
+      %button.btn Save
+      
     
 %iframe{:src => '/assets/result.html', :width => '100%', :style => 'height:700px', :id => 'editor-iframe'}
