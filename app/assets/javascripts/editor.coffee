@@ -1,4 +1,3 @@
-window.iframeLoaded =->
-  console.log "Frame loaded"
-  document.getElementById("editor-iframe").contentWindow.document.body.onclick = (el)->
-    debugger
+window.updateSelected = (tag, xpath)->
+  $('#tag-switcher').val(tag)
+  $('#item-xpath').html(xpath)
