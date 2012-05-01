@@ -50,58 +50,7 @@ class PhotoshopItem::Layer
     return (self.top <= other_layer.top and self.left <= other_layer.left and self.bottom >= other_layer.bottom and self.right >= other_layer.right)
   end
   
-  
-  def regroup_vertically(dom, width, height)
-    return dom
-  end
-  
-  def regroup_horizontally(dom, width, height)
-    pp "Regrouping horizontally"
-    new_dom = []
-    begin
-      group = []
-      dom_element = dom.first
-      
-      new_dummy_element = dom_element.clone
-      new_dummy_element.right = new_dummy_element.left + width
-            
-      dom.each do |dom_element|
-        if new_dummy_element.encloses? dom_element
-          group.push dom_element
-        end
-      end
-      group.each do |item|
-        dom.delete item
-      end
-      new_dom.push group
-    end while not dom.empty?
-    
-    return new_dom
-  end
-  
-  def organize(dom_map, width, height)
-    pp "Beginning to organize"
-    # Just organize by height alone
-    @children.each do |child_index|
-      @dom.push dom_map.fetch child_index
-    end
-
-    @dom.sort!
-    order = :horizontal
-    new_dom = @dom
-    begin
-      @dom = new_dom
-      if order == :vertical
-        new_dom = regroup_vertically @dom, width, height
-        order = :horizontal
-      elsif order == :horizontal 
-        new_dom = regroup_horizontally @dom, width, height
-        order = :vertical
-      end
-    end while false
-  end
-  
-  def render_to_html(dom_map, root = false)
+  def render_to_html()
     #puts "Generating html for #{self.inspect}"
     html = ""
     
@@ -132,17 +81,7 @@ class PhotoshopItem::Layer
       end
       style_string = Converter::to_style_string css  
     end
-    
-    if not @children.empty?
-      organize dom_map, width, height
-      children_dom = []
-      @children.each do |child_index|
-        child = dom_map.fetch child_index
-        children_dom.push(child.render_to_html dom_map)
-      end
-      inner_html = children_dom.join(" ")
-    end
-    
+  
     attributes = {}
     attributes[:style] = style_string
     
