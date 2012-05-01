@@ -78,7 +78,11 @@ class PhotoshopItem::Dom
       return self.top <=> other_layer.top
     end
   end
-    
+  
+  def inspect
+    "Dom Node: (#{self.top}, #{self.left}) - #{self.width} wide, #{self.height} high - #{self.children.size}"
+  end
+  
   def fix_bounds
     @children.each do |child|
       @top    = [child.top, @top].min
