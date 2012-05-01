@@ -70,21 +70,11 @@ class PhotoshopItem::Layer
       width = self.width
       height = self.height
       element = :div
-      if root 
-        element = :body
-        css.delete :width
-        css.delete :height
-        css.delete :'min-height'
-        css[:margin] = "0 auto"
-        css[:width] = 1024
-        width = 1024
-      end
       style_string = Converter::to_style_string css  
     end
   
     attributes = {}
     attributes[:style] = style_string
-    
     
     if element == :img
       html = "<img src='#{image_path}'>"
