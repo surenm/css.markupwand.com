@@ -1,6 +1,3 @@
-window.onload =-> 
-  parent.iframeLoaded();
-
 addHoverListeners =->
   $('body *').bind 'hover', ->
     $('.goyaka-hover').removeClass 'goyaka-hover'
