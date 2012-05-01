@@ -1,8 +1,8 @@
 class PhotoshopItem::Layer
   include ActionView::Helpers::TagHelper
   
-  attr_accessor :top, :bottom, :left, :right, :name, :layer, :children
-
+  attr_accessor :top, :bottom, :left, :right, :name, :layer, :kind
+  attr_reader :width, :height
   
   def initialize(layer)    
     @bounds = layer[:bounds]
@@ -15,9 +15,9 @@ class PhotoshopItem::Layer
     @bottom = value[:bottom][:value]
     @left   = value[:left][:value]
     @right  = value[:right][:value]    
-
-    @children = []
-    @dom = []
+    
+    @width  = @right - @left
+    @height = @bottom - @top
   end
   
   def <=>(other_layer)
@@ -50,17 +50,6 @@ class PhotoshopItem::Layer
     return (self.top <= other_layer.top and self.left <= other_layer.left and self.bottom >= other_layer.bottom and self.right >= other_layer.right)
   end
   
-  def height
-    @bottom - @top
-  end
-  
-  def width
-    @right - @left
-  end
-  
-  def area
-    self.height * self.width
-  end
   
   def regroup_vertically(dom, width, height)
     return dom
