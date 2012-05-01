@@ -1,0 +1,28 @@
+body {
+  padding:0;
+  
+  .usage-info {
+    margin:0 auto;
+    margin-left:40%;
+    display: inline-block;
+    
+    .msg {
+      
+    }
+  }
+    
+  .editor-controls {
+    min-height:40px;
+    
+    h1 {
+      font-size:15px;
+    }
+  }
+  
+  
+  .editor {
+    border:1px solid #000;
+  }
+  
+
+}
