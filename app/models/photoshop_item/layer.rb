@@ -50,38 +50,44 @@ class PhotoshopItem::Layer
     return (self.top <= other_layer.top and self.left <= other_layer.left and self.bottom >= other_layer.bottom and self.right >= other_layer.right)
   end
   
-  def render_to_html()
+  def intersect?(other)
+    return (self.left < other.right and self.right > other.left and self.top < other.bottom and self.bottom > other.top)
+  end
+  
+  def render_to_html(args = nil)
     #puts "Generating html for #{self.inspect}"
-    html = ""
+    css = {}
+    if not args.nil?
+      if not args[:css].nil?
+        css = args[:css]
+      end
+    end
     
+    html = ""
     if self.kind == "LayerKind.TEXT"
-      element = :div
+      tag = :div
+      css.merge! Converter::parse_text self.layer
       inner_html = self.layer[:textKey][:value][:textKey][:value]
-      css = Converter::parse_text self.layer
       style_string = Converter::to_style_string css
     elsif self.kind == "LayerKind.SMARTOBJECT"
-      element = :img
-      inner_html = ''
+      tag = :img
       image_path = Converter::get_image_path self.layer
-      style_string = ''
-
     elsif self.kind == "LayerKind.SOLIDFILL"
-      css = Converter::parse_box self.layer
+      tag = :div
+      css.merge! Converter::parse_box self.layer
       width = self.width
       height = self.height
-      element = :div
-      style_string = Converter::to_style_string css  
     end
-  
+
+    style_string = Converter::to_style_string css
     attributes = {}
     attributes[:style] = style_string
     
-    if element == :img
-      html = "<img src='#{image_path}'>"
+    if tag == :img
+      html = "<img src='#{image_path}'/>"
     else
-      html = content_tag element, inner_html, {:style => style_string}, false
-    end
-    
+      html = content_tag tag, inner_html, {:style => style_string}, false
+    end    
     return html
   end
 end
