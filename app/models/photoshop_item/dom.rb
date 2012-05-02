@@ -145,8 +145,17 @@ class PhotoshopItem::Dom
   
   def render_to_html
     html = ""
-    @children.each do |child|
-      html += child.render_to_html
+    Log.debug @ordering
+    if @ordering == :left
+      html = "<div>"
+      @children.each do |child|
+        html += child.render_to_html :css => { :float => 'left' }
+      end
+      html += "<div style='clear: both'></div>"
+    else
+      @children.each do |child|
+        html += child.render_to_html
+      end
     end
     return html
   end
