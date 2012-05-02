@@ -5,6 +5,7 @@ class PhotoshopItem::Dom
   attr_accessor :top, :bottom, :left, :right, :children
   attr_reader :width, :height
   
+  #TODO: This is a hack. Fix this
   def self.get_root(grid)
     max_possible = grid.size
     ret = -1
