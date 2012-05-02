@@ -77,8 +77,10 @@ class PhotoshopItem::Dom
      return dom
    end
   
-  def initialize(children, ordering = nil)
+  def initialize(layer, children, ordering = nil)
+    @layer = layer
     @children = children
+    @ordering = ordering
     
     @top = Constants::INF
     @bottom = -Constants::INF
@@ -86,7 +88,6 @@ class PhotoshopItem::Dom
     @right = -Constants::INF
     
     fix_bounds
-    regroup!
   end
 
   def <=>(other_layer)
