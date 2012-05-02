@@ -20,6 +20,23 @@ class PhotoshopItem::Dom
     end
     return ret
   end
+  
+  def self.create_dom(layers, grid, index)
+    Log.debug "Creating DOM for #{layers[index].name}"
+    
+    children = []
+    grid[index].each do |child_index|
+      if grid[child_index].size > 0
+        Log.debug "Adding a DOM layer #{layers[child_index].name}"
+        children.push self.create_dom(layers, grid, child_index)
+      else
+        Log.debug "Adding a leaf layer #{layers[child_index].name}"
+        children.push layers[child_index]
+      end
+    end
+    PhotoshopItem::Dom.new layers[index], children, nil
+  end
+  
   def self.create_dom_from_psd(layer_objects)
      layers = layer_objects.collect do |layer_object|
        PhotoshopItem::Layer.new layer_object
