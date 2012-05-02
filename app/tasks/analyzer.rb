@@ -6,9 +6,9 @@ class Analyzer
     psd_layers = JSON.parse psd_json_data, :symbolize_names => true
     
     Log.info "Beginning analyzing..."
-    dom = PhotoshopItem::Dom.create_dom_from_psd psd_layers
-    dom.regroup!
-    
+    raw_dom = PhotoshopItem::Dom.create_dom_from_psd psd_layers
+    dom = PhotoshopItem::Dom.regroup raw_dom
+
     Log.info "Generating HTML..."
     html = dom.render_to_html
     html_fptr = File.new '/tmp/result.html', 'w+'

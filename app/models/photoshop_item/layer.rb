@@ -40,7 +40,7 @@ class PhotoshopItem::Layer
   end
   
   def inspect
-    "#{self.name}: (#{self.top}, #{self.left}) - #{self.width} wide, #{self.height} high"
+    "#{self.name}: (#{self.top}, #{self.left}) - #{self.width} wide, #{self.height} high \n"
   end
   
   # TODO: This is a hard limit encloses function. 
