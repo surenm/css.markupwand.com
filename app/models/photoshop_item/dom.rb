@@ -134,6 +134,10 @@ class PhotoshopItem::Dom
         order = :down
       end
     end while false
+  def add_dom_or_layer(item)
+    @children.push item
+    
+    fix_bounds
   end
   
   def regroup_downwards
