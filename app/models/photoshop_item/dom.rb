@@ -99,7 +99,9 @@ class PhotoshopItem::Dom
   end
   
   def inspect
-    "Dom Node: (#{self.top}, #{self.left}) - #{self.width} wide, #{self.height} high - #{self.children.size}"
+    "Dom Node: (#{self.top}, #{self.left}::#{self.bottom}, #{self.right}) - #{self.width} wide, #{self.height} high"
+  end
+  
   def encloses?(other_layer)
     return (self.top <= other_layer.top and self.left <= other_layer.left and self.bottom >= other_layer.bottom and self.right >= other_layer.right)
   end
