@@ -73,21 +73,7 @@ class PhotoshopItem::Dom
        end
      end
      
-     grid_data = Array.new
-     grid.each do |grid_row|
-       grid_row_data = Array.new
-       grid_row.each do |layer_index|
-         grid_row_data.push layers[layer_index]
-       end
-       
-       # TODO: This might skip few independent layers. Add them as well.
-       if not grid_row_data.empty?
-         row_dom = PhotoshopItem::Dom.new grid_row_data
-         grid_data.push row_dom
-       end
-     end
-
-     dom = PhotoshopItem::Dom.new grid_data, :down
+     dom = self.create_dom(layers, grid, root_index)    
      return dom
    end
   
