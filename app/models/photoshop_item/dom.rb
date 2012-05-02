@@ -6,6 +6,20 @@ class PhotoshopItem::Dom
   attr_accessor :top, :bottom, :left, :right, :children
   attr_reader :width, :height
   
+  def self.get_root(grid)
+    max_possible = grid.size
+    ret = -1
+    max = -1
+    grid.each_with_index do |row, index|
+      if row.size == max_possible
+        return index
+      elsif row.size > max
+        max = row.size
+        ret = index
+      end
+    end
+    return ret
+  end
   def self.create_dom_from_psd(layer_objects)
      layers = layer_objects.collect do |layer_object|
        PhotoshopItem::Layer.new layer_object
