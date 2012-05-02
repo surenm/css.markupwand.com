@@ -115,6 +115,7 @@ class PhotoshopItem::Dom
       @left   = [child.left, @left].min
       @right  = [child.right, @right].max
     end
+    
 
     @width  = @right - @left
     @height = @bottom - @top
@@ -122,18 +123,21 @@ class PhotoshopItem::Dom
   
   def regroup!
     return if @children.empty?
+    regroup_downwards
 
-    order = :down
-    new_dom = @children
-    begin
-      if order == :down
-        new_dom = regroup_downwards
-        order = :left
-      elsif order == :left
-        new_dom = regroup_leftwards
-        order = :down
-      end
-    end while false
+    #order = :down
+    #new_dom = @children
+    #begin
+    #  if order == :down
+    #    new_dom = regroup_downwards
+    #    order = :left
+    #  elsif order == :left
+    #    new_dom = regroup_leftwards
+    #    order = :down
+    #  end
+    #end while false
+  end
+  
   def add_dom_or_layer(item)
     @children.push item
     
@@ -143,27 +147,34 @@ class PhotoshopItem::Dom
   def regroup_downwards
     @children.sort { |a, b| a.top <=> b.top }
     
-=begin
-      group = []
-      dom_element = @children.first
+    current_dom = self.clone
+    new_dom = PhotoshopItem::Dom.new nil, [], :down
+    begin
+      # chose the topmost child
+      first_element = current_dom.children.first
+      dummy_element = first_element.clone
       
-      new_dummy_element = dom_element.clone
-      new_dummy_element.right = new_dummy_element.left + width
-            
-      @children.each do |dom_element|
-        if new_dummy_element.encloses? dom_element
-          group.push dom_element
+      dummy_element.right = dummy_element.left + width
+      
+      grouped_elements = []
+      current_dom.children.each do |element|
+        if dummy_element.intersect? element
+          grouped_elements.push element
         end
       end
       
-      group.each do |item|
-        @children.delete item
+      grouped_elements.each do |element|
+        current_dom.children.delete element
       end
       
-      new_dom.push group
-      pp @children.size, @children.empty?
-      pp new_dom
-=end
+      if grouped_elements.size > 1
+        new_group_dom = PhotoshopItem::Dom.new nil, grouped_elements, :left
+        new_dom.add_dom_or_layer new_group_dom
+      else
+        new_dom.add_dom_or_layer first_element
+      end
+    end while not current_dom.children.empty?
+    
     return
   end
   
