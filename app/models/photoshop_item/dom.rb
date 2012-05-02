@@ -1,7 +1,6 @@
 require "pp"
 
 class PhotoshopItem::Dom
-  include ActionView::Helpers::TagHelper
   
   attr_accessor :top, :bottom, :left, :right, :children
   attr_reader :width, :height
@@ -43,6 +42,7 @@ class PhotoshopItem::Dom
      end
 
      layers.sort!
+     Log.debug "Total #{layers.size} layers available"
 
      # Find a grid map of enclosing rectangles
      # grid[i][j] is true if i-th rectangle encloses j-th rectangle
@@ -57,6 +57,9 @@ class PhotoshopItem::Dom
          end
        end
      end
+     
+     root_index = self.get_root(grid)
+     Log.debug "Root: #{layers[root_index].name}"
 
      # Build a tree adjancecy list out of the grid map
      # grid[i][j] is true if j-th rectangle is a direct child of i-th rectangle
