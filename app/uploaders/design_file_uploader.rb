@@ -20,6 +20,14 @@ class DesignFileUploader < CarrierWave::Uploader::Base
     "uploads/#{model.class.to_s.underscore}/#{mounted_as}"
   end
   
+  def self.fetch_file(file_path)
+    begin
+      gridfs_file = Mongo::GridFileSystem.new(Mongoid.database).open(file_path, 'r')
+    rescue
+      nil
+    end
+  end
+  
   def extension_white_list
     %w(psd)
   end
