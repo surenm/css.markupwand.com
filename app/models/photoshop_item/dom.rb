@@ -37,10 +37,13 @@ class PhotoshopItem::Dom
     PhotoshopItem::Dom.new layers[index], children, ordering
   end
   
-  def self.create_dom_from_psd(layer_objects)
-     layers = layer_objects.collect do |layer_object|
-       PhotoshopItem::Layer.new layer_object
-     end
+  def self.create_dom_from_psd(psd_data)
+    layers_json = psd_data[:art_layers]
+    layers = []
+    layers_json.each do |key, layer_object|
+      layer = PhotoshopItem::Layer.new layer_object
+      layers.push layer
+    end
 
     layers.sort!
     Log.info "Total #{layers.size} layers available"
