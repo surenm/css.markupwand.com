@@ -4,6 +4,11 @@ class PhotoshopItem::Layer
   attr_reader :top, :bottom, :left, :right, :name, :layer
   attr_accessor :children
   
+  LAYER_TEXT = "LayerKind.TEXT"
+  LAYER_SMARTOBJECT = "LayerKind.SMARTOBJECT"
+  LAYER_SOLIDFILL   = "LayerKind.SOLIDFILL"
+  
+  
   def initialize(layer)    
     @bounds = layer[:bounds]
     @name   = layer[:name][:value]
@@ -54,34 +59,52 @@ LAYER
     @children.sort! { |a, b| dom_map[a].top <=> dom_map[b].top }
   end
   
+  def image_path
+    if layer_kind == LAYER_SMARTOBJECT
+      Converter::get_image_path self.layer
+    else
+      nil
+    end
+  end
+  
+  def layer_kind
+    self.layer[:layerKind]
+  end
+  
+  def tag
+    if layer_kind  == LAYER_TEXT or layer_kind == LAYER_SOLIDFILL
+      :div
+    elsif layer_kind == LAYER_SMARTOBJECT
+      :img
+    end
+  end
+  
+  def style
+    if layer_kind == LAYER_TEXT
+       Converter::to_style_string (Converter::parse_text self.layer)
+    elsif layer_kind == LAYER_SMARTOBJECT
+        ''
+    elsif layer_kind == LAYER_SOLIDFILL
+       Converter::to_style_string Converter::parse_box self.layer
+    end
+  end
+  
+  def inner_html
+    if layer_kind == LAYER_TEXT
+      self.layer[:textKey][:value][:textKey][:value]
+    else
+      ''
+    end
+  end
+  
   def render_to_html(dom_map, root = false)
     #puts "Generating html for #{self.inspect}"
     html = ""
     
-    if self.layer[:layerKind] == "LayerKind.TEXT"
-      element = :div
-      inner_html = self.layer[:textKey][:value][:textKey][:value]
-      css = Converter::parse_text self.layer
-      style_string = Converter::to_style_string css
-    elsif self.layer[:layerKind] == "LayerKind.SMARTOBJECT"
-      element = :img
-      inner_html = ''
-      image_path = Converter::get_image_path self.layer
-      style_string = ''
-      #puts "smart object layer"
-    elsif self.layer[:layerKind] == "LayerKind.SOLIDFILL"
-      css = Converter::parse_box self.layer
-      element = :div
-      if root 
-        element = :body
-        css.delete :width
-        css.delete :height
-        css.delete :'min-height'
-        css[:margin] = "0 auto"
-        css[:width] = 960
-      end
-      style_string = Converter::to_style_string css  
-    end
+    markup_details = fetch_markup_details (root = root)
+    element        = markup_details[:tag]
+    style_string   = markup_details[:style]
+    inner_html     = markup_details[:inner_html]
     
     if not @children.empty?
       organize dom_map
@@ -93,14 +116,10 @@ LAYER
       inner_html = children_dom.join(" ")
     end
     
-    attributes = {}
-    attributes[:style] = style_string
-    
-    
     if element == :img
       html = "<img src='#{image_path}'>"
     else
-      html = content_tag element, inner_html, {:style => style_string}, false
+      html = content_tag tag, inner_html, {:style => style}, false
     end
     
     return html
