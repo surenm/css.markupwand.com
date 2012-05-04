@@ -16,6 +16,7 @@ gem 'therubyracer'
 gem 'xml-simple'
 gem 'resque'
 gem 'multi_json'
+gem 'log4r'
 
 # Gems used only for assets and not required
 # in production environments by default.
