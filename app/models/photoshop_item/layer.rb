@@ -88,7 +88,7 @@ class PhotoshopItem::Layer
     end
   end
   
-  def style(css)
+  def class_name(css)
     if layer_kind == LAYER_TEXT
       css.update Converter::parse_text self.layer
     elsif layer_kind == LAYER_SMARTOBJECT
@@ -103,7 +103,8 @@ class PhotoshopItem::Layer
         css[:width] = 960
       end
     end
-    Converter::to_style_string css
+    
+    PhotoshopItem::StylesHash.add_and_get_class(Converter::to_style_string(css))
   end
   
   def text
@@ -127,7 +128,7 @@ class PhotoshopItem::Layer
     if tag == :img
       html = "<img src='#{image_path}'/>"
     else
-      html = content_tag tag, inner_html, {:style => style(override_css)}, false
+      html = content_tag tag, inner_html, {:class => class_name(override_css)}, false
     end    
     return html
   end
