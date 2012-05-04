@@ -36,8 +36,6 @@ module Converter
   end
 
   def Converter::parse_box(layer)
-    puts layer[:name][:value]
-
     css                = {}
     bounds             = layer[:bounds][:value]
     css[:width]        = (bounds[:right][:value] - bounds[:left][:value]).to_s + 'px'
