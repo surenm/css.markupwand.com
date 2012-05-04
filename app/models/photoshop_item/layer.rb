@@ -4,10 +4,10 @@ class PhotoshopItem::Layer
   attr_reader :top, :bottom, :left, :right, :name, :layer
   attr_accessor :children
   
-  LAYER_TEXT = "LayerKind.TEXT"
+  
+  LAYER_TEXT        = "LayerKind.TEXT"
   LAYER_SMARTOBJECT = "LayerKind.SMARTOBJECT"
   LAYER_SOLIDFILL   = "LayerKind.SOLIDFILL"
-  
   
   def initialize(layer)    
     @bounds = layer[:bounds]
@@ -30,6 +30,11 @@ class PhotoshopItem::Layer
     else
       return self.left <=> other_layer.left
     end
+  end
+  
+  # Sets that it is a root
+  def is_a_root_node
+    @is_root = true
   end
   
   def inspect
@@ -73,7 +78,7 @@ LAYER
   end
   
   def tag
-    if is_root
+    if @is_root
       :body
     elsif layer_kind  == LAYER_TEXT or layer_kind == LAYER_SOLIDFILL
       :div
@@ -89,7 +94,7 @@ LAYER
       ''
     elsif layer_kind == LAYER_SOLIDFILL
       css = Converter::parse_box self.layer
-      if is_root
+      if @is_root
         css.delete :width
         css.delete :height
         css.delete :'min-height'
@@ -100,7 +105,7 @@ LAYER
     end
   end
   
-  def inner_html
+  def text
     if layer_kind == LAYER_TEXT
       self.layer[:textKey][:value][:textKey][:value]
     else
@@ -109,8 +114,8 @@ LAYER
   end
   
   def render_to_html(dom_map)
-    html = ""
-        
+    
+    inner_html = text
     if not @children.empty?
       organize dom_map
       children_dom = []
@@ -121,9 +126,10 @@ LAYER
       inner_html = children_dom.join(" ")
     end
     
-    if element == :img
+    
+    if tag == :img
       html = "<img src='#{image_path}'>"
-    else
+    else  
       html = content_tag tag, inner_html, {:style => style}, false
     end
     
