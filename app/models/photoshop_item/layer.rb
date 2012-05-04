@@ -38,6 +38,7 @@ class PhotoshopItem::Layer
   # Sets that it is a root
   def is_a_root_node
     @is_root = true
+  end
 
   def ==(other_layer)
     return (
