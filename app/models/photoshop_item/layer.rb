@@ -14,11 +14,12 @@ class PhotoshopItem::Layer
     @name   = layer[:name][:value]
     @layer  = layer
 
-    value   = @bounds[:value]
-    @top    = value[:top][:value]
-    @bottom = value[:bottom][:value]
-    @left   = value[:left][:value]
-    @right  = value[:right][:value]    
+    value    = @bounds[:value]
+    @top     = value[:top][:value]
+    @bottom  = value[:bottom][:value]
+    @left    = value[:left][:value]
+    @right   = value[:right][:value]  
+    @is_root = false
 
     @children = []
   end
@@ -72,7 +73,9 @@ LAYER
   end
   
   def tag
-    if layer_kind  == LAYER_TEXT or layer_kind == LAYER_SOLIDFILL
+    if is_root
+      :body
+    elsif layer_kind  == LAYER_TEXT or layer_kind == LAYER_SOLIDFILL
       :div
     elsif layer_kind == LAYER_SMARTOBJECT
       :img
@@ -81,11 +84,19 @@ LAYER
   
   def style
     if layer_kind == LAYER_TEXT
-       Converter::to_style_string (Converter::parse_text self.layer)
+      Converter::to_style_string (Converter::parse_text self.layer)
     elsif layer_kind == LAYER_SMARTOBJECT
-        ''
+      ''
     elsif layer_kind == LAYER_SOLIDFILL
-       Converter::to_style_string Converter::parse_box self.layer
+      css = Converter::parse_box self.layer
+      if is_root
+        css.delete :width
+        css.delete :height
+        css.delete :'min-height'
+        css[:margin] = "0 auto"
+        css[:width] = 960
+      end
+      Converter::to_style_string css
     end
   end
   
@@ -97,15 +108,9 @@ LAYER
     end
   end
   
-  def render_to_html(dom_map, root = false)
-    #puts "Generating html for #{self.inspect}"
+  def render_to_html(dom_map)
     html = ""
-    
-    markup_details = fetch_markup_details (root = root)
-    element        = markup_details[:tag]
-    style_string   = markup_details[:style]
-    inner_html     = markup_details[:inner_html]
-    
+        
     if not @children.empty?
       organize dom_map
       children_dom = []
