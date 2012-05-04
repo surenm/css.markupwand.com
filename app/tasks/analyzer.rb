@@ -67,7 +67,8 @@ class Analyzer
   
   def self.generate_html(dom_map)
     root_node = self.get_root_layer dom_map
-    html = root_node.render_to_html dom_map, true
+    root_node.is_root = true
+    html = root_node.render_to_html dom_map
     return html
   end
   
