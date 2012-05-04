@@ -42,44 +42,44 @@ class PhotoshopItem::Dom
        PhotoshopItem::Layer.new layer_object
      end
 
-     layers.sort!
-     Log.info "Total #{layers.size} layers available"
+    layers.sort!
+    Log.info "Total #{layers.size} layers available"
 
-     # Find a grid map of enclosing rectangles
-     # grid[i][j] is true if i-th rectangle encloses j-th rectangle
-     layers_count = layers.size
-     grid = Array.new(layers_count) { Array.new }
-     for i in 0..(layers_count-1)
-       for j in 0..(layers_count-1)
-         first = layers[i]
-         second = layers[j]
-         if i != j and first.encloses? second
-           grid[i].push j
-         end
-       end
-     end
-     
-     root_index = self.get_root(grid)
-     Log.info "Root: #{layers[root_index].name}"
+    # Find a grid map of enclosing rectangles
+    # grid[i][j] is true if i-th rectangle encloses j-th rectangle
+    layers_count = layers.size
+    grid = Array.new(layers_count) { Array.new }
+    for i in 0..(layers_count-1)
+      for j in 0..(layers_count-1)
+        first = layers[i]
+        second = layers[j]
+        if i != j and first.encloses? second
+          grid[i].push j
+        end
+      end
+    end
 
-     # Build a tree adjancecy list out of the grid map
-     # grid[i][j] is true if j-th rectangle is a direct child of i-th rectangle
-     for i in 0..(layers_count-1)
-       items_to_delete = []
-       grid[i].each do |child|
-         grid[child].each do |grand_child|
-           items_to_delete.push grand_child
-         end
-       end
+    root_index = self.get_root(grid)
+    Log.info "Root: #{layers[root_index].name}"
 
-       items_to_delete.each do |item|
-         grid[i].delete item
-       end
-     end
-     
-     dom = self.create_dom layers, grid, root_index, :down
-     return dom
-   end
+    # Build a tree adjancecy list out of the grid map
+    # grid[i][j] is true if j-th rectangle is a direct child of i-th rectangle
+    for i in 0..(layers_count-1)
+      items_to_delete = []
+      grid[i].each do |child|
+        grid[child].each do |grand_child|
+          items_to_delete.push grand_child
+        end
+      end
+
+      items_to_delete.each do |item|
+        grid[i].delete item
+      end
+    end
+
+    dom = self.create_dom layers, grid, root_index, :down
+    return dom
+  end
   
   def initialize(layer, children, ordering = nil)
     @layer = layer
