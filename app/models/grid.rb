@@ -1,17 +1,24 @@
 class Grid
-  attr_accessor :sub_grids, :parent, :bounds
+  attr_accessor :sub_grids, :parent, :bounds, :nodes
 
   def initialize(nodes, parent)
+    self.nodes = nodes
     parent = parent
-    bounds = BoundingBox.get_super_bounds(nodes)
-    self.sub_grids = get_subgrids(nodes)
+    node_bounds = nodes.collect {|node| node.bounds}
+    self.bounds = BoundingBox.get_super_bounds(node_bounds)
+    self.sub_grids = []
+    if(nodes.size > 1 && (parent==nil || nodes != parent.nodes))
+      puts "Getting sub grids for Grid with bounds = #{self.bounds}"
+      self.sub_grids = get_subgrids(nodes)
+      puts "Got #{self.sub_grids.size} subgrids"
+    end
   end
 
   #FIXME: See if this function could be broken down. Too long!
   def get_subgrids(nodes)
     subgrids = []
     bounding_boxes = nodes.collect {|node| node.bounds}
-    super_bounds = BoundingBox.get_super_bounds(nodes)
+    super_bounds = BoundingBox.get_super_bounds(bounding_boxes)
 
     vertical_lines = bounding_boxes.collect{|bb| bb.left}
     vertical_lines += bounding_boxes.collect{|bb| bb.right}
@@ -21,24 +28,33 @@ class Grid
     horizontal_lines += bounding_boxes.collect{|bb| bb.bottom}
     horizontal_lines.uniq!
 
-    vertical_gutters = vertical_lines.select do |vertical_line|
+    vertical_gutters = []
+    vertical_lines.each do |vertical_line|
+      is_gutter = true
       bounding_boxes.each do |bb|
         if bb.left < vertical_line and vertical_line < bb.right
-          return false
+          is_gutter = false
         end
       end
-      return true
+      vertical_gutters.push vertical_line if is_gutter
     end
+    vertical_gutters.sort!
 
-    horizontal_gutters = horizontal_lines.collect do |horizontal_line|
+    horizontal_gutters = []
+    horizontal_lines.each do |horizontal_line|
+      is_gutter = true
       bounding_boxes.each do |bb|
         if bb.top < horizontal_line and horizontal_line < bb.bottom
-          return false
+          is_gutter = false
         end
       end
-      return true
+      horizontal_gutters.push horizontal_line if is_gutter
     end
+    horizontal_gutters.sort!
     
+    puts "Horizontal Gutters #{horizontal_gutters}"
+    puts "Vertical Gutters #{vertical_gutters}"
+
     # If the gutters are in one direction
     # This case is common at higher levels
     # Eg., Level 1 - Header, body footer - all separated by horizontal gutter
@@ -52,7 +68,9 @@ class Grid
         horizontal_gutters.each do |gutter|
           current_region = BoundingBox.new(previous_gutter, left_bound, gutter, right_bound)
           nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes, :bounds)
-          subgrids.push Grid.new(nodes_in_region, self)
+          if not nodes_in_region.empty?
+            subgrids.push Grid.new(nodes_in_region, self)
+          end
           previous_gutter = gutter
         end
       else
@@ -62,29 +80,40 @@ class Grid
         vertical_gutters.each do |gutter|
           current_region = BoundingBox.new(top_bound, previous_gutter, bottom_bound, gutter)
           nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes, :bounds)
-          subgrids.push Grid.new(nodes_in_region, self)
+          if not nodes_in_region.empty?
+            subgrids.push Grid.new(nodes_in_region, self)
+          end
           previous_gutter = gutter
         end
       end
-    
-    # If there are gutters in both directions
-    # The case is common in lower levels, where you find a mXn grid of elements.
+
+      # If there are gutters in both directions
+      # The case is common in lower levels, where you find a mXn grid of elements.
     elsif (!horizontal_gutters.empty? && !vertical_gutters.empty?)
       previous_x_gutter = super_bounds.top
       horizontal_gutters.each do |x_gutter|
         previous_y_gutter = super_bounds.left
         vertical_gutters.each do |y_gutter|
           current_region = BoundingBox.new(previous_x_gutter, previous_y_gutter, x_gutter, y_gutter)
-          nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes)
-          subgrids.push Grid.new(nodes_in_region, self)
+          nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes, :bounds)
+          if not nodes_in_region.empty?
+            subgrids.push Grid.new(nodes_in_region, self)
+          end
           previous_y_gutter = y_gutter
         end
         previous_x_gutter = x_gutter
       end
-    else
-      #This is leaf level. No more subgrids.
-      return []
     end
     return subgrids
+  end
+
+  def print(indent_level=0)
+    spaces = ""
+    prefix = "|--"
+    indent_level.times {|i| spaces+="  "}
+    puts "#{spaces}#{prefix}#{self.bounds.to_s}"
+    self.sub_grids.each do |subgrid|
+      subgrid.print(indent_level+1)
+    end
   end
 end
