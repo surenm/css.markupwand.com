@@ -25,7 +25,11 @@ class BoundingBox
   end
 
   def to_s
-    "T:#{self.top} | L:#{self.left} | B:#{self.bottom} | R:#{self.right}"
+    "(#{self.top}, #{self.left}, #{self.bottom}, #{self.right})"
+  end
+  
+  def same_as?(other_box)
+    self.top == other_box.top and self.left == other_box.left and self.bottom == other_box.bottom and self.right == other_box.right
   end
 
   def encloses?(other_box)
@@ -61,7 +65,7 @@ class BoundingBox
   def self.get_objects_in_region(region, objects, bound_getter_name)
     objects_in_region = objects.select do |item|
       bounds = item.send(bound_getter_name)
-      region.encloses?(bounds)
+      region.encloses?(bounds) and !region.same_as?(bounds)
     end
     return objects_in_region
   end
