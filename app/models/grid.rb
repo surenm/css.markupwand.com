@@ -66,16 +66,24 @@ class Grid
           previous_gutter = gutter
         end
       end
-    end
     
     # If there are gutters in both directions
     # The case is common in lower levels, where you find a mXn grid of elements.
-    if (!horizontal_gutters.empty? && !vertical_gutters.empty?)
+    elsif (!horizontal_gutters.empty? && !vertical_gutters.empty?)
+      previous_x_gutter = super_bounds.top
       horizontal_gutters.each do |x_gutter|
+        previous_y_gutter = super_bounds.left
         vertical_gutters.each do |y_gutter|
-          
+          current_region = BoundingBox.new(previous_x_gutter, previous_y_gutter, x_gutter, y_gutter)
+          nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes)
+          subgrids.push Grid.new(nodes_in_region, self)
+          previous_y_gutter = y_gutter
         end
+        previous_x_gutter = x_gutter
       end
+    else
+      return []
     end
+    return subgrids
   end
 end
