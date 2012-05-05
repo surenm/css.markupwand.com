@@ -59,6 +59,10 @@ class BoundingBox
   
   def self.get_objects_in_region(region, objects, bound_getter_name)
     #TODO: Add the logic - Call "bound_getter_name" from each "object" in objects, select the ones within "region"
+    objects.each do |item|
+      bounds = item.send(bound_getter_name)
+      region.encloses?(bounds)
+    end
     return nil
   end
 end
