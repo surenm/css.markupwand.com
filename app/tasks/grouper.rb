@@ -4,7 +4,7 @@ class Grouper
   private
   def find_bounds
     top = left = bottom = right = nil
-    @nodes.each do |node|
+    self.nodes.each do |node|
       if top.nil? or node["top"]<top
         top = node["top"]
       end
@@ -22,7 +22,7 @@ class Grouper
   end
 
   def remove_document_base
-    @nodes.delete_if do |node|
+    self.nodes.delete_if do |node|
       node["top"]==self.bounds.top and node["bottom"]==self.bounds.bottom and node["right"]==self.bounds.right and node["left"]==self.bounds.left
     end
     self.bounds = find_bounds
@@ -34,7 +34,7 @@ class Grouper
 
   public
   def initialize(json_file)
-    @nodes = []
+    self.nodes = []
     fh = File.read json_file
     json = JSON.parse fh
     json.each do |node_json|
@@ -44,7 +44,7 @@ class Grouper
       node["bottom"] = node_bounds["bottom"]["value"]
       node["left"] = node_bounds["left"]["value"]
       node["right"] = node_bounds["right"]["value"]
-      @nodes.push node
+      self.nodes.push node
     end
     self.bounds = find_bounds
     remove_document_base
