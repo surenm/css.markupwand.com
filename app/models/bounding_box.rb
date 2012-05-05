@@ -56,4 +56,9 @@ class BoundingBox
     end
     return BoundingBox.new(top, left, bottom , right)
   end
+  
+  def self.get_objects_in_region(region, objects, bound_getter_name)
+    #TODO: Add the logic - Call "bound_getter_name" from each "object" in objects, select the ones within "region"
+    return nil
+  end
 end
