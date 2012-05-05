@@ -4,6 +4,10 @@ class PhotoshopItem::StylesHash
     @index  = 0
   end
   
+  def styles
+    @styles
+  end
+  
   @@instance = PhotoshopItem::StylesHash.new
   
   def self.instance
@@ -24,12 +28,30 @@ class PhotoshopItem::StylesHash
     end
   end
   
+  def self.get_styles_hash
+    PhotoshopItem::StylesHash.instance.styles
+  end
+  
   def self.add_and_get_class(string)
     PhotoshopItem::StylesHash.instance.add_and_get_class(string)
   end
   
   def self.generate_css_file
-    return 'hehe'
+    classes  = PhotoshopItem::StylesHash.get_styles_hash 
+    css_data = ''
+    
+    classes.each do |style, class_name|
+      style_formatted = style.gsub(";",";\n")
+      class_block = <<CLASS_BLOCK
+.#{class_name} {
+  #{style_formatted}
+}
+
+CLASS_BLOCK
+      css_data = css_data + class_block
+    end
+    
+    return css_data
   end
   
 end
