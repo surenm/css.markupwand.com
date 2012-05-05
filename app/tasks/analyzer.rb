@@ -10,10 +10,13 @@ class Analyzer
     dom = PhotoshopItem::Dom.regroup raw_dom
 
     Log.info "Generating HTML..."
-    html = dom.render_to_html
-    html_fptr = File.new '/tmp/result.html', 'w+'
-    html_fptr.write html
-    html_fptr.close
-    return
+    body_html = dom.render_to_html
+    wrapper   = File.new Rails.root.join('app','assets','wrapper_templates','bootstrap_wrapper.html'), 'r'
+    html      = wrapper.read
+    wrapper.close
+    
+    html.gsub! "{yield}", body_html
+
+    return html
   end
 end
