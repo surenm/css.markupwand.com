@@ -38,6 +38,7 @@ class BoundingBox
     return ((left_distance < self.width or left_distance < other_box.width) and (top_distance < self.height or top_distance < other_box.height))
   end
   
+  #Super bound is the minimal bounding box that encloses a bunch of bounding boxes
   def self.get_super_bounds(bounding_box_list)
     top = left = bottom = right = nil
     bounding_box_list.each do |bounding_box|
@@ -58,11 +59,10 @@ class BoundingBox
   end
   
   def self.get_objects_in_region(region, objects, bound_getter_name)
-    #TODO: Add the logic - Call "bound_getter_name" from each "object" in objects, select the ones within "region"
-    objects.each do |item|
+    objects_in_region = objects.select do |item|
       bounds = item.send(bound_getter_name)
       region.encloses?(bounds)
     end
-    return nil
+    return objects_in_region
   end
 end

@@ -66,7 +66,6 @@ class Grid
     if (!horizontal_gutters.empty? && !vertical_gutters.empty?)
       horizontal_gutters.each do |x_gutter|
         vertical_gutters.each do |y_gutter|
-          #TODO: Fill in the logic
           
         end
       end
