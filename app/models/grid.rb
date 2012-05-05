@@ -39,7 +39,11 @@ class Grid
       return true
     end
     
-    # If the gutters are in one direction - Most likely the case at higher levels
+    # If the gutters are in one direction
+    # This case is common at higher levels
+    # Eg., Level 1 - Header, body footer - all separated by horizontal gutter
+    # Level 2 - Body has a content area and a right of left nav - app separated by vertical gutter
+    # and so on
     if (horizontal_gutters.empty? and not vertical_gutters.empty?) or (vertical_gutters.empty? and not horizontal_gutters.empty?)
       if not horizontal_gutters.empty?
         previous_gutter = super_bounds.top
@@ -49,6 +53,7 @@ class Grid
           current_region = BoundingBox.new(previous_gutter, left_bound, gutter, right_bound)
           nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes, :bounds)
           subgrids.push Grid.new(nodes_in_region, self)
+          previous_gutter = gutter
         end
       else
         previous_gutter = super_bounds.left
@@ -58,11 +63,13 @@ class Grid
           current_region = BoundingBox.new(top_bound, previous_gutter, bottom_bound, gutter)
           nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes, :bounds)
           subgrids.push Grid.new(nodes_in_region, self)
+          previous_gutter = gutter
         end
       end
     end
     
-    # If there are gutters in both directions - The case in lower levels
+    # If there are gutters in both directions
+    # The case is common in lower levels, where you find a mXn grid of elements.
     if (!horizontal_gutters.empty? && !vertical_gutters.empty?)
       horizontal_gutters.each do |x_gutter|
         vertical_gutters.each do |y_gutter|
