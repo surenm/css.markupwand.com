@@ -28,4 +28,8 @@ class PhotoshopItem::StylesHash
     PhotoshopItem::StylesHash.instance.add_and_get_class(string)
   end
   
+  def self.generate_css_file
+    return 'hehe'
+  end
+  
 end
