@@ -8,6 +8,7 @@ class PhotoshopItem::Layer
   LAYER_TEXT        = "LayerKind.TEXT"
   LAYER_SMARTOBJECT = "LayerKind.SMARTOBJECT"
   LAYER_SOLIDFILL   = "LayerKind.SOLIDFILL"
+  LAYER_NORMAL      = "LayerKind.NORMAL"
   
   def initialize(layer)    
     @bounds = layer[:bounds]
@@ -81,10 +82,13 @@ class PhotoshopItem::Layer
   def tag
     if @is_root
       :body
-    elsif layer_kind  == LAYER_TEXT or layer_kind == LAYER_SOLIDFILL
-      :div
     elsif layer_kind == LAYER_SMARTOBJECT
       :img
+    elsif layer_kind  == LAYER_TEXT or layer_kind == LAYER_SOLIDFILL or layer_kind == LAYER_NORMAL
+      :div
+    else
+      Log.info "New layer found #{layer_kind} for layer #{self.name}"
+      :div
     end
   end
   
@@ -116,7 +120,6 @@ class PhotoshopItem::Layer
   end
   
   def render_to_html(args = nil)
-    #puts "Generating html for #{self.inspect}"
     override_css = {}
     if not args.nil?
       if not args[:css].nil?
