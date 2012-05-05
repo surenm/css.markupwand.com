@@ -82,6 +82,7 @@ class Grid
         previous_x_gutter = x_gutter
       end
     else
+      #This is leaf level. No more subgrids.
       return []
     end
     return subgrids
