@@ -29,7 +29,7 @@ class BoundingBox
   end
 
   def encloses?(other_box)
-    self.top < other_box.top and self.bottom > other_box.bottom and self.left < other_box.left and self.right > other_box.right
+    self.top <= other_box.top and self.bottom >= other_box.bottom and self.left <= other_box.left and self.right >= other_box.right
   end
 
   def overlaps?(other_box)
