@@ -37,4 +37,23 @@ class BoundingBox
     top_distance = (self.top - other_box.top).abs
     return ((left_distance < self.width or left_distance < other_box.width) and (top_distance < self.height or top_distance < other_box.height))
   end
+  
+  def self.get_super_bounds(bounding_box_list)
+    top = left = bottom = right = nil
+    bounding_box_list.each do |bounding_box|
+      if top.nil? or bounding_box.top<top
+        top = bounding_box.top
+      end
+      if left.nil? or bounding_box.left<left
+        left = bounding_box.left
+      end
+      if bottom.nil? or bounding_box.bottom>bottom
+        bottom = bounding_box.bottom
+      end
+      if right.nil? or bounding_box.right>right
+        right = bounding_box.right
+      end
+    end
+    return BoundingBox.new(top, left, bottom , right)
+  end
 end
