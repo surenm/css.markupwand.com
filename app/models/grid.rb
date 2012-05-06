@@ -69,9 +69,7 @@ class Grid
         if not nodes_in_region.empty?
           subgrids.push Grid.new(nodes_in_region, self)
         end
-        previous_y_gutter = y_gutter
       end
-      previous_x_gutter = x_gutter
     end
     return subgrids
   end
