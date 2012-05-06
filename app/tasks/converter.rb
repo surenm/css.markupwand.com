@@ -29,7 +29,12 @@ module Converter
       return font
     end
   end
-    
+  
+  def Converter::parse_shadow(shadow)
+    color = parse_color(shadow[:value][:color])
+    size  = shadow[:value][:distance][:value]
+    "#{size}px #{size}px #{size}px #{color}"
+  end
   
   def Converter::parse_text(layer)
     #choose first one right now
@@ -39,11 +44,15 @@ module Converter
     css[:'font-family'] = parse_font(text_style[:value][:textStyle][:value][:fontName][:value])
     css[:'font-size']   = text_style[:value][:textStyle][:value][:size][:value].to_s + 'px'
     font_weight         = text_style[:value][:textStyle][:value][:fontStyleName][:value]
+    
+    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
+      css[:'text-shadow'] = parse_shadow(layer[:layerEffects][:value][:dropShadow])
+    end
 
     if not FONT_WEIGHT[font_weight].nil?
       css[:'font-weight'] = FONT_WEIGHT[font_weight]
     end
-
+    
     css[:color] = parse_color(text_style[:value][:textStyle][:value][:color])
     css
   end
