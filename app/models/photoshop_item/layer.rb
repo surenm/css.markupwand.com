@@ -131,7 +131,8 @@ class PhotoshopItem::Layer
     if tag == :img
       html = "<img src='#{image_path}'/>"
     else
-      html = content_tag tag, inner_html, {:class => class_name(override_css)}, false
+      html = "\n"
+      html = html + (content_tag tag, inner_html, {:class => class_name(override_css), :'data-layer-name' => self.name }, false)
     end    
     return html
   end
