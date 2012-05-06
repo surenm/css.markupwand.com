@@ -1,9 +1,10 @@
 class Grid
-  attr_accessor :sub_grids, :parent, :bounds, :nodes
+  attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type
   def initialize(nodes, parent)
-    self.nodes = nodes
+    puts "----------Creating grid enclosing-------------"
     pp nodes
-    parent = parent
+    self.nodes = nodes
+    self.parent = parent
     node_bounds = nodes.collect {|node| node.bounds}
     self.bounds = BoundingBox.get_super_bounds(node_bounds)
     puts "Getting sub grids for Grid with bounds = #{self.bounds}"
@@ -20,7 +21,7 @@ class Grid
     vertical_lines.each do |vertical_line|
       is_gutter = true
       bounding_boxes.each do |bb|
-        if bb.left < vertical_line and vertical_line < bb.right and !bb.same_as?(super_bounds)
+        if bb.left < vertical_line and vertical_line < bb.right
           is_gutter = false
         end
       end
@@ -39,7 +40,7 @@ class Grid
     horizontal_lines.each do |horizontal_line|
       is_gutter = true
       bounding_boxes.each do |bb|
-        if bb.top < horizontal_line and horizontal_line < bb.bottom and !bb.same_as?(super_bounds)
+        if bb.top < horizontal_line and horizontal_line < bb.bottom
           is_gutter = false
         end
       end
@@ -48,16 +49,30 @@ class Grid
     horizontal_gutters.sort!
   end
 
+  def copy_grid_properties(node)
+    #Placeholder
+  end
+
   #FIXME: See if this function could be broken down. Too long!
   def get_subgrids(nodes)
     subgrids = []
     bounding_boxes = nodes.collect {|node| node.bounds}
     super_bounds = BoundingBox.get_super_bounds(bounding_boxes)
 
+    grid_overlaps = nodes.select {|node| node.bounds.same_as? super_bounds}
+    if not grid_overlaps.empty?
+      grid_overlaps.each do |overlapping_node|
+        self.copy_grid_properties overlapping_node
+        bounding_boxes.delete overlapping_node.bounds
+        nodes.delete overlapping_node
+      end
+    end
+
+
     vertical_gutters = get_vertical_gutters(bounding_boxes, super_bounds)
-    puts "Vertical Gutters #{vertical_gutters}"
+    puts "Vertical Gutters - #{vertical_gutters}"
     horizontal_gutters = get_horizontal_gutters(bounding_boxes, super_bounds)
-    puts "Horizontal Gutters #{horizontal_gutters}"
+    puts "Horizontal Gutters - #{horizontal_gutters}"
 
     horizontal_gutters.each_with_index do |x_gutter, x_index|
       next if x_index==0
@@ -66,7 +81,11 @@ class Grid
         next if y_index==0
         previous_y_gutter = vertical_gutters[y_index-1]
         current_region = BoundingBox.new(previous_x_gutter, previous_y_gutter, x_gutter, y_gutter)
+        puts "---------------------------------"
+        puts "Looking at grid #{current_region}"
         nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes, :bounds)
+        pp nodes_in_region
+        puts "---------------------------------"
         if not nodes_in_region.empty?
           subgrids.push Grid.new(nodes_in_region, self)
         end
@@ -79,7 +98,7 @@ class Grid
     spaces = ""
     prefix = "|--"
     indent_level.times {|i| spaces+="  "}
-    puts "#{spaces}#{prefix}#{self.bounds.to_s}"
+    puts "#{spaces}#{prefix}#{self.bounds.to_s}#{self.nodes.to_s}"
     self.sub_grids.each do |subgrid|
       subgrid.print(indent_level+1)
     end
