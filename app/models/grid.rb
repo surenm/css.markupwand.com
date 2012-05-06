@@ -14,6 +14,7 @@ class Grid
     vertical_lines = bounding_boxes.collect{|bb| bb.left}
     vertical_lines += bounding_boxes.collect{|bb| bb.right}
     vertical_lines.uniq!
+    puts "Vertical lines - #{vertical_lines}"
 
     vertical_gutters = []
     vertical_lines.each do |vertical_line|
@@ -32,6 +33,7 @@ class Grid
     horizontal_lines = bounding_boxes.collect{|bb| bb.top}
     horizontal_lines += bounding_boxes.collect{|bb| bb.bottom}
     horizontal_lines.uniq!
+    puts "Horizontal lines - #{horizontal_lines}"
 
     horizontal_gutters = []
     horizontal_lines.each do |horizontal_line|
@@ -53,10 +55,9 @@ class Grid
     super_bounds = BoundingBox.get_super_bounds(bounding_boxes)
 
     vertical_gutters = get_vertical_gutters(bounding_boxes, super_bounds)
-    horizontal_gutters = get_horizontal_gutters(bounding_boxes, super_bounds)
-
-    puts "Horizontal Gutters #{horizontal_gutters}"
     puts "Vertical Gutters #{vertical_gutters}"
+    horizontal_gutters = get_horizontal_gutters(bounding_boxes, super_bounds)
+    puts "Horizontal Gutters #{horizontal_gutters}"
 
     horizontal_gutters.each_with_index do |x_gutter, x_index|
       next if x_index==0
