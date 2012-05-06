@@ -36,3 +36,7 @@ gem 'haml'
 #File upload related gems
 gem 'carrierwave'
 gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
+
+
+#Development goodies
+gem 'pry-rails', :group => :development

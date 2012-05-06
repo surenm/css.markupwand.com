@@ -15,11 +15,6 @@ class Grouper
     puts self.nodes.size
   end
 
-  def order_boxes
-    @bounds.each do |bound|
-    end
-  end
-
   public
   def initialize(json_file)
     self.nodes = []
@@ -28,7 +23,7 @@ class Grouper
     json.each do |node_json|
       node_bounds = node_json["bounds"]["value"]
       bounding_box = BoundingBox.new(node_bounds["top"]["value"], node_bounds["left"]["value"], node_bounds["bottom"]["value"], node_bounds["right"]["value"])
-      node = DesignNode.new(bounding_box)
+      node = DesignNode.new(bounding_box, node_json["name"]["value"])
       self.nodes.push node
     end
     bounding_boxes = nodes.collect {|node| node.bounds}

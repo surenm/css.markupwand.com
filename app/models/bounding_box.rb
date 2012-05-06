@@ -1,5 +1,6 @@
 class BoundingBox
-  attr_accessor :top, :left, :bottom, :right, :width, :height
+  attr_accessor :top, :left, :bottom, :right
+  attr_reader :width, :height
 
   def initialize(top=nil, left=nil, bottom=nil, right=nil)
     set(top, left, bottom, right)
@@ -16,18 +17,18 @@ class BoundingBox
     self.right = right
 
     begin
-      self.width = (right-left).abs
-      self.height = (bottom-top).abs
+      @width = (right-left).abs
+      @height = (bottom-top).abs
     rescue
-      self.width = nil
-      self.height = nil
+      @width = nil
+      @height = nil
     end
   end
 
   def to_s
     "(#{self.top}, #{self.left}, #{self.bottom}, #{self.right})"
   end
-  
+
   def same_as?(other_box)
     self.top == other_box.top and self.left == other_box.left and self.bottom == other_box.bottom and self.right == other_box.right
   end
@@ -41,7 +42,7 @@ class BoundingBox
     top_distance = (self.top - other_box.top).abs
     return ((left_distance < self.width or left_distance < other_box.width) and (top_distance < self.height or top_distance < other_box.height))
   end
-  
+
   #Super bound is the minimal bounding box that encloses a bunch of bounding boxes
   def self.get_super_bounds(bounding_box_list)
     top = left = bottom = right = nil
@@ -61,12 +62,18 @@ class BoundingBox
     end
     return BoundingBox.new(top, left, bottom , right)
   end
-  
+
   def self.get_objects_in_region(region, objects, bound_getter_name)
+    puts "+++++++++++++++++++++++++++"
+    puts "Region considered: #{region}"
+    puts "Objects considered: #{objects}"
     objects_in_region = objects.select do |item|
       bounds = item.send(bound_getter_name)
-      region.encloses?(bounds) and !region.same_as?(bounds)
+      puts "-- #{item} -- #{region.encloses?(bounds)}"
+      region.encloses?(bounds)
     end
+    puts "Objects in region: #{objects_in_region}"
+    puts "+++++++++++++++++++++++++++"
     return objects_in_region
   end
 end
