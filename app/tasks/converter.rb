@@ -10,6 +10,10 @@ module Converter
     'Bold'    => 'bold'
   }
   
+  Converter::FONT_MAPS  = {
+    'Helvetica World' => 'Helvetica'
+  }
+  
   def Converter::parse_color(color_object)
     red   = Integer (color_object[:value][:red][:value])
     green = Integer (color_object[:value][:grain][:value])
@@ -18,14 +22,23 @@ module Converter
     '#' + red.to_s(16) + green.to_s(16) + blue.to_s(16)
   end
   
+  def Converter::parse_font(font)
+    if Converter::FONT_MAPS.has_key? font
+      Converter::FONT_MAPS[font]
+    else
+      return font
+    end
+  end
+    
+  
   def Converter::parse_text(layer)
     #choose first one right now
     text_style = layer[:textKey][:value][:textStyleRange][:value].first
 
-    css               = {}
-    css[:'font-family'] = text_style[:value][:textStyle][:value][:fontName][:value]
+    css                 = {}
+    css[:'font-family'] = parse_font(text_style[:value][:textStyle][:value][:fontName][:value])
     css[:'font-size']   = text_style[:value][:textStyle][:value][:size][:value].to_s + 'px'
-    font_weight       = text_style[:value][:textStyle][:value][:fontStyleName][:value]
+    font_weight         = text_style[:value][:textStyle][:value][:fontStyleName][:value]
 
     if not FONT_WEIGHT[font_weight].nil?
       css[:'font-weight'] = FONT_WEIGHT[font_weight]
