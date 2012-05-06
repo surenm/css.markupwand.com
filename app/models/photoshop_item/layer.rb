@@ -120,6 +120,8 @@ class PhotoshopItem::Layer
   end
   
   def render_to_html(args = nil)
+    Log.info "Creating markup for #{@name}"
+    
     override_css = {}
     if not args.nil?
       if not args[:css].nil?
@@ -132,7 +134,9 @@ class PhotoshopItem::Layer
       html = "<img src='#{image_path}'/>"
     else
       html = "\n"
-      html = html + (content_tag tag, inner_html, {:class => class_name(override_css), :'data-layer-name' => self.name }, false)
+      html = html + (content_tag tag, inner_html, 
+        {:class => class_name(override_css), 
+         :'data-layer-name' => self.name }, false)
     end    
     return html
   end
