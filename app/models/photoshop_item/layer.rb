@@ -1,8 +1,7 @@
 class PhotoshopItem::Layer
   include ActionView::Helpers::TagHelper
   
-  attr_accessor :top, :bottom, :left, :right, :name, :layer, :kind
-  attr_reader :width, :height
+  attr_accessor :bounds, :name, :layer, :kind
   
   
   LAYER_TEXT        = "LayerKind.TEXT"
@@ -10,42 +9,34 @@ class PhotoshopItem::Layer
   LAYER_SOLIDFILL   = "LayerKind.SOLIDFILL"
   
   def initialize(layer)    
-    @bounds = layer[:bounds]
+    bound_json = layer[:bounds]
     @name   = layer[:name][:value]
     @kind   = layer[:layerKind]
     @layer  = layer
 
-    value    = @bounds[:value]
-    @top     = value[:top][:value]
-    @bottom  = value[:bottom][:value]
-    @left    = value[:left][:value]
-    @right   = value[:right][:value]  
+    value    = bound_json[:value]
+    top     = value[:top][:value]
+    bottom  = value[:bottom][:value]
+    left    = value[:left][:value]
+    right   = value[:right][:value]  
     @is_root = false
-
-  
-    @width  = @right - @left
-    @height = @bottom - @top
-  end
-  
-  def <=>(other_layer)
-    if self.top == other_layer.top
-      return self.left <=> other_layer.left
-    else
-      return self.top <=> other_layer.top
-    end
+    
+    @bounds = BoundingBox.new(top, left, bottom, right)
+    
   end
   
   # Sets that it is a root
   def is_a_root_node
     @is_root = true
   end
+  
+  def <=> (other_layer)
+    self.bounds <=> other_layer.bounds
+  end
 
   def ==(other_layer)
     return (
-      self.top == other_layer.top and
-      self.left == other_layer.left and 
-      self.bottom == other_layer.bottom and 
-      self.right == other_layer.right and
+      self.bounds.same_as? other_layer.bounds and
       self.name == other_layer.name and 
       self.children == other_layer.children
     )
@@ -59,11 +50,11 @@ class PhotoshopItem::Layer
   # This actually has to be something like if the areas intersect for more than 50% or so 
   # then the bigger one encloses the smaller one.
   def encloses?(other_layer)
-    return (self.top <= other_layer.top and self.left <= other_layer.left and self.bottom >= other_layer.bottom and self.right >= other_layer.right)
+    return self.bounds.encloses? other_layer.bounds
   end
   
   def intersect?(other)
-    return (self.left < other.right and self.right > other.left and self.top < other.bottom and self.bottom > other.top)
+    return self.bounds.intersect? other.bounds
   end
   
   def image_path

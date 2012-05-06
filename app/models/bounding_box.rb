@@ -63,6 +63,18 @@ class BoundingBox
     return BoundingBox.new(top, left, bottom , right)
   end
 
+  def <=>(other_box)
+    if self.top == other_box.top
+      return self.left <=> other_box.left
+    else
+      return self.top <=> other_box.top
+    end
+  end
+
+  def intersect?(other)
+    self.left < other.right and self.right > other.left and self.top < other.bottom and self.bottom > other.top
+  end
+
   def self.get_objects_in_region(region, objects, bound_getter_name)
     puts "+++++++++++++++++++++++++++"
     puts "Region considered: #{region}"
