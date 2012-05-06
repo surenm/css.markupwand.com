@@ -74,60 +74,6 @@ class Grid
       previous_x_gutter = x_gutter
     end
     return subgrids
-=begin
-    # If the gutters are in one direction
-    # This case is common at higher levels
-    # Eg., Level 1 - Header, body footer - all separated by horizontal gutter
-    # Level 2 - Body has a content area and a right of left nav - app separated by vertical gutter
-    # and so on
-    if (horizontal_gutters.empty? and not vertical_gutters.empty?) or (vertical_gutters.empty? and not horizontal_gutters.empty?)
-      if not horizontal_gutters.empty?
-        previous_gutter = super_bounds.top
-        left_bound = super_bounds.left
-        right_bound = super_bounds.right
-        horizontal_gutters.each do |gutter|
-          current_region = BoundingBox.new(previous_gutter, left_bound, gutter, right_bound)
-          nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes, :bounds)
-          if not nodes_in_region.empty?
-            subgrids.push Grid.new(nodes_in_region, self)
-          end
-          previous_gutter = gutter
-        end
-      else
-        previous_gutter = super_bounds.left
-        top_bound = super_bounds.top
-        bottom_bound = super_bounds.bottom
-        vertical_gutters.each do |gutter|
-          current_region = BoundingBox.new(top_bound, previous_gutter, bottom_bound, gutter)
-          nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes, :bounds)
-          if not nodes_in_region.empty?
-            subgrids.push Grid.new(nodes_in_region, self)
-          end
-          previous_gutter = gutter
-        end
-      end
-      puts "IF"
-    # If there are gutters in both directions
-    # The case is common in lower levels, where you find a mXn grid of elements.
-    elsif (!horizontal_gutters.empty? && !vertical_gutters.empty?)
-      previous_x_gutter = super_bounds.top
-      horizontal_gutters.each do |x_gutter|
-        previous_y_gutter = super_bounds.left
-        vertical_gutters.each do |y_gutter|
-          current_region = BoundingBox.new(previous_x_gutter, previous_y_gutter, x_gutter, y_gutter)
-          nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes, :bounds)
-          if not nodes_in_region.empty?
-            subgrids.push Grid.new(nodes_in_region, self)
-          end
-          previous_y_gutter = y_gutter
-        end
-        previous_x_gutter = x_gutter
-      end
-      puts "ELSIF"
-    end
-    puts "Subgrids: #{subgrids.size}"
-    return subgrids
-=end
   end
 
   def print(indent_level=0)
