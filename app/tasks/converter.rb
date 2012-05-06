@@ -36,8 +36,11 @@ module Converter
     "#{size}px #{size}px #{size}px #{color}"
   end
   
+  def Converter::parse_opacity(opacity)
+    Float(opacity[:value])/256.0
+  end
+  
   def Converter::parse_text(layer)
-    #choose first one right now
     text_style = layer[:textKey][:value][:textStyleRange][:value].first
 
     css                 = {}
@@ -47,6 +50,10 @@ module Converter
     
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
       css[:'text-shadow'] = parse_shadow(layer[:layerEffects][:value][:dropShadow])
+    end
+    
+    if Integer(layer[:opacity][:value]) < 255
+      css[:opacity] = parse_opacity(layer[:opacity])
     end
 
     if not FONT_WEIGHT[font_weight].nil?
