@@ -5,9 +5,28 @@ class Utils
   
   def self.process_file(file_name)
     Log.info "Beginning to process #{file_name}..."
-    fptr = File.new file_name
-    json_data = fptr.read
-    html = Analyzer.analyze json_data
+
+    fptr = File.read file_name
+    json = JSON.parse fptr, :symbolize_names => true
+    nodes = []
+    json.each do |node_json|
+      node_bounds = node_json[:bounds][:value]
+      bounding_box = BoundingBox.new(node_bounds[:top][:value], node_bounds[:left][:value], node_bounds[:bottom][:value], node_bounds[:right][:value])
+      node = PhotoshopItem::Layer.new(node_json)
+      nodes.push node
+    end
+
+    bounding_boxes = nodes.collect {|node| node.bounds}
+    bounds = BoundingBox.get_super_bounds bounding_boxes
+
+    grid = Grid.new(nodes, nil)
+    body_html = grid.to_html
+
+    wrapper   = File.new Rails.root.join('app','assets','wrapper_templates','bootstrap_wrapper.html'), 'r'
+    html      = wrapper.read
+    wrapper.close
+    
+    html.gsub! "{yield}", body_html
     
     better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ','_')
     folder_path      = Rails.root.join("generated", better_file_name)
