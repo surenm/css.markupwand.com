@@ -9,7 +9,7 @@ module Converter
     'Regular' => nil,
     'Bold'    => 'bold'
   }
-  
+
   def Converter::parse_color(color_object)
     red   = Integer (color_object[:value][:red][:value])
     green = Integer (color_object[:value][:grain][:value])
@@ -17,7 +17,7 @@ module Converter
 
     '#' + red.to_s(16) + green.to_s(16) + blue.to_s(16)
   end
-  
+
   def Converter::parse_text(layer)
     #choose first one right now
     text_style = layer[:textKey][:value][:textStyleRange][:value].first
@@ -32,6 +32,7 @@ module Converter
     end
 
     css[:color] = parse_color(text_style[:value][:textStyle][:value][:color])
+
     css
   end
 
@@ -47,7 +48,7 @@ module Converter
 
     css
   end
-  
+
   def Converter::to_style_string(css)
     css_string = ""
     css.each do |key,value|
@@ -55,10 +56,10 @@ module Converter
     end
     return css_string
   end
-  
+
   def Converter::get_image_path(layer)
     file = layer[:smartObject][:value][:fileReference][:value]
-    
+
     "/tmp/"+ file
   end
 
@@ -86,7 +87,7 @@ def parse_file(json)
       puts "Box item: " + item[:name][:value]
       css = Converter::parse_box(item)
     end
-    
+
     pp css
   end
 end
@@ -95,5 +96,5 @@ if __FILE__ == $0
   data = read_file()
   if data
     parse_file(data)
-  end   
+  end
 end

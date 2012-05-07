@@ -39,4 +39,5 @@ gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
 
 
 #Development goodies
-gem 'pry-rails', :group => :development
+#gem 'pry-rails', :group => :development
+#gem 'pry-stack_explorer', :group => :development

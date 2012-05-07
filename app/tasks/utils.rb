@@ -9,7 +9,7 @@ class Utils
     json_data = fptr.read
     html = Analyzer.analyze json_data
     
-    better_file_name = file_name.split('/').last.gsub('.psd','').gsub('.json','').underscore.gsub(' ','_')
+    better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ','_')
     folder_path      = Rails.root.join("generated", better_file_name)
     css_path         = folder_path.join("assets","css")
     css_file         = css_path.join "style.css"

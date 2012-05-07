@@ -76,16 +76,10 @@ class BoundingBox
   end
 
   def self.get_objects_in_region(region, objects, bound_getter_name)
-    puts "+++++++++++++++++++++++++++"
-    puts "Region considered: #{region}"
-    puts "Objects considered: #{objects}"
     objects_in_region = objects.select do |item|
       bounds = item.send(bound_getter_name)
-      puts "-- #{item} -- #{region.encloses?(bounds)}"
       region.encloses?(bounds)
     end
-    puts "Objects in region: #{objects_in_region}"
-    puts "+++++++++++++++++++++++++++"
     return objects_in_region
   end
 end

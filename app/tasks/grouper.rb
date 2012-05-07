@@ -15,20 +15,14 @@ class Grouper
     puts self.nodes.size
   end
 
-  def recursive_symbolize_keys! hash
-    hash.symbolize_keys!
-    hash.values.select{|v| v.is_a? Hash}.each{|h| recursive_symbolize_keys!(h)}
-  end
-
   public
   def initialize(json_file)
     self.nodes = []
     fh = File.read json_file
-    json = JSON.parse fh
+    json = JSON.parse fh, :symbolize_names => true
     json.each do |node_json|
-      node_bounds = node_json["bounds"]["value"]
-      bounding_box = BoundingBox.new(node_bounds["top"]["value"], node_bounds["left"]["value"], node_bounds["bottom"]["value"], node_bounds["right"]["value"])
-      recursive_symbolize_keys! node_json
+      node_bounds = node_json[:bounds][:value]
+      bounding_box = BoundingBox.new(node_bounds[:top][:value], node_bounds[:left][:value], node_bounds[:bottom][:value], node_bounds[:right][:value])
       node = PhotoshopItem::Layer.new(node_json)
       self.nodes.push node
     end
