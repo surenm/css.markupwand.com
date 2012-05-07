@@ -28,8 +28,14 @@ class Utils
 
     bounding_boxes = nodes.collect {|node| node.bounds}
     bounds         = BoundingBox.get_super_bounds bounding_boxes
-
-    grid      = Grid.new(nodes, nil)
+    
+    bounding_boxes.each do |bounding_box|
+      Log.debug bounding_box
+    end
+    
+    grid      = Grid.new nodes, nil
+    Log.info grid
+    
     body_html = grid.to_html
 
     wrapper   = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
