@@ -103,8 +103,7 @@ class Grid
       
       nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
       
-      if not nodes_in_region.empty?
-        Log.fatal nodes_in_region.count
+      if not nodes_in_region.empty? and nodes_in_region.size < nodes.size
         nodes_in_region.each {|node| available_nodes.delete node.uid}
         subgrids.push Grid.new(nodes_in_region, self)
       end
