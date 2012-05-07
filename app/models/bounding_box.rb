@@ -1,6 +1,6 @@
 class BoundingBox
   attr_accessor :top, :left, :bottom, :right
-  attr_reader :width, :height
+  attr_reader :width, :height, :area
 
   def initialize(top=nil, left=nil, bottom=nil, right=nil)
     set(top, left, bottom, right)
@@ -19,9 +19,11 @@ class BoundingBox
     begin
       @width = (right-left).abs
       @height = (bottom-top).abs
+      @area = @width * @height
     rescue
       @width = nil
       @height = nil
+      @area = nil
     end
   end
 
