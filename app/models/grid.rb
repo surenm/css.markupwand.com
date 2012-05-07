@@ -75,23 +75,42 @@ class Grid
       end
     end
 
-
-    vertical_gutters = get_vertical_gutters(bounding_boxes, super_bounds)
+    vertical_gutters   = get_vertical_gutters(bounding_boxes, super_bounds)
     horizontal_gutters = get_horizontal_gutters(bounding_boxes, super_bounds)
+    #Log.debug "Vertical Gutters: #{vertical_gutters}"
+    #Log.debug "Horizontal Gutters: #{horizontal_gutters}"
 
-    horizontal_gutters.each_with_index do |x_gutter, x_index|
-      next if x_index==0
-      previous_x_gutter = horizontal_gutters[x_index-1]
-      vertical_gutters.each_with_index do |y_gutter, y_index|
-        next if y_index==0
-        previous_y_gutter = vertical_gutters[y_index-1]
-        current_region = BoundingBox.new(previous_x_gutter, previous_y_gutter, x_gutter, y_gutter)
-        nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes, :bounds)
-        if not nodes_in_region.empty?
-          subgrids.push Grid.new(nodes_in_region, self)
-        end
+    # get all possible grouping boxes with the available gutters
+    grouping_boxes = []
+    horizontal_gutters.repeated_combination(2).each do |x_gutters|
+      vertical_gutters.repeated_combination(2).each do |y_gutters|
+        grouping_boxes.push BoundingBox.new x_gutters[0], y_gutters[0], x_gutters[1], y_gutters[1]
       end
     end
+    
+    # sort them on the basis of area in decreasing order
+    grouping_boxes.sort! { |a, b| b.area <=> a.area }
+    
+    # list of nodes to exhaust
+    available_nodes = Hash.new
+    nodes.each do |node| 
+      available_nodes[node.uid] = node
+    end
+    
+    grouping_boxes.each do |grouping_box|
+      break if available_nodes.empty?
+      remaining_nodes = available_nodes.values
+      
+      nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
+      
+      if not nodes_in_region.empty?
+        Log.fatal nodes_in_region.count
+        nodes_in_region.each {|node| available_nodes.delete node.uid}
+        subgrids.push Grid.new(nodes_in_region, self)
+      end
+      
+    end
+
     return subgrids
   end
 
