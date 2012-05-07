@@ -8,11 +8,21 @@ class Utils
 
     fptr     = File.read file_name
     psd_data = JSON.parse fptr, :symbolize_names => true
+    
+    # A hash of all layers
+    art_layers = psd_data[:art_layers]
+    layer_sets = psd_data[:layer_sets]  
+
+    # Layer descriptors of all photoshop layers
+    all_layers_json = Hash.new
+    all_layers_json.update art_layers
+    all_layers_json.update layer_sets
+    
     nodes = []
-    json.each do |node_json|
-      node_bounds = node_json[:bounds][:value]
+    art_layers.each do |layer_id, node_json|
+      node_bounds  = node_json[:bounds][:value]
       bounding_box = BoundingBox.new(node_bounds[:top][:value], node_bounds[:left][:value], node_bounds[:bottom][:value], node_bounds[:right][:value])
-      node = PhotoshopItem::Layer.new(node_json)
+      node         = PhotoshopItem::Layer.new(node_json)
       nodes.push node
     end
 
