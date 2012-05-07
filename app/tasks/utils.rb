@@ -6,8 +6,8 @@ class Utils
   def self.process_file(file_name)
     Log.info "Beginning to process #{file_name}..."
 
-    fptr = File.read file_name
-    json = JSON.parse fptr, :symbolize_names => true
+    fptr     = File.read file_name
+    psd_data = JSON.parse fptr, :symbolize_names => true
     nodes = []
     json.each do |node_json|
       node_bounds = node_json[:bounds][:value]
@@ -17,26 +17,26 @@ class Utils
     end
 
     bounding_boxes = nodes.collect {|node| node.bounds}
-    bounds = BoundingBox.get_super_bounds bounding_boxes
+    bounds         = BoundingBox.get_super_bounds bounding_boxes
 
-    grid = Grid.new(nodes, nil)
+    grid      = Grid.new(nodes, nil)
     body_html = grid.to_html
 
-    wrapper   = File.new Rails.root.join('app','assets','wrapper_templates','bootstrap_wrapper.html'), 'r'
+    wrapper   = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html      = wrapper.read
     wrapper.close
     
     html.gsub! "{yield}", body_html
     
-    better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ','_')
+    better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ', '_')
     folder_path      = Rails.root.join("generated", better_file_name)
-    css_path         = folder_path.join("assets","css")
+    css_path         = folder_path.join("assets", "css")
     
     Log.info "Creating css_path #{folder_path}"
     FileUtils.mkdir_p css_path
     
-    css_file         = css_path.join "style.css"
-    css_data         = PhotoshopItem::StylesHash.generate_css_file
+    css_file = css_path.join "style.css"
+    css_data = PhotoshopItem::StylesHash.generate_css_file
 
     File.open(css_file, 'w') {|f| f.write(css_data) }
     
