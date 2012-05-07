@@ -31,7 +31,7 @@ class BoundingBox
     "(#{self.top}, #{self.left}, #{self.bottom}, #{self.right})"
   end
 
-  def same_as?(other_box)
+  def ==(other_box)
     self.top == other_box.top and self.left == other_box.left and self.bottom == other_box.bottom and self.right == other_box.right
   end
 
@@ -80,8 +80,10 @@ class BoundingBox
   def self.get_objects_in_region(region, objects, bound_getter_name)
     objects_in_region = objects.select do |item|
       bounds = item.send(bound_getter_name)
-      region.encloses?(bounds)
+      region != bounds and region.encloses? bounds
     end
+    
+    
     return objects_in_region
   end
 end

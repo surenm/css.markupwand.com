@@ -1,7 +1,7 @@
 class PhotoshopItem::Layer
   include ActionView::Helpers::TagHelper
 
-  attr_accessor :bounds, :name, :layer, :kind
+  attr_accessor :bounds, :name, :layer, :kind, :uid
 
 
   LAYER_TEXT        = "LayerKind.TEXT"
@@ -13,6 +13,8 @@ class PhotoshopItem::Layer
     bound_json = layer[:bounds]
     @name   = layer[:name][:value]
     @kind   = layer[:layerKind]
+    @uid    = layer[:layerID][:value]
+
     self.layer  = layer
 
     value    = bound_json[:value]
@@ -40,9 +42,9 @@ class PhotoshopItem::Layer
   end
 
   def ==(other_layer)
-    return false if other_layer==nil
+    return false if other_layer == nil
     return (
-    self.bounds.same_as? other_layer.bounds and
+    self.bounds == other_layer.bounds and
     self.name == other_layer.name and
     self.children == other_layer.children
     )
