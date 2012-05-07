@@ -2,8 +2,7 @@ require "pp"
 
 class PhotoshopItem::Dom
   
-  attr_accessor :top, :bottom, :left, :right, :children
-  attr_reader :width, :height
+  attr_accessor :bounds, :children
   
   #TODO: This is a hack. Fix this
   def self.get_root(grid)
@@ -89,20 +88,18 @@ class PhotoshopItem::Dom
     @children = children
     @ordering = ordering
     
-    @top = Constants::INF
-    @bottom = -Constants::INF
-    @left = Constants::INF
-    @right = -Constants::INF
+    top = Constants::INF
+    bottom = -Constants::INF
+    left = Constants::INF
+    right = -Constants::INF
+    
+    @bounds = BoundingBox.new(top, left, bottom, right)
     
     fix_bounds
   end
 
   def <=>(other_layer)
-    if self.top == other_layer.top
-      return self.left <=> other_layer.left
-    else
-      return self.top <=> other_layer.top
-    end
+    self.bounds <=> other_layer.bounds
   end
   
   def inspect
@@ -115,23 +112,22 @@ class PhotoshopItem::Dom
   end
   
   def encloses?(other_layer)
-    return (self.top <= other_layer.top and self.left <= other_layer.left and self.bottom >= other_layer.bottom and self.right >= other_layer.right)
+    self.encloses? other_layer
   end
   
   def intersect?(other)
-    return (self.left < other.right and self.right > other.left and self.top < other.bottom and self.bottom > other.top)
+    self.intersect?other
   end
   
   def fix_bounds
+    top = bottom = left = right = nil
     @children.each do |child|
-      @top    = [child.top, @top].min
-      @bottom = [child.bottom, @bottom].max
-      @left   = [child.left, @left].min
-      @right  = [child.right, @right].max
+      top    = [child.bounds.top, @bounds.top].min
+      bottom = [child.bounds.bottom, @bounds.bottom].max
+      left   = [child.bounds.left, @bounds.left].min
+      right  = [child.bounds.right, @bounds.right].max
     end
-
-    @width  = @right - @left
-    @height = @bottom - @top
+    @bounds = BoundingBox.new(top, left, bottom, right)
   end
   
   def self.regroup(dom)
@@ -161,7 +157,7 @@ class PhotoshopItem::Dom
   
   def self.regroup_downwards(dom)
     Log.debug "Regrouping downwards..."
-    dom.children.sort { |a, b| a.top <=> b.top }
+    dom.children.sort { |a, b| a.bounds.top <=> b.bounds.top }
     
     current_dom = dom
     new_dom = PhotoshopItem::Dom.new nil, [], :down
@@ -170,7 +166,7 @@ class PhotoshopItem::Dom
       first_element = current_dom.children.first
       dummy_element = first_element.clone 
       
-      dummy_element.right = dummy_element.left + dom.width
+      dummy_element.bounds.right = dummy_element.bounds.left + dom.bounds.width
       
       grouped_elements = []
       current_dom.children.each do |element|
