@@ -64,9 +64,9 @@ class Grid
   def get_subgrids(nodes)
     subgrids = []
     bounding_boxes = nodes.collect {|node| node.bounds}
-    super_bounds = BoundingBox.get_super_bounds(bounding_boxes)
+    super_bounds   = BoundingBox.get_super_bounds(bounding_boxes)
 
-    grid_overlays = nodes.select {|node| node.bounds.same_as? super_bounds}
+    grid_overlays = nodes.select {|node| node.bounds == super_bounds}
     if not grid_overlays.empty?
       grid_overlays.each do |overlayed_node|
         self.copy_layer_info overlayed_node
