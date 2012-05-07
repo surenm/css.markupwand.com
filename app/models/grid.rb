@@ -2,12 +2,20 @@ class Grid
   attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer
 
   def initialize(nodes, parent)
+    if parent.nil?
+      Log.debug "Calling Root node"
+    else
+      Log.debug "Calling grid on #{parent.bounds}"
+    end
+    nodes.each do |node|
+      Log.debug node
+    end
     self.nodes = nodes
     self.parent = parent
     node_bounds = nodes.collect {|node| node.bounds}
     self.bounds = BoundingBox.get_super_bounds(node_bounds)
     self.sub_grids = get_subgrids(nodes)
-    if self.parent==nil
+    if self.parent == nil
       self.layer.is_a_root_node
     end
   end
