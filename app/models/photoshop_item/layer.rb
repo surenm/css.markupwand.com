@@ -90,19 +90,19 @@ class PhotoshopItem::Layer
     end
   end
 
-  def class_name(css)
+  def class_name(css = {}, is_root = false)
     if layer_kind == LAYER_TEXT
       css.update Converter::parse_text self.layer
     elsif layer_kind == LAYER_SMARTOBJECT
       css.update {}
     elsif layer_kind == LAYER_SOLIDFILL
       css.update Converter::parse_box self.layer
-      if @is_root
+      if is_root
         css.delete :width
         css.delete :height
         css.delete :'min-height'
         css[:margin] = "0 auto"
-        css[:width] = 960
+        css[:width] = '960px'
       end
     end
 
@@ -133,7 +133,7 @@ class PhotoshopItem::Layer
     if tag == :img
       html = "<img src='#{image_path}'/>"
     else
-      html = content_tag tag, inner_html, {:class => class_name(override_css)}, false
+      html = content_tag tag, inner_html, {:class => class_name(override_css, @is_root)}, false
     end
     return html
   end
