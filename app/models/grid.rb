@@ -17,6 +17,9 @@ class Grid
     self.sub_grids = get_subgrids(nodes)
     if self.parent == nil
       self.layer.is_a_root_node
+    if @nodes.size > 1
+      @sub_grids = get_subgrids nodes
+    end
     end
   end
 
@@ -105,6 +108,9 @@ class Grid
 
     vertical_gutters   = get_vertical_gutters(bounding_boxes, super_bounds)
     horizontal_gutters = get_horizontal_gutters(bounding_boxes, super_bounds)
+    
+    if vertical_gutters.empty? or horizontal_gutters.empty? 
+      return nil
     end
     
     Log.debug "Vertical Gutters: #{vertical_gutters}"
