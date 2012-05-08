@@ -1,4 +1,5 @@
 class Grid
+  include ActionView::Helpers::TagHelper
   attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer
 
   def initialize(nodes, parent)
