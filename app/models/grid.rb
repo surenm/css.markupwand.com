@@ -127,9 +127,16 @@ class Grid
       
       nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
       
-      if not nodes_in_region.empty? and nodes_in_region.size < nodes.size
+      if nodes_in_region.empty?
+        # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
+        # Usually a corner case
+      elsif nodes_in_region.size == nodes.size
+        # TODO: This grouping_box is a superbound of thes nodes. 
+        # Add this as a style to the grid if there exists a layer for this grouping_box
+      elsif nodes_in_region.size < nodes.size
         nodes_in_region.each {|node| available_nodes.delete node.uid}
         subgrids.push Grid.new(nodes_in_region, self)
+        
       end
       
     end
