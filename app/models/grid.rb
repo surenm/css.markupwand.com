@@ -157,8 +157,7 @@ class Grid
         # Add this as a style to the grid if there exists a layer for this grouping_box
       elsif nodes_in_region.size < nodes.size
         nodes_in_region.each {|node| available_nodes.delete node.uid}
-        subgrids.push Grid.new(nodes_in_region, self)
-        
+        subgrids.push Grid.new nodes_in_region, self, max_depth - 1
       end
     end
     
