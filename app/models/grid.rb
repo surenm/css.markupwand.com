@@ -98,30 +98,45 @@ class Grid
     return grouping_boxes
   end
 
-  #FIXME: See if this function could be broken down. Too long!
-  def get_subgrids(nodes)
-    subgrids = []
-    bounding_boxes = nodes.collect {|node| node.bounds}
-    super_bounds   = BoundingBox.get_super_bounds(bounding_boxes)
-
-    grid_overlays = nodes.select {|node| node.bounds == super_bounds}
-    if not grid_overlays.empty?
-      grid_overlays.each do |overlayed_node|
-        self.add_photoshop_layer overlayed_node
-        bounding_boxes.delete overlayed_node.bounds
-        nodes.delete overlayed_node
+  def self.get_super_nodes(nodes)
+    super_nodes = nodes.select do |enclosing_node|
+      flag = true
+      nodes.each do |node|
+        if not enclosing_node.encloses? node
+          flag = false 
+          break
+        end
       end
+      flag
     end
+    
+    return super_nodes
+  end
 
+  #FIXME: See if this function could be broken down. Too long!
+  def get_subgrids(max_depth)
+    subgrids = [] 
     
-    if vertical_gutters.empty? or horizontal_gutters.empty? 
-      return nil
+    super_nodes = Grid.get_super_nodes @nodes
+
+    super_nodes.each do |super_node|
+      Log.debug "Style node: #{super_node}"
+      self.add_photoshop_layer super_node
+      nodes.delete super_node
     end
     
+    bounding_boxes = nodes.collect {|node| node.bounds}
+    super_bounds   = BoundingBox.get_super_bounds bounding_boxes
+
     vertical_gutters   = get_vertical_gutters bounding_boxes, super_bounds
     horizontal_gutters = get_horizontal_gutters bounding_boxes, super_bounds
+
     Log.debug "Vertical Gutters: #{vertical_gutters}"
     Log.debug "Horizontal Gutters: #{horizontal_gutters}"
+    
+    if vertical_gutters.empty? or horizontal_gutters.empty? 
+      return []
+    end
 
     grouping_boxes = Grid.get_grouping_boxes horizontal_gutters, vertical_gutters
     
