@@ -56,8 +56,9 @@ class Grid
     horizontal_gutters.sort!
   end
 
-  def copy_layer_info(node)
-    self.layer = node
+  def add_photoshop_layer(layer)
+    @photoshop_layers.push layer
+  end
   end
 
   #FIXME: See if this function could be broken down. Too long!
@@ -69,7 +70,7 @@ class Grid
     grid_overlays = nodes.select {|node| node.bounds == super_bounds}
     if not grid_overlays.empty?
       grid_overlays.each do |overlayed_node|
-        self.copy_layer_info overlayed_node
+        self.add_photoshop_layer overlayed_node
         bounding_boxes.delete overlayed_node.bounds
         nodes.delete overlayed_node
       end
