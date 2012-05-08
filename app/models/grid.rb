@@ -113,13 +113,13 @@ class Grid
       end
     end
 
-    vertical_gutters   = get_vertical_gutters(bounding_boxes, super_bounds)
-    horizontal_gutters = get_horizontal_gutters(bounding_boxes, super_bounds)
     
     if vertical_gutters.empty? or horizontal_gutters.empty? 
       return nil
     end
     
+    vertical_gutters   = get_vertical_gutters bounding_boxes, super_bounds
+    horizontal_gutters = get_horizontal_gutters bounding_boxes, super_bounds
     Log.debug "Vertical Gutters: #{vertical_gutters}"
     Log.debug "Horizontal Gutters: #{horizontal_gutters}"
 
