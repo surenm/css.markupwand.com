@@ -124,6 +124,7 @@ class PhotoshopItem::Layer
 
     inner_html = ''
 
+    # TODO: WTF is this?
     if !args.nil? &&  !(args[:inner_html].nil? || args[:inner_html].empty?)
       inner_html = ' '+args[:inner_html]+' ' unless args.nil? or args[:inner_html].nil?
     elsif layer_kind == LAYER_TEXT
