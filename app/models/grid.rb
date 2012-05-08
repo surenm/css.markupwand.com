@@ -126,13 +126,14 @@ class Grid
 
   def to_html
     html = ""
-    if self.sub_grids.empty?
-      html = self.layer.to_html
-    else
-      self.sub_grids.each do |subgrid|
+    @photoshop_layers.each do |photoshop_layer| 
+      html += photoshop_layer.to_html
+    end
+    
+    if not @sub_grids.nil? and not @sub_grids.empty?
+      @sub_grids.each do |subgrid|
         html += subgrid.to_html
       end
-      html = self.layer.to_html({:inner_html=>html})
     end
     return html
   end
