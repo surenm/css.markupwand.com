@@ -2,29 +2,31 @@ class Grid
   include ActionView::Helpers::TagHelper
   attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer
 
-  def initialize(nodes, parent)
-    if parent.nil?
-      Log.debug "Calling Root node"
-    else
-      Log.debug "Calling grid on #{parent.bounds}"
+  def initialize(nodes, parent, max_depth = 100)
+
+    @nodes     = nodes    # The layers enclosed by this Grid
+    @parent    = parent   # Parent grid for this grid
+    @layers    = []       # Set of children style layers for this grid
+    @sub_grids = []       # children for this grid
+
+    @is_root   = false    # if the grid is the root node or the <body> tag for this html
+    if @parent == nil
+      @is_root = true
     end
-    nodes.each do |node|
-      Log.debug node
-    end
-    @nodes = nodes
-    @parent = parent
-    @photoshop_layers = []
     
     node_bounds = nodes.collect {|node| node.bounds}
     @bounds = BoundingBox.get_super_bounds node_bounds
     
-    if @nodes.size > 1
-      @sub_grids = get_subgrids nodes
-    end
-
-    if @parent == nil
-      #TODO: Grid should be a root node. Not a layer
-      #@layer.is_a_root_node
+    @nodes.sort!
+    
+    if @nodes.size > 1 
+      if max_depth > 0
+        @sub_grids = get_subgrids max_depth
+      else 
+        Log.fatal "Recursive parsing stopped because max_depth has been reached"
+      end
+    elsif @nodes.size == 1
+      @sub_grids.push @nodes.first  # Trivial. Just one layer is a child of this layer
     end
   end
 
