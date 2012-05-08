@@ -62,7 +62,7 @@ class BoundingBox
         right = bounding_box.right
       end
     end
-    return BoundingBox.new(top, left, bottom , right)
+    return BoundingBox.new top, left, bottom , right
   end
 
   def <=>(other_box)
