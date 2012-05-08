@@ -148,9 +148,18 @@ class Grid
     spaces = ""
     prefix = "|--"
     indent_level.times {|i| spaces+="  "}
-    puts "#{spaces}#{prefix}#{self.bounds.to_s}#{self.nodes.to_s}"
+
+    puts "#{spaces}#{prefix}#{self.bounds.to_s}"
+    self.nodes.each do |node|
+      puts "#{spaces}#{spaces}#{node}"
+    end
     self.sub_grids.each do |subgrid|
+      indent_level += 4
       subgrid.print(indent_level+1)
+      indent_level -= 4
+    end
+  end
+  
   def inspect
     if @sub_grids.nil?
       Log.debug "Empty subgrids"
