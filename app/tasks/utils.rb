@@ -64,6 +64,8 @@ class Utils
     system("tidy -q -o #{html_file_name} -i #{raw_file_name}")
     
     Log.info "Successfully completed processing #{better_file_name}."
+    Log.info "Generated HTML - #{html_file_name}, opening it."
+    system("open '#{html_file_name}'")
     
     return
   end
