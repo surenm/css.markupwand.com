@@ -184,14 +184,6 @@ class Grid
     end
   end
   
-  def inspect
-    if @sub_grids.nil?
-      Log.debug "Empty subgrids"
-      return
-    end
-    
-    @sub_grids.each do |grid|
-      Log.debug grid
     end
   end
 
