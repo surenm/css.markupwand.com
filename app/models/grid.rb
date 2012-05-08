@@ -184,6 +184,11 @@ class Grid
     end
   end
   
+  def tag
+    if @is_root
+      :body
+    else
+      :div
     end
   end
 
