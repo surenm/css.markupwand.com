@@ -35,6 +35,7 @@ class Utils
     
     grid      = Grid.new nodes, nil, max_depth
     body_html = grid.to_html
+    
 
     wrapper   = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html      = wrapper.read
@@ -54,10 +55,13 @@ class Utils
 
     File.open(css_file, 'w') {|f| f.write(css_data) }
     
+    raw_file_name = folder_path.join 'raw.html'
     html_file_name = folder_path.join 'index.html'
-    html_fptr      = File.new html_file_name, 'w+'
+    html_fptr      = File.new raw_file_name, 'w+'
     html_fptr.write html
     html_fptr.close
+    
+    system("tidy -o #{html_file_name} -i #{raw_file_name}")
     
     Log.info "Successfully completed processing #{better_file_name}."
     

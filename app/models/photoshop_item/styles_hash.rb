@@ -37,7 +37,7 @@ class PhotoshopItem::StylesHash
   end
   
   def self.generate_css_file
-    classes  = PhotoshopItem::StylesHash.get_styles_hash 
+    classes  = PhotoshopItem::StylesHash.get_styles_hash
     css_data = ''
     
     classes.each do |style, class_name|
