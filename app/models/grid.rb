@@ -118,11 +118,8 @@ class Grid
 
     grouping_boxes = Grid.get_grouping_boxes horizontal_gutters, vertical_gutters
     
-    # list of nodes to exhaust
-    available_nodes = Hash.new
-    nodes.each do |node| 
-      available_nodes[node.uid] = node
-    end
+    # list of nodes to exhaust. A slick way to construct a hash from array
+    available_nodes = Hash[nodes.collect { |item| [item.uid, item] }]
     
     grouping_boxes.each do |grouping_box|
       break if available_nodes.empty?
