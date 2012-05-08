@@ -67,7 +67,7 @@ class Grid
   end
 
   def add_photoshop_layer(layer)
-    @photoshop_layers.push layer
+    @layers.push layer
   end
   
   def self.get_grouping_boxes(horizontal_gutters, vertical_gutters)
