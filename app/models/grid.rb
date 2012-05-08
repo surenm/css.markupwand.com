@@ -10,16 +10,20 @@ class Grid
     nodes.each do |node|
       Log.debug node
     end
-    self.nodes = nodes
-    self.parent = parent
+    @nodes = nodes
+    @parent = parent
+    @photoshop_layers = []
+    
     node_bounds = nodes.collect {|node| node.bounds}
-    self.bounds = BoundingBox.get_super_bounds(node_bounds)
-    self.sub_grids = get_subgrids(nodes)
-    if self.parent == nil
-      self.layer.is_a_root_node
+    @bounds = BoundingBox.get_super_bounds node_bounds
+    
     if @nodes.size > 1
       @sub_grids = get_subgrids nodes
     end
+
+    if @parent == nil
+      #TODO: Grid should be a root node. Not a layer
+      #@layer.is_a_root_node
     end
   end
 
@@ -124,7 +128,7 @@ class Grid
     grouping_boxes.each do |grouping_box|
       break if available_nodes.empty?
       remaining_nodes = available_nodes.values
-      
+
       nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
       
       if nodes_in_region.empty?
@@ -138,7 +142,10 @@ class Grid
         subgrids.push Grid.new(nodes_in_region, self)
         
       end
-      
+    end
+    
+    subgrids.each do |grid|
+      Log.fatal grid
     end
 
     return subgrids
