@@ -3,7 +3,7 @@ class Utils
     self.process_file "/tmp/mailgun.psd.json"
   end
   
-  def self.process_file(file_name)
+  def self.process_file(file_name, max_depth = 100)
     Log.info "Beginning to process #{file_name}..."
 
     fptr     = File.read file_name
@@ -33,7 +33,7 @@ class Utils
       Log.debug bounding_box
     end
     
-    grid      = Grid.new nodes, nil
+    grid      = Grid.new nodes, nil, max_depth
     body_html = grid.to_html
 
     wrapper   = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
