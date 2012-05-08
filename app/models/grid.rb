@@ -59,6 +59,33 @@ class Grid
   def add_photoshop_layer(layer)
     @photoshop_layers.push layer
   end
+  
+  def self.get_grouping_boxes(horizontal_gutters, vertical_gutters)
+    # get all possible grouping boxes with the available gutters
+    grouping_boxes = []
+    
+    trailing_horizontal_gutters = horizontal_gutters
+    leading_horizontal_gutters = horizontal_gutters.rotate
+    
+    trailing_vertical_gutters = vertical_gutters
+    leading_vertical_gutters = vertical_gutters.rotate
+    
+    horizontal_bounds = trailing_horizontal_gutters.zip leading_horizontal_gutters
+    vertical_bounds = trailing_vertical_gutters.zip leading_vertical_gutters
+    
+    horizontal_bounds.slice! -1
+    vertical_bounds.slice! -1    
+    
+    horizontal_bounds.each do |horizontal_bound|
+      vertical_bounds.each do |vertical_bound|
+        grouping_boxes.push BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
+      end
+    end
+    
+    # sort them on the basis of area in decreasing order
+    grouping_boxes.sort! { |a, b| b.area <=> a.area }
+    
+    return grouping_boxes
   end
 
   #FIXME: See if this function could be broken down. Too long!
@@ -78,19 +105,12 @@ class Grid
 
     vertical_gutters   = get_vertical_gutters(bounding_boxes, super_bounds)
     horizontal_gutters = get_horizontal_gutters(bounding_boxes, super_bounds)
-    #Log.debug "Vertical Gutters: #{vertical_gutters}"
-    #Log.debug "Horizontal Gutters: #{horizontal_gutters}"
-
-    # get all possible grouping boxes with the available gutters
-    grouping_boxes = []
-    horizontal_gutters.repeated_combination(2).each do |x_gutters|
-      vertical_gutters.repeated_combination(2).each do |y_gutters|
-        grouping_boxes.push BoundingBox.new x_gutters[0], y_gutters[0], x_gutters[1], y_gutters[1]
-      end
     end
     
-    # sort them on the basis of area in decreasing order
-    grouping_boxes.sort! { |a, b| b.area <=> a.area }
+    Log.debug "Vertical Gutters: #{vertical_gutters}"
+    Log.debug "Horizontal Gutters: #{horizontal_gutters}"
+
+    grouping_boxes = Grid.get_grouping_boxes horizontal_gutters, vertical_gutters
     
     # list of nodes to exhaust
     available_nodes = Hash.new
