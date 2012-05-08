@@ -191,18 +191,23 @@ class Grid
       :div
     end
   end
-
+  
   def to_html
-    html = ""
-    @photoshop_layers.each do |photoshop_layer| 
-      html += photoshop_layer.to_html
-    end
+    css_class = ""
     
-    if not @sub_grids.nil? and not @sub_grids.empty?
-      @sub_grids.each do |subgrid|
-        html += subgrid.to_html
+    @layers.each do |layer|
+      css_class += "#{layer.class_name({}, @is_root)} "
+    end
+    inner_html = ""
+    
+    if not @sub_grids.empty?
+      inner_html = ""
+      @sub_grids.each do |sub_grid|
+        inner_html += sub_grid.to_html
       end
     end
+    
+    html = content_tag tag, inner_html, {:class => css_class}, false
     return html
   end
 end
