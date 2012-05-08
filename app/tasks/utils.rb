@@ -34,8 +34,6 @@ class Utils
     end
     
     grid      = Grid.new nodes, nil
-    Log.info grid
-    
     body_html = grid.to_html
 
     wrapper   = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
