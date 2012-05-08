@@ -141,6 +141,14 @@ class Grid
     puts "#{spaces}#{prefix}#{self.bounds.to_s}#{self.nodes.to_s}"
     self.sub_grids.each do |subgrid|
       subgrid.print(indent_level+1)
+  def inspect
+    if @sub_grids.nil?
+      Log.debug "Empty subgrids"
+      return
+    end
+    
+    @sub_grids.each do |grid|
+      Log.debug grid
     end
   end
 
