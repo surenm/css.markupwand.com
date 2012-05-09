@@ -2,6 +2,48 @@ class Grid
   include ActionView::Helpers::TagHelper
   attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer, :orientation
 
+  def self.get_grouping_boxes(horizontal_gutters, vertical_gutters)
+    # get all possible grouping boxes with the available gutters
+    grouping_boxes = []
+    
+    trailing_horizontal_gutters = horizontal_gutters
+    leading_horizontal_gutters = horizontal_gutters.rotate
+    
+    trailing_vertical_gutters = vertical_gutters
+    leading_vertical_gutters = vertical_gutters.rotate
+    
+    horizontal_bounds = trailing_horizontal_gutters.zip leading_horizontal_gutters
+    vertical_bounds = trailing_vertical_gutters.zip leading_vertical_gutters
+    
+    horizontal_bounds.slice! -1
+    vertical_bounds.slice! -1    
+    
+    root_group = Group.new :normal
+    horizontal_bounds.each do |horizontal_bound|
+      row_group = Group.new :left
+      vertical_bounds.each do |vertical_bound|
+        row_group.push BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
+      end
+      root_group.push row_group
+    end
+    return root_group
+  end
+  
+  def self.get_super_nodes(nodes)
+    super_nodes = nodes.select do |enclosing_node|
+      flag = true
+      nodes.each do |node|
+        if not enclosing_node.encloses? node
+          flag = false 
+          break
+        end
+      end
+      flag
+    end
+    
+    return super_nodes
+  end
+
   def initialize(nodes, parent, max_depth = 100)
 
     @nodes     = nodes    # The layers enclosed by this Grid
@@ -72,47 +114,7 @@ class Grid
     @layers.push layer
   end
   
-  def self.get_grouping_boxes(horizontal_gutters, vertical_gutters)
-    # get all possible grouping boxes with the available gutters
-    grouping_boxes = []
-    
-    trailing_horizontal_gutters = horizontal_gutters
-    leading_horizontal_gutters = horizontal_gutters.rotate
-    
-    trailing_vertical_gutters = vertical_gutters
-    leading_vertical_gutters = vertical_gutters.rotate
-    
-    horizontal_bounds = trailing_horizontal_gutters.zip leading_horizontal_gutters
-    vertical_bounds = trailing_vertical_gutters.zip leading_vertical_gutters
-    
-    horizontal_bounds.slice! -1
-    vertical_bounds.slice! -1    
-    
-    root_group = Group.new :normal
-    horizontal_bounds.each do |horizontal_bound|
-      row_group = Group.new :left
-      vertical_bounds.each do |vertical_bound|
-        row_group.push BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
-      end
-      root_group.push row_group
-    end
-    return root_group
-  end
 
-  def self.get_super_nodes(nodes)
-    super_nodes = nodes.select do |enclosing_node|
-      flag = true
-      nodes.each do |node|
-        if not enclosing_node.encloses? node
-          flag = false 
-          break
-        end
-      end
-      flag
-    end
-    
-    return super_nodes
-  end
   
   def create_dummy_wrapper(bound)
     dummy_layer = Constants::dummy_layer_hash
