@@ -1,0 +1,313 @@
+{
+    "name": {
+        "charID": "Nm  ",
+        "stringID": "name",
+        "value": "Dummy Layer by Transformer",
+        "type": {
+
+        }
+    },
+    "color": {
+        "charID": "Clr ",
+        "stringID": "color",
+        "value": 1315925605,
+        "type": 1131180576
+    },
+    "visible": {
+        "charID": "Vsbl",
+        "stringID": "visible",
+        "value": true,
+        "type": {
+
+        }
+    },
+    "mode": {
+        "charID": "Md  ",
+        "stringID": "mode",
+        "value": 1316121964,
+        "type": 1114402381
+    },
+    "opacity": {
+        "charID": "Opct",
+        "stringID": "opacity",
+        "value": 255,
+        "type": {
+
+        }
+    },
+    "layerID": {
+        "charID": "LyrI",
+        "stringID": "layerID",
+        "value": 52,
+        "type": {
+
+        }
+    },
+    "itemIndex": {
+        "charID": "ItmI",
+        "stringID": "itemIndex",
+        "value": 2,
+        "type": {
+
+        }
+    },
+    "count": {
+        "charID": "Cnt ",
+        "stringID": "count",
+        "value": 30,
+        "type": {
+
+        }
+    },
+    "preserveTransparency": {
+        "charID": "PrsT",
+        "stringID": "preserveTransparency",
+        "value": false,
+        "type": {
+
+        }
+    },
+    "userMaskEnabled": {
+        "charID": "UsrM",
+        "stringID": "userMaskEnabled",
+        "value": true,
+        "type": {
+
+        }
+    },
+    "userMaskLinked": {
+        "charID": "Usrs",
+        "stringID": "userMaskLinked",
+        "value": true,
+        "type": {
+
+        }
+    },
+    "layerFXVisible": {
+        "charID": "lfxv",
+        "stringID": "layerFXVisible",
+        "value": false,
+        "type": {
+
+        }
+    },
+    "globalAngle": {
+        "charID": "gblA",
+        "stringID": "globalAngle",
+        "value": 149,
+        "type": {
+
+        }
+    },
+    "background": {
+        "charID": "Bckg",
+        "stringID": "background",
+        "value": false,
+        "type": {
+
+        }
+    },
+    "layerSection": {
+        "charID": "",
+        "stringID": "layerSection",
+        "value": 2150,
+        "type": 2147
+    },
+    "layerLocking": {
+        "charID": "",
+        "stringID": "layerLocking",
+        "value": {
+            "protectTransparency": {
+                "charID": "",
+                "stringID": "protectTransparency",
+                "value": false,
+                "type": {
+
+                }
+            },
+            "protectComposite": {
+                "charID": "",
+                "stringID": "protectComposite",
+                "value": false,
+                "type": {
+
+                }
+            },
+            "protectPosition": {
+                "charID": "",
+                "stringID": "protectPosition",
+                "value": false,
+                "type": {
+
+                }
+            },
+            "protectAll": {
+                "charID": "",
+                "stringID": "protectAll",
+                "value": false,
+                "type": {
+
+                }
+            }
+        },
+        "type": 216
+    },
+    "group": {
+        "charID": "Grup",
+        "stringID": "group",
+        "value": false,
+        "type": {
+
+        }
+    },
+    "targetChannels": {
+        "charID": "",
+        "stringID": "targetChannels",
+        "value": [{
+            "value": {
+                "typename": "ActionReference"
+            },
+            "type": {
+
+            }
+        }, {
+            "value": {
+                "typename": "ActionReference"
+            },
+            "type": {
+
+            }
+        }, {
+            "value": {
+                "typename": "ActionReference"
+            },
+            "type": {
+
+            }
+        }],
+        "type": {
+
+        }
+    },
+    "visibleChannels": {
+        "charID": "",
+        "stringID": "visibleChannels",
+        "value": [{
+            "value": {
+                "typename": "ActionReference"
+            },
+            "type": {
+
+            }
+        }, {
+            "value": {
+                "typename": "ActionReference"
+            },
+            "type": {
+
+            }
+        }, {
+            "value": {
+                "typename": "ActionReference"
+            },
+            "type": {
+
+            }
+        }],
+        "type": {
+
+        }
+    },
+    "channelRestrictions": {
+        "charID": "",
+        "stringID": "channelRestrictions",
+        "value": [{
+            "value": 1382293536,
+            "type": 1130917484
+        }, {
+            "value": 1198681632,
+            "type": 1130917484
+        }, {
+            "value": 1114382368,
+            "type": 1130917484
+        }],
+        "type": {
+
+        }
+    },
+    "adjustment": {
+        "charID": "Adjs",
+        "stringID": "adjustment",
+        "value": [{
+            "value": {
+                "color": {
+                    "charID": "Clr ",
+                    "stringID": "color",
+                    "value": {
+                        "red": {
+                            "charID": "Rd  ",
+                            "stringID": "red",
+                            "value": 255,
+                            "type": {
+
+                            }
+                        },
+                        "grain": {
+                            "charID": "Grn ",
+                            "stringID": "grain",
+                            "value": 255,
+                            "type": {
+
+                            }
+                        },
+                        "blue": {
+                            "charID": "Bl  ",
+                            "stringID": "blue",
+                            "value": 255,
+                            "type": {
+
+                            }
+                        }
+                    },
+                    "type": 1380401731
+                }
+            },
+            "type": 120
+        }],
+        "type": {
+
+        }
+    },
+    "bounds": {
+        "charID": "",
+        "stringID": "bounds",
+        "value": {
+            "top": {
+                "charID": "Top ",
+                "stringID": "top",
+                "value": 0,
+                "type": 592476268
+            },
+            "left": {
+                "charID": "Left",
+                "stringID": "left",
+                "value": 0,
+                "type": 592476268
+            },
+            "bottom": {
+                "charID": "Btom",
+                "stringID": "bottom",
+                "value": 0,
+                "type": 592476268
+            },
+            "right": {
+                "charID": "Rght",
+                "stringID": "right",
+                "value": 0,
+                "type": 592476268
+            }
+        },
+        "type": 1382249582
+    },
+    "layerKind": "LayerKind.SOLIDFILL"
+}

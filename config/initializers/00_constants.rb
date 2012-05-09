@@ -7,6 +7,10 @@ module Constants
   def Constants::round_to_nearest_five(num)
     (((num + 5 )/5)-1)*5
   end
-  
+
+  def Constants::dummy_layer_hash
+    dummy_layer_json = File.open(Rails.root.join('app','assets','javascripts','dummy_layer.json'),'r').read
+    JSON.parse dummy_layer_json, :symbolize_names => true
+  end
   
 end

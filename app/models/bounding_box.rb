@@ -1,6 +1,6 @@
 class BoundingBox
   attr_accessor :top, :left, :bottom, :right
-  attr_reader :width, :height
+  attr_reader :width, :height, :area
 
   def initialize(top=nil, left=nil, bottom=nil, right=nil)
     set(top, left, bottom, right)
@@ -19,9 +19,11 @@ class BoundingBox
     begin
       @width = (right-left).abs
       @height = (bottom-top).abs
+      @area = @width * @height
     rescue
       @width = nil
       @height = nil
+      @area = nil
     end
   end
 
@@ -29,7 +31,7 @@ class BoundingBox
     "(#{self.top}, #{self.left}, #{self.bottom}, #{self.right})"
   end
 
-  def same_as?(other_box)
+  def ==(other_box)
     self.top == other_box.top and self.left == other_box.left and self.bottom == other_box.bottom and self.right == other_box.right
   end
 
@@ -60,7 +62,7 @@ class BoundingBox
         right = bounding_box.right
       end
     end
-    return BoundingBox.new(top, left, bottom , right)
+    return BoundingBox.new top, left, bottom , right
   end
 
   def <=>(other_box)
@@ -78,8 +80,10 @@ class BoundingBox
   def self.get_objects_in_region(region, objects, bound_getter_name)
     objects_in_region = objects.select do |item|
       bounds = item.send(bound_getter_name)
-      region.encloses?(bounds)
+      region != bounds and region.encloses? bounds
     end
+    
+    
     return objects_in_region
   end
 end

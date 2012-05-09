@@ -3,7 +3,7 @@ class Utils
     self.process_file "/tmp/mailgun.psd.json"
   end
   
-  def self.process_file(file_name)
+  def self.process_file(file_name, max_depth = 100)
     Log.info "Beginning to process #{file_name}..."
 
     fptr     = File.read file_name
@@ -31,12 +31,17 @@ class Utils
     bounding_boxes = nodes.collect {|node| node.bounds}
     bounds         = BoundingBox.get_super_bounds bounding_boxes
 
-    Log.info "Done getting bounds, creating grids"
-    Log.info nodes
+    bounding_boxes.each do |bounding_box|
+      Log.debug bounding_box
+    end
+
+    Log.info "Done getting bounds, creating grids..."
+    
     grid      = Grid.new(nodes, nil)
     body_html = grid.to_html
+    
     Log.info "Done generating body html"
-
+    
     wrapper   = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html      = wrapper.read
     wrapper.close
@@ -55,12 +60,17 @@ class Utils
 
     File.open(css_file, 'w') {|f| f.write(css_data) }
     
+    raw_file_name = folder_path.join 'raw.html'
     html_file_name = folder_path.join 'index.html'
-    html_fptr      = File.new html_file_name, 'w+'
+    html_fptr      = File.new raw_file_name, 'w+'
     html_fptr.write html
     html_fptr.close
     
+    system("tidy -q -o #{html_file_name} -i #{raw_file_name}")
+    
     Log.info "Successfully completed processing #{better_file_name}."
+    Log.info "Generated HTML - #{html_file_name}, opening it."
+    system("open '#{html_file_name}'")
     
     return
   end

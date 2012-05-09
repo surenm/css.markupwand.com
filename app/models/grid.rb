@@ -1,14 +1,32 @@
 class Grid
+  include ActionView::Helpers::TagHelper
   attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer
 
-  def initialize(nodes, parent)
-    self.nodes = nodes
-    self.parent = parent
+  def initialize(nodes, parent, max_depth = 100)
+
+    @nodes     = nodes    # The layers enclosed by this Grid
+    @parent    = parent   # Parent grid for this grid
+    @layers    = []       # Set of children style layers for this grid
+    @sub_grids = []       # children for this grid
+
+    @is_root   = false    # if the grid is the root node or the <body> tag for this html
+    if @parent == nil
+      @is_root = true
+    end
+    
     node_bounds = nodes.collect {|node| node.bounds}
-    self.bounds = BoundingBox.get_super_bounds(node_bounds)
-    self.sub_grids = get_subgrids(nodes)
-    if self.parent==nil
-      self.layer.is_a_root_node
+    @bounds = BoundingBox.get_super_bounds node_bounds
+    
+    @nodes.sort!
+    
+    if @nodes.size > 1 
+      if max_depth > 0
+        @sub_grids = get_subgrids max_depth
+      else 
+        Log.fatal "Recursive parsing stopped because max_depth has been reached"
+      end
+    elsif @nodes.size == 1
+      @sub_grids.push @nodes.first  # Trivial. Just one layer is a child of this layer
     end
   end
 
@@ -48,42 +66,116 @@ class Grid
     horizontal_gutters.sort!
   end
 
-  def copy_layer_info(node)
-    self.layer = node
+  def add_photoshop_layer(layer)
+    @layers.push layer
+  end
+  
+  def self.get_grouping_boxes(horizontal_gutters, vertical_gutters)
+    # get all possible grouping boxes with the available gutters
+    grouping_boxes = []
+    
+    trailing_horizontal_gutters = horizontal_gutters
+    leading_horizontal_gutters = horizontal_gutters.rotate
+    
+    trailing_vertical_gutters = vertical_gutters
+    leading_vertical_gutters = vertical_gutters.rotate
+    
+    horizontal_bounds = trailing_horizontal_gutters.zip leading_horizontal_gutters
+    vertical_bounds = trailing_vertical_gutters.zip leading_vertical_gutters
+    
+    horizontal_bounds.slice! -1
+    vertical_bounds.slice! -1    
+    
+    horizontal_bounds.each do |horizontal_bound|
+      vertical_bounds.each do |vertical_bound|
+        grouping_boxes.push BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
+      end
+    end
+    
+    # sort them on the basis of area in decreasing order
+    grouping_boxes.sort! { |a, b| b.area <=> a.area }
+    
+    return grouping_boxes
+  end
+
+  def self.get_super_nodes(nodes)
+    super_nodes = nodes.select do |enclosing_node|
+      flag = true
+      nodes.each do |node|
+        if not enclosing_node.encloses? node
+          flag = false 
+          break
+        end
+      end
+      flag
+    end
+    
+    return super_nodes
+  end
+  
+  def create_dummy_wrapper(bound)
+    dummy_layer = Constants::dummy_layer_hash
+    dummy_layer[:bounds][:value][:top][:value] = bound.top
+    dummy_layer[:bounds][:value][:left][:value] = bound.left
+    dummy_layer[:bounds][:value][:bottom][:value] = bound.bottom
+    dummy_layer[:bounds][:value][:right][:value] = bound.right
+    
+    PhotoshopItem::Layer.new dummy_layer
   end
 
   #FIXME: See if this function could be broken down. Too long!
-  def get_subgrids(nodes)
-    subgrids = []
+  def get_subgrids(max_depth)
+    subgrids = [] 
+    
+    super_nodes = Grid.get_super_nodes @nodes
+
+    super_nodes.each do |super_node|
+      Log.debug "Style node: #{super_node}"
+      self.add_photoshop_layer super_node
+      nodes.delete super_node
+    end
+    
     bounding_boxes = nodes.collect {|node| node.bounds}
-    super_bounds = BoundingBox.get_super_bounds(bounding_boxes)
+    super_bounds   = BoundingBox.get_super_bounds bounding_boxes
 
-    grid_overlays = nodes.select {|node| node.bounds.same_as? super_bounds}
-    if not grid_overlays.empty?
-      grid_overlays.each do |overlayed_node|
-        self.copy_layer_info overlayed_node
-        bounding_boxes.delete overlayed_node.bounds
-        nodes.delete overlayed_node
-      end
+    vertical_gutters   = get_vertical_gutters bounding_boxes, super_bounds
+    horizontal_gutters = get_horizontal_gutters bounding_boxes, super_bounds
+
+    Log.debug "Vertical Gutters: #{vertical_gutters}"
+    Log.debug "Horizontal Gutters: #{horizontal_gutters}"
+    
+    if vertical_gutters.empty? or horizontal_gutters.empty? 
+      return []
     end
 
+    grouping_boxes = Grid.get_grouping_boxes horizontal_gutters, vertical_gutters
+    
+    # list of nodes to exhaust. A slick way to construct a hash from array
+    available_nodes = Hash[nodes.collect { |item| [item.uid, item] }]
+    
+    grouping_boxes.each do |grouping_box|
+      break if available_nodes.empty?
+      remaining_nodes = available_nodes.values
 
-    vertical_gutters = get_vertical_gutters(bounding_boxes, super_bounds)
-    horizontal_gutters = get_horizontal_gutters(bounding_boxes, super_bounds)
-
-    horizontal_gutters.each_with_index do |x_gutter, x_index|
-      next if x_index==0
-      previous_x_gutter = horizontal_gutters[x_index-1]
-      vertical_gutters.each_with_index do |y_gutter, y_index|
-        next if y_index==0
-        previous_y_gutter = vertical_gutters[y_index-1]
-        current_region = BoundingBox.new(previous_x_gutter, previous_y_gutter, x_gutter, y_gutter)
-        nodes_in_region = BoundingBox.get_objects_in_region(current_region, nodes, :bounds)
-        if not nodes_in_region.empty?
-          subgrids.push Grid.new(nodes_in_region, self)
-        end
+      nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
+      
+      if nodes_in_region.empty?
+        # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
+        # Usually a corner case
+      elsif nodes_in_region.size == nodes.size
+        # TODO: This grouping_box is a superbound of thes nodes. 
+        # Add this as a style to the grid if there exists a layer for this grouping_box
+        # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
+      elsif nodes_in_region.size < nodes.size
+        nodes_in_region.each {|node| available_nodes.delete node.uid}
+        subgrids.push Grid.new nodes_in_region, self, max_depth - 1
       end
     end
+    
+    subgrids.each do |grid|
+      Log.fatal grid
+    end
+
     return subgrids
   end
 
@@ -91,22 +183,47 @@ class Grid
     spaces = ""
     prefix = "|--"
     indent_level.times {|i| spaces+="  "}
-    puts "#{spaces}#{prefix}#{self.bounds.to_s}#{self.nodes.to_s}"
+
+    puts "#{spaces}#{prefix}#{self.bounds.to_s}"
+    self.nodes.each do |node|
+      puts "#{spaces}#{spaces}#{node}"
+    end
     self.sub_grids.each do |subgrid|
+      indent_level += 4
       subgrid.print(indent_level+1)
+      indent_level -= 4
     end
   end
-
-  def to_html
-    html = ""
-    if self.sub_grids.empty?
-      html = self.layer.to_html
+  
+  def tag
+    if @is_root
+      :body
     else
-      self.sub_grids.each do |subgrid|
-        html += subgrid.to_html
-      end
-      html = self.layer.to_html({:inner_html=>html})
+      :div
     end
+  end
+  
+  def to_html
+    css_class = ""
+    
+    @layers.each do |layer|
+      css_class += "#{layer.class_name({}, @is_root)} "
+    end
+    inner_html = ""
+    
+    if not @sub_grids.empty?
+      inner_html = ""
+      @sub_grids.each do |sub_grid|
+        inner_html += sub_grid.to_html
+      end
+    end
+    
+    attributes = {}
+    if not css_class.empty?
+      attributes[:class] = css_class
+    end
+    
+    html = content_tag tag, inner_html, attributes , false
     return html
   end
 end
