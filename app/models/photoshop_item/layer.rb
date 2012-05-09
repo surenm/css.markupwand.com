@@ -143,8 +143,4 @@ class PhotoshopItem::Layer
     
     return html
   end
-
-  def to_s
-    "#{self.name} -- #{self.bounds}"
-  end
 end
