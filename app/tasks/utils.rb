@@ -37,7 +37,7 @@ class Utils
 
     Log.info "Done getting bounds, creating grids..."
     
-    grid      = Grid.new(nodes, nil)
+    grid      = Grid.new(nodes, nil, max_depth)
     body_html = grid.to_html
     
     Log.info "Done generating body html"
