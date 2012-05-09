@@ -122,44 +122,25 @@ class PhotoshopItem::Layer
     end
   end
 
-  def to_html(args=nil)
+  def to_html(args = {})
     #puts "Generating html for #{self.inspect}"
-    override_css = {}
-    override_css = args[:css] unless args.nil? or args[:css].nil?
-
-    inner_html = ''
-
-    # TODO: WTF is this?
-    if !args.nil? &&  !(args[:inner_html].nil? || args[:inner_html].empty?)
-      inner_html = ' '+args[:inner_html]+' ' unless args.nil? or args[:inner_html].nil?
-    elsif layer_kind == LAYER_TEXT
+    css = args.fetch :css, {}
+    css_class = class_name css, @is_root
+    
+    inner_html = args.fetch :inner_html, ''
+    if inner_html.empty? and layer_kind == LAYER_TEXT
       inner_html = text
     end
-
-    if tag == :img
-      html = "<img src='#{image_path}'/>"
-    else
-      html = content_tag tag, inner_html, {:class => class_name(override_css, @is_root)}, false
-    end
-    return html
-  end
-
-  def render_to_html(args = nil)
-    Log.info "Creating markup for #{@name}"
     
-    override_css = {}
-    if not args.nil?
-      if not args[:css].nil?
-        override_css = args[:css]
-      end
-    end
+    attributes = Hash.new
+    attributes[:class] = css_class
 
-    inner_html = text
     if tag == :img
       html = "<img src='#{image_path}'/>"
     else
-      html = content_tag tag, inner_html, {:class => class_name(override_css)}, false
+      html = content_tag tag, inner_html, attributes, false
     end
+    
     return html
   end
 
