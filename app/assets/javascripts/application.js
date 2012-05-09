@@ -13,14 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require twitter/bootstrap
-//= require editor
 //= require jquery.client
 //= require jquery.dnd-file-upload
 //= require utils
- 
-$(document).ready(function() {
-    $("#drop-div").dropzone({
-        url : "http://localhost:3000/design_files",
-        printLogs : true,
-    });
-}); 
