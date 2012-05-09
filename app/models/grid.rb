@@ -62,7 +62,13 @@ class Grid
     @bounds = BoundingBox.get_super_bounds node_bounds
     
     @nodes.sort!
+  end
+  
+  def add_photoshop_layer(layer)
+    @layers.push layer
+  end
     
+  def group
     if @nodes.size > 1 
       if max_depth > 0
         @sub_grids = get_subgrids max_depth
@@ -109,12 +115,6 @@ class Grid
     end
     horizontal_gutters.sort!
   end
-
-  def add_photoshop_layer(layer)
-    @layers.push layer
-  end
-  
-
   
   def create_dummy_wrapper(bound)
     dummy_layer = Constants::dummy_layer_hash
