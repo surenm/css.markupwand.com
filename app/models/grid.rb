@@ -88,16 +88,15 @@ class Grid
     horizontal_bounds.slice! -1
     vertical_bounds.slice! -1    
     
+    root_group = Group.new :normal
     horizontal_bounds.each do |horizontal_bound|
+      row_group = Group.new :left
       vertical_bounds.each do |vertical_bound|
-        grouping_boxes.push BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
+        row_group.push BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
       end
+      root_group.push row_group
     end
-    
-    # sort them on the basis of area in decreasing order
-    grouping_boxes.sort! { |a, b| b.area <=> a.area }
-    
-    return grouping_boxes
+    return root_group
   end
 
   def self.get_super_nodes(nodes)
