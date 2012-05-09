@@ -1,6 +1,6 @@
 class Grid
   include ActionView::Helpers::TagHelper
-  attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer
+  attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer, :orientation
 
   def initialize(nodes, parent, max_depth = 100)
 
@@ -8,9 +8,11 @@ class Grid
     @parent    = parent   # Parent grid for this grid
     @layers    = []       # Set of children style layers for this grid
     @sub_grids = []       # children for this grid
+    @orientation = :normal
 
     @is_root   = false    # if the grid is the root node or the <body> tag for this html
     if @parent == nil
+      Log.debug "Setting the root node"
       @is_root = true
     end
     
