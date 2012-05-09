@@ -155,7 +155,8 @@ class Grid
     # list of nodes to exhaust. A slick way to construct a hash from array
     available_nodes = Hash[nodes.collect { |item| [item.uid, item] }]
     root_group.children.each do |row_group|
-      self.orientation = root_group.orientation
+      row_grid = Grid.new [], self, max_depth
+      row_grid.orientation = row_group.orientation
       row_group.children.each do |grouping_box|
         remaining_nodes = available_nodes.values
         nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
@@ -169,10 +170,10 @@ class Grid
         elsif nodes_in_region.size < nodes.size
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new nodes_in_region, self, max_depth - 1
-          grid.orientation = row_group.orientation
-          subgrids.push grid
+          row_grid.sub_grids.push grid
         end
       end
+      subgrids.push row_grid
     end
     return subgrids
   end
