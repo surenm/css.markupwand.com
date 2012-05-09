@@ -90,11 +90,11 @@ class PhotoshopItem::Layer
     end
   end
 
-  def class_name(css = {}, is_root = false)
+  def get_css(css = {}, is_root = false)
     if layer_kind == LAYER_TEXT
       css.update Converter::parse_text self.layer
     elsif layer_kind == LAYER_SMARTOBJECT
-      css.update {}
+      # don't do anything
     elsif layer_kind == LAYER_SOLIDFILL
       css.update Converter::parse_box self.layer
       if is_root
@@ -105,7 +105,12 @@ class PhotoshopItem::Layer
         css[:width] = '960px'
       end
     end
+    
+    css
+  end
 
+  def class_name(css = {}, is_root = false)
+    css = get_css(css, is_root)
     PhotoshopItem::StylesHash.add_and_get_class(Converter::to_style_string(css))
   end
 
