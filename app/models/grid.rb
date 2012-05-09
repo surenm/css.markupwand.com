@@ -131,7 +131,7 @@ class Grid
     super_nodes = Grid.get_super_nodes @nodes
 
     super_nodes.each do |super_node|
-      Log.debug "Style node: #{super_node}"
+      Log.debug "Style node: #{super_node.name}"
       self.add_photoshop_layer super_node
       nodes.delete super_node
     end
@@ -149,34 +149,31 @@ class Grid
       return []
     end
 
-    grouping_boxes = Grid.get_grouping_boxes horizontal_gutters, vertical_gutters
+    root_group = Grid.get_grouping_boxes horizontal_gutters, vertical_gutters
+    Log.debug root_group
     
     # list of nodes to exhaust. A slick way to construct a hash from array
     available_nodes = Hash[nodes.collect { |item| [item.uid, item] }]
-    
-    grouping_boxes.each do |grouping_box|
-      break if available_nodes.empty?
-      remaining_nodes = available_nodes.values
-
-      nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
-      
-      if nodes_in_region.empty?
-        # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
-        # Usually a corner case
-      elsif nodes_in_region.size == nodes.size
-        # TODO: This grouping_box is a superbound of thes nodes. 
-        # Add this as a style to the grid if there exists a layer for this grouping_box
-        # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
-      elsif nodes_in_region.size < nodes.size
-        nodes_in_region.each {|node| available_nodes.delete node.uid}
-        subgrids.push Grid.new nodes_in_region, self, max_depth - 1
+    root_group.children.each do |row_group|
+      self.orientation = root_group.orientation
+      row_group.children.each do |grouping_box|
+        remaining_nodes = available_nodes.values
+        nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
+        if nodes_in_region.empty?
+          # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
+          # Usually a corner case
+        elsif nodes_in_region.size == nodes.size
+          # TODO: This grouping_box is a superbound of thes nodes. 
+          # Add this as a style to the grid if there exists a layer for this grouping_box
+          # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
+        elsif nodes_in_region.size < nodes.size
+          nodes_in_region.each {|node| available_nodes.delete node.uid}
+          grid = Grid.new nodes_in_region, self, max_depth - 1
+          grid.orientation = row_group.orientation
+          subgrids.push grid
+        end
       end
     end
-    
-    subgrids.each do |grid|
-      Log.fatal grid
-    end
-
     return subgrids
   end
 
