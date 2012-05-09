@@ -201,27 +201,38 @@ class Grid
     end
   end
   
-  def to_html
-    css_class = ""
-    
+  def to_html(args = {})
+    #puts "Generating html for #{self.inspect}"
+    css = args.fetch :css, {}
+    css_class = PhotoshopItem::StylesHash.add_and_get_class Converter::to_style_string css
+
     @layers.each do |layer|
-      css_class += "#{layer.class_name({}, @is_root)} "
+      css.update layer.get_css({}, @is_root)
     end
-    inner_html = ""
+
+    # Is this required for grids?
+    inner_html = args.fetch :inner_html, ''
+  
+    attributes = Hash.new
+    attributes[:class] = css_class if not css_class.nil?
     
-    if not @sub_grids.empty?
-      inner_html = ""
-      @sub_grids.each do |sub_grid|
-        inner_html += sub_grid.to_html
-      end
+    children_override_css = Hash.new
+    if @orientation == :left
+      children_override_css[:float] = 'left' 
+    end
+
+    sub_grid_args = Hash.new
+    sub_grid_args[:css] = children_override_css
+    
+    @sub_grids.each do |sub_grid|
+      inner_html += sub_grid.to_html sub_grid_args
     end
     
-    attributes = {}
-    if not css_class.empty?
-      attributes[:class] = css_class
+    if @sub_grids.empty? and @orientation == :left
+      inner_html += content_tag :div, " ", { :style => "clear: both" }, false
     end
     
-    html = content_tag tag, inner_html, attributes , false
+    html = content_tag tag, inner_html, attributes, false
     return html
   end
 end
