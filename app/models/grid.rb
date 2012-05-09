@@ -207,7 +207,12 @@ class Grid
       end
     end
     
-    html = content_tag tag, inner_html, {:class => css_class}, false
+    attributes = {}
+    if not css_class.empty?
+      attributes[:class] = css_class
+    end
+    
+    html = content_tag tag, inner_html, attributes , false
     return html
   end
 end
