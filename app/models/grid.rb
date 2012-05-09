@@ -112,6 +112,16 @@ class Grid
     
     return super_nodes
   end
+  
+  def create_dummy_wrapper(bound)
+    dummy_layer = Constants::dummy_layer_hash
+    dummy_layer[:bounds][:value][:top][:value] = bound.top
+    dummy_layer[:bounds][:value][:left][:value] = bound.left
+    dummy_layer[:bounds][:value][:bottom][:value] = bound.bottom
+    dummy_layer[:bounds][:value][:right][:value] = bound.right
+    
+    PhotoshopItem::Layer.new dummy_layer
+  end
 
   #FIXME: See if this function could be broken down. Too long!
   def get_subgrids(max_depth)
