@@ -52,6 +52,13 @@ class Grid
     @sub_grids = []       # children for this grid
     @orientation = :normal
 
+    super_nodes = Grid.get_super_nodes @nodes
+    super_nodes.each do |super_node|
+      Log.debug "Style node: #{super_node.name}"
+      self.add_photoshop_layer super_node
+      nodes.delete super_node
+    end
+
     @is_root   = false    # if the grid is the root node or the <body> tag for this html
     if @parent == nil
       Log.debug "Setting the root node"
@@ -126,18 +133,9 @@ class Grid
     PhotoshopItem::Layer.new dummy_layer
   end
 
-  #FIXME: See if this function could be broken down. Too long!
   def get_subgrids(max_depth)
     subgrids = [] 
-    
-    super_nodes = Grid.get_super_nodes @nodes
-
-    super_nodes.each do |super_node|
-      Log.debug "Style node: #{super_node.name}"
-      self.add_photoshop_layer super_node
-      nodes.delete super_node
-    end
-    
+      
     bounding_boxes = nodes.collect {|node| node.bounds}
     super_bounds   = BoundingBox.get_super_bounds bounding_boxes
 
