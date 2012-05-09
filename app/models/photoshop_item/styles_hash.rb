@@ -15,6 +15,9 @@ class PhotoshopItem::StylesHash
   end
   
   def add_and_get_class(css)
+    if css.empty?
+      return nil
+    end
     
     if @styles.has_key? css
       Log.info "Repeating class #{@styles[css]}"
