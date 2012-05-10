@@ -38,14 +38,13 @@ class Grid
           break
         end
       end
-      flag
+      flag and enclosing_node.kind == PhotoshopItem::Layer::LAYER_SOLIDFILL
     end
     
     return super_nodes
   end
 
-  def initialize(nodes, parent, max_depth = 100)
-
+  def initialize(nodes, parent)
     @nodes     = nodes    # The layers enclosed by this Grid
     @parent    = parent   # Parent grid for this grid
     @layers    = []       # Set of children style layers for this grid
@@ -59,7 +58,8 @@ class Grid
       nodes.delete super_node
     end
 
-    @is_root   = false    # if the grid is the root node or the <body> tag for this html
+    @is_root = false    # if the grid is the root node or the <body> tag for this html
+    
     if @parent == nil
       Log.debug "Setting the root node"
       @is_root = true
@@ -75,7 +75,7 @@ class Grid
     @layers.push layer
   end
     
-  def group
+  def group(max_depth = 100)
     if @nodes.size > 1 
       if max_depth > 0
         @sub_grids = get_subgrids max_depth
@@ -84,6 +84,9 @@ class Grid
       end
     elsif @nodes.size == 1
       @sub_grids.push @nodes.first  # Trivial. Just one layer is a child of this layer
+    end
+    @sub_grids.each do |sub_grid|
+      sub_grid.group if sub_grid.class.to_s == "Grid"
     end
   end
 
@@ -135,7 +138,11 @@ class Grid
 
   def get_subgrids(max_depth)
     subgrids = [] 
-      
+    
+    nodes.each do |node|
+      Log.fatal node.name
+    end
+    
     bounding_boxes = nodes.collect {|node| node.bounds}
     super_bounds   = BoundingBox.get_super_bounds bounding_boxes
 
@@ -150,12 +157,12 @@ class Grid
     end
 
     root_group = Grid.get_grouping_boxes horizontal_gutters, vertical_gutters
-    Log.debug root_group
     
     # list of nodes to exhaust. A slick way to construct a hash from array
     available_nodes = Hash[nodes.collect { |item| [item.uid, item] }]
+    
     root_group.children.each do |row_group|
-      row_grid = Grid.new [], self, max_depth
+      row_grid = Grid.new [], self
       row_grid.orientation = row_group.orientation
       row_group.children.each do |grouping_box|
         remaining_nodes = available_nodes.values
@@ -169,12 +176,13 @@ class Grid
           # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
         elsif nodes_in_region.size < nodes.size
           nodes_in_region.each {|node| available_nodes.delete node.uid}
-          grid = Grid.new nodes_in_region, self, max_depth - 1
+          grid = Grid.new nodes_in_region, self
           row_grid.sub_grids.push grid
         end
       end
       subgrids.push row_grid
     end
+
     return subgrids
   end
 
