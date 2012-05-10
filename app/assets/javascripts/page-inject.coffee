@@ -3,7 +3,7 @@ addHoverListeners =->
     $('.goyaka-hover').removeClass 'goyaka-hover'
     $(this).addClass 'goyaka-hover'
     
-
+  
 getXPath = (element)->
   if element.id != ''
     return 'id(' + element.id + ')'
@@ -21,14 +21,22 @@ getXPath = (element)->
       
 
 addClickListeners =->
-  $('body *').bind 'click', ->
+  $('body *').bind 'click', (e)->
     $('.goyaka-select').removeClass 'goyaka-select'
     $(this).addClass 'goyaka-select'
     currentXPath  = getXPath(this)
     currentTag    = this.tagName.toLowerCase()
     parent.updateSelected(currentTag, currentXPath)
     return false
-    
+  
+  
+  $(window).keydown (e) ->
+    if (navigator.userAgent.indexOf('Mac OS X') != -1) and (e.metaKey)
+      parent.enableMultiSelect()
+    else if  (navigator.userAgent.indexOf('Mac OS X') == -1) and (e.ctrlKey)
+      # Non-mac browsers. Not tested yet.
+      parent.enableMultiSelect()
+              
 init =->
   addHoverListeners()
   addClickListeners()
