@@ -36,6 +36,7 @@ class Utils
     
     grid = Grid.new nodes, nil
     grid.group
+    grid.print
     
     body_html = grid.to_html
     

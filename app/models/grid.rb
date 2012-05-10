@@ -65,8 +65,14 @@ class Grid
       @is_root = true
     end
     
-    node_bounds = nodes.collect {|node| node.bounds}
-    @bounds = BoundingBox.get_super_bounds node_bounds
+    if nodes.empty?
+      @bounds = nil
+    else
+      node_bounds = nodes.collect {|node| node.bounds}
+      @bounds = BoundingBox.get_super_bounds node_bounds
+      Log.debug @bounds
+      Log.debug "Getting super bounds"
+    end
     
     @nodes.sort!
   end
@@ -189,17 +195,15 @@ class Grid
   def print(indent_level=0)
     spaces = ""
     prefix = "|--"
-    indent_level.times {|i| spaces+="  "}
+    indent_level.times {|i| spaces+=" "}
 
-    puts "#{spaces}#{prefix}#{self.bounds.to_s}"
-    self.nodes.each do |node|
-      puts "#{spaces}#{spaces}#{node}"
-    end
+    puts "#{spaces}#{prefix} (grid) #{self.bounds.to_s}"
     self.sub_grids.each do |subgrid|
       indent_level += 4
       subgrid.print(indent_level+1)
       indent_level -= 4
     end
+    
   end
   
   def tag
