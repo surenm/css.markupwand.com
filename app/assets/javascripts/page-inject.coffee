@@ -36,6 +36,7 @@ addClickListeners =->
     else if  (navigator.userAgent.indexOf('Mac OS X') == -1) and (e.ctrlKey)
       # Non-mac browsers. Not tested yet.
       parent.enableMultiSelect()
+    return true
               
 init =->
   addHoverListeners()
