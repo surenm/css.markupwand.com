@@ -1,5 +1,4 @@
 window.updateSelected = (tag, xpath)->
-  debugger
   if window.Goyaka['multiSelectEnabled']
     $('.group-tags-block').html($('.group-tags-block').html() + ' hello ')
   else
@@ -15,6 +14,7 @@ window.enableMultiSelect = ->
     $('.edit-tags').hide()
     $('.grouptags').show()
     window.Goyaka['multiSelectEnabled'] = true
+    $('.group-tags-block').html('')
   else
     $('.edit-tags').show()
     $('.grouptags').hide()
