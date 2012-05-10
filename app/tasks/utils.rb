@@ -20,9 +20,6 @@ class Utils
     
     nodes = []
     art_layers.each do |layer_id, node_json|
-      node_bounds  = node_json[:bounds][:value]
-      bounding_box = BoundingBox.new(node_bounds[:top][:value], node_bounds[:left][:value], node_bounds[:bottom][:value], node_bounds[:right][:value])
-      Log.info "Creating photoshop layer for #{node_json[:name][:value]}"
       node         = PhotoshopItem::Layer.new(node_json)
       nodes.push node
     end
