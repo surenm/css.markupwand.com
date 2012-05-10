@@ -1,8 +1,21 @@
-<%= form_for @design_file do |f| %>
-<%= f.file_field :file %>
-<%= f.submit %>
+<%= content_for :content do %>
+  <%= form_for @design_file do |f| %>
+  <%= f.file_field :file %>
+  <%= f.submit %>
+  <% end %>
+
+  <div id="drop-div" style="width: 200px; height: 200px; border: thin solid black;">
+      Drop files here!
+  </div>
 <% end %>
 
-<div id="drop-div" style="width: 200px; height: 200px; border: thin solid black;">
-    Drop files here!
-</div>
+<%= content_for :javascript do %>
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#drop-div").dropzone({
+        url : "http://localhost:3000/design_files",
+        printLogs : true,
+    });
+});
+</script>
+<% end %>
