@@ -1,9 +1,22 @@
 window.updateSelected = (tag, xpath)->
   $('#tag-switcher').val(tag)
   $('#item-xpath').html(xpath)
-  
+
+window.Goyaka = {}
+
+window.Goyaka['multiSelectEnabled'] = false  
 window.enableMultiSelect = ->
   console.log "Enabled multi select"
+  if $('.multiselect').css('visibility') == 'hidden'
+    $('.multiselect').css('visibility','visible')
+    $('.edit-tags').hide()
+    $('.grouptags').show()
+    window.Goyaka['multiSelectEnabled'] = true
+  else
+    $('.edit-tags').show()
+    $('.grouptags').hide()
+    $('.multiselect').css('visibility','hidden')
+    window.Goyaka['multiSelectEnabled'] = false
 
 $(document).ready ->
   
