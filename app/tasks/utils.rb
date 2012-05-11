@@ -24,12 +24,10 @@ class Utils
       nodes.push node
     end
 
-    Log.info "Getting bounds"
-    bounding_boxes = nodes.collect {|node| node.bounds}
-    bounds         = BoundingBox.get_super_bounds bounding_boxes
-
-    bounding_boxes.each do |bounding_box|
-      Log.debug bounding_box
+    Log.info "Getting nodes"
+    
+    nodes.each do |node|
+      Log.debug "#{node} - #{node.bounds}"
     end
 
     Log.info "Done getting bounds, creating grids..."
