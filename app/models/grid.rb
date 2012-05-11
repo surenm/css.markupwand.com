@@ -220,11 +220,13 @@ class Grid
   def to_html(args = {})
     #puts "Generating html for #{self.inspect}"
     css = args.fetch :css, {}
-    css_class = PhotoshopItem::StylesHash.add_and_get_class Converter::to_style_string css
-
+    
     @layers.each do |layer|
       css.update layer.get_css({}, @is_root)
     end
+    
+    css_class = PhotoshopItem::StylesHash.add_and_get_class Converter::to_style_string css    
+    Log.warn css
 
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
