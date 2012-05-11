@@ -79,7 +79,7 @@ class BoundingBox
 
   def self.get_objects_in_region(region, objects, bound_getter_name)
     
-    Log.info "Checking if objects #{objects} are in region #{region}"
+    Log.debug "Checking if objects #{objects} are in region #{region}"
     objects_in_region = objects.select do |item|
       bounds = item.send(bound_getter_name)
       if objects.length > 1

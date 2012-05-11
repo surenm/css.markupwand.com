@@ -18,27 +18,19 @@ class Utils
     all_layers_json.update art_layers
     all_layers_json.update layer_sets
     
+    Log.info "Getting nodes..."
     nodes = []
     art_layers.each do |layer_id, node_json|
-      node         = PhotoshopItem::Layer.new(node_json)
+      node = PhotoshopItem::Layer.new(node_json)
       nodes.push node
     end
-
-    Log.info "Getting nodes"
-    
-    nodes.each do |node|
-      Log.debug "#{node} - #{node.bounds}"
-    end
-
-    Log.info "Done getting bounds, creating grids..."
-    
+  
+    Log.info "Creating grids..."
     grid = Grid.new nodes, nil
-    grid.group
-    grid.print
-    
+    grid.group! max_depth
+
+    Log.info "Generating body HTML..."    
     body_html = grid.to_html
-    
-    Log.info "Done generating body html"
     
     wrapper   = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html      = wrapper.read
@@ -50,7 +42,7 @@ class Utils
     folder_path      = Rails.root.join("generated", better_file_name)
     css_path         = folder_path.join("assets", "css")
     
-    Log.info "Creating css_path #{folder_path}"
+    Log.info "Creating css_path #{folder_path}..."
     FileUtils.mkdir_p css_path
     
     css_file = css_path.join "style.css"
@@ -58,18 +50,19 @@ class Utils
 
     File.open(css_file, 'w') {|f| f.write(css_data) }
     
-    raw_file_name = folder_path.join 'raw.html'
+    raw_file_name  = folder_path.join 'raw.html'
     html_file_name = folder_path.join 'index.html'
-    html_fptr      = File.new raw_file_name, 'w+'
+    
+    Log.info "Saving HTML file - #{html_file_name}..."
+    html_fptr = File.new raw_file_name, 'w+'
     html_fptr.write html
     html_fptr.close
     
+    Log.info "Tidying up the html..."
     system("tidy -q -o #{html_file_name} -i #{raw_file_name}")
     
     Log.info "Successfully completed processing #{better_file_name}."
-    Log.info "Generated HTML - #{html_file_name}, opening it."
-    system("open '#{html_file_name}'")
-    
+    #system("open '#{html_file_name}'")
     return
   end
 end

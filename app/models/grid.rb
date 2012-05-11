@@ -81,7 +81,7 @@ class Grid
     @layers.push layer
   end
     
-  def group(max_depth = 100)
+  def group!(max_depth = 100)
     if @nodes.size > 1 
       if max_depth > 0
         @sub_grids = get_subgrids max_depth
@@ -92,7 +92,7 @@ class Grid
       @sub_grids.push @nodes.first  # Trivial. Just one layer is a child of this layer
     end
     @sub_grids.each do |sub_grid|
-      sub_grid.group if sub_grid.class.to_s == "Grid"
+      sub_grid.group!(max_depth - 1) if sub_grid.class.to_s == "Grid"
     end
   end
 
@@ -144,13 +144,12 @@ class Grid
 
   def get_subgrids(max_depth)
     subgrids = [] 
-    Log.info "Getting subgrids (#{nodes.length} nodes in this grid)"
-    Log.info "#{nodes.join ','}"
+    Log.debug "Getting subgrids (#{nodes.length} nodes in this grid)"
     
     bounding_boxes = nodes.collect {|node| node.bounds}
-    Log.info "Bounding boxes - #{bounding_boxes}"
+    Log.debug "Bounding boxes - #{bounding_boxes}"
     super_bounds   = BoundingBox.get_super_bounds bounding_boxes
-    Log.info "Super bound - #{super_bounds}"
+    Log.debug "Super bound - #{super_bounds}"
     
     vertical_gutters   = get_vertical_gutters bounding_boxes, super_bounds
     horizontal_gutters = get_horizontal_gutters bounding_boxes, super_bounds
@@ -167,25 +166,25 @@ class Grid
     # list of nodes to exhaust. A slick way to construct a hash from array
     available_nodes = Hash[nodes.collect { |item| [item.uid, item] }]
     
-    Log.info "Root groups #{root_group}"
+    Log.debug "Root groups #{root_group}"
     root_group.children.each do |row_group|
       row_grid = Grid.new [], self
       row_grid.orientation = row_group.orientation
       row_group.children.each do |grouping_box|
         remaining_nodes = available_nodes.values
-        Log.info "Trying grouping box #{grouping_box}"
+        Log.debug "Trying grouping box #{grouping_box}"
         nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
         if nodes_in_region.empty?
-          Log.info "Stopping, no more nodes in this region"
+          Log.debug "Stopping, no more nodes in this region"
           # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
           # Usually a corner case
         elsif nodes_in_region.size == nodes.size
-          Log.info "Stopping, no nodes were reduced"
+          Log.debug "Stopping, no nodes were reduced"
           # TODO: This grouping_box is a superbound of thes nodes. 
           # Add this as a style to the grid if there exists a layer for this grouping_box
           # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
         elsif nodes_in_region.size < nodes.size
-          Log.info "Recursing inside, found nodes in region"
+          Log.debug "Recursing inside, found nodes in region"
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new nodes_in_region, self
           row_grid.sub_grids.push grid
