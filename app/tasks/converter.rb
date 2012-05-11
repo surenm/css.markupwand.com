@@ -15,11 +15,14 @@ module Converter
   }
   
   def Converter::parse_color(color_object)
-    red   = Integer (color_object[:value][:red][:value])
-    green = Integer (color_object[:value][:grain][:value])
-    blue  = Integer (color_object[:value][:blue][:value])
+    red   = (Integer(color_object[:value][:red][:value])).to_s(16)
+    green = (Integer(color_object[:value][:grain][:value])).to_s(16)
+    blue  = (Integer(color_object[:value][:blue][:value])).to_s(16)
+    red   = '0' + red if red.length < 2
+    green = '0' + green if green.length < 2
+    blue  = '0' + blue if blue.length < 2 
 
-    '#' + red.to_s(16) + green.to_s(16) + blue.to_s(16)
+    '#' + red + green + blue
   end
   
   def Converter::parse_font(font)
