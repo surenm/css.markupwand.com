@@ -40,7 +40,6 @@ class Grid
       end
       flag and enclosing_node.kind == PhotoshopItem::Layer::LAYER_SOLIDFILL
     end
-    
     return super_nodes
   end
 
@@ -62,7 +61,7 @@ class Grid
     @is_root = false    # if the grid is the root node or the <body> tag for this html
     
     if @parent == nil
-      Log.debug "Setting the root node"
+      Log.info "Setting the root node"
       @is_root = true
     end
     
@@ -71,7 +70,6 @@ class Grid
     else
       node_bounds = nodes.collect {|node| node.bounds}
       @bounds = BoundingBox.get_super_bounds node_bounds
-      Log.debug "Super bound = #{@bounds.to_s}"
     end
     
     @nodes.sort!
@@ -148,7 +146,8 @@ class Grid
     
     bounding_boxes = nodes.collect {|node| node.bounds}
     Log.debug "Bounding boxes - #{bounding_boxes}"
-    super_bounds   = BoundingBox.get_super_bounds bounding_boxes
+    
+    super_bounds = BoundingBox.get_super_bounds bounding_boxes
     Log.debug "Super bound - #{super_bounds}"
     
     vertical_gutters   = get_vertical_gutters bounding_boxes, super_bounds
