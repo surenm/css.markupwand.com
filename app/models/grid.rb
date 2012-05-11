@@ -144,14 +144,14 @@ class Grid
 
   def get_subgrids(max_depth)
     subgrids = [] 
-    
-    nodes.each do |node|
-      Log.fatal node.name
-    end
+    Log.info "Getting subgrids (#{nodes.length} nodes in this grid)"
+    Log.info "#{nodes.join ','}"
     
     bounding_boxes = nodes.collect {|node| node.bounds}
+    Log.info "Bounding boxes - #{bounding_boxes}"
     super_bounds   = BoundingBox.get_super_bounds bounding_boxes
-
+    Log.info "Super bound - #{super_bounds}"
+    
     vertical_gutters   = get_vertical_gutters bounding_boxes, super_bounds
     horizontal_gutters = get_horizontal_gutters bounding_boxes, super_bounds
 
