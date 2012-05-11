@@ -82,7 +82,11 @@ class BoundingBox
     Log.info "Checking if objects #{objects} are in region #{region}"
     objects_in_region = objects.select do |item|
       bounds = item.send(bound_getter_name)
-      region != bounds and region.encloses? bounds
+      if objects.length > 1
+        region != bounds and region.encloses? bounds
+      else
+        region.encloses? bounds
+      end
     end
     
     return objects_in_region
