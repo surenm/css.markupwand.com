@@ -80,7 +80,7 @@ class BoundingBox
   def self.get_objects_in_region(region, objects, bound_getter_name)
     objects_in_region = objects.select do |item|
       bounds = item.send(bound_getter_name)
-      region != bounds and region.encloses? bounds
+      region.encloses? bounds
     end
     
     
