@@ -144,6 +144,10 @@ class PhotoshopItem::Layer
     return html
   end
   
+  def to_s
+    @name
+  end
+  
   def print(indent_level = 0)
     spaces = ""
     prefix = "|--"
