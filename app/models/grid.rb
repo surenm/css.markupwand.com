@@ -226,7 +226,6 @@ class Grid
     end
     
     css_class = PhotoshopItem::StylesHash.add_and_get_class Converter::to_style_string css    
-    Log.warn css
 
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
