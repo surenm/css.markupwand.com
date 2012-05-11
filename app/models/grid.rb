@@ -52,9 +52,7 @@ class Grid
     @orientation = :normal
 
     super_nodes = Grid.get_super_nodes @nodes
-    if super_nodes.empty?
-      Log.warn "No super nodes found"
-    end
+
     super_nodes.each do |super_node|
       Log.debug "Style node: #{super_node.name}"
       self.add_photoshop_layer super_node
@@ -73,8 +71,7 @@ class Grid
     else
       node_bounds = nodes.collect {|node| node.bounds}
       @bounds = BoundingBox.get_super_bounds node_bounds
-      Log.debug @bounds
-      Log.debug "Getting super bounds"
+      Log.debug "Super bound = #{@bounds.to_s}"
     end
     
     @nodes.sort!
