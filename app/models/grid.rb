@@ -246,7 +246,7 @@ class Grid
       inner_html += sub_grid.to_html sub_grid_args
     end
     
-    if @sub_grids.empty? and @orientation == :left
+    if not @sub_grids.empty? and @orientation == :left
       inner_html += content_tag :div, " ", { :style => "clear: both" }, false
     end
     
