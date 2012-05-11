@@ -167,20 +167,25 @@ class Grid
     # list of nodes to exhaust. A slick way to construct a hash from array
     available_nodes = Hash[nodes.collect { |item| [item.uid, item] }]
     
+    Log.info "Root groups #{root_group}"
     root_group.children.each do |row_group|
       row_grid = Grid.new [], self
       row_grid.orientation = row_group.orientation
       row_group.children.each do |grouping_box|
         remaining_nodes = available_nodes.values
+        Log.info "Trying grouping box #{grouping_box}"
         nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
         if nodes_in_region.empty?
+          Log.info "Stopping, no more nodes in this region"
           # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
           # Usually a corner case
         elsif nodes_in_region.size == nodes.size
+          Log.info "Stopping, no nodes were reduced"
           # TODO: This grouping_box is a superbound of thes nodes. 
           # Add this as a style to the grid if there exists a layer for this grouping_box
           # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
         elsif nodes_in_region.size < nodes.size
+          Log.info "Recursing inside, found nodes in region"
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new nodes_in_region, self
           row_grid.sub_grids.push grid
@@ -199,9 +204,9 @@ class Grid
 
     puts "#{spaces}#{prefix} (grid) #{self.bounds.to_s}"
     self.sub_grids.each do |subgrid|
-      indent_level += 4
+      indent_level += 1
       subgrid.print(indent_level+1)
-      indent_level -= 4
+      indent_level -= 1
     end
     
   end
