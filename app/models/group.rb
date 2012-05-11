@@ -10,4 +10,8 @@ class Group
   def push(child)
     @children.push child
   end
+  
+  def to_s
+    "#{@orientation} - #{@children}"
+  end
 end
