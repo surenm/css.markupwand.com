@@ -4,11 +4,23 @@ require 'rubygems'
 require 'json'
 require 'pp'
 
+# Modify float to cut off to few significant digits
+class Float
+  def sigfig(digits)
+    sprintf("%.#{digits - 1}e", self).to_f
+  end
+end
+
 module Converter
   Converter::FONT_WEIGHT = {
     'Regular' => nil,
     'Bold'    => 'bold'
   }
+  
+  Converter::FONT_STYLE = {
+    'Italic' => 'italic'
+  }
+  
   
   Converter::FONT_MAPS  = {
     'Helvetica World' => 'Helvetica'
@@ -25,46 +37,93 @@ module Converter
     '#' + red + green + blue
   end
   
-  def Converter::parse_font(font)
+  def Converter::parse_font_name(font_item)
+    font        = font_item[:fontName][:value]
+    mapped_font = font
     if Converter::FONT_MAPS.has_key? font
-      Converter::FONT_MAPS[font]
+      mapped_font = Converter::FONT_MAPS[font]
+    end
+    
+    {:'font-family' => mapped_font}
+  end
+  
+  def Converter::parse_font_size(font_item)
+    { :'font-size' => font_item[:size][:value].to_s + 'px' }
+  end
+  
+  def Converter::parse_font_style(font_item)
+    font_modifier = font_item[:fontStyleName][:value]
+    font_modifier_css = {}
+    
+    if not FONT_WEIGHT[font_modifier].nil?
+      font_modifier_css[:'font-weight'] = FONT_WEIGHT[font_modifier]
+    end
+    
+    if not FONT_STYLE[font_modifier].nil?
+      font_modifier_css[:'font-style'] = FONT_STYLE[font_modifier]
+    end
+    
+    font_modifier_css
+  end
+  
+  def Converter::parse_font_shadow(layer)
+    
+    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
+      {:'text-shadow' =>
+         parse_box_shadow(layer[:layerEffects][:value][:dropShadow]) }
     else
-      return font
+      {}
     end
   end
   
-  def Converter::parse_shadow(shadow)
+  def Converter::parse_box_shadow(shadow)
     color = parse_color(shadow[:value][:color])
     size  = shadow[:value][:distance][:value]
     "#{size}px #{size}px #{size}px #{color}"
   end
   
-  def Converter::parse_opacity(opacity)
-    Float(opacity[:value])/256.0
+  def Converter::parse_opacity(layer)
+    if Integer(layer[:opacity][:value]) < 255
+      opacity = Float(layer[:opacity][:value])/256.0
+      { :opacity => opacity.sigfig(2) }
+    else
+      {}
+    end
+    
   end
   
+  def Converter::parse_text_color(text_style)
+    color_object = text_style[:value][:textStyle][:value][:color]
+    
+    { :color => parse_color(color_object) }
+  end
+  
+  # Returns a hash for CSS styles
   def Converter::parse_text(layer)
     text_style = layer[:textKey][:value][:textStyleRange][:value].first
-
+    font_info  = text_style[:value][:textStyle][:value]
+    
     css                 = {}
-    css[:'font-family'] = parse_font(text_style[:value][:textStyle][:value][:fontName][:value])
-    css[:'font-size']   = text_style[:value][:textStyle][:value][:size][:value].to_s + 'px'
-    font_weight         = text_style[:value][:textStyle][:value][:fontStyleName][:value]
     
-    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
-      css[:'text-shadow'] = parse_shadow(layer[:layerEffects][:value][:dropShadow])
-    end
+    # Font name
+    css.update(parse_font_name(font_info))    
     
-    if Integer(layer[:opacity][:value]) < 255
-      css[:opacity] = parse_opacity(layer[:opacity])
-    end
+    # Font-weight/style
+    css.update(parse_font_style(font_info))
+    
+    # Font size
+    css.update(parse_font_size(font_info))
+    
+    
+    # Shadows 
+    css.update(parse_font_shadow(layer))
+    
+    # Opacity
+    css.update(parse_opacity(layer))
 
-    if not FONT_WEIGHT[font_weight].nil?
-      css[:'font-weight'] = FONT_WEIGHT[font_weight]
-    end
+    # Color
+    css.update(parse_text_color(text_style))
     
-    css[:color] = parse_color(text_style[:value][:textStyle][:value][:color])
-
     css
   end
 
