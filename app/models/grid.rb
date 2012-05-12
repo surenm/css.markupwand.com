@@ -154,31 +154,26 @@ class Grid
 
 
   def get_subgrids(max_depth)
+    Log.debug "Getting subgrids (#{self.nodes.length} nodes in this grid)"
+    
+    # Subgrids at this level
     subgrids = [] 
-    Log.debug "Getting subgrids (#{nodes.length} nodes in this grid)"
     
-    bounding_boxes = nodes.collect {|node| node.bounds}
-    Log.debug "Bounding boxes - #{bounding_boxes}"
-    
-    super_bounds = BoundingBox.get_super_bounds bounding_boxes
-    Log.debug "Super bound - #{super_bounds}"
-    
-    vertical_gutters   = get_vertical_gutters bounding_boxes, super_bounds
-    horizontal_gutters = get_horizontal_gutters bounding_boxes, super_bounds
-
-    Log.debug "Vertical Gutters: #{vertical_gutters}"
-    Log.debug "Horizontal Gutters: #{horizontal_gutters}"
-    
-    if vertical_gutters.empty? or horizontal_gutters.empty? 
-      return []
-    end
-
-    root_group = Grid.get_grouping_boxes horizontal_gutters, vertical_gutters
-    
-    # list of nodes to exhaust. A slick way to construct a hash from array
-    available_nodes = Hash[nodes.collect { |item| [item.uid, item] }]
-    
+    # Some root grouping of nodes to recursivel add as children
+    root_group = Grid.get_grouping_boxes @nodes
     Log.debug "Root groups #{root_group}"
+
+    layers = @nodes
+    initial_layers_count = layers.size
+        
+    # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
+    root_style_layers = Grid.get_style_layers layers
+    self.add_style_layers root_style_layers    
+    Log.warn root_style_layers
+    
+    # remove root_style_nodes from the layers to process
+    root_style_layers.each { |root_style_layer| layers.delete root_style_layer}
+    
     root_group.children.each do |row_group|
       row_grid = Grid.new [], self
       row_grid.orientation = row_group.orientation
