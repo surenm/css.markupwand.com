@@ -49,11 +49,7 @@ class PhotoshopItem::Layer
     self.children == other_layer.children
     )
   end
-=begin
-  def inspect
-    "#{self.name}: #{self.bounds} \n"
-  end
-=end
+
   # TODO: This is a hard limit encloses function.
   # This actually has to be something like if the areas intersect for more than 50% or so
   # then the bigger one encloses the smaller one.
@@ -64,7 +60,7 @@ class PhotoshopItem::Layer
   def intersect?(other)
     return self.bounds.intersect? other.bounds
   end
-
+  
   def image_path
     if layer_kind == LAYER_SMARTOBJECT
       Converter::get_image_path self.layer
