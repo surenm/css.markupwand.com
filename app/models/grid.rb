@@ -132,8 +132,9 @@ class Grid
     @nodes.sort!
   end
   
-  def add_photoshop_layer(layer)
-    @layers.push layer
+  def add_style_layers(layers)
+    @layers.push layers
+    @layers.flatten!
   end
     
   def group!(max_depth = 100)
