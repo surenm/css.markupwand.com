@@ -51,14 +51,6 @@ class Grid
     @sub_grids = []       # children for this grid
     @orientation = :normal
 
-    super_nodes = Grid.get_super_nodes @nodes
-
-    super_nodes.each do |super_node|
-      Log.debug "Style node: #{super_node.name}"
-      self.add_photoshop_layer super_node
-      nodes.delete super_node
-    end
-
     @is_root = false    # if the grid is the root node or the <body> tag for this html
     
     if @parent == nil
@@ -174,6 +166,16 @@ class Grid
         remaining_nodes = available_nodes.values
         Log.debug "Trying grouping box #{grouping_box}"
         nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
+        
+        super_nodes = Grid.get_super_nodes nodes_in_region
+
+        super_nodes.each do |super_node|
+          Log.debug "Style node: #{super_node.name}"
+          # FIXME: the super_node should be added to the appropriate grid
+          self.add_photoshop_layer super_node
+          available_nodes.delete super_node.uid
+        end
+        
         if nodes_in_region.empty?
           Log.debug "Stopping, no more nodes in this region"
           # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
