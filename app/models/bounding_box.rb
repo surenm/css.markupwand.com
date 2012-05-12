@@ -61,20 +61,20 @@ class BoundingBox
   def self.get_super_bounds(bounding_box_list)
     top = left = bottom = right = nil
     bounding_box_list.each do |bounding_box|
-      if top.nil? or bounding_box.top<top
+      if top.nil? or bounding_box.top < top
         top = bounding_box.top
       end
-      if left.nil? or bounding_box.left<left
+      if left.nil? or bounding_box.left < left
         left = bounding_box.left
       end
-      if bottom.nil? or bounding_box.bottom>bottom
+      if bottom.nil? or bounding_box.bottom > bottom
         bottom = bounding_box.bottom
       end
-      if right.nil? or bounding_box.right>right
+      if right.nil? or bounding_box.right > right
         right = bounding_box.right
       end
     end
-    return BoundingBox.new top, left, bottom , right
+    return BoundingBox.new top, left, bottom, right
   end
 
 
