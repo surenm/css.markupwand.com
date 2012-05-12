@@ -38,8 +38,9 @@ class Grid
           break
         end
       end
-      flag and enclosing_node.kind == PhotoshopItem::Layer::LAYER_SOLIDFILL
+      flag and (enclosing_node.kind == PhotoshopItem::Layer::LAYER_SOLIDFILL or enclosing_node.kind == PhotoshopItem::Layer::LAYER_NORMAL)
     end
+    Log.warn super_nodes
     return super_nodes
   end
 
