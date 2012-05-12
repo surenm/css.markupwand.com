@@ -187,6 +187,7 @@ class Grid
       row_style_layers.each {|layer| available_nodes.delete layer.uid}
       
       Log.warn available_nodes
+      
       row_group.children.each do |grouping_box|
         remaining_nodes = available_nodes.values
         Log.debug "Trying grouping box #{grouping_box}"
@@ -196,31 +197,30 @@ class Grid
           Log.debug "Stopping, no more nodes in this region"
           # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
           # Usually a corner case
-        elsif nodes_in_region.size == nodes.size
+        elsif nodes_in_region.size == initial_layers_count
           Log.debug "Stopping, no nodes were reduced"
           # TODO: This grouping_box is a superbound of thes nodes. 
           # Add this as a style to the grid if there exists a layer for this grouping_box
           # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
-        elsif nodes_in_region.size < nodes.size
+        elsif nodes_in_region.size < initial_layers_count
           Log.debug "Recursing inside, found nodes in region"
           
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new nodes_in_region, self
           
-          super_nodes = Grid.get_super_nodes nodes_in_region
-          super_nodes.each do |super_node|
-            Log.debug "Style node: #{super_node.name}"
-            # FIXME: the super_node should be added to the appropriate grid
-            grid.add_photoshop_layer super_node
-            available_nodes.delete super_node.uid
-          end
-          
+          style_layers = Grid.get_style_layers nodes_in_region
+          style_layers.each do |style_layer|
+            Log.debug "Style node: #{style_layer.name}"
+            grid.add_style_layers style_layer
+            available_nodes.delete style_layer.uid
+          end 
+
           row_grid.sub_grids.push grid
         end
       end
       subgrids.push row_grid
     end
-
+    pp subgrids
     return subgrids
   end
 
