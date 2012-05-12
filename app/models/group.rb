@@ -14,4 +14,16 @@ class Group
   def to_s
     "#{@orientation} - #{@children}"
   end
+  
+  def bounds
+    bounding_boxes = []
+    @children.each do |child| 
+      if child.class.to_s == "BoundingBox"
+        bounding_boxes.push child
+      elsif child.class.to_s == "Group"
+        bounding_boxes.push child.bounds
+      end
+    end
+    BoundingBox.get_super_bounds bounding_boxes
+  end
 end
