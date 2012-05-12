@@ -2,7 +2,6 @@ class Grid
   include ActionView::Helpers::TagHelper
   attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer, :orientation
 
-  def self.get_grouping_boxes(horizontal_gutters, vertical_gutters)
   def self.get_vertical_gutters(bounding_boxes)
     vertical_lines = bounding_boxes.collect{|bb| bb.left}
     vertical_lines += bounding_boxes.collect{|bb| bb.right}
@@ -19,6 +18,8 @@ class Grid
       vertical_gutters.push vertical_line if is_gutter
     end
     vertical_gutters.sort!
+  end
+
   def self.get_horizontal_gutters(bounding_boxes)
     horizontal_lines = bounding_boxes.collect{|bb| bb.top}
     horizontal_lines += bounding_boxes.collect{|bb| bb.bottom}
@@ -37,6 +38,24 @@ class Grid
     horizontal_gutters.sort!
   end
 
+  def self.get_grouping_boxes(layers)
+
+    # All layer boundaries to get the gutters
+    bounding_boxes = layers.collect {|layer| layer.bounds}
+    Log.debug "Bounding boxes - #{bounding_boxes}"
+    
+    # Get the vertical and horizontal gutters at this level
+    vertical_gutters   = get_vertical_gutters bounding_boxes
+    horizontal_gutters = get_horizontal_gutters bounding_boxes
+    Log.debug "Vertical Gutters: #{vertical_gutters}"
+    Log.debug "Horizontal Gutters: #{horizontal_gutters}"
+    
+    # if empty gutters, then there probably is no children here. 
+    # TODO: Find out if this even happens?
+    if vertical_gutters.empty? or horizontal_gutters.empty? 
+      return []
+    end
+  
     # get all possible grouping boxes with the available gutters
     grouping_boxes = []
     
