@@ -174,9 +174,19 @@ class Grid
     # remove root_style_nodes from the layers to process
     root_style_layers.each { |root_style_layer| layers.delete root_style_layer}
     
+    # list of nodes to group. A slick way to construct a hash from array
+    available_nodes = Hash[layers.collect { |item| [item.uid, item] }]
+
     root_group.children.each do |row_group|
       row_grid = Grid.new [], self
       row_grid.orientation = row_group.orientation
+      row_layers = layers.select { |layer| row_group.bounds.encloses? layer.bounds }
+      
+      row_style_layers = Grid.get_style_layers row_layers
+      row_grid.add_style_layers row_style_layers
+      row_style_layers.each {|layer| available_nodes.delete layer.uid}
+      
+      Log.warn available_nodes
       row_group.children.each do |grouping_box|
         remaining_nodes = available_nodes.values
         Log.debug "Trying grouping box #{grouping_box}"
