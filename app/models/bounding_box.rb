@@ -34,11 +34,23 @@ class BoundingBox
   def ==(other_box)
     self.top == other_box.top and self.left == other_box.left and self.bottom == other_box.bottom and self.right == other_box.right
   end
+  
+  def <=>(other_box)
+    if self.top == other_box.top
+      return self.left <=> other_box.left
+    else
+      return self.top <=> other_box.top
+    end
+  end
+
+  def intersect?(other)
+    self.left < other.right and self.right > other.left and self.top < other.bottom and self.bottom > other.top
+  end
 
   def encloses?(other_box)
     self.top <= other_box.top and self.bottom >= other_box.bottom and self.left <= other_box.left and self.right >= other_box.right
   end
-
+  
   def overlaps?(other_box)
     left_distance = (self.left-other_box.left).abs
     top_distance = (self.top - other_box.top).abs
@@ -65,17 +77,6 @@ class BoundingBox
     return BoundingBox.new top, left, bottom , right
   end
 
-  def <=>(other_box)
-    if self.top == other_box.top
-      return self.left <=> other_box.left
-    else
-      return self.top <=> other_box.top
-    end
-  end
-
-  def intersect?(other)
-    self.left < other.right and self.right > other.left and self.top < other.bottom and self.bottom > other.top
-  end
 
   def self.get_objects_in_region(region, objects, bound_getter_name)
     
