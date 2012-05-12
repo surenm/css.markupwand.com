@@ -167,15 +167,6 @@ class Grid
         Log.debug "Trying grouping box #{grouping_box}"
         nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
         
-        super_nodes = Grid.get_super_nodes nodes_in_region
-
-        super_nodes.each do |super_node|
-          Log.debug "Style node: #{super_node.name}"
-          # FIXME: the super_node should be added to the appropriate grid
-          self.add_photoshop_layer super_node
-          available_nodes.delete super_node.uid
-        end
-        
         if nodes_in_region.empty?
           Log.debug "Stopping, no more nodes in this region"
           # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
@@ -187,8 +178,18 @@ class Grid
           # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
         elsif nodes_in_region.size < nodes.size
           Log.debug "Recursing inside, found nodes in region"
+          
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new nodes_in_region, self
+          
+          super_nodes = Grid.get_super_nodes nodes_in_region
+          super_nodes.each do |super_node|
+            Log.debug "Style node: #{super_node.name}"
+            # FIXME: the super_node should be added to the appropriate grid
+            grid.add_photoshop_layer super_node
+            available_nodes.delete super_node.uid
+          end
+          
           row_grid.sub_grids.push grid
         end
       end
