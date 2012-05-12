@@ -3,6 +3,22 @@ class Grid
   attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer, :orientation
 
   def self.get_grouping_boxes(horizontal_gutters, vertical_gutters)
+  def self.get_vertical_gutters(bounding_boxes)
+    vertical_lines = bounding_boxes.collect{|bb| bb.left}
+    vertical_lines += bounding_boxes.collect{|bb| bb.right}
+    vertical_lines.uniq!
+
+    vertical_gutters = []
+    vertical_lines.each do |vertical_line|
+      is_gutter = true
+      bounding_boxes.each do |bb|
+        if bb.left < vertical_line and vertical_line < bb.right
+          is_gutter = false
+        end
+      end
+      vertical_gutters.push vertical_line if is_gutter
+    end
+    vertical_gutters.sort!
     # get all possible grouping boxes with the available gutters
     grouping_boxes = []
     
@@ -87,23 +103,6 @@ class Grid
     end
   end
 
-  def get_vertical_gutters(bounding_boxes, super_bounds)
-    vertical_lines = bounding_boxes.collect{|bb| bb.left}
-    vertical_lines += bounding_boxes.collect{|bb| bb.right}
-    vertical_lines.uniq!
-
-    vertical_gutters = []
-    vertical_lines.each do |vertical_line|
-      is_gutter = true
-      bounding_boxes.each do |bb|
-        if bb.left < vertical_line and vertical_line < bb.right
-          is_gutter = false
-        end
-      end
-      vertical_gutters.push vertical_line if is_gutter
-    end
-    vertical_gutters.sort!
-  end
 
   def get_horizontal_gutters(bounding_boxes, super_bounds)
     horizontal_lines = bounding_boxes.collect{|bb| bb.top}
