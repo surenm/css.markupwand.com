@@ -38,8 +38,9 @@ class Grid
           break
         end
       end
-      flag and enclosing_node.kind == PhotoshopItem::Layer::LAYER_SOLIDFILL
+      flag and (enclosing_node.kind == PhotoshopItem::Layer::LAYER_SOLIDFILL or enclosing_node.kind == PhotoshopItem::Layer::LAYER_NORMAL)
     end
+    Log.warn super_nodes
     return super_nodes
   end
 
@@ -49,14 +50,6 @@ class Grid
     @layers    = []       # Set of children style layers for this grid
     @sub_grids = []       # children for this grid
     @orientation = :normal
-
-    super_nodes = Grid.get_super_nodes @nodes
-
-    super_nodes.each do |super_node|
-      Log.debug "Style node: #{super_node.name}"
-      self.add_photoshop_layer super_node
-      nodes.delete super_node
-    end
 
     @is_root = false    # if the grid is the root node or the <body> tag for this html
     
@@ -173,6 +166,7 @@ class Grid
         remaining_nodes = available_nodes.values
         Log.debug "Trying grouping box #{grouping_box}"
         nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
+        
         if nodes_in_region.empty?
           Log.debug "Stopping, no more nodes in this region"
           # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
@@ -184,8 +178,18 @@ class Grid
           # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
         elsif nodes_in_region.size < nodes.size
           Log.debug "Recursing inside, found nodes in region"
+          
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new nodes_in_region, self
+          
+          super_nodes = Grid.get_super_nodes nodes_in_region
+          super_nodes.each do |super_node|
+            Log.debug "Style node: #{super_node.name}"
+            # FIXME: the super_node should be added to the appropriate grid
+            grid.add_photoshop_layer super_node
+            available_nodes.delete super_node.uid
+          end
+          
           row_grid.sub_grids.push grid
         end
       end
@@ -225,7 +229,7 @@ class Grid
       css.update layer.get_css({}, @is_root)
     end
     
-    css_class = PhotoshopItem::StylesHash.add_and_get_class Converter::to_style_string css    
+    css_class = PhotoshopItem::StylesHash.add_and_get_class Converter::to_style_string css
 
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
