@@ -41,6 +41,13 @@ class PhotoshopItem::StylesHash
     classes  = PhotoshopItem::StylesHash.get_styles_hash
     css_data = ''
     
+    # Debugging div positioning
+    css_data += <<DIV_BLOCK
+div {
+  border: 1px #eeeeee solid;
+}
+DIV_BLOCK
+    
     classes.each do |style, class_name|
       style_formatted = style.gsub(";",";\n")
       class_block = <<CLASS_BLOCK
