@@ -79,24 +79,35 @@ class Grid
       end
       root_group.push row_group
     end
+    
     return root_group
   end
-  
-  def self.get_super_nodes(nodes)
-    super_nodes = nodes.select do |enclosing_node|
-      flag = true
-      nodes.each do |node|
-        if not enclosing_node.encloses? node
-          flag = false 
-          break
+
+  # usually any layer that matches the grouping box's bounds is a style layer
+  def self.get_style_layers(layers, grouping_box = nil)
+    style_layers = []
+    
+    if not grouping_box.nil?
+      layers.each do |layer|
+        if layer.bounds == grouping_box.bounds
+          style_layers.push layer
         end
       end
-      flag and (enclosing_node.kind == PhotoshopItem::Layer::LAYER_SOLIDFILL or enclosing_node.kind == PhotoshopItem::Layer::LAYER_NORMAL)
     end
-    Log.warn super_nodes
-    return super_nodes
-  end
 
+    if style_layers.empty?
+      other_super_nodes = layers.select do |enclosing_layer|
+        flag = true
+        layers.each { |layer| flag = false if not enclosing_layer.encloses? layer }
+        flag
+      end
+      style_layers.push other_super_nodes
+    end
+    
+    style_layers.flatten!
+    return style_layers
+  end
+  
   def initialize(nodes, parent)
     @nodes     = nodes    # The layers enclosed by this Grid
     @parent    = parent   # Parent grid for this grid
