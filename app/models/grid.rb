@@ -19,6 +19,24 @@ class Grid
       vertical_gutters.push vertical_line if is_gutter
     end
     vertical_gutters.sort!
+  def self.get_horizontal_gutters(bounding_boxes)
+    horizontal_lines = bounding_boxes.collect{|bb| bb.top}
+    horizontal_lines += bounding_boxes.collect{|bb| bb.bottom}
+    horizontal_lines.uniq!
+
+    horizontal_gutters = []
+    horizontal_lines.each do |horizontal_line|
+      is_gutter = true
+      bounding_boxes.each do |bb|
+        if bb.top < horizontal_line and horizontal_line < bb.bottom
+          is_gutter = false
+        end
+      end
+      horizontal_gutters.push horizontal_line if is_gutter
+    end
+    horizontal_gutters.sort!
+  end
+
     # get all possible grouping boxes with the available gutters
     grouping_boxes = []
     
@@ -104,23 +122,6 @@ class Grid
   end
 
 
-  def get_horizontal_gutters(bounding_boxes, super_bounds)
-    horizontal_lines = bounding_boxes.collect{|bb| bb.top}
-    horizontal_lines += bounding_boxes.collect{|bb| bb.bottom}
-    horizontal_lines.uniq!
-
-    horizontal_gutters = []
-    horizontal_lines.each do |horizontal_line|
-      is_gutter = true
-      bounding_boxes.each do |bb|
-        if bb.top < horizontal_line and horizontal_line < bb.bottom
-          is_gutter = false
-        end
-      end
-      horizontal_gutters.push horizontal_line if is_gutter
-    end
-    horizontal_gutters.sort!
-  end
   
   def create_dummy_wrapper(bound)
     dummy_layer = Constants::dummy_layer_hash
