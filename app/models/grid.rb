@@ -220,7 +220,6 @@ class Grid
       end
       subgrids.push row_grid
     end
-    pp subgrids
     return subgrids
   end
 
