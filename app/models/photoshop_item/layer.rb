@@ -8,8 +8,8 @@ class PhotoshopItem::Layer
   LAYER_SMARTOBJECT = "LayerKind.SMARTOBJECT"
   LAYER_SOLIDFILL   = "LayerKind.SOLIDFILL"
   LAYER_NORMAL      = "LayerKind.NORMAL"
-  
-  def initialize(layer)    
+
+  def initialize(layer)
     bound_json = layer[:bounds]
     @name   = layer[:name][:value]
     @kind   = layer[:layerKind]
@@ -26,6 +26,10 @@ class PhotoshopItem::Layer
 
     @bounds = BoundingBox.new(top, left, bottom, right)
 
+  end
+  
+  def to_s
+    @name
   end
 
   # Sets that it is a root
@@ -49,11 +53,7 @@ class PhotoshopItem::Layer
     self.children == other_layer.children
     )
   end
-=begin
-  def inspect
-    "#{self.name}: #{self.bounds} \n"
-  end
-=end
+
   # TODO: This is a hard limit encloses function.
   # This actually has to be something like if the areas intersect for more than 50% or so
   # then the bigger one encloses the smaller one.
@@ -64,12 +64,20 @@ class PhotoshopItem::Layer
   def intersect?(other)
     return self.bounds.intersect? other.bounds
   end
+  
+  def is_non_smart_image?
+    return !self.layer[:layerType].nil? && self.layer[:layerType]=='IMAGE' 
+  end 
 
   def image_path
     if layer_kind == LAYER_SMARTOBJECT
-      Converter::get_image_path self.layer
-    else
-      nil
+      Converter::get_image_path self
+    elsif layer_kind == LAYER_NORMAL
+      if self.is_non_smart_image?
+        return self.layer[:imagePath]
+      else
+        nil
+      end
     end
   end
 
@@ -82,7 +90,13 @@ class PhotoshopItem::Layer
       :body
     elsif layer_kind == LAYER_SMARTOBJECT
       :img
-    elsif layer_kind  == LAYER_TEXT or layer_kind == LAYER_SOLIDFILL or layer_kind == LAYER_NORMAL
+    elsif layer_kind == LAYER_NORMAL
+      if self.is_non_smart_image?
+        :img
+      else
+        :div
+      end
+    elsif layer_kind  == LAYER_TEXT or layer_kind == LAYER_SOLIDFILL
       :div
     else
       Log.info "New layer found #{layer_kind} for layer #{self.name}"
@@ -142,16 +156,5 @@ class PhotoshopItem::Layer
     end
     
     return html
-  end
-  
-  def to_s
-    @name
-  end
-  
-  def print(indent_level = 0)
-    spaces = ""
-    prefix = "|--"
-    indent_level.times {|i| spaces+=" "}
-    puts "#{spaces}#{prefix} (layer) #{@name} #{@bounds.to_s}"
   end
 end

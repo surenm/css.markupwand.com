@@ -49,7 +49,7 @@ class PhotoshopItem::StylesHash
     if self.debug
       css_data += <<DIV_BLOCK
   div {
-    border: 1px #eeeeee solid;
+    border: 1px Gray dotted;
   }
 DIV_BLOCK
     end

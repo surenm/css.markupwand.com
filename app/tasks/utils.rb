@@ -3,7 +3,7 @@ class Utils
     self.process_file "/tmp/mailgun.psd.json"
   end
   
-  def self.process_file(file_name, max_depth = 100)
+  def self.process_file(file_name)
     Log.info "Beginning to process #{file_name}..."
 
     fptr     = File.read file_name
@@ -25,9 +25,13 @@ class Utils
       nodes.push node
     end
   
+    
+    Grid.reset_grouping_queue
+    
     Log.info "Creating grids..."
     grid = Grid.new nodes, nil
-    grid.group! max_depth
+    
+    Grid.group!
 
     Log.info "Generating body HTML..."    
     body_html = grid.to_html
