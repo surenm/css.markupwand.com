@@ -244,7 +244,13 @@ class Grid
         end
 
       end
-      subgrids.push row_grid
+      if row_grid.sub_grids.size == 1
+        subgrid = row_grid.sub_grids.first
+        subgrid.parent = self
+        subgrids.push subgrid
+      elsif row_grid.sub_grids.size > 1
+        subgrids.push row_grid
+      end
     end
     return subgrids
   end
