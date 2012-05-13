@@ -55,13 +55,12 @@ class Grid
 
     # All layer boundaries to get the gutters
     bounding_boxes = layers.collect {|layer| layer.bounds}
-    Log.debug "Bounding boxes - #{bounding_boxes}"
     
     # Get the vertical and horizontal gutters at this level
     vertical_gutters   = get_vertical_gutters bounding_boxes
     horizontal_gutters = get_horizontal_gutters bounding_boxes
-    Log.debug "Vertical Gutters: #{vertical_gutters}"
-    Log.debug "Horizontal Gutters: #{horizontal_gutters}"
+    Log.info "Vertical Gutters: #{vertical_gutters}"
+    Log.info "Horizontal Gutters: #{horizontal_gutters}"
     
     # if empty gutters, then there probably is no children here. 
     # TODO: Find out if this even happens?
@@ -93,6 +92,7 @@ class Grid
       root_group.push row_group
     end
     
+    Log.info root_group
     return root_group
   end
 
@@ -155,6 +155,7 @@ class Grid
     if @nodes.size > 1 
       @sub_grids = get_subgrids
     elsif @nodes.size == 1
+      Log.info "Just one layer #{@nodes.first} is available. Adding to the grid"
       @sub_grids.push @nodes.first  # Trivial. Just one layer is a child of this layer
     end
   end
@@ -169,61 +170,70 @@ class Grid
     root_group = Grid.get_grouping_boxes @nodes
     Log.debug "Root groups #{root_group}"
 
+    # list of layers in this grid.
     layers = @nodes
     initial_layers_count = layers.size
+    available_nodes = Hash[layers.collect { |item| [item.uid, item] }]
         
     # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
     root_style_layers = Grid.get_style_layers layers
-    self.add_style_layers root_style_layers    
-    Log.warn root_style_layers
+    Log.info "Root style layers are #{root_style_layers}"
+
+    # First add them as style layers to this grid
+    self.add_style_layers root_style_layers
     
-    # remove root_style_nodes from the layers to process
-    root_style_layers.each { |root_style_layer| layers.delete root_style_layer}
-    
-    # list of nodes to group. A slick way to construct a hash from array
-    available_nodes = Hash[layers.collect { |item| [item.uid, item] }]
+    # next remove them from the available_layers to process
+    Log.debug "Deleting #{root_style_layers} root style layers..."
+    root_style_layers.each { |root_style_layer| available_nodes.delete root_style_layer.uid}
 
     root_group.children.each do |row_group|
+      layers = available_nodes.values
+      
       row_grid = Grid.new [], self
       row_grid.orientation = row_group.orientation
       row_layers = layers.select { |layer| row_group.bounds.encloses? layer.bounds }
       
       row_style_layers = Grid.get_style_layers row_layers
-      row_grid.add_style_layers row_style_layers
-      row_style_layers.each {|layer| available_nodes.delete layer.uid}
+      Log.info "Row style layers are #{row_style_layers}"
       
-      Log.warn available_nodes
+      # Add them to row grid style layers and remove from available_layers
+      row_grid.add_style_layers row_style_layers
+      
+      Log.debug "Deleting #{row_style_layers} row style layers..."
+      row_style_layers.each {|layer| available_nodes.delete layer.uid}
       
       row_group.children.each do |grouping_box|
         remaining_nodes = available_nodes.values
-        Log.debug "Trying grouping box #{grouping_box}"
+        Log.info "Trying grouping box #{grouping_box}"
         nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
         
         if nodes_in_region.empty?
-          Log.debug "Stopping, no more nodes in this region"
+          Log.warn "Stopping, no more nodes in this region"
           # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
           # Usually a corner case
         elsif nodes_in_region.size == initial_layers_count
-          Log.debug "Stopping, no nodes were reduced"
+          Log.warn "Stopping, no nodes were reduced"
           # TODO: This grouping_box is a superbound of thes nodes. 
           # Add this as a style to the grid if there exists a layer for this grouping_box
           # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
         elsif nodes_in_region.size < initial_layers_count
-          Log.debug "Recursing inside, found nodes in region"
+          Log.info "Recursing inside, found nodes in region"
           
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new nodes_in_region, self
           
           style_layers = Grid.get_style_layers nodes_in_region
+          Log.info "Style layers are #{style_layers}"
+          
           style_layers.each do |style_layer|
             Log.debug "Style node: #{style_layer.name}"
             grid.add_style_layers style_layer
             available_nodes.delete style_layer.uid
-          end 
-
+          end
           Grid::GROUPING_QUEUE.push grid
           row_grid.sub_grids.push grid
         end
+
       end
       subgrids.push row_grid
     end
