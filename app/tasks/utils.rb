@@ -14,17 +14,13 @@ class Utils
     layer_sets = psd_data[:layer_sets]  
 
     # Layer descriptors of all photoshop layers
-    all_layers_json = Hash.new
-    all_layers_json.update art_layers
-    all_layers_json.update layer_sets
-    
+        
     Log.info "Getting nodes..."
     nodes = []
     art_layers.each do |layer_id, node_json|
       node = PhotoshopItem::Layer.new(node_json)
       nodes.push node
     end
-  
     
     Grid.reset_grouping_queue
     
@@ -46,7 +42,8 @@ class Utils
     folder_path      = Rails.root.join("generated", better_file_name)
 
     PhotoshopItem::StylesHash.write_css_file folder_path
-
+    PhotoshopItem::Font.find_missing_fonts art_layers
+    
     raw_file_name  = folder_path.join 'raw.html'
     html_file_name = folder_path.join 'index.html'
     
