@@ -80,16 +80,18 @@ class BoundingBox
 
   def self.get_objects_in_region(region, objects, bound_getter_name)
     
-    Log.debug "Checking if objects #{objects} are in region #{region}"
+    Log.info "Checking if objects #{objects} are in region #{region}"
     objects_in_region = objects.select do |item|
       bounds = item.send(bound_getter_name)
-      Log.debug "Evaluating #{item} #{item.bounds} in #{region}"
+      Log.debug "Evaluating if #{item} #{item.bounds} is in #{region}"
       if objects.length > 1
         region != bounds and region.encloses? bounds
       else
         region.encloses? bounds
       end
     end
+    
+    Log.info "#{objects_in_region} are within #{region}"
     
     return objects_in_region
   end
