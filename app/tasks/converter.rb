@@ -126,6 +126,19 @@ module Converter
     
     css
   end
+  
+  
+  def Converter::parse_box_border(layer)
+    if layer[:layerEffects][:value].has_key? :frameFX
+      border = layer[:layerEffects][:value][:frameFX]
+      size   = border[:value][:size][:value].to_s + 'px'
+      color  = parse_color(border[:value][:color])
+      {:border => "#{size} solid #{color}"}
+    else
+      {}
+    end
+  end
+  
 
   def Converter::parse_box(layer)
     css                = {}
