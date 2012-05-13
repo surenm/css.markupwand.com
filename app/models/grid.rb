@@ -181,7 +181,7 @@ class Grid
     available_nodes = Hash[layers.collect { |item| [item.uid, item] }]
         
     # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
-    root_style_layers = Grid.get_style_layers layers
+    root_style_layers = Grid.get_style_layers layers, root_group
     Log.info "Root style layers are #{root_style_layers}"
 
     # First add them as style layers to this grid
@@ -198,7 +198,7 @@ class Grid
       row_grid.orientation = row_group.orientation
       row_layers = layers.select { |layer| row_group.bounds.encloses? layer.bounds }
       
-      row_style_layers = Grid.get_style_layers row_layers
+      row_style_layers = Grid.get_style_layers row_layers, row_group
       Log.info "Row style layers are #{row_style_layers}"
       
       # Add them to row grid style layers and remove from available_layers
@@ -227,7 +227,7 @@ class Grid
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new nodes_in_region, self
           
-          style_layers = Grid.get_style_layers nodes_in_region
+          style_layers = Grid.get_style_layers nodes_in_region, grouping_box
           Log.info "Style layers are #{style_layers}"
           
           style_layers.each do |style_layer|
