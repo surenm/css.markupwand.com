@@ -139,6 +139,9 @@ module Converter
     end
   end
   
+  def Converter::parse_box_rounded_corners(layer)
+    {}
+  end
 
   def Converter::parse_box(layer)
     css                = {}
@@ -149,7 +152,10 @@ module Converter
     if layer.has_key? :adjustment
       css[:background]   = parse_color(layer[:adjustment][:value].first[:value][:color])
     end
-
+    
+    css.update parse_box_border(layer)
+    css.update parse_box_rounded_corners(layer)
+    
     css
   end
 
