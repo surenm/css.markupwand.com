@@ -110,12 +110,15 @@ class Grid
 
       layers.each do |layer|
         if layer.bounds == max_bounds
-          style_layers.push layer
+          if layer.kind == PhotoshopItem::Layer::LAYER_SOLIDFILL or layer.kind == PhotoshopItem::Layer::LAYER_NORMAL
+            style_layers.push layer
+          end
         end
       end
     end
   
     style_layers.flatten!
+    
     return style_layers
   end
   
