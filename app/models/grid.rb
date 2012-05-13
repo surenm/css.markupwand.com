@@ -113,16 +113,7 @@ class Grid
         end
       end
     end
-
-    if style_layers.empty?
-      other_super_nodes = layers.select do |enclosing_layer|
-        flag = true
-        layers.each { |layer| flag = false if not enclosing_layer.encloses? layer }
-        flag
-      end
-      style_layers.push other_super_nodes
-    end
-    
+  
     style_layers.flatten!
     return style_layers
   end
