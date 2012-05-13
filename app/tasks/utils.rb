@@ -46,8 +46,11 @@ class Utils
     folder_path      = Rails.root.join("generated", better_file_name)
     css_path         = folder_path.join("assets", "css")
     
-    Log.info "Creating css_path #{folder_path}..."
-    FileUtils.mkdir_p css_path
+    assets_path = folder_path.join "assets"
+    FileUtils.mkdir_p assets_path
+    
+    # Copy bootstrap to assets folder
+    FileUtils.cp_r Rails.root.join("app", "assets", "bootstrap", "docs", "assets", "css"), folder_path.join("assets")
     
     css_file = css_path.join "style.css"
     css_data = PhotoshopItem::StylesHash.generate_css_file
