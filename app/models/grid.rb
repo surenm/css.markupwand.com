@@ -98,12 +98,17 @@ class Grid
   end
 
   # usually any layer that matches the grouping box's bounds is a style layer
-  def self.get_style_layers(layers, grouping_box = nil)
+  def self.get_style_layers(layers, parent_box = nil)
     style_layers = []
+    if parent_box.class.to_s == "BoundingBox"
+      max_bounds = parent_box
+    else 
+      max_bounds = parent_box.bounds
+    end
     
-    if not grouping_box.nil?
+    if not parent_box.nil?
       layers.each do |layer|
-        if layer.bounds == grouping_box.bounds
+        if layer.bounds == max_bounds
           style_layers.push layer
         end
       end
