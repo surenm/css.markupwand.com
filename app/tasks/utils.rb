@@ -44,16 +44,9 @@ class Utils
     
     better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ', '_')
     folder_path      = Rails.root.join("generated", better_file_name)
-    css_path         = folder_path.join("assets", "css")
-    
-    Log.info "Creating css_path #{folder_path}..."
-    FileUtils.mkdir_p css_path
-    
-    css_file = css_path.join "style.css"
-    css_data = PhotoshopItem::StylesHash.generate_css_file
 
-    File.open(css_file, 'w') {|f| f.write(css_data) }
-    
+    PhotoshopItem::StylesHash.write_css_file folder_path
+
     raw_file_name  = folder_path.join 'raw.html'
     html_file_name = folder_path.join 'index.html'
     
@@ -66,7 +59,6 @@ class Utils
     system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
     
     Log.info "Successfully completed processing #{better_file_name}."
-    #system("open '#{html_file_name}'")
     return
   end
 end

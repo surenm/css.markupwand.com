@@ -41,6 +41,18 @@ class PhotoshopItem::StylesHash
     PhotoshopItem::StylesHash.instance.add_and_get_class(string)
   end
   
+  def self.write_css_file(folder_path)
+    css_path = folder_path.join("assets", "css")
+    FileUtils.mkdir_p css_path
+    
+    css_file = css_path.join "style.css"
+    css_data = PhotoshopItem::StylesHash.generate_css_file
+    
+    Log.info "Writing css file #{css_file}"
+    
+    File.open(css_file, 'w') {|f| f.write(css_data) }
+  end
+  
   def self.generate_css_file
     classes  = PhotoshopItem::StylesHash.get_styles_hash
     css_data = ''
