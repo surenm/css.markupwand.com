@@ -25,8 +25,13 @@ class Utils
       nodes.push node
     end
   
+    
+    Grid.reset_grouping_queue
+    
     Log.info "Creating grids..."
     grid = Grid.new nodes, nil
+    
+    Grid.group!
 
     Log.info "Generating body HTML..."    
     body_html = grid.to_html
