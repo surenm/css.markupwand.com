@@ -71,7 +71,7 @@ class PhotoshopItem::Layer
 
   def image_path
     if layer_kind == LAYER_SMARTOBJECT
-      Converter::get_image_path self.layer
+      Converter::get_image_path self
     elsif layer_kind == LAYER_NORMAL
       if self.is_non_smart_image?
         return self.layer[:imagePath]
