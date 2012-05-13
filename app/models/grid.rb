@@ -100,13 +100,14 @@ class Grid
   # usually any layer that matches the grouping box's bounds is a style layer
   def self.get_style_layers(layers, parent_box = nil)
     style_layers = []
-    if parent_box.class.to_s == "BoundingBox"
-      max_bounds = parent_box
-    else 
-      max_bounds = parent_box.bounds
-    end
-    
     if not parent_box.nil?
+      
+      if parent_box.class.to_s == "BoundingBox"
+        max_bounds = parent_box
+      else 
+        max_bounds = parent_box.bounds
+      end
+
       layers.each do |layer|
         if layer.bounds == max_bounds
           style_layers.push layer
@@ -208,6 +209,9 @@ class Grid
         Log.info "Trying grouping box #{grouping_box}"
         nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
         
+        style_layers = Grid.get_style_layers remaining_nodes, grouping_box
+        Log.info "Style layers are #{style_layers}"
+        
         if nodes_in_region.empty?
           Log.warn "Stopping, no more nodes in this region"
           # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
@@ -223,14 +227,12 @@ class Grid
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new nodes_in_region, self
           
-          style_layers = Grid.get_style_layers nodes_in_region, grouping_box
-          Log.info "Style layers are #{style_layers}"
-          
           style_layers.each do |style_layer|
             Log.debug "Style node: #{style_layer.name}"
             grid.add_style_layers style_layer
             available_nodes.delete style_layer.uid
           end
+          
           Grid::GROUPING_QUEUE.push grid
           row_grid.sub_grids.push grid
         end
