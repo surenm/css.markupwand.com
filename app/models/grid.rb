@@ -142,9 +142,12 @@ class Grid
     else
       node_bounds = nodes.collect {|node| node.bounds}
       @bounds = BoundingBox.get_super_bounds node_bounds
+      width = @bounds.width
+      if width <= 960
+        @width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class width
+      end
+      @nodes.sort!
     end
-    
-    @nodes.sort!
   end
   
   def inspect
@@ -272,6 +275,10 @@ class Grid
     end
     
     css_class = PhotoshopItem::StylesHash.add_and_get_class Converter::to_style_string css
+    
+    if not @width_class.nil?
+      css_class = "#{css_class} #{@width_class}"
+    end
 
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
