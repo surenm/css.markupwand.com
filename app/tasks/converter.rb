@@ -25,7 +25,7 @@ module Converter
   Converter::FONT_MAPS  = {
     'Helvetica World' => 'Helvetica'
   }
-  
+
   def Converter::parse_color(color_object)
     red   = (Integer(color_object[:value][:red][:value])).to_s(16)
     green = (Integer(color_object[:value][:grain][:value])).to_s(16)
@@ -40,6 +40,7 @@ module Converter
   def Converter::parse_font_name(font_item)
     font        = font_item[:fontName][:value]
     mapped_font = font
+
     if Converter::FONT_MAPS.has_key? font
       mapped_font = Converter::FONT_MAPS[font]
     end
@@ -149,8 +150,11 @@ module Converter
   end
 
   def Converter::get_image_path(layer)
-    file = layer[:smartObject][:value][:fileReference][:value]
-
+    if layer.is_non_smart_image?
+      file = layer[:imagePath]
+    else
+      file = layer[:smartObject][:value][:fileReference][:value]
+    end
     "/tmp/"+ file
   end
 

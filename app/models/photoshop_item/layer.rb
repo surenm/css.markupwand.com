@@ -8,8 +8,8 @@ class PhotoshopItem::Layer
   LAYER_SMARTOBJECT = "LayerKind.SMARTOBJECT"
   LAYER_SOLIDFILL   = "LayerKind.SOLIDFILL"
   LAYER_NORMAL      = "LayerKind.NORMAL"
-  
-  def initialize(layer)    
+
+  def initialize(layer)
     bound_json = layer[:bounds]
     @name   = layer[:name][:value]
     @kind   = layer[:layerKind]
@@ -64,12 +64,20 @@ class PhotoshopItem::Layer
   def intersect?(other)
     return self.bounds.intersect? other.bounds
   end
+  
+  def is_non_smart_image?
+    return !self.layer[:layerType].nil? && self.layer[:layerType]=='IMAGE' 
+  end 
 
   def image_path
     if layer_kind == LAYER_SMARTOBJECT
       Converter::get_image_path self.layer
-    else
-      nil
+    elsif layer_kind == LAYER_NORMAL
+      if self.is_non_smart_image?
+        return self.layer[:imagePath]
+      else
+        nil
+      end
     end
   end
 
@@ -82,7 +90,13 @@ class PhotoshopItem::Layer
       :body
     elsif layer_kind == LAYER_SMARTOBJECT
       :img
-    elsif layer_kind  == LAYER_TEXT or layer_kind == LAYER_SOLIDFILL or layer_kind == LAYER_NORMAL
+    elsif layer_kind == LAYER_NORMAL
+      if self.is_non_smart_image?
+        :img
+      else
+        :div
+      end
+    elsif layer_kind  == LAYER_TEXT or layer_kind == LAYER_SOLIDFILL
       :div
     else
       Log.info "New layer found #{layer_kind} for layer #{self.name}"
