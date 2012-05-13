@@ -27,6 +27,10 @@ class PhotoshopItem::Layer
     @bounds = BoundingBox.new(top, left, bottom, right)
 
   end
+  
+  def to_s
+    @name
+  end
 
   # Sets that it is a root
   def is_a_root_node
@@ -49,11 +53,7 @@ class PhotoshopItem::Layer
     self.children == other_layer.children
     )
   end
-=begin
-  def inspect
-    "#{self.name}: #{self.bounds} \n"
-  end
-=end
+
   # TODO: This is a hard limit encloses function.
   # This actually has to be something like if the areas intersect for more than 50% or so
   # then the bigger one encloses the smaller one.
@@ -156,16 +156,5 @@ class PhotoshopItem::Layer
     end
     
     return html
-  end
-  
-  def to_s
-    @name
-  end
-  
-  def print(indent_level = 0)
-    spaces = ""
-    prefix = "|--"
-    indent_level.times {|i| spaces+=" "}
-    puts "#{spaces}#{prefix} (layer) #{@name} #{@bounds.to_s}"
   end
 end
