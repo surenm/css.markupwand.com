@@ -8,6 +8,10 @@ class PhotoshopItem::StylesHash
     @styles
   end
   
+  def self.debug
+    ENV.has_key? 'DEBUG' and ENV['DEBUG'].to_i > 0
+  end
+  
   @@instance = PhotoshopItem::StylesHash.new
   
   def self.instance
@@ -20,12 +24,10 @@ class PhotoshopItem::StylesHash
     end
     
     if @styles.has_key? css
-      Log.debug "Repeating class #{@styles[css]}"
       return @styles[css]
     else
       @index = @index + 1
       class_name = 'class' + (@index).to_s
-      Log.debug "Creating class #{class_name}"
       @styles[css] = class_name
       return class_name
     end
@@ -44,12 +46,14 @@ class PhotoshopItem::StylesHash
     css_data = ''
     
     # Debugging div positioning
-    css_data += <<DIV_BLOCK
-div {
-  border: 1px #eeeeee solid;
-}
+    if self.debug
+      css_data += <<DIV_BLOCK
+  div {
+    border: 1px #eeeeee solid;
+  }
 DIV_BLOCK
-    
+    end
+      
     classes.each do |style, class_name|
       style_formatted = style.gsub(";",";\n")
       class_block = <<CLASS_BLOCK
