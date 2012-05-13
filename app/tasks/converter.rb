@@ -151,9 +151,9 @@ module Converter
 
   def Converter::get_image_path(layer)
     if layer.is_non_smart_image?
-      file = layer[:imagePath]
+      file = layer.layer[:imagePath]
     else
-      file = layer[:smartObject][:value][:fileReference][:value]
+      file = layer.layer[:smartObject][:value][:fileReference][:value]
     end
     "/tmp/"+ file
   end
