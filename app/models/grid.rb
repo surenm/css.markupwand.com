@@ -60,8 +60,8 @@ class Grid
     # Get the vertical and horizontal gutters at this level
     vertical_gutters   = get_vertical_gutters bounding_boxes
     horizontal_gutters = get_horizontal_gutters bounding_boxes
-    Log.info "Vertical Gutters: #{vertical_gutters}"
-    Log.info "Horizontal Gutters: #{horizontal_gutters}"
+    Log.debug "Vertical Gutters: #{vertical_gutters}"
+    Log.debug "Horizontal Gutters: #{horizontal_gutters}"
     
     # if empty gutters, then there probably is no children here. 
     # TODO: Find out if this even happens?
@@ -93,7 +93,7 @@ class Grid
       root_group.push row_group
     end
     
-    Log.info root_group
+    Log.debug root_group
     return root_group
   end
 
@@ -179,7 +179,8 @@ class Grid
         
     # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
     root_style_layers = Grid.get_style_layers layers, root_group
-    Log.info "Root style layers are #{root_style_layers}"
+    Log.info "Root style layers are #{root_style_layers}" if root_style_layers.size > 0
+    Log.debug "Root style layers are #{root_style_layers}"
 
     # First add them as style layers to this grid
     self.add_style_layers root_style_layers
@@ -196,7 +197,8 @@ class Grid
       row_layers = layers.select { |layer| row_group.bounds.encloses? layer.bounds }
       
       row_style_layers = Grid.get_style_layers row_layers, row_group
-      Log.info "Row style layers are #{row_style_layers}"
+      Log.info "Row style layers are #{row_style_layers}" if row_style_layers.size > 0
+      Log.debug "Row style layers are #{row_style_layers}" 
       
       # Add them to row grid style layers and remove from available_layers
       row_grid.add_style_layers row_style_layers
@@ -206,11 +208,12 @@ class Grid
       
       row_group.children.each do |grouping_box|
         remaining_nodes = available_nodes.values
-        Log.info "Trying grouping box #{grouping_box}"
+        Log.debug "Trying grouping box #{grouping_box}"
         nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
         
         style_layers = Grid.get_style_layers remaining_nodes, grouping_box
-        Log.info "Style layers are #{style_layers}"
+        Log.info "Style layers are #{style_layers}" if style_layers.size > 0
+        Log.debug "Style layers are #{style_layers}"
         
         if nodes_in_region.empty?
           Log.warn "Stopping, no more nodes in this region"
@@ -222,7 +225,7 @@ class Grid
           # Add this as a style to the grid if there exists a layer for this grouping_box
           # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
         elsif nodes_in_region.size < initial_layers_count
-          Log.info "Recursing inside, found nodes in region"
+          Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
           
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new nodes_in_region, row_grid
