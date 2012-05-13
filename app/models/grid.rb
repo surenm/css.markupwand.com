@@ -265,7 +265,7 @@ class Grid
       css.update layer.get_css({}, @is_root)
     end
     
-    css_class = PhotoshopItem::StylesHash.add_and_get_class Converter::to_style_string css
+    css_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string css
 
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''

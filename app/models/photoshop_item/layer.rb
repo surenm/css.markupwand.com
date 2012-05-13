@@ -70,9 +70,9 @@ class PhotoshopItem::Layer
   end 
 
   def image_path
-    if layer_kind == LAYER_SMARTOBJECT
-      Converter::get_image_path self
-    elsif layer_kind == LAYER_NORMAL
+    if @kind == LAYER_SMARTOBJECT
+      CssParser::get_image_path self
+    elsif @kind == LAYER_NORMAL
       if self.is_non_smart_image?
         return self.layer[:imagePath]
       else
@@ -81,36 +81,32 @@ class PhotoshopItem::Layer
     end
   end
 
-  def layer_kind
-    self.layer[:layerKind]
-  end
-
   def tag
     if @is_root
       :body
-    elsif layer_kind == LAYER_SMARTOBJECT
+    elsif @kind == LAYER_SMARTOBJECT
       :img
-    elsif layer_kind == LAYER_NORMAL
+    elsif @kind == LAYER_NORMAL
       if self.is_non_smart_image?
         :img
       else
         :div
       end
-    elsif layer_kind  == LAYER_TEXT or layer_kind == LAYER_SOLIDFILL
+    elsif @kind  == LAYER_TEXT or @kind == LAYER_SOLIDFILL
       :div
     else
-      Log.info "New layer found #{layer_kind} for layer #{self.name}"
+      Log.info "New layer found #{@kind} for layer #{self.name}"
       :div
     end
   end
 
   def get_css(css = {}, is_root = false)
-    if layer_kind == LAYER_TEXT
-      css.update Converter::parse_text self.layer
-    elsif layer_kind == LAYER_SMARTOBJECT
+    if @kind == LAYER_TEXT
+      css.update CssParser::parse_text self.layer
+    elsif @kind == LAYER_SMARTOBJECT
       # don't do anything
-    elsif layer_kind == LAYER_SOLIDFILL
-      css.update Converter::parse_box self.layer
+    elsif @kind == LAYER_SOLIDFILL
+      css.update CssParser::parse_box self.layer
       if is_root
         css.delete :width
         css.delete :height
@@ -125,11 +121,11 @@ class PhotoshopItem::Layer
 
   def class_name(css = {}, is_root = false)
     css = get_css(css, is_root)
-    PhotoshopItem::StylesHash.add_and_get_class(Converter::to_style_string(css))
+    PhotoshopItem::StylesHash.add_and_get_class(CssParser::to_style_string(css))
   end
 
   def text
-    if layer_kind == LAYER_TEXT
+    if @kind == LAYER_TEXT
       self.layer[:textKey][:value][:textKey][:value]
     else
       ''
@@ -142,7 +138,7 @@ class PhotoshopItem::Layer
     css_class = class_name css, @is_root
     
     inner_html = args.fetch :inner_html, ''
-    if inner_html.empty? and layer_kind == LAYER_TEXT
+    if inner_html.empty? and @kind == LAYER_TEXT
       inner_html = text
     end
     

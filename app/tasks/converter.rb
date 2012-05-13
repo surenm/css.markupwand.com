@@ -1,5 +1,5 @@
 # Runs through nodejs.
-# Format: ruby converter.rb <filename>
+# Format: ruby CssParser.rb <filename>
 require 'rubygems'
 require 'json'
 require 'pp'
@@ -11,22 +11,22 @@ class Float
   end
 end
 
-module Converter
-  Converter::FONT_WEIGHT = {
+module CssParser
+  CssParser::FONT_WEIGHT = {
     'Regular' => nil,
     'Bold'    => 'bold'
   }
   
-  Converter::FONT_STYLE = {
+  CssParser::FONT_STYLE = {
     'Italic' => 'italic'
   }
   
   
-  Converter::FONT_MAPS  = {
+  CssParser::FONT_MAPS  = {
     'Helvetica World' => 'Helvetica'
   }
 
-  def Converter::parse_color(color_object)
+  def CssParser::parse_color(color_object)
     red   = (Integer(color_object[:value][:red][:value])).to_s(16)
     green = (Integer(color_object[:value][:grain][:value])).to_s(16)
     blue  = (Integer(color_object[:value][:blue][:value])).to_s(16)
@@ -37,22 +37,22 @@ module Converter
     '#' + red + green + blue
   end
   
-  def Converter::parse_font_name(font_item)
+  def CssParser::parse_font_name(font_item)
     font        = font_item[:fontName][:value]
     mapped_font = font
 
-    if Converter::FONT_MAPS.has_key? font
-      mapped_font = Converter::FONT_MAPS[font]
+    if CssParser::FONT_MAPS.has_key? font
+      mapped_font = CssParser::FONT_MAPS[font]
     end
     
     {:'font-family' => mapped_font}
   end
   
-  def Converter::parse_font_size(font_item)
+  def CssParser::parse_font_size(font_item)
     { :'font-size' => font_item[:size][:value].to_s + 'px' }
   end
   
-  def Converter::parse_font_style(font_item)
+  def CssParser::parse_font_style(font_item)
     font_modifier = font_item[:fontStyleName][:value]
     font_modifier_css = {}
     
@@ -67,7 +67,7 @@ module Converter
     font_modifier_css
   end
   
-  def Converter::parse_font_shadow(layer)
+  def CssParser::parse_font_shadow(layer)
     
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
       {:'text-shadow' =>
@@ -77,13 +77,13 @@ module Converter
     end
   end
   
-  def Converter::parse_box_shadow(shadow)
+  def CssParser::parse_box_shadow(shadow)
     color = parse_color(shadow[:value][:color])
     size  = shadow[:value][:distance][:value]
     "#{size}px #{size}px #{size}px #{color}"
   end
   
-  def Converter::parse_opacity(layer)
+  def CssParser::parse_opacity(layer)
     if Integer(layer[:opacity][:value]) < 255
       opacity = Float(layer[:opacity][:value])/256.0
       { :opacity => opacity.sigfig(2) }
@@ -93,14 +93,14 @@ module Converter
     
   end
   
-  def Converter::parse_text_color(text_style)
+  def CssParser::parse_text_color(text_style)
     color_object = text_style[:value][:textStyle][:value][:color]
     
     { :color => parse_color(color_object) }
   end
   
   # Returns a hash for CSS styles
-  def Converter::parse_text(layer)
+  def CssParser::parse_text(layer)
     text_style = layer[:textKey][:value][:textStyleRange][:value].first
     font_info  = text_style[:value][:textStyle][:value]
     
@@ -129,7 +129,7 @@ module Converter
   end
   
   
-  def Converter::parse_box_border(layer)
+  def CssParser::parse_box_border(layer)
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :frameFX
       border = layer[:layerEffects][:value][:frameFX]
       size   = border[:value][:size][:value].to_s + 'px'
@@ -140,7 +140,7 @@ module Converter
     end
   end
   
-  def Converter::parse_box_rounded_corners(layer)
+  def CssParser::parse_box_rounded_corners(layer)
     if layer.has_key? :path_items and layer[:path_items].length > 4
       radius = layer[:path_items][2][0] - layer[:path_items][1][0]
       {:'border-radius' => "#{radius}px"}
@@ -149,7 +149,7 @@ module Converter
     end
   end
 
-  def Converter::parse_box(layer)
+  def CssParser::parse_box(layer)
     css                = {}
     bounds             = layer[:bounds][:value]
     css[:width]        = (bounds[:right][:value] - bounds[:left][:value]).to_s + 'px'
@@ -165,7 +165,7 @@ module Converter
     css
   end
 
-  def Converter::to_style_string(css)
+  def CssParser::to_style_string(css)
     css_string = ""
     css.each do |key,value|
       css_string += "#{key}: #{value}; "
@@ -173,7 +173,7 @@ module Converter
     return css_string
   end
 
-  def Converter::get_image_path(layer)
+  def CssParser::get_image_path(layer)
     if layer.is_non_smart_image?
       file = layer.layer[:imagePath]
     else
@@ -186,7 +186,7 @@ end
 
 def read_file
   if ARGV.length < 1
-    puts "Format: ruby converter.rb <filename>"
+    puts "Format: ruby CssParser.rb <filename>"
   else
     filename = ARGV.first
     data = (File.open(filename)).read
@@ -199,12 +199,12 @@ def parse_file(json)
     css = {}
     if item.has_key? 'textKey'
       puts "Text item: " +  item[:name][:value]
-      css = Converter::parse_text(item)
+      css = CssParser::parse_text(item)
     elsif item.has_key? 'smartObject'
       puts "Smart Object: " + item[:name][:value]
     else
       puts "Box item: " + item[:name][:value]
-      css = Converter::parse_box(item)
+      css = CssParser::parse_box(item)
     end
 
     pp css
