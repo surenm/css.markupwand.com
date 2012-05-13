@@ -63,7 +63,7 @@ class Utils
     html_fptr.close
     
     Log.info "Tidying up the html..."
-    system("tidy -q -o #{html_file_name} -i #{raw_file_name}")
+    system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
     
     Log.info "Successfully completed processing #{better_file_name}."
     #system("open '#{html_file_name}'")
