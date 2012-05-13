@@ -130,7 +130,7 @@ module Converter
   
   
   def Converter::parse_box_border(layer)
-    if layer[:layerEffects][:value].has_key? :frameFX
+    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :frameFX
       border = layer[:layerEffects][:value][:frameFX]
       size   = border[:value][:size][:value].to_s + 'px'
       color  = parse_color(border[:value][:color])
@@ -141,7 +141,12 @@ module Converter
   end
   
   def Converter::parse_box_rounded_corners(layer)
-    {}
+    if layer.has_key? :path_items and layer[:path_items].length > 4
+      radius = layer[:path_items][2][0] - layer[:path_items][1][0]
+      {:'border-radius' => "#{radius}px"}
+    else
+      {}
+    end
   end
 
   def Converter::parse_box(layer)
