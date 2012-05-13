@@ -8,6 +8,10 @@ class PhotoshopItem::StylesHash
     @styles
   end
   
+  def self.debug
+    ENV.has_key? 'DEBUG' and ENV['DEBUG'].to_i > 0
+  end
+  
   @@instance = PhotoshopItem::StylesHash.new
   
   def self.instance
@@ -42,12 +46,14 @@ class PhotoshopItem::StylesHash
     css_data = ''
     
     # Debugging div positioning
-    css_data += <<DIV_BLOCK
-div {
-  border: 1px #eeeeee solid;
-}
+    if self.debug
+      css_data += <<DIV_BLOCK
+  div {
+    border: 1px #eeeeee solid;
+  }
 DIV_BLOCK
-    
+    end
+      
     classes.each do |style, class_name|
       style_formatted = style.gsub(";",";\n")
       class_block = <<CLASS_BLOCK
