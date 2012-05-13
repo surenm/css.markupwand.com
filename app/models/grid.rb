@@ -2,6 +2,19 @@ class Grid
   include ActionView::Helpers::TagHelper
   attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer, :orientation
 
+  Grid::GROUPING_QUEUE = Queue.new
+  
+  def self.reset_grouping_queue
+    Grid::GROUPING_QUEUE.clear
+  end
+  
+  def self.group!
+    while not Grid::GROUPING_QUEUE.empty?
+      grid = Grid::GROUPING_QUEUE.pop
+      grid.group!
+    end
+  end
+
   def self.get_vertical_gutters(bounding_boxes)
     vertical_lines = bounding_boxes.collect{|bb| bb.left}
     vertical_lines += bounding_boxes.collect{|bb| bb.right}
@@ -120,6 +133,7 @@ class Grid
     if @parent == nil
       Log.info "Setting the root node"
       @is_root = true
+      Grid::GROUPING_QUEUE.push self
     end
     
     if nodes.empty?
@@ -143,11 +157,7 @@ class Grid
     elsif @nodes.size == 1
       @sub_grids.push @nodes.first  # Trivial. Just one layer is a child of this layer
     end
-    @sub_grids.each do |sub_grid|
-      sub_grid.group!(max_depth - 1) if sub_grid.class.to_s == "Grid"
-    end
   end
-
 
   def get_subgrids
     Log.debug "Getting subgrids (#{self.nodes.length} nodes in this grid)"
@@ -211,6 +221,7 @@ class Grid
             available_nodes.delete style_layer.uid
           end 
 
+          Grid::GROUPING_QUEUE.push grid
           row_grid.sub_grids.push grid
         end
       end
