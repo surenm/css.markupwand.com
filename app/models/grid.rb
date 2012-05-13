@@ -137,13 +137,9 @@ class Grid
     @layers.flatten!
   end
     
-  def group!(max_depth = 100)
+  def group!
     if @nodes.size > 1 
-      if max_depth > 0
-        @sub_grids = get_subgrids max_depth
-      else 
-        Log.fatal "Recursive parsing stopped because max_depth has been reached"
-      end
+      @sub_grids = get_subgrids
     elsif @nodes.size == 1
       @sub_grids.push @nodes.first  # Trivial. Just one layer is a child of this layer
     end
@@ -153,7 +149,7 @@ class Grid
   end
 
 
-  def get_subgrids(max_depth)
+  def get_subgrids
     Log.debug "Getting subgrids (#{self.nodes.length} nodes in this grid)"
     
     # Subgrids at this level
