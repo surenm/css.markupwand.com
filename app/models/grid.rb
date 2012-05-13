@@ -225,7 +225,7 @@ class Grid
           Log.info "Recursing inside, found nodes in region"
           
           nodes_in_region.each {|node| available_nodes.delete node.uid}
-          grid = Grid.new nodes_in_region, self
+          grid = Grid.new nodes_in_region, row_grid
           
           style_layers.each do |style_layer|
             Log.debug "Style node: #{style_layer.name}"
