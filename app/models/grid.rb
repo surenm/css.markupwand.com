@@ -12,6 +12,7 @@ class Grid
     while not Grid::GROUPING_QUEUE.empty?
       grid = Grid::GROUPING_QUEUE.pop
       grid.group!
+      Log.debug grid
     end
   end
 
@@ -146,6 +147,10 @@ class Grid
     @nodes.sort!
   end
   
+  def inspect
+    "Style Layers: #{@layers}, Sub grids: #{@sub_grids.size}"
+  end
+  
   def add_style_layers(layers)
     @layers.push layers
     @layers.flatten!
@@ -155,7 +160,7 @@ class Grid
     if @nodes.size > 1 
       @sub_grids = get_subgrids
     elsif @nodes.size == 1
-      Log.info "Just one layer #{@nodes.first} is available. Adding to the grid"
+      Log.debug "Just one layer #{@nodes.first} is available. Adding to the grid"
       @sub_grids.push @nodes.first  # Trivial. Just one layer is a child of this layer
     end
   end
