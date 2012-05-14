@@ -65,7 +65,6 @@ class PhotoshopItem::FontMap
         font_matches[font_name] += matches
       end
     end
-    puts "2"
     
     font_matches
   end
@@ -96,7 +95,6 @@ class PhotoshopItem::FontMap
         font_matches[font_name] += matches
       end
     end
-    puts "3"
     
     font_matches
     
