@@ -1,1 +1,16 @@
 Convert PSD to HTML5/CSS3
+
+
+Fetching font data
+------------------
+
+Typekit:
+
+ curl -s https://typekit.com/api/v1/json/libraries/trial?per_page=500 | jsonpp > typekit_trial.json
+ curl -s https://typekit.com/api/v1/json/libraries/personal?per_page=500 | jsonpp > typekit_personal_1.json
+ curl -s https://typekit.com/api/v1/json/libraries/personal?per_page=500&page_count=2 | jsonpp > typekit_personal_2.json
+ curl -s https://typekit.com/api/v1/json/libraries/full?per_page=500 | jsonpp > typekit_full_1.json
+ curl -s https://typekit.com/api/v1/json/libraries/full?per_page=500&page_count=2 | jsonpp > typekit_full_2.json
+ 
+Google Webfont:
+ curl -s https://www.googleapis.com/webfonts/v1/webfonts | jsonpp > google_webfont.json
