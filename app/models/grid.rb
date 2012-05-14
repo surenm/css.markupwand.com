@@ -1,6 +1,19 @@
 class Grid
+  include Mongoid::Document
+  include Mongoid::Timestamps::Created
+  include Mongoid::Timestamps::Updated
+  
   include ActionView::Helpers::TagHelper
   attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer, :orientation
+
+  # self references for children and parent grids
+  has_many :children, :class_name => 'Grid', :inverse_of => :parent
+  belongs_to :parent, :class_name => 'Grid', :inverse_of => :children
+  
+  field :layers, :type => Array
+  field :style_layers, :type => Array
+  field :orientation, :type => String, :default => :normal
+  field :root, :type => Boolean, :default => false
 
   Grid::GROUPING_QUEUE = Queue.new
   
