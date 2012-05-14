@@ -13,4 +13,4 @@ Typekit:
  curl -s https://typekit.com/api/v1/json/libraries/full?per_page=500&page_count=2 | jsonpp > typekit_full_2.json
  
 Google Webfont:
- curl -s https://www.googleapis.com/webfonts/v1/webfonts | jsonpp > google_webfont.json
+ curl -s https://www.googleapis.com/webfonts/v1/webfonts  > google_webfont.json
