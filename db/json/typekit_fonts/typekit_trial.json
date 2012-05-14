@@ -1,0 +1,1041 @@
+{
+  "library": {
+    "id": "trial",
+    "link": "/api/v1/json/libraries/trial",
+    "name": "Trial Library",
+    "families": [
+      {
+        "id": "lgrs",
+        "link": "/api/v1/json/families/lgrs",
+        "name": "Abril Fatface"
+      },
+      {
+        "id": "jtgy",
+        "link": "/api/v1/json/families/jtgy",
+        "name": "Acta Display"
+      },
+      {
+        "id": "spmb",
+        "link": "/api/v1/json/families/spmb",
+        "name": "Acta Poster"
+      },
+      {
+        "id": "drlt",
+        "link": "/api/v1/json/families/drlt",
+        "name": "Acta Poster Swashes"
+      },
+      {
+        "id": "zcmv",
+        "link": "/api/v1/json/families/zcmv",
+        "name": "Acuta"
+      },
+      {
+        "id": "gmsj",
+        "link": "/api/v1/json/families/gmsj",
+        "name": "Adelle Web"
+      },
+      {
+        "id": "tmmf",
+        "link": "/api/v1/json/families/tmmf",
+        "name": "Adobe Garamond Pro"
+      },
+      {
+        "id": "ydjd",
+        "link": "/api/v1/json/families/ydjd",
+        "name": "Adrianna Extended Demibold"
+      },
+      {
+        "id": "dqrj",
+        "link": "/api/v1/json/families/dqrj",
+        "name": "Alber New Web"
+      },
+      {
+        "id": "kvxq",
+        "link": "/api/v1/json/families/kvxq",
+        "name": "Alpha Echo"
+      },
+      {
+        "id": "byws",
+        "link": "/api/v1/json/families/byws",
+        "name": "Alwyn New Rounded Web"
+      },
+      {
+        "id": "ymqr",
+        "link": "/api/v1/json/families/ymqr",
+        "name": "Alwyn New Web"
+      },
+      {
+        "id": "gxdg",
+        "link": "/api/v1/json/families/gxdg",
+        "name": "Angie STD Sans"
+      },
+      {
+        "id": "nrky",
+        "link": "/api/v1/json/families/nrky",
+        "name": "Anisette STD Petite"
+      },
+      {
+        "id": "bfnx",
+        "link": "/api/v1/json/families/bfnx",
+        "name": "Anisette STD Petite SC"
+      },
+      {
+        "id": "rnhy",
+        "link": "/api/v1/json/families/rnhy",
+        "name": "Anivers"
+      },
+      {
+        "id": "xqhs",
+        "link": "/api/v1/json/families/xqhs",
+        "name": "Anivers SC"
+      },
+      {
+        "id": "fbln",
+        "link": "/api/v1/json/families/fbln",
+        "name": "Anonymous Pro"
+      },
+      {
+        "id": "hfbt",
+        "link": "/api/v1/json/families/hfbt",
+        "name": "Apolline STD"
+      },
+      {
+        "id": "vzsq",
+        "link": "/api/v1/json/families/vzsq",
+        "name": "Apolline STD SC"
+      },
+      {
+        "id": "nlwf",
+        "link": "/api/v1/json/families/nlwf",
+        "name": "Arimo"
+      },
+      {
+        "id": "czzb",
+        "link": "/api/v1/json/families/czzb",
+        "name": "Armalite Rifle"
+      },
+      {
+        "id": "tsyb",
+        "link": "/api/v1/json/families/tsyb",
+        "name": "Arvo"
+      },
+      {
+        "id": "jdgx",
+        "link": "/api/v1/json/families/jdgx",
+        "name": "Bad Dog"
+      },
+      {
+        "id": "phmy",
+        "link": "/api/v1/json/families/phmy",
+        "name": "Badaboom Pro"
+      },
+      {
+        "id": "clbv",
+        "link": "/api/v1/json/families/clbv",
+        "name": "BD Geminis"
+      },
+      {
+        "id": "xrhd",
+        "link": "/api/v1/json/families/xrhd",
+        "name": "BD Plakatbau"
+      },
+      {
+        "id": "nrgs",
+        "link": "/api/v1/json/families/nrgs",
+        "name": "Bebas Neue"
+      },
+      {
+        "id": "xbgb",
+        "link": "/api/v1/json/families/xbgb",
+        "name": "Bigfish"
+      },
+      {
+        "id": "srfh",
+        "link": "/api/v1/json/families/srfh",
+        "name": "Blambot Casual"
+      },
+      {
+        "id": "zsfy",
+        "link": "/api/v1/json/families/zsfy",
+        "name": "Blambot FX Pro"
+      },
+      {
+        "id": "kxqg",
+        "link": "/api/v1/json/families/kxqg",
+        "name": "Blambot Pro"
+      },
+      {
+        "id": "rypf",
+        "link": "/api/v1/json/families/rypf",
+        "name": "Bodedo"
+      },
+      {
+        "id": "dkyc",
+        "link": "/api/v1/json/families/dkyc",
+        "name": "Boston Traffic"
+      },
+      {
+        "id": "qnhg",
+        "link": "/api/v1/json/families/qnhg",
+        "name": "Bree Serif"
+      },
+      {
+        "id": "rdpv",
+        "link": "/api/v1/json/families/rdpv",
+        "name": "Cabazon"
+      },
+      {
+        "id": "vybr",
+        "link": "/api/v1/json/families/vybr",
+        "name": "Calluna"
+      },
+      {
+        "id": "wgzc",
+        "link": "/api/v1/json/families/wgzc",
+        "name": "Calluna Sans"
+      },
+      {
+        "id": "kydd",
+        "link": "/api/v1/json/families/kydd",
+        "name": "Cantarell"
+      },
+      {
+        "id": "ksng",
+        "link": "/api/v1/json/families/ksng",
+        "name": "CarbonType"
+      },
+      {
+        "id": "cnlb",
+        "link": "/api/v1/json/families/cnlb",
+        "name": "Cardo"
+      },
+      {
+        "id": "wyrn",
+        "link": "/api/v1/json/families/wyrn",
+        "name": "Chippewa Falls"
+      },
+      {
+        "id": "klcb",
+        "link": "/api/v1/json/families/klcb",
+        "name": "Chunk"
+      },
+      {
+        "id": "wjvv",
+        "link": "/api/v1/json/families/wjvv",
+        "name": "Cody Web"
+      },
+      {
+        "id": "khwj",
+        "link": "/api/v1/json/families/khwj",
+        "name": "Colaborate"
+      },
+      {
+        "id": "fscr",
+        "link": "/api/v1/json/families/fscr",
+        "name": "Continuo Web"
+      },
+      {
+        "id": "vkcq",
+        "link": "/api/v1/json/families/vkcq",
+        "name": "Corn Dog"
+      },
+      {
+        "id": "gtgg",
+        "link": "/api/v1/json/families/gtgg",
+        "name": "Crimson"
+      },
+      {
+        "id": "wljs",
+        "link": "/api/v1/json/families/wljs",
+        "name": "Cubano"
+      },
+      {
+        "id": "pcvr",
+        "link": "/api/v1/json/families/pcvr",
+        "name": "Daniel"
+      },
+      {
+        "id": "xgfd",
+        "link": "/api/v1/json/families/xgfd",
+        "name": "De Walpergen's Pica"
+      },
+      {
+        "id": "rbmz",
+        "link": "/api/v1/json/families/rbmz",
+        "name": "De Walpergen's Pica Small Caps"
+      },
+      {
+        "id": "mfjw",
+        "link": "/api/v1/json/families/mfjw",
+        "name": "DejaRip"
+      },
+      {
+        "id": "czrb",
+        "link": "/api/v1/json/families/czrb",
+        "name": "Depot New Condensed Web"
+      },
+      {
+        "id": "hrrw",
+        "link": "/api/v1/json/families/hrrw",
+        "name": "Depot New Web"
+      },
+      {
+        "id": "lgsh",
+        "link": "/api/v1/json/families/lgsh",
+        "name": "Diavlo"
+      },
+      {
+        "id": "ftkg",
+        "link": "/api/v1/json/families/ftkg",
+        "name": "Double Pica"
+      },
+      {
+        "id": "stkc",
+        "link": "/api/v1/json/families/stkc",
+        "name": "Double Pica Small Caps"
+      },
+      {
+        "id": "gkmg",
+        "link": "/api/v1/json/families/gkmg",
+        "name": "Droid Sans"
+      },
+      {
+        "id": "vqgt",
+        "link": "/api/v1/json/families/vqgt",
+        "name": "Droid Sans Mono"
+      },
+      {
+        "id": "pcpv",
+        "link": "/api/v1/json/families/pcpv",
+        "name": "Droid Serif"
+      },
+      {
+        "id": "lbpc",
+        "link": "/api/v1/json/families/lbpc",
+        "name": "Dustismo"
+      },
+      {
+        "id": "gjzc",
+        "link": "/api/v1/json/families/gjzc",
+        "name": "Edding 780"
+      },
+      {
+        "id": "bbfy",
+        "link": "/api/v1/json/families/bbfy",
+        "name": "Edo"
+      },
+      {
+        "id": "kwsg",
+        "link": "/api/v1/json/families/kwsg",
+        "name": "English"
+      },
+      {
+        "id": "btzs",
+        "link": "/api/v1/json/families/btzs",
+        "name": "English Small Caps"
+      },
+      {
+        "id": "ywzt",
+        "link": "/api/v1/json/families/ywzt",
+        "name": "Estilo"
+      },
+      {
+        "id": "yzhh",
+        "link": "/api/v1/json/families/yzhh",
+        "name": "Estilo Pro"
+      },
+      {
+        "id": "kqtj",
+        "link": "/api/v1/json/families/kqtj",
+        "name": "Estilo Script"
+      },
+      {
+        "id": "myvg",
+        "link": "/api/v1/json/families/myvg",
+        "name": "Europa"
+      },
+      {
+        "id": "fsmy",
+        "link": "/api/v1/json/families/fsmy",
+        "name": "Fanwood"
+      },
+      {
+        "id": "ytjc",
+        "link": "/api/v1/json/families/ytjc",
+        "name": "Faricy New Web"
+      },
+      {
+        "id": "xyqp",
+        "link": "/api/v1/json/families/xyqp",
+        "name": "Fatboy"
+      },
+      {
+        "id": "pzyv",
+        "link": "/api/v1/json/families/pzyv",
+        "name": "Fertigo Pro"
+      },
+      {
+        "id": "twbx",
+        "link": "/api/v1/json/families/twbx",
+        "name": "Fertigo Pro Script"
+      },
+      {
+        "id": "rwbq",
+        "link": "/api/v1/json/families/rwbq",
+        "name": "FF Enzo Web "
+      },
+      {
+        "id": "zgjf",
+        "link": "/api/v1/json/families/zgjf",
+        "name": "FF Mach Web Pro"
+      },
+      {
+        "id": "ywgw",
+        "link": "/api/v1/json/families/ywgw",
+        "name": "FF Mach Web Pro Condensed"
+      },
+      {
+        "id": "xxss",
+        "link": "/api/v1/json/families/xxss",
+        "name": "FF Mach Wide Web Pro"
+      },
+      {
+        "id": "fthp",
+        "link": "/api/v1/json/families/fthp",
+        "name": "FF Nuvo SC Web Pro"
+      },
+      {
+        "id": "njjs",
+        "link": "/api/v1/json/families/njjs",
+        "name": "FF Nuvo Web Pro"
+      },
+      {
+        "id": "myym",
+        "link": "/api/v1/json/families/myym",
+        "name": "French Canon"
+      },
+      {
+        "id": "bcym",
+        "link": "/api/v1/json/families/bcym",
+        "name": "French Canon Small Caps"
+      },
+      {
+        "id": "jwdn",
+        "link": "/api/v1/json/families/jwdn",
+        "name": "Garogier"
+      },
+      {
+        "id": "bcnl",
+        "link": "/api/v1/json/families/bcnl",
+        "name": "Gesta"
+      },
+      {
+        "id": "rgmk",
+        "link": "/api/v1/json/families/rgmk",
+        "name": "Good Kitty"
+      },
+      {
+        "id": "fmpj",
+        "link": "/api/v1/json/families/fmpj",
+        "name": "GoodDog New"
+      },
+      {
+        "id": "kctm",
+        "link": "/api/v1/json/families/kctm",
+        "name": "Great Primer"
+      },
+      {
+        "id": "djsq",
+        "link": "/api/v1/json/families/djsq",
+        "name": "Great Primer Small Caps"
+      },
+      {
+        "id": "mdps",
+        "link": "/api/v1/json/families/mdps",
+        "name": "Heavy Data"
+      },
+      {
+        "id": "mnbw",
+        "link": "/api/v1/json/families/mnbw",
+        "name": "Hedley New Web"
+      },
+      {
+        "id": "vbwb",
+        "link": "/api/v1/json/families/vbwb",
+        "name": "Helsinki"
+      },
+      {
+        "id": "qrhv",
+        "link": "/api/v1/json/families/qrhv",
+        "name": "Hill House"
+      },
+      {
+        "id": "smzx",
+        "link": "/api/v1/json/families/smzx",
+        "name": "Hotel Open"
+      },
+      {
+        "id": "mjpz",
+        "link": "/api/v1/json/families/mjpz",
+        "name": "Hotel Solid"
+      },
+      {
+        "id": "bxgy",
+        "link": "/api/v1/json/families/bxgy",
+        "name": "Hydrophilia Iced"
+      },
+      {
+        "id": "bwvb",
+        "link": "/api/v1/json/families/bwvb",
+        "name": "Hydrophilia Liquid"
+      },
+      {
+        "id": "gmvz",
+        "link": "/api/v1/json/families/gmvz",
+        "name": "Inconsolata"
+      },
+      {
+        "id": "bsnk",
+        "link": "/api/v1/json/families/bsnk",
+        "name": "Intruder Alert"
+      },
+      {
+        "id": "qkzf",
+        "link": "/api/v1/json/families/qkzf",
+        "name": "John Doe"
+      },
+      {
+        "id": "vjys",
+        "link": "/api/v1/json/families/vjys",
+        "name": "Josefin"
+      },
+      {
+        "id": "lnlc",
+        "link": "/api/v1/json/families/lnlc",
+        "name": "Junction"
+      },
+      {
+        "id": "jgfl",
+        "link": "/api/v1/json/families/jgfl",
+        "name": "Kaffeesatz"
+      },
+      {
+        "id": "rzkj",
+        "link": "/api/v1/json/families/rzkj",
+        "name": "Know Your Product"
+      },
+      {
+        "id": "nwxv",
+        "link": "/api/v1/json/families/nwxv",
+        "name": "Le Havre "
+      },
+      {
+        "id": "mcxm",
+        "link": "/api/v1/json/families/mcxm",
+        "name": "Le Havre Rounded"
+      },
+      {
+        "id": "kmpm",
+        "link": "/api/v1/json/families/kmpm",
+        "name": "League Gothic"
+      },
+      {
+        "id": "qbgv",
+        "link": "/api/v1/json/families/qbgv",
+        "name": "League Script No. 1"
+      },
+      {
+        "id": "twry",
+        "link": "/api/v1/json/families/twry",
+        "name": "Learning Curve"
+      },
+      {
+        "id": "qsqs",
+        "link": "/api/v1/json/families/qsqs",
+        "name": "Learning Curve Dashed "
+      },
+      {
+        "id": "ztvq",
+        "link": "/api/v1/json/families/ztvq",
+        "name": "Legendum"
+      },
+      {
+        "id": "wklw",
+        "link": "/api/v1/json/families/wklw",
+        "name": "Legitima"
+      },
+      {
+        "id": "vyvm",
+        "link": "/api/v1/json/families/vyvm",
+        "name": "LFT Etica Display Web"
+      },
+      {
+        "id": "zsyz",
+        "link": "/api/v1/json/families/zsyz",
+        "name": "Liberation Sans"
+      },
+      {
+        "id": "lcny",
+        "link": "/api/v1/json/families/lcny",
+        "name": "Liberation Serif"
+      },
+      {
+        "id": "ftfj",
+        "link": "/api/v1/json/families/ftfj",
+        "name": "Ligurino"
+      },
+      {
+        "id": "fngw",
+        "link": "/api/v1/json/families/fngw",
+        "name": "Ligurino Condensed"
+      },
+      {
+        "id": "vrtl",
+        "link": "/api/v1/json/families/vrtl",
+        "name": "Lilac Malaria "
+      },
+      {
+        "id": "wpgv",
+        "link": "/api/v1/json/families/wpgv",
+        "name": "Linden Hill"
+      },
+      {
+        "id": "bkzg",
+        "link": "/api/v1/json/families/bkzg",
+        "name": "Lint McCree"
+      },
+      {
+        "id": "zsbz",
+        "link": "/api/v1/json/families/zsbz",
+        "name": "Lobster"
+      },
+      {
+        "id": "pzyp",
+        "link": "/api/v1/json/families/pzyp",
+        "name": "Luminance"
+      },
+      {
+        "id": "dtyw",
+        "link": "/api/v1/json/families/dtyw",
+        "name": "Luminance SC"
+      },
+      {
+        "id": "spyf",
+        "link": "/api/v1/json/families/spyf",
+        "name": "Luxi Sans"
+      },
+      {
+        "id": "ssny",
+        "link": "/api/v1/json/families/ssny",
+        "name": "Luxi Serif"
+      },
+      {
+        "id": "qnch",
+        "link": "/api/v1/json/families/qnch",
+        "name": "M+ 1c"
+      },
+      {
+        "id": "gmnw",
+        "link": "/api/v1/json/families/gmnw",
+        "name": "M+ 1m "
+      },
+      {
+        "id": "wtdk",
+        "link": "/api/v1/json/families/wtdk",
+        "name": "Magion Web"
+      },
+      {
+        "id": "hxwt",
+        "link": "/api/v1/json/families/hxwt",
+        "name": "Metalista Web"
+      },
+      {
+        "id": "kzcb",
+        "link": "/api/v1/json/families/kzcb",
+        "name": "Mic 32 New Rounded Web"
+      },
+      {
+        "id": "qjtc",
+        "link": "/api/v1/json/families/qjtc",
+        "name": "Mic 32 New Web"
+      },
+      {
+        "id": "vswr",
+        "link": "/api/v1/json/families/vswr",
+        "name": "Moby"
+      },
+      {
+        "id": "lcgn",
+        "link": "/api/v1/json/families/lcgn",
+        "name": "Moby Monospaced"
+      },
+      {
+        "id": "jmcg",
+        "link": "/api/v1/json/families/jmcg",
+        "name": "Modesto"
+      },
+      {
+        "id": "xmgm",
+        "link": "/api/v1/json/families/xmgm",
+        "name": "Modesto Condensed"
+      },
+      {
+        "id": "jjrz",
+        "link": "/api/v1/json/families/jjrz",
+        "name": "Modesto Expanded"
+      },
+      {
+        "id": "vhpy",
+        "link": "/api/v1/json/families/vhpy",
+        "name": "Modesto Text"
+      },
+      {
+        "id": "jqzh",
+        "link": "/api/v1/json/families/jqzh",
+        "name": "Molengo"
+      },
+      {
+        "id": "mngr",
+        "link": "/api/v1/json/families/mngr",
+        "name": "Mono45 Headline"
+      },
+      {
+        "id": "kckf",
+        "link": "/api/v1/json/families/kckf",
+        "name": "Motor"
+      },
+      {
+        "id": "fzlg",
+        "link": "/api/v1/json/families/fzlg",
+        "name": "Motor Stencil"
+      },
+      {
+        "id": "htrh",
+        "link": "/api/v1/json/families/htrh",
+        "name": "Museo"
+      },
+      {
+        "id": "ycvr",
+        "link": "/api/v1/json/families/ycvr",
+        "name": "Museo Sans"
+      },
+      {
+        "id": "llxb",
+        "link": "/api/v1/json/families/llxb",
+        "name": "Museo Slab"
+      },
+      {
+        "id": "hldj",
+        "link": "/api/v1/json/families/hldj",
+        "name": "Neuropol Nova"
+      },
+      {
+        "id": "fgrc",
+        "link": "/api/v1/json/families/fgrc",
+        "name": "Newcomen"
+      },
+      {
+        "id": "jyxm",
+        "link": "/api/v1/json/families/jyxm",
+        "name": "Nimbus Sans"
+      },
+      {
+        "id": "cbsf",
+        "link": "/api/v1/json/families/cbsf",
+        "name": "Nimbus Sans Condensed"
+      },
+      {
+        "id": "wkbr",
+        "link": "/api/v1/json/families/wkbr",
+        "name": "Nimbus Sans Extended"
+      },
+      {
+        "id": "smsp",
+        "link": "/api/v1/json/families/smsp",
+        "name": "Nobile"
+      },
+      {
+        "id": "hhcn",
+        "link": "/api/v1/json/families/hhcn",
+        "name": "Old Standard"
+      },
+      {
+        "id": "jtcj",
+        "link": "/api/v1/json/families/jtcj",
+        "name": "Open Sans"
+      },
+      {
+        "id": "rfss",
+        "link": "/api/v1/json/families/rfss",
+        "name": "Orbitron"
+      },
+      {
+        "id": "dmfb",
+        "link": "/api/v1/json/families/dmfb",
+        "name": "Orgovan Rounded Web"
+      },
+      {
+        "id": "ltxb",
+        "link": "/api/v1/json/families/ltxb",
+        "name": "Oxtail"
+      },
+      {
+        "id": "gxfz",
+        "link": "/api/v1/json/families/gxfz",
+        "name": "Penna"
+      },
+      {
+        "id": "lmfs",
+        "link": "/api/v1/json/families/lmfs",
+        "name": "Penna Connected"
+      },
+      {
+        "id": "xchj",
+        "link": "/api/v1/json/families/xchj",
+        "name": "Penna Connected Swashes"
+      },
+      {
+        "id": "dpld",
+        "link": "/api/v1/json/families/dpld",
+        "name": "Penna Swashes"
+      },
+      {
+        "id": "fsrs",
+        "link": "/api/v1/json/families/fsrs",
+        "name": "Poplar Std"
+      },
+      {
+        "id": "qpkn",
+        "link": "/api/v1/json/families/qpkn",
+        "name": "Poster Clean"
+      },
+      {
+        "id": "tpnn",
+        "link": "/api/v1/json/families/tpnn",
+        "name": "Prociono"
+      },
+      {
+        "id": "lllr",
+        "link": "/api/v1/json/families/lllr",
+        "name": "PT Sans"
+      },
+      {
+        "id": "dydp",
+        "link": "/api/v1/json/families/dydp",
+        "name": "PT Sans Caption"
+      },
+      {
+        "id": "rmcr",
+        "link": "/api/v1/json/families/rmcr",
+        "name": "PT Sans Narrow"
+      },
+      {
+        "id": "xcqq",
+        "link": "/api/v1/json/families/xcqq",
+        "name": "PT Serif"
+      },
+      {
+        "id": "wnnk",
+        "link": "/api/v1/json/families/wnnk",
+        "name": "PT Serif Caption"
+      },
+      {
+        "id": "ccqc",
+        "link": "/api/v1/json/families/ccqc",
+        "name": "Puritan"
+      },
+      {
+        "id": "nqdy",
+        "link": "/api/v1/json/families/nqdy",
+        "name": "Raleway"
+      },
+      {
+        "id": "fbtr",
+        "link": "/api/v1/json/families/fbtr",
+        "name": "Reenie Beanie"
+      },
+      {
+        "id": "qwvc",
+        "link": "/api/v1/json/families/qwvc",
+        "name": "Report"
+      },
+      {
+        "id": "xngk",
+        "link": "/api/v1/json/families/xngk",
+        "name": "Restore"
+      },
+      {
+        "id": "gkhy",
+        "link": "/api/v1/json/families/gkhy",
+        "name": "Rosewood Std"
+      },
+      {
+        "id": "rcrp",
+        "link": "/api/v1/json/families/rcrp",
+        "name": "Rosewood Std Fill"
+      },
+      {
+        "id": "fjsz",
+        "link": "/api/v1/json/families/fjsz",
+        "name": "saxMono"
+      },
+      {
+        "id": "jzbt",
+        "link": "/api/v1/json/families/jzbt",
+        "name": "Share OSF"
+      },
+      {
+        "id": "vnrl",
+        "link": "/api/v1/json/families/vnrl",
+        "name": "Share Regular"
+      },
+      {
+        "id": "tszf",
+        "link": "/api/v1/json/families/tszf",
+        "name": "Share Tech"
+      },
+      {
+        "id": "ypjx",
+        "link": "/api/v1/json/families/ypjx",
+        "name": "Share TechMono"
+      },
+      {
+        "id": "dldb",
+        "link": "/api/v1/json/families/dldb",
+        "name": "Shrub"
+      },
+      {
+        "id": "wsxd",
+        "link": "/api/v1/json/families/wsxd",
+        "name": "Silkscreen"
+      },
+      {
+        "id": "pfsq",
+        "link": "/api/v1/json/families/pfsq",
+        "name": "Sniglet"
+      },
+      {
+        "id": "nnzs",
+        "link": "/api/v1/json/families/nnzs",
+        "name": "Sophisto"
+      },
+      {
+        "id": "xhsp",
+        "link": "/api/v1/json/families/xhsp",
+        "name": "Sophisto SC"
+      },
+      {
+        "id": "yrwy",
+        "link": "/api/v1/json/families/yrwy",
+        "name": "Sorts Mill Goudy"
+      },
+      {
+        "id": "djhf",
+        "link": "/api/v1/json/families/djhf",
+        "name": "Sovba"
+      },
+      {
+        "id": "pxyp",
+        "link": "/api/v1/json/families/pxyp",
+        "name": "Steinzeit"
+      },
+      {
+        "id": "dqqv",
+        "link": "/api/v1/json/families/dqqv",
+        "name": "Steinzeit Fill In"
+      },
+      {
+        "id": "qywd",
+        "link": "/api/v1/json/families/qywd",
+        "name": "Tandelle "
+      },
+      {
+        "id": "dwdh",
+        "link": "/api/v1/json/families/dwdh",
+        "name": "Tangerine"
+      },
+      {
+        "id": "qvsv",
+        "link": "/api/v1/json/families/qvsv",
+        "name": "Tenby Eight "
+      },
+      {
+        "id": "pxcb",
+        "link": "/api/v1/json/families/pxcb",
+        "name": "Tenby Five"
+      },
+      {
+        "id": "xxhj",
+        "link": "/api/v1/json/families/xxhj",
+        "name": "Tenby Four"
+      },
+      {
+        "id": "tcxj",
+        "link": "/api/v1/json/families/tcxj",
+        "name": "Tenby Seven"
+      },
+      {
+        "id": "kzrf",
+        "link": "/api/v1/json/families/kzrf",
+        "name": "Tenby Six"
+      },
+      {
+        "id": "yhln",
+        "link": "/api/v1/json/families/yhln",
+        "name": "Terfens"
+      },
+      {
+        "id": "plns",
+        "link": "/api/v1/json/families/plns",
+        "name": "Tinos"
+      },
+      {
+        "id": "jhhw",
+        "link": "/api/v1/json/families/jhhw",
+        "name": "Ubuntu"
+      },
+      {
+        "id": "kflc",
+        "link": "/api/v1/json/families/kflc",
+        "name": "Ubuntu Condensed"
+      },
+      {
+        "id": "vwkk",
+        "link": "/api/v1/json/families/vwkk",
+        "name": "Ubuntu Mono"
+      },
+      {
+        "id": "tvvb",
+        "link": "/api/v1/json/families/tvvb",
+        "name": "Velino Poster"
+      },
+      {
+        "id": "lvrl",
+        "link": "/api/v1/json/families/lvrl",
+        "name": "Vera Sans"
+      },
+      {
+        "id": "zlhl",
+        "link": "/api/v1/json/families/zlhl",
+        "name": "VM74"
+      },
+      {
+        "id": "pdhm",
+        "link": "/api/v1/json/families/pdhm",
+        "name": "Vollkorn"
+      },
+      {
+        "id": "tyqy",
+        "link": "/api/v1/json/families/tyqy",
+        "name": "Voluta Script Pro"
+      }
+    ],
+    "pagination": {
+      "count": 205,
+      "on": "families",
+      "page": 1,
+      "page_count": 1,
+      "per_page": 500
+    }
+  }
+}
