@@ -42,7 +42,7 @@ class Utils
     folder_path      = Rails.root.join("generated", better_file_name)
 
     PhotoshopItem::StylesHash.write_css_file folder_path
-    PhotoshopItem::Font.find_missing_fonts art_layers
+    PhotoshopItem::FontMap.find_web_fonts art_layers
     
     raw_file_name  = folder_path.join 'raw.html'
     html_file_name = folder_path.join 'index.html'
