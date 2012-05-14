@@ -5,6 +5,10 @@ class PhotoshopItem::FontMap
     'Helvetica World' => 'Helvetica'
   }
   
+  TYPEKIT_LIBRARY_TRIAL = 'Trial Library'
+  TYPEKIT_LIBRARY_FULL = 'Full Library'
+  TYPEKIT_LIBRARY_PERSONAL = 'Personal Library'
+  
   # Base fonts for browsers
   # http://en.wikipedia.org/wiki/Core_fonts_for_the_Web
   DEFAULT_FONTS = ['Helvetica', 'Lucida Sans', 'Tahoma', 'Andale Mono',
