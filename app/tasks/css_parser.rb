@@ -20,11 +20,6 @@ module CssParser
   CssParser::FONT_STYLE = {
     'Italic' => 'italic'
   }
-  
-  
-  CssParser::FONT_MAPS  = {
-    'Helvetica World' => 'Helvetica'
-  }
 
   def CssParser::parse_color(color_object)
     red   = (Integer(color_object[:value][:red][:value])).to_s(16)
@@ -37,13 +32,8 @@ module CssParser
     '#' + red + green + blue
   end
   
-  def CssParser::parse_font_name(font_item)
-    font        = font_item[:fontName][:value]
-    mapped_font = font
-
-    if CssParser::FONT_MAPS.has_key? font
-      mapped_font = CssParser::FONT_MAPS[font]
-    end
+  def CssParser::parse_font_name(layer)
+    mapped_font = PhotoshopItem::FontMap.get_font_name(layer)
     
     {:'font-family' => mapped_font}
   end
@@ -107,14 +97,13 @@ module CssParser
     css                 = {}
     
     # Font name
-    css.update(parse_font_name(font_info))    
+    css.update(parse_font_name(layer))    
     
     # Font-weight/style
     css.update(parse_font_style(font_info))
     
     # Font size
     css.update(parse_font_size(font_info))
-    
     
     # Shadows 
     css.update(parse_font_shadow(layer))
