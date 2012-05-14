@@ -195,8 +195,6 @@ def parse_file(json)
       puts "Box item: " + item[:name][:value]
       css = CssParser::parse_box(item)
     end
-
-    pp css
   end
 end
 
