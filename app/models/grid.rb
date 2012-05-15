@@ -301,14 +301,14 @@ class Grid
     #puts "Generating html for #{self.inspect}"
     css = args.fetch :css, {}
     
-    @layers.each do |layer|
+    self.style_layers.each do |layer|
       css.update layer.get_css({}, @is_root)
     end
     
     css_class = PhotoshopItem::StylesHash.add_and_get_class Converter::to_style_string css
     
-    if not @width_class.nil?
-      css_class = "#{css_class} #{@width_class}"
+    if not self.width_class.nil?
+      css_class = "#{css_class} #{self.width_class}"
     end
 
     # Is this required for grids?
@@ -318,18 +318,18 @@ class Grid
     attributes[:class] = css_class if not css_class.nil?
     
     children_override_css = Hash.new
-    if @orientation == :left
+    if self.orientation == :left
       children_override_css[:float] = 'left' 
     end
 
     sub_grid_args = Hash.new
     sub_grid_args[:css] = children_override_css
     
-    @sub_grids.each do |sub_grid|
+    self.children.each do |sub_grid|
       inner_html += sub_grid.to_html sub_grid_args
     end
     
-    if not @sub_grids.empty? and @orientation == :left
+    if not self.children.empty? and self.orientation == :left
       inner_html += content_tag :div, " ", { :style => "clear: both" }, false
     end
     
