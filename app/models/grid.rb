@@ -131,7 +131,7 @@ class Grid
 
       layers.each do |layer|
         if layer.bounds == max_bounds
-          if layer.kind == PhotoshopItem::Layer::LAYER_SOLIDFILL or layer.kind == PhotoshopItem::Layer::LAYER_NORMAL
+          if layer.kind == Layer::LAYER_SOLIDFILL or layer.kind == Layer::LAYER_NORMAL
             style_layers.push layer
           end
         end
