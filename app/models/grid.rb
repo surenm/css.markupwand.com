@@ -260,12 +260,13 @@ class Grid
   def to_html(args = {})
     #puts "Generating html for #{self.inspect}"
     css = args.fetch :css, {}
+    styles_hash = args[:styles_hash]
     
     @layers.each do |layer|
       css.update layer.get_css({}, @is_root)
     end
     
-    css_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string css
+    css_class = styles_hash.add_and_get_class CssParser::to_style_string css
 
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
@@ -277,9 +278,11 @@ class Grid
     if @orientation == :left
       children_override_css[:float] = 'left' 
     end
-
+    
     sub_grid_args = Hash.new
-    sub_grid_args[:css] = children_override_css
+    sub_grid_args[:css]         = children_override_css
+    sub_grid_args[:styles_hash] = styles_hash
+    sub_grid_args[:font_map]    = args[:font_map]
     
     @sub_grids.each do |sub_grid|
       inner_html += sub_grid.to_html sub_grid_args
