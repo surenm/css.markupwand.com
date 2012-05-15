@@ -44,12 +44,12 @@ class Utils
     wrapper.close
     
     html.gsub! "{yield}", body_html
+    html.gsub! "{webfonts}", font_map.webfont_code
     
     better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ', '_')
     folder_path      = Rails.root.join("generated", better_file_name)
-
-    PhotoshopItem::StylesHash.write_css_file folder_path
-    PhotoshopItem::FontMap.find_web_fonts art_layers
+    
+    styles_hash.write_css_file folder_path
     
     raw_file_name  = folder_path.join 'raw.html'
     html_file_name = folder_path.join 'index.html'
