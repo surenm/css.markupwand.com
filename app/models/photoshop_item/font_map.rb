@@ -37,10 +37,24 @@ class PhotoshopItem::FontMap
       pp typekit_fonts[font]
       pp google_fonts[font]
       webfonts[font] = typekit_fonts[font] + google_fonts[font]
+  def webfont_code
+    # TODO Generate this depending upon user
+    # The javascript url is user specific.
+    typekit_code = <<HTML
+    <script type="text/javascript" src="http://use.typekit.com/kdl3dlc.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>  
+HTML
+    webfont_code = ''
+  
+    if @typekit_install_urls.length > 0
+      webfont_code += typekit_code
     end
     
-    pp webfonts
+    if not @google_webfont_code.empty?
+      webfont_code += @google_webfont_code
+    end
     
+    webfont_code
   end
   
   def show_install_urls
