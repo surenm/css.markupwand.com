@@ -63,4 +63,9 @@ CLASS_BLOCK
     return css_data
   end
   
+  def self.get_bootstrap_width_class(width)
+    spanx = ((12*width)/960).round.to_i
+    return "span#{spanx}"
+  end
+  
 end

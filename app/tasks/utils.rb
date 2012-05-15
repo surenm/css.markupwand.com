@@ -54,8 +54,17 @@ class Utils
     
     better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ', '_')
     folder_path      = Rails.root.join("generated", better_file_name)
+
+    # Create assets folder
+    assets_path = folder_path.join "assets"
+    FileUtils.mkdir_p assets_path
     
+    # Write style.css file
     styles_hash.write_css_file folder_path
+    
+    
+    # Copy bootstrap to assets folder
+    FileUtils.cp_r Rails.root.join("app", "assets", "bootstrap", "docs", "assets", "css"), folder_path.join("assets")
     
     raw_file_name  = folder_path.join 'raw.html'
     html_file_name = folder_path.join 'index.html'
