@@ -1,47 +1,50 @@
-class PhotoshopItem::Layer
+class Layer
+  include Mongoid::Document
+  include Mongoid::Timestamps::Created
+  include Mongoid::Timestamps::Updated  
   include ActionView::Helpers::TagHelper
-
-  attr_accessor :bounds, :name, :layer, :kind, :uid
-
 
   LAYER_TEXT        = "LayerKind.TEXT"
   LAYER_SMARTOBJECT = "LayerKind.SMARTOBJECT"
   LAYER_SOLIDFILL   = "LayerKind.SOLIDFILL"
   LAYER_NORMAL      = "LayerKind.NORMAL"
+  
+  belongs_to :grid
+  
+  field :uid, :type  => String
+  field :name, :type => String
+  field :kind, :type => String
+  field :raw, :type  => String
+  field :layer_type, :type => String, :default => nil
 
-  def initialize(layer)
-    bound_json = layer[:bounds]
-    @name   = layer[:name][:value]
-    @kind   = layer[:layerKind]
-    @uid    = layer[:layerID][:value]
-
-    self.layer  = layer
-
-    value    = bound_json[:value]
-    top     = value[:top][:value]
-    bottom  = value[:bottom][:value]
-    left    = value[:left][:value]
-    right   = value[:right][:value]
-    @is_root = false
-
-    @bounds = BoundingBox.new(top, left, bottom, right)
-
+  def set(layer)
+    self.name       = layer[:name][:value]
+    self.kind       = layer[:layerKind]
+    self.layer_type = layer[:layerType]
+    self.uid        = layer[:layerID][:value]
+    self.raw        = layer.to_json.to_s
+    self.save!
   end
   
-  def to_s
-    @name
+  def inspect
+    self.name
   end
-
-  # Sets that it is a root
-  def is_a_root_node
-    @is_root = true
+  
+  def layer_json
+    JSON.parse self.raw, :symbolize_names => true
   end
+  
+  def bounds
+    value  = layer_json[:bounds][:value]
+    top    = value[:top][:value]
+    bottom = value[:bottom][:value]
+    left   = value[:left][:value]
+    right  = value[:right][:value]
 
-  def is_not_root_node
-    @is_root = false
+    @bounds = BoundingBox.new(top, left, bottom, right)
   end
-
-  def <=> (other_layer)
+  
+  def <=>(other_layer)
     self.bounds <=> other_layer.bounds
   end
 
@@ -49,14 +52,10 @@ class PhotoshopItem::Layer
     return false if other_layer == nil
     return (
     self.bounds == other_layer.bounds and
-    self.name == other_layer.name and
-    self.children == other_layer.children
+    self.name == other_layer.name
     )
   end
 
-  # TODO: This is a hard limit encloses function.
-  # This actually has to be something like if the areas intersect for more than 50% or so
-  # then the bigger one encloses the smaller one.
   def encloses?(other_layer)
     return self.bounds.encloses? other_layer.bounds
   end
@@ -66,51 +65,45 @@ class PhotoshopItem::Layer
   end
   
   def is_non_smart_image?
-    return !self.layer[:layerType].nil? && self.layer[:layerType]=='IMAGE' 
+    self.layer_type == 'IMAGE'
   end 
 
   def image_path
-    if layer_kind == LAYER_SMARTOBJECT
+    if self.kind == LAYER_SMARTOBJECT
       Converter::get_image_path self
-    elsif layer_kind == LAYER_NORMAL
+    elsif self.kind == LAYER_NORMAL
       if self.is_non_smart_image?
-        return self.layer[:imagePath]
+        return layer_json[:imagePath]
       else
         nil
       end
     end
   end
 
-  def layer_kind
-    self.layer[:layerKind]
-  end
-
   def tag
-    if @is_root
-      :body
-    elsif layer_kind == LAYER_SMARTOBJECT
+    if self.kind == LAYER_SMARTOBJECT
       :img
-    elsif layer_kind == LAYER_NORMAL
+    elsif self.kind == LAYER_NORMAL
       if self.is_non_smart_image?
         :img
       else
         :div
       end
-    elsif layer_kind  == LAYER_TEXT or layer_kind == LAYER_SOLIDFILL
+    elsif self.kind  == LAYER_TEXT or self.kind == LAYER_SOLIDFILL
       :div
     else
-      Log.info "New layer found #{layer_kind} for layer #{self.name}"
+      Log.info "New layer found #{self.kind} for layer #{self.name}"
       :div
     end
   end
 
   def get_css(css = {}, is_root = false)
-    if layer_kind == LAYER_TEXT
-      css.update Converter::parse_text self.layer
-    elsif layer_kind == LAYER_SMARTOBJECT
+    if self.kind == LAYER_TEXT
+      css.update Converter::parse_text layer_json
+    elsif self.kind == LAYER_SMARTOBJECT
       # don't do anything
-    elsif layer_kind == LAYER_SOLIDFILL
-      css.update Converter::parse_box self.layer
+    elsif self.kind == LAYER_SOLIDFILL
+      css.update Converter::parse_box layer_json
       if is_root
         css.delete :width
         css.delete :height
@@ -129,8 +122,8 @@ class PhotoshopItem::Layer
   end
 
   def text
-    if layer_kind == LAYER_TEXT
-      self.layer[:textKey][:value][:textKey][:value]
+    if self.kind == LAYER_TEXT
+      layer_json[:textKey][:value][:textKey][:value]
     else
       ''
     end
@@ -142,7 +135,7 @@ class PhotoshopItem::Layer
     css_class = class_name css, @is_root
     
     inner_html = args.fetch :inner_html, ''
-    if inner_html.empty? and layer_kind == LAYER_TEXT
+    if inner_html.empty? and self.kind == LAYER_TEXT
       inner_html = text
     end
     
@@ -154,7 +147,6 @@ class PhotoshopItem::Layer
     else
       html = content_tag tag, inner_html, attributes, false
     end
-    
     return html
   end
 end
