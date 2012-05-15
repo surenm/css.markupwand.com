@@ -1,9 +1,8 @@
 class PhotoshopItem::Layer
   include ActionView::Helpers::TagHelper
 
-  attr_accessor :bounds, :name, :layer, :kind, :uid
-
-
+  attr_accessor :bounds, :name, :layer, :kind, :uid, :font_map_ref, :styles_hash_ref
+  
   LAYER_TEXT        = "LayerKind.TEXT"
   LAYER_SMARTOBJECT = "LayerKind.SMARTOBJECT"
   LAYER_SOLIDFILL   = "LayerKind.SOLIDFILL"
@@ -25,7 +24,6 @@ class PhotoshopItem::Layer
     @is_root = false
 
     @bounds = BoundingBox.new(top, left, bottom, right)
-
   end
   
   def to_s
@@ -45,7 +43,7 @@ class PhotoshopItem::Layer
     self.bounds <=> other_layer.bounds
   end
 
-  def ==(other_layer)
+  def == (other_layer)
     return false if other_layer == nil
     return (
     self.bounds == other_layer.bounds and
@@ -102,7 +100,7 @@ class PhotoshopItem::Layer
 
   def get_css(css = {}, is_root = false)
     if @kind == LAYER_TEXT
-      css.update CssParser::parse_text self.layer
+      css.update CssParser::parse_text self.layer, @font_map_ref
     elsif @kind == LAYER_SMARTOBJECT
       # don't do anything
     elsif @kind == LAYER_SOLIDFILL
@@ -121,7 +119,7 @@ class PhotoshopItem::Layer
 
   def class_name(css = {}, is_root = false)
     css = get_css(css, is_root)
-    PhotoshopItem::StylesHash.add_and_get_class(CssParser::to_style_string(css))
+    @styles_hash_ref.add_and_get_class(CssParser::to_style_string(css))
   end
 
   def text
@@ -135,7 +133,9 @@ class PhotoshopItem::Layer
   def to_html(args = {})
     #puts "Generating html for #{self.inspect}"
     css = args.fetch :css, {}
-    css_class = class_name css, @is_root
+    @styles_hash_ref = args[:styles_hash]
+    @font_map_ref    = args[:font_map]
+    css_class        = class_name css, @is_root
     
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and @kind == LAYER_TEXT
