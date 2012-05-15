@@ -174,18 +174,26 @@ class Grid
     "Style Layers: #{@layers}, Sub grids: #{@sub_grids.size}"
   end
   
-  def add_style_layers(layers)
-    @layers.push layers
-    @layers.flatten!
+    
+  def add_style_layers(grid_style_layers)
+    if grid_style_layers.class.to_s == "Array"
+      grid_style_layers.flatten!
+      grid_style_layers.each { |style_layer| self.style_layers.push style_layer }
+    else 
+      self.style_layers.push grid_style_layers
+    end
   end
     
   def group!
-    if @nodes.size > 1 
-      @sub_grids = get_subgrids
-    elsif @nodes.size == 1
-      Log.debug "Just one layer #{@nodes.first} is available. Adding to the grid"
-      @sub_grids.push @nodes.first  # Trivial. Just one layer is a child of this layer
+    if self.layers.size > 1 
+      self.children = get_subgrids
+    elsif self.layers.size == 1
+      Log.debug "Just one layer #{self.layers.first} is available. Adding to the grid"
+      grid = Grid.new 
+      grid.set self.layers, self
+      self.children.push grid
     end
+    self.save!
   end
 
   def get_subgrids
