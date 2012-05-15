@@ -12,8 +12,18 @@ class Grid
 
   has_many :layers, :class_name => 'Layer'
   has_many :style_layers, :class_name => 'Layer'
+  # fields relevant for a grid
+  field :name, :type => String
+  field :hash, :type => String
   field :orientation, :type => String, :default => :normal
   field :root, :type => Boolean, :default => false
+  field :optimized, :type => Boolean, :default => false
+  
+  field :tag, :type => String, :default => :div
+  field :override_tag, :type => String, :default => nil
+  
+  field :width_class, :type => String
+  field :override_width_class, :type => String, :default => nil
 
   Grid::GROUPING_QUEUE = Queue.new
   
