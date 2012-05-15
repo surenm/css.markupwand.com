@@ -32,8 +32,8 @@ module CssParser
     '#' + red + green + blue
   end
   
-  def CssParser::parse_font_name(layer)
-    mapped_font = PhotoshopItem::FontMap.get_font_name(layer)
+  def CssParser::parse_font_name(layer, font_map_ref)
+    mapped_font = font_map_ref.get_font_name(layer)
     
     {:'font-family' => mapped_font}
   end
@@ -90,14 +90,14 @@ module CssParser
   end
   
   # Returns a hash for CSS styles
-  def CssParser::parse_text(layer)
+  def CssParser::parse_text(layer, font_map_ref)
     text_style = layer[:textKey][:value][:textStyleRange][:value].first
     font_info  = text_style[:value][:textStyle][:value]
     
     css                 = {}
     
     # Font name
-    css.update(parse_font_name(layer))    
+    css.update(parse_font_name(layer, font_map_ref))    
     
     # Font-weight/style
     css.update(parse_font_style(font_info))
