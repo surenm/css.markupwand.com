@@ -143,32 +143,31 @@ class Grid
     return style_layers
   end
   
-  def initialize(nodes, parent)
-    @nodes     = nodes    # The layers enclosed by this Grid
-    @parent    = parent   # Parent grid for this grid
-    @layers    = []       # Set of children style layers for this grid
-    @sub_grids = []       # children for this grid
-    @orientation = :normal
+  
+  def set(layers, parent)
+    layers.each { |layer| self.layers.push layer }
 
-    @is_root = false    # if the grid is the root node or the <body> tag for this html
+    self.parent = parent   # Parent grid for this grid
     
-    if @parent == nil
+    if self.parent == nil
       Log.info "Setting the root node"
-      @is_root = true
+      self.root = true
       Grid::GROUPING_QUEUE.push self
     end
     
-    if nodes.empty?
+    if layers.empty?
       @bounds = nil
     else
-      node_bounds = nodes.collect {|node| node.bounds}
+      node_bounds = layers.collect {|layer| layer.bounds}
       @bounds = BoundingBox.get_super_bounds node_bounds
       width = @bounds.width
       if width <= 960
-        @width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class width
+        self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class width
       end
-      @nodes.sort!
+      self.layers.sort!
     end
+
+    self.save!
   end
   
   def inspect
