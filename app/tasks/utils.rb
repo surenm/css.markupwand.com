@@ -35,9 +35,15 @@ class Utils
     grid = Grid.new nodes, nil
     
     Grid.group!
-
+    
     Log.info "Generating body HTML..."    
-    body_html = grid.to_html
+    
+    # Passing around the reference for styles hash and font map
+    # Other way would be to have a singleton function, would change if it gets
+    # messier.
+    body_html = grid.to_html({ 
+      :styles_hash => styles_hash, 
+      :font_map => font_map })
     
     wrapper   = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html      = wrapper.read
