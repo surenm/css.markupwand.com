@@ -10,6 +10,7 @@ class Grid
 
   has_many :layers, :class_name => 'Layer'
   has_many :style_layers, :class_name => 'Layer'
+  
   # fields relevant for a grid
   field :name, :type => String
   field :hash, :type => String
@@ -169,11 +170,6 @@ class Grid
 
     self.save!
   end
-  
-  def inspect
-    "Style Layers: #{@layers}, Sub grids: #{@sub_grids.size}"
-  end
-  
     
   def add_style_layers(grid_style_layers)
     if grid_style_layers.class.to_s == "Array"
@@ -185,12 +181,15 @@ class Grid
   end
     
   def group!
-    if self.layers.size > 1 
-      self.children = get_subgrids
+    if self.layers.size > 1
+      children_subgrids = get_subgrids
+      self.children.push children_subgrids
     elsif self.layers.size == 1
+      Log.fatal self.layers
       Log.debug "Just one layer #{self.layers.first} is available. Adding to the grid"
       grid = Grid.new 
       grid.set self.layers, self
+      grid.save!
       self.children.push grid
     end
     self.save!
@@ -290,7 +289,7 @@ class Grid
   end
   
   def tag
-    if @is_root
+    if self.root
       :body
     else
       :div
@@ -302,7 +301,7 @@ class Grid
     css = args.fetch :css, {}
     
     self.style_layers.each do |layer|
-      css.update layer.get_css({}, @is_root)
+      css.update layer.get_css({}, self.root)
     end
     
     css_class = PhotoshopItem::StylesHash.add_and_get_class Converter::to_style_string css
