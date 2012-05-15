@@ -17,26 +17,31 @@ class PhotoshopItem::FontMap
      'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Georgia',
      'Impact', 'Times New Roman', 'Trebuchet MS', 'Verdana', 'Webdings']
   
-  def self.find_web_fonts(layers)
+  # Find out fonts and urls from
+  # Google and Typekit
+  def find_web_fonts    
     fonts_list = []
-    layers.each do |layer_id, layer|
-       fonts_list.push PhotoshopItem::FontMap.get_font_name(layer)
+    @layers.each do |layer_id, layer|
+       fonts_list.push get_font_name(layer, raw = true)
     end
-    
     fonts_list.uniq!
     fonts_list.compact!
+    
+    # Remove browser default fonts from the list of fonts.
     fonts_list = fonts_list - DEFAULT_FONTS
     
-    fonts_list
+    typekit_fonts = find_in_typekit(fonts_list)
+    google_fonts  = find_in_google(fonts_list)
     
-    typekit_fonts = PhotoshopItem::FontMap.find_in_typekit(fonts_list)
-    google_fonts  =  PhotoshopItem::FontMap.find_in_google_webfonts(fonts_list)
+    font_map = {}
+    font_map.update typekit_fonts[:map]
+    font_map.update google_fonts[:map]
     
-    webfonts = {}
-    fonts_list.each do |font|
-      pp typekit_fonts[font]
-      pp google_fonts[font]
-      webfonts[font] = typekit_fonts[font] + google_fonts[font]
+    @font_map             = font_map
+    @google_webfont_code  = google_fonts[:webfont_code]
+    @typekit_install_urls = typekit_fonts[:install_url]
+  end
+  
   def webfont_code
     # TODO Generate this depending upon user
     # The javascript url is user specific.
