@@ -13,6 +13,13 @@ class Utils
     art_layers = psd_data[:art_layers]
     layer_sets = psd_data[:layer_sets]  
 
+
+    # Initialize styles hash and font map
+    font_map    = PhotoshopItem::FontMap.new art_layers
+    font_map.find_web_fonts
+    
+    styles_hash = PhotoshopItem::StylesHash.new font_map
+    
     # Layer descriptors of all photoshop layers
         
     Log.info "Getting nodes..."
