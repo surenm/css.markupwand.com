@@ -1,10 +1,8 @@
 class Grid
   include Mongoid::Document
   include Mongoid::Timestamps::Created
-  include Mongoid::Timestamps::Updated
-  
+  include Mongoid::Timestamps::Updated  
   include ActionView::Helpers::TagHelper
-  attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer, :orientation
 
   # self references for children and parent grids
   has_many :children, :class_name => 'Grid', :inverse_of => :parent
