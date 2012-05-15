@@ -43,7 +43,18 @@ class PhotoshopItem::FontMap
     
   end
   
-  def self.find_in_typekit(fonts_list)
+  def show_install_urls
+    # Return the installable fonts to be clicked in UI
+    
+    if @typekit_install_urls.length > 0
+      Log.info "Install these typekit fonts:" 
+      @typekit_install_urls.each do |font_url|
+        Log.info font_url
+      end
+    end
+  end
+  
+  def find_in_typekit(fonts_list)
     typekit_folder = Rails.root.join('db','json','typekit_fonts')
     files = Dir.new(typekit_folder).entries
     files.slice! 0, 2 # Remove '.' and '..'
