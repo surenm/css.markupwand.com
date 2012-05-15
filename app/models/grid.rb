@@ -276,7 +276,7 @@ class Grid
           Grid::GROUPING_QUEUE.push grid
           row_grid.children.push grid
         end
-
+        row_grid.save!
       end
       if row_grid.children.size == 1
         subgrid = row_grid.children.first
