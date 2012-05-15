@@ -175,9 +175,9 @@ module Converter
 
   def Converter::get_image_path(layer)
     if layer.is_non_smart_image?
-      file = layer.layer[:imagePath]
+      file = layer.layer_json[:imagePath]
     else
-      file = layer.layer[:smartObject][:value][:fileReference][:value]
+      file = layer.layer_json[:smartObject][:value][:fileReference][:value]
     end
     "/tmp/"+ file
   end
@@ -206,8 +206,6 @@ def parse_file(json)
       puts "Box item: " + item[:name][:value]
       css = Converter::parse_box(item)
     end
-
-    pp css
   end
 end
 
