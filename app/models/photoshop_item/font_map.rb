@@ -63,27 +63,39 @@ class PhotoshopItem::FontMap
     # Create empty hash
     fonts_list.each { |font| font_matches[font] = [] }
     
-    
+    # Make this better. Exact matches should have higher priority
     files.each do |file|
       file_path = typekit_folder.join(file)
       font_data = JSON.parse(File.open(file_path).read)
-      library_type = font_data['library']['name']
       
       fonts_list.each do |font_name|
         matches = font_data['library']['families'].find_all do |typekit_font|
           typekit_font['name'] =~ /#{font_name}/i
         end 
-        
-        matches.each_with_index do |item,index|
-          matches[index]['library_type'] = library_type
-          matches[index]['source'] = 'typekit'
-        end
-        
+                        
         font_matches[font_name] += matches
+        
+        # Unique them
+        font_matches[font_name].uniq! { |font_item| font_item['id'] }
+        
       end
     end
     
-    font_matches
+    font_map  = {}
+    font_urls = []
+    
+    # Pick out the uniq items
+    # Right now, pick the first item. Optimize this later.
+    fonts_list.each do |font|
+      if not font_matches[font].empty?
+        font_data = font_matches[font].first
+        font_json = ApplicationHelper::get_json("http://typekit.com#{font_data['link']}")
+        font_map[font]  = font_json['family']['slug']
+        font_urls.push font_json['family']['web_link']
+      end
+    end
+    
+    { :install_url => font_urls, :map => font_map }
   end
   
   # Gives out a font map to be used in css and 
