@@ -63,6 +63,8 @@ class Utils
     system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
     
     Log.info "Successfully completed processing #{better_file_name}."
+    font_map.show_install_urls
+     
     return
   end
 end
