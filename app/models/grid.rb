@@ -197,17 +197,17 @@ class Grid
   end
 
   def get_subgrids
-    Log.debug "Getting subgrids (#{self.nodes.length} nodes in this grid)"
+    Log.debug "Getting subgrids (#{self.layers.length} layers in this grid)"
     
     # Subgrids at this level
     subgrids = [] 
     
     # Some root grouping of nodes to recursivel add as children
-    root_group = Grid.get_grouping_boxes @nodes
+    root_group = Grid.get_grouping_boxes self.layers
     Log.debug "Root groups #{root_group}"
 
     # list of layers in this grid.
-    layers = @nodes
+    layers = self.layers
     initial_layers_count = layers.size
     available_nodes = Hash[layers.collect { |item| [item.uid, item] }]
         
@@ -226,7 +226,9 @@ class Grid
     root_group.children.each do |row_group|
       layers = available_nodes.values
       
-      row_grid = Grid.new [], self
+      row_grid = Grid.new
+      row_grid.set [], self
+      
       row_grid.orientation = row_group.orientation
       row_layers = layers.select { |layer| row_group.bounds.encloses? layer.bounds }
       
@@ -262,7 +264,8 @@ class Grid
           Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
           
           nodes_in_region.each {|node| available_nodes.delete node.uid}
-          grid = Grid.new nodes_in_region, row_grid
+          grid = Grid.new
+          grid.set nodes_in_region, row_grid
           
           style_layers.each do |style_layer|
             Log.debug "Style node: #{style_layer.name}"
@@ -271,15 +274,15 @@ class Grid
           end
           
           Grid::GROUPING_QUEUE.push grid
-          row_grid.sub_grids.push grid
+          row_grid.children.push grid
         end
 
       end
-      if row_grid.sub_grids.size == 1
-        subgrid = row_grid.sub_grids.first
+      if row_grid.children.size == 1
+        subgrid = row_grid.children.first
         subgrid.parent = self
         subgrids.push subgrid
-      elsif row_grid.sub_grids.size > 1
+      elsif row_grid.children.size > 1
         subgrids.push row_grid
       end
     end
