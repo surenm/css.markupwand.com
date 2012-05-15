@@ -1,13 +1,15 @@
 class PhotoshopItem::FontMap
   
-  
   FONT_MAP = {
     'Helvetica World' => 'Helvetica'
   }
   
-  TYPEKIT_LIBRARY_TRIAL = 'Trial Library'
-  TYPEKIT_LIBRARY_FULL = 'Full Library'
-  TYPEKIT_LIBRARY_PERSONAL = 'Personal Library'
+  attr_accessor :layers, :font_map, :typekit_install_urls
+  
+  def initialize(layers)
+    @layers = layers
+    @font_map = Hash.new
+  end
   
   # Base fonts for browsers
   # http://en.wikipedia.org/wiki/Core_fonts_for_the_Web
