@@ -9,9 +9,9 @@ class Grid
   # self references for children and parent grids
   has_many :children, :class_name => 'Grid', :inverse_of => :parent
   belongs_to :parent, :class_name => 'Grid', :inverse_of => :children
-  
-  field :layers, :type => Array
-  field :style_layers, :type => Array
+
+  has_many :layers, :class_name => 'Layer'
+  has_many :style_layers, :class_name => 'Layer'
   field :orientation, :type => String, :default => :normal
   field :root, :type => Boolean, :default => false
 
