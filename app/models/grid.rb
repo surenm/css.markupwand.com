@@ -10,6 +10,7 @@ class Grid
 
   has_many :layers, :class_name => 'Layer'
   has_many :style_layers, :class_name => 'Layer'
+  has_many :render_layers, :class_name => 'Layer'
   
   # fields relevant for a grid
   field :name, :type => String
@@ -34,7 +35,6 @@ class Grid
     while not Grid::GROUPING_QUEUE.empty?
       grid = Grid::GROUPING_QUEUE.pop
       grid.group!
-      Log.debug grid
     end
   end
 
@@ -185,12 +185,8 @@ class Grid
       children_subgrids = get_subgrids
       self.children.push children_subgrids
     elsif self.layers.size == 1
-      Log.fatal self.layers
       Log.debug "Just one layer #{self.layers.first} is available. Adding to the grid"
-      grid = Grid.new 
-      grid.set self.layers, self
-      grid.save!
-      self.children.push grid
+      self.render_layers.push self.layers.first
     end
     self.save!
   end
@@ -323,6 +319,10 @@ class Grid
 
     sub_grid_args = Hash.new
     sub_grid_args[:css] = children_override_css
+    
+    self.render_layers.each do |layer|
+      inner_html += layer.to_html sub_grid_args
+    end
     
     self.children.each do |sub_grid|
       inner_html += sub_grid.to_html sub_grid_args
