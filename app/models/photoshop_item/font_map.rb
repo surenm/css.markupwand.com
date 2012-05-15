@@ -75,14 +75,20 @@ class PhotoshopItem::FontMap
     font_matches
   end
   
-  def self.find_in_google_webfonts(fonts_list)
+  # Gives out a font map to be used in css and 
+  # URL to be inserted for getting those fonts.
+  # 
+  # Returns a hash, embed_url and font_map
+  def find_in_google(fonts_list)
     google_folder =  Rails.root.join('db','json','google_webfonts')
     files = Dir.new(google_folder).entries
     files.slice! 0, 2 # Remove '.' and '..'
+  
+    font_name_array = []
     
     font_matches = {}
     # Create empty hash
-    fonts_list.each { |font| font_matches[font] = [] }
+    fonts_list.each { |font| font_matches[font] = nil }
     
     files.each do |file|
       file_path = google_folder.join(file)
@@ -93,17 +99,31 @@ class PhotoshopItem::FontMap
           google_font['family'] =~ /#{font_name}/i
         end
         
-        matches.each_with_index do |item,index|
-          matches[index]['name'] = matches[index]['name']
-          matches[index]['source'] = 'google'
+        if matches.length > 0
+          font_matches[font_name] = matches.first
         end
-        
-        font_matches[font_name] += matches
+    
       end
     end
     
-    font_matches
+    font_map = {}
+    font_matches.each do |font_name, font_data|
+      if font_data
+        font_map[font_name] = font_data['family']
+      end
+    end
     
+    font_map.each { |name, family| font_name_array.push family.gsub(' ', '+') }
+    font_url_suffix = font_name_array.join '|'
+    if font_name_array.length > 0
+      webfont_code = <<HTML
+<link href='http://fonts.googleapis.com/css?family=#{font_url_suffix}' rel='stylesheet' type='text/css'>
+HTML
+    else
+      webfont_code = ''
+    end
+
+    {:webfont_code => webfont_code, :map => font_map }
   end
   
   def get_font_name(layer, raw = false)
