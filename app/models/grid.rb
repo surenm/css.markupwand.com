@@ -27,6 +27,10 @@ class Grid
 
   Grid::GROUPING_QUEUE = Queue.new
   
+  def inspect
+    self.id
+  end
+  
   def self.reset_grouping_queue
     Grid::GROUPING_QUEUE.clear
   end
