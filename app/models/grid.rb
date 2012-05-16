@@ -160,19 +160,25 @@ class Grid
       Grid::GROUPING_QUEUE.push self
     end
     
-    if layers.empty?
-      @bounds = nil
-    else
-      node_bounds = layers.collect {|layer| layer.bounds}
-      @bounds = BoundingBox.get_super_bounds node_bounds
-      width = @bounds.width
+    if not bounds.nil?
+      width = bounds.width
       if width <= 960
         self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class width
       end
-      self.layers.sort!
     end
-
+    
+    self.layers.sort!
     self.save!
+  end
+  
+  def bounds
+    if layers.empty?
+      bounds = nil
+    else
+      node_bounds = self.layers.collect {|layer| layer.bounds}
+      bounds = BoundingBox.get_super_bounds node_bounds
+    end
+    return bounds
   end
     
   def add_style_layers(grid_style_layers)
