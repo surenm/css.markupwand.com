@@ -1,6 +1,6 @@
 class Grid
   include ActionView::Helpers::TagHelper
-  attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer, :orientation
+  attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer, :orientation, :fit_to_grid
 
   Grid::GROUPING_QUEUE = Queue.new
   
@@ -128,6 +128,7 @@ class Grid
     @layers    = []       # Set of children style layers for this grid
     @sub_grids = []       # children for this grid
     @orientation = :normal
+    @fit_to_grid = false  # TODO Read this from configuration for that render. 
 
     @is_root = false    # if the grid is the root node or the <body> tag for this html
     
@@ -143,7 +144,7 @@ class Grid
       node_bounds = nodes.collect {|node| node.bounds}
       @bounds = BoundingBox.get_super_bounds node_bounds
       width = @bounds.width
-      if width <= 960
+      if width <= 960 and @fit_to_grid
         @width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class width
       end
       @nodes.sort!
