@@ -192,8 +192,7 @@ class Grid
     
   def group!
     if self.layers.size > 1
-      children_subgrids = get_subgrids
-      self.children.push children_subgrids
+      get_subgrids
     elsif self.layers.size == 1
       Log.debug "Just one layer #{self.layers.first} is available. Adding to the grid"
       self.render_layers.push self.layers.first
@@ -204,20 +203,17 @@ class Grid
   def get_subgrids
     Log.debug "Getting subgrids (#{self.layers.length} layers in this grid)"
     
-    # Subgrids at this level
-    subgrids = [] 
-    
     # Some root grouping of nodes to recursivel add as children
     root_group = Grid.get_grouping_boxes self.layers
     Log.debug "Root groups #{root_group}"
 
     # list of layers in this grid.
-    layers = self.layers
-    initial_layers_count = layers.size
-    available_nodes = Hash[layers.collect { |item| [item.uid, item] }]
+    itr_layers = self.layers
+    initial_layers_count = itr_layers.size
+    available_nodes = Hash[itr_layers.collect { |item| [item.uid, item] }]
         
     # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
-    root_style_layers = Grid.get_style_layers layers, root_group
+    root_style_layers = Grid.get_style_layers itr_layers, root_group
     Log.info "Root style layers are #{root_style_layers}" if root_style_layers.size > 0
     Log.debug "Root style layers are #{root_style_layers}"
 
@@ -229,13 +225,13 @@ class Grid
     root_style_layers.each { |root_style_layer| available_nodes.delete root_style_layer.uid}
 
     root_group.children.each do |row_group|
-      layers = available_nodes.values
+      current_layers = available_nodes.values
       
       row_grid = Grid.new
       row_grid.set [], self
       
       row_grid.orientation = row_group.orientation
-      row_layers = layers.select { |layer| row_group.bounds.encloses? layer.bounds }
+      row_layers = current_layers.select { |layer| row_group.bounds.encloses? layer.bounds }
       
       row_style_layers = Grid.get_style_layers row_layers, row_group
       Log.info "Row style layers are #{row_style_layers}" if row_style_layers.size > 0
@@ -279,19 +275,11 @@ class Grid
           end
           
           Grid::GROUPING_QUEUE.push grid
-          row_grid.children.push grid
+          row_grid.save!
         end
-        row_grid.save!
-      end
-      if row_grid.children.size == 1
-        subgrid = row_grid.children.first
-        subgrid.parent = self
-        subgrids.push subgrid
-      elsif row_grid.children.size > 1
-        subgrids.push row_grid
       end
     end
-    return subgrids
+    self.save!
   end
   
   def tag
