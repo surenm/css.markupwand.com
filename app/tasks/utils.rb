@@ -53,7 +53,7 @@ class Utils
     html.gsub! "{webfonts}", font_map.webfont_code
     
     better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ', '_')
-    folder_path      = Rails.root.join("generated", better_file_name)
+    folder_path      = Rails.root.join("..","generated", better_file_name)
 
     # Create assets folder
     assets_path = folder_path.join "assets"
