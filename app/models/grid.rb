@@ -128,7 +128,7 @@ class Grid
     @layers    = []       # Set of children style layers for this grid
     @sub_grids = []       # children for this grid
     @orientation = :normal
-    @fit_to_grid = false  # TODO Read this from configuration for that render. 
+    @fit_to_grid = true  # TODO Read this from configuration for that render. 
 
     @is_root = false    # if the grid is the root node or the <body> tag for this html
     
