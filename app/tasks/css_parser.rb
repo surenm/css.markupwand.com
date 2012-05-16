@@ -168,7 +168,7 @@ module CssParser
     else
       file = layer.layer[:smartObject][:value][:fileReference][:value]
     end
-    "/tmp/"+ file
+    "assets/img/"+ file
   end
 
 end
