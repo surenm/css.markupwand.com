@@ -105,6 +105,7 @@ class Layer
       # don't do anything
     elsif @kind == LAYER_SOLIDFILL
       css.update CssParser::parse_box self.layer
+    end
 
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self.layer, @font_map_ref
