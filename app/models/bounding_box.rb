@@ -9,6 +9,10 @@ class BoundingBox
   def reset
     set(nil, nil, nil, nil)
   end
+  
+  def nil?
+    self.top.nil? or self.right.nil? or self.bottom.nil? or self.left.nil?
+  end
 
   def set(top, left, bottom, right)
     self.top = top
