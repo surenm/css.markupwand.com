@@ -1,6 +1,6 @@
 class PageGlobals
   @@instance = nil
-  attr_accessor :grouping_queue
+  attr_accessor :grouping_queue, :padding_prefix_buffer
   private
   def initialize
     self.grouping_queue = Queue.new
@@ -14,5 +14,8 @@ class PageGlobals
     return @@instance
   end
   
+  def reset_padding_prefix
+    self.padding_prefix_buffer = nil
+  end
   
 end
