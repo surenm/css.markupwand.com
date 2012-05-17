@@ -127,7 +127,7 @@ class Layer
 
   def class_name(css = {}, is_root = false)
     css = get_css(css, is_root)
-    @styles_hash_ref.add_and_get_class(CssParser::to_style_string(css))
+    PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string(css)
   end
 
   def text
@@ -141,7 +141,6 @@ class Layer
   def to_html(args = {})
     #puts "Generating html for #{self.inspect}"
     css = args.fetch :css, {}
-    @styles_hash_ref = args[:styles_hash]
     @font_map_ref    = args[:font_map]
     css_class        = class_name css, @is_root
     

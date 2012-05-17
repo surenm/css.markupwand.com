@@ -300,14 +300,13 @@ class Grid
 
   def to_html(args = {})
     css = args.fetch :css, {}
-
-    styles_hash = args.fetch :styles_hash, nil
     
     self.style_layers.each do |layer_id|
       layer = Layer.find layer_id
       css.update layer.get_css({}, self.root)
     end
-    layers_style_class = styles_hash.add_and_get_class CssParser::to_style_string css
+    
+    layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string css
     
     css_classes = []
     
@@ -325,7 +324,6 @@ class Grid
     attributes[:"data-grid-id"] = self.id.to_s
     
     sub_grid_args               = Hash.new
-    sub_grid_args[:styles_hash] = styles_hash
     sub_grid_args[:font_map]    = args[:font_map]
     
     if self.render_layer.nil?

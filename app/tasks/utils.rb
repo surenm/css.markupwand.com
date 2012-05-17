@@ -18,8 +18,6 @@ class Utils
     font_map    = PhotoshopItem::FontMap.new art_layers
     font_map.find_web_fonts
     
-    styles_hash = PhotoshopItem::StylesHash.new font_map
-    
     # Layer descriptors of all photoshop layers
         
     Log.info "Getting nodes..."
@@ -43,9 +41,7 @@ class Utils
     # Passing around the reference for styles hash and font map
     # Other way would be to have a singleton function, would change if it gets
     # messier.
-    body_html = grid.to_html({ 
-      :styles_hash => styles_hash, 
-      :font_map => font_map })
+    body_html = grid.to_html ({:font_map => font_map })
     
     wrapper   = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html      = wrapper.read
@@ -62,8 +58,7 @@ class Utils
     FileUtils.mkdir_p assets_path
     
     # Write style.css file
-    styles_hash.write_css_file folder_path
-    
+    PhotoshopItem::StylesHash.write_css_file folder_path
     
     # Copy bootstrap to assets folder
     FileUtils.cp_r Rails.root.join("app", "assets", "bootstrap", "docs", "assets", "css"), folder_path.join("assets")
