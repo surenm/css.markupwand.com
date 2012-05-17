@@ -11,7 +11,11 @@ class Utils
     
     # A hash of all layers
     art_layers = psd_data[:art_layers]
-    layer_sets = psd_data[:layer_sets]  
+    layer_sets = psd_data[:layer_sets]
+    
+    #Set page level properties
+    pageglobals = PageGlobals.instance
+    pageglobals.page_bounds = BoundingBox.new(0,0,psd_data[:properties][:height], psd_data[:properties][:width])
 
 
     # Initialize styles hash and font map
