@@ -27,7 +27,7 @@ class Layer
   end
   
   def inspect
-    self.name
+    "Layer: #{self.name}"
   end
   
   def layer_json
