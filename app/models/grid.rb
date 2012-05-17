@@ -322,9 +322,11 @@ class Grid
   
     attributes = Hash.new
     attributes[:class] = css_class_string if not css_class_string.nil?
+    attributes[:"data-grid-id"] = self.id.to_s
     
     if self.render_layer.nil?
-      self.children.each do |sub_grid|
+      children = self.children.sort { |a, b| a.id.to_s <=> b.id.to_s }
+      children.each do |sub_grid|
         inner_html += sub_grid.to_html
       end
       if not self.children.empty? and self.orientation == "left"
