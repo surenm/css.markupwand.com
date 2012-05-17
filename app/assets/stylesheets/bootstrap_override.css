@@ -1,3 +1,7 @@
 [class*="span"] {
   margin-left: 0;
 }
+
+body {
+  line-height: normal;
+}
