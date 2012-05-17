@@ -9,6 +9,10 @@ class BoundingBox
   def reset
     set(nil, nil, nil, nil)
   end
+  
+  def nil?
+    self.top.nil? or self.right.nil? or self.bottom.nil? or self.left.nil?
+  end
 
   def set(top, left, bottom, right)
     self.top = top
@@ -83,7 +87,7 @@ class BoundingBox
     Log.info "Checking if objects #{objects} are in region #{region}"
     objects_in_region = objects.select do |item|
       bounds = item.send(bound_getter_name)
-      Log.debug "Evaluating if #{item} #{item.bounds} is in #{region}"
+      Log.debug "Evaluating if #{item.name} with bounds #{item.bounds} is in #{region}"
       region.encloses? bounds
     end
     

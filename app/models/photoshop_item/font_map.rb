@@ -169,7 +169,7 @@ HTML
   end
   
   def get_font_name(layer, raw = false)
-    if layer[:layerKind] == PhotoshopItem::Layer::LAYER_TEXT
+    if layer[:layerKind] == Layer::LAYER_TEXT
       text_style = layer[:textKey][:value][:textStyleRange][:value].first
       font_info  = text_style[:value][:textStyle][:value]
       font_name  = font_info[:fontName][:value]
