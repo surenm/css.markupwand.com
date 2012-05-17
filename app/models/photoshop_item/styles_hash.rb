@@ -63,7 +63,10 @@ CLASS_BLOCK
     return css_data
   end
   
-  def self.get_bootstrap_width_class(width)
+  def self.get_bootstrap_width_class(width, is_text_layer = false)
+    # Text layer spacing is same in photoshop and web.
+    width = width * 1.2 if is_text_layer 
+      
     spanx = ((24*width)/960.0).round.to_i
     return "span#{spanx}"
   end

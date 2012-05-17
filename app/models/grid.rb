@@ -145,7 +145,12 @@ class Grid
       @bounds = BoundingBox.get_super_bounds node_bounds
       width = @bounds.width
       if width <= 960 and @fit_to_grid
-        @width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class width
+        is_text_layer = false
+        if @nodes.length == 1 and @nodes[0].kind == PhotoshopItem::Layer::LAYER_TEXT
+          is_text_layer = true
+        end
+        
+        @width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(width, is_text_layer = is_text_layer)
       end
       @nodes.sort!
     end
