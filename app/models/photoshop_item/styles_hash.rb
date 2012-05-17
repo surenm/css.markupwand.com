@@ -32,12 +32,8 @@ class PhotoshopItem::StylesHash
     return @@instance
   end
   
-  def self.get_styles_hash
-    PhotoshopItem::StylesHash.instance.css_classes
-  end
-  
   def self.add_and_get_class(string)
-    PhotoshopItem::StylesHash.instance.add_and_get_class(string)
+    @@instance.add_and_get_class(string)
   end
   
   def self.write_css_file(folder_path)
@@ -51,8 +47,8 @@ class PhotoshopItem::StylesHash
   end
   
   def self.generate_css_data
-    css_classes  = PhotoshopItem::StylesHash.get_styles_hash
-    css_data = ''
+    css_classes = @@instance.css_classes
+    css_data    = ''
     
     # Debugging div positioning
     if self.debug
