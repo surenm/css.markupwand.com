@@ -25,14 +25,16 @@ class Utils
     Log.info "Getting nodes..."
     nodes = []
     art_layers.each do |layer_id, node_json|
-      node = PhotoshopItem::Layer.new(node_json)
+      node = Layer.new
+      node.set node_json
       nodes.push node
     end
     
     Grid.reset_grouping_queue
     
     Log.info "Creating grids..."
-    grid = Grid.new nodes, nil
+    grid = Grid.new 
+    grid.set nodes, nil
     
     Grid.group!
     
