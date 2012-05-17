@@ -4,16 +4,11 @@ class Grid
   include Mongoid::Timestamps::Updated  
   include ActionView::Helpers::TagHelper
 
-  # FIXME Change grouping queue and padding area to be a statemachine
-  @@padding_area       = nil
-
-
   # self references for children and parent grids
   has_many :children, :class_name => 'Grid', :inverse_of => :parent
   belongs_to :parent, :class_name => 'Grid', :inverse_of => :children
 
   has_many :layers, :class_name => 'Layer'
-
   
   # fields relevant for a grid
   field :name, :type => String
@@ -23,6 +18,7 @@ class Grid
   field :optimized, :type => Boolean, :default => false
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
+  field :padding_area, :type => Array, :default => []
   
   field :tag, :type => String, :default => :div
   field :override_tag, :type => String, :default => nil
@@ -128,7 +124,7 @@ class Grid
     return root_group
   end
 
-  # usually any layer that matches the grouping box's bounds is a style layer
+  # Usually any layer that matches the grouping box's bounds is a style layer
   def self.get_style_layers(layers, parent_box = nil)
     style_layers = []
     if not parent_box.nil?
@@ -164,28 +160,20 @@ class Grid
       @@pageglobals.grouping_queue.push self
     end
     
-    if not bounds.nil?
-      width = bounds.width
-      if width <= 960
-        self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class width
-      end
-    end
-    
     self.layers.sort!
     self.save!
   end
   
   def set_width_class(padding = 0)
-    if not @bounds.nil?
-      Log.info "Width = #{@bounds.width} + #{padding} for #{@nodes}"
-      width = @bounds.width - padding
-      if width <= 960 and @fit_to_grid
+    if not self.bounds.nil?
+      width = self.bounds.width - padding
+      if width <= 960
         is_text_layer = false
-        if @nodes.length == 1 and @nodes[0].kind == PhotoshopItem::Layer::LAYER_TEXT
+        if self.layers.length == 1 and self.layers[0].kind == Layer::LAYER_TEXT
           is_text_layer = true
         end
         
-        @width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(width, is_text_layer = is_text_layer)
+        self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(width, is_text_layer = is_text_layer)
       end
     end
   end
@@ -280,7 +268,7 @@ class Grid
 
         if nodes_in_region.empty?
           Log.warn "Stopping, no more nodes in this region"
-          @@padding_area = grouping_box.clone
+          @@pageglobals.padding_prefix_buffer = grouping_box.clone
           
           # TODO: This grouping box denotes padding or white space between two regions. Handle that.
           # Usually a corner case
@@ -291,7 +279,7 @@ class Grid
           # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
         elsif nodes_in_region.size < initial_layers_count
           Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
-
+          
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new
           grid.set nodes_in_region, row_grid
@@ -302,10 +290,11 @@ class Grid
             available_nodes.delete style_layer.uid
           end
           
-          # if not @@padding_area.nil?
-          #  grid.padding_area = @@padding_area.clone
-          #  @@padding_area = nil
-          # end
+          if not @@pageglobals.padding_prefix_buffer.nil?
+           grid.padding_bounding_box = @@pageglobals.padding_prefix_buffer.clone
+           @@pageglobals.reset_padding_prefix
+          end
+          
           @@pageglobals.grouping_queue.push grid
         end
       end
@@ -333,7 +322,7 @@ class Grid
     indent_level.times {|i| spaces+=" "}
 
     puts "#{spaces}#{prefix} (grid) #{self.bounds.to_s}"
-    self.sub_grids.each do |subgrid|
+    self.children.each do |subgrid|
       indent_level += 1
       subgrid.print(indent_level+1)
       indent_level -= 1
@@ -341,30 +330,46 @@ class Grid
     
   end
   
+  def get_margin_css
+    # Find Top and left difference from parent grid
+    
+  end
+  
   # For css
   def get_padding_css
     padding_css = {}
     
-    if @padding_area
-      if @bounds.top - @padding_area.top > 0
-        padding_css[:'padding-top'] = ( @bounds.top - @padding_area.top).to_s + 'px'
+    if not self.padding_bounding_box.nil?
+      if self.bounds.top - self.padding_bounding_box.top > 0
+        padding_css[:'padding-top'] = ( self.bounds.top - self.padding_bounding_box.top).to_s + 'px'
       end
       
-      if @bounds.left - @padding_area.left > 0
-        padding_css[:'padding-left'] = (@bounds.left - @padding_area.left).to_s + 'px'
+      if self.bounds.left - self.padding_bounding_box.left > 0
+        padding_css[:'padding-left'] = (self.bounds.left - self.padding_bounding_box.left).to_s + 'px'
       end
-      
-      Log.info "Padding css #{padding_css}"
       
     end
     
     padding_css
   end
   
+  def padding_bounding_box
+    if not self.padding_area.empty? 
+      return BoundingBox.new(padding_area[0], padding_area[1], padding_area[2], padding_area[3])
+    else
+      return nil
+    end
+  end
+  
+  def padding_bounding_box=(padding_bound_box)
+    self.padding_area = [padding_bound_box.top, padding_bound_box.left,
+       padding_bound_box.bottom, padding_bound_box.right]
+  end
+  
   # For width calculation
   def left_padding
-    if @padding_area and ((@bounds.left - @padding_area.left) > 0)
-      (@bounds.left - @padding_area.left)
+    if self.padding_bounding_box and ((self.bounds.left - self.padding_bounding_box.left) > 0)
+      (self.bounds.left - self.padding_bounding_box.left)
     else
       0
     end
