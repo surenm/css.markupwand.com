@@ -1,8 +1,10 @@
 class Grid
   include ActionView::Helpers::TagHelper
-  attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer, :orientation, :fit_to_grid
+  attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer, :orientation, :fit_to_grid, :padding_area
 
   Grid::GROUPING_QUEUE = Queue.new
+  # FIXME Change grouping queue and padding area to be a statemachine
+  @@padding_area       = nil
   
   def self.reset_grouping_queue
     Grid::GROUPING_QUEUE.clear
@@ -143,7 +145,14 @@ class Grid
     else
       node_bounds = nodes.collect {|node| node.bounds}
       @bounds = BoundingBox.get_super_bounds node_bounds
-      width = @bounds.width
+      @nodes.sort!
+    end
+  end
+  
+  def set_width_class(padding = 0)
+    if not @bounds.nil?
+      Log.info "Width = #{@bounds.width} + #{padding} for #{@nodes}"
+      width = @bounds.width - padding
       if width <= 960 and @fit_to_grid
         is_text_layer = false
         if @nodes.length == 1 and @nodes[0].kind == PhotoshopItem::Layer::LAYER_TEXT
@@ -152,7 +161,6 @@ class Grid
         
         @width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(width, is_text_layer = is_text_layer)
       end
-      @nodes.sort!
     end
   end
   
@@ -225,12 +233,10 @@ class Grid
         
         style_layers = Grid.get_style_layers remaining_nodes, grouping_box
         Log.info "Style layers are #{style_layers}" if style_layers.size > 0
-        Log.debug "Style layers are #{style_layers}"
         
         if nodes_in_region.empty?
-          Log.warn "Stopping, no more nodes for the region #{@bounds}"
-          # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
-          # Usually a corner case
+          Log.warn "Stopping, no more nodes for the region"
+          @@padding_area = grouping_box.clone
         elsif nodes_in_region.size == initial_layers_count
           Log.warn "Stopping, no nodes were reduced"
           # TODO: This grouping_box is a superbound of thes nodes. 
@@ -248,11 +254,16 @@ class Grid
             available_nodes.delete style_layer.uid
           end
           
+          if not @@padding_area.nil?
+            grid.padding_area = @@padding_area.clone
+            @@padding_area = nil
+          end
           Grid::GROUPING_QUEUE.push grid
           row_grid.sub_grids.push grid
         end
 
       end
+      
       if row_grid.sub_grids.size == 1
         subgrid = row_grid.sub_grids.first
         subgrid.parent = self
@@ -286,6 +297,35 @@ class Grid
     
   end
   
+  # For css
+  def get_padding_css
+    padding_css = {}
+    
+    if @padding_area
+      if @bounds.top - @padding_area.top > 0
+        padding_css[:'padding-top'] = ( @bounds.top - @padding_area.top).to_s + 'px'
+      end
+      
+      if @bounds.left - @padding_area.left > 0
+        padding_css[:'padding-left'] = (@bounds.left - @padding_area.left).to_s + 'px'
+      end
+      
+      Log.info "Padding css #{padding_css}"
+      
+    end
+    
+    padding_css
+  end
+  
+  # For width calculation
+  def left_padding
+    if @padding_area and ((@bounds.left - @padding_area.left) > 0)
+      (@bounds.left - @padding_area.left)
+    else
+      0
+    end
+  end
+  
   def to_html(args = {})
     #puts "Generating html for #{self.inspect}"
     css = args.fetch :css, {}
@@ -295,15 +335,18 @@ class Grid
       css.update layer.get_css({}, @is_root)
     end
     
+    css.update get_padding_css
+    set_width_class left_padding
+    
     css_class = styles_hash.add_and_get_class CssParser::to_style_string css
     
     if not @width_class.nil?
       css_class = "#{css_class} #{@width_class}"
     end
-
+    
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
-  
+    
     attributes = Hash.new
     attributes[:class] = css_class if not css_class.nil?
     
@@ -327,5 +370,9 @@ class Grid
     
     html = content_tag tag, inner_html, attributes, false
     return html
+  end
+  
+  def to_s
+    "Grid #{@bounds}"
   end
 end
