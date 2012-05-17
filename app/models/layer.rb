@@ -100,19 +100,19 @@ class Layer
 
   def get_css(css = {}, is_root = false)
     if @kind == LAYER_TEXT
-      css.update CssParser::parse_text self.layer, @font_map_ref
+      css.update CssParser::parse_text layer_json, @font_map_ref
     elsif @kind == LAYER_SMARTOBJECT
       # don't do anything
     elsif @kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_box self.layer
+      css.update CssParser::parse_box layer_json
     end
 
     if self.kind == LAYER_TEXT
-      css.update CssParser::parse_text self.layer, @font_map_ref
+      css.update CssParser::parse_text layer_json, @font_map_ref
     elsif self.kind == LAYER_SMARTOBJECT
       # don't do anything
     elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_box self.layer
+      css.update CssParser::parse_box layer_json
       if is_root
         css.delete :width
         css.delete :height
