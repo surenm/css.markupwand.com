@@ -226,12 +226,16 @@ class Grid
 
     root_group.children.each do |row_group|
       current_layers = available_nodes.values
+
+      row_layers = current_layers.select { |layer| row_group.bounds.encloses? layer.bounds }
+      if row_layers.empty?
+        next
+      end
       
       row_grid = Grid.new
       row_grid.set [], self
 
       row_grid.orientation = :left
-      row_layers = current_layers.select { |layer| row_group.bounds.encloses? layer.bounds }
       
       row_style_layers = Grid.get_style_layers row_layers, row_group
       Log.info "Row style layers are #{row_style_layers}" if row_style_layers.size > 0
