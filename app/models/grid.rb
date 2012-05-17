@@ -329,19 +329,18 @@ class Grid
     sub_grid_args = Hash.new
     sub_grid_args[:css] = children_override_css
     
-    if not self.render_layer.nil?
+    if self.render_layer.nil?
+      self.children.each do |sub_grid|
+        inner_html += sub_grid.to_html sub_grid_args
+      end
+      if not self.children.empty?
+        inner_html += content_tag :div, " ", { :style => "clear: both" }, false
+      end
+    else
       render_layer_obj = Layer.find render_layer
       inner_html += render_layer_obj.to_html sub_grid_args
     end
-    
-    self.children.each do |sub_grid|
-      inner_html += sub_grid.to_html sub_grid_args
-    end
-    
-    if self.orientation == :left
-      inner_html += content_tag :div, " ", { :style => "clear: both" }, false
-    end
-    
+
     html = content_tag tag, inner_html, attributes, false
     return html
   end
