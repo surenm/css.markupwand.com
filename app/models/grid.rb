@@ -338,7 +338,7 @@ class Grid
       end
     else
       render_layer_obj = Layer.find render_layer, sub_grid_args
-      inner_html += render_layer_obj.to_html
+      inner_html += render_layer_obj.to_html sub_grid_args
     end
 
     html = content_tag tag, inner_html, attributes, false
