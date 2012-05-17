@@ -153,4 +153,12 @@ class PhotoshopItem::Layer
     
     return html
   end
+  
+  def print(indent_level = 0)
+    spaces = ""
+    prefix = "|--"
+    indent_level.times {|i| spaces+=" "}
+    puts "#{spaces}#{prefix} (layer) #{@name} #{@bounds.to_s}"
+  end
+  
 end

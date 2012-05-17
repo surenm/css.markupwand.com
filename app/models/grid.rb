@@ -228,7 +228,7 @@ class Grid
         Log.debug "Style layers are #{style_layers}"
         
         if nodes_in_region.empty?
-          Log.warn "Stopping, no more nodes in this region"
+          Log.warn "Stopping, no more nodes for the region #{@bounds}"
           # TODO: This grouping box denotes padding or white space between two regions. Handle that. 
           # Usually a corner case
         elsif nodes_in_region.size == initial_layers_count
@@ -270,6 +270,20 @@ class Grid
     else
       :div
     end
+  end
+  
+  def print(indent_level=0)
+    spaces = ""
+    prefix = "|--"
+    indent_level.times {|i| spaces+=" "}
+
+    puts "#{spaces}#{prefix} (grid) #{self.bounds.to_s}"
+    self.sub_grids.each do |subgrid|
+      indent_level += 1
+      subgrid.print(indent_level+1)
+      indent_level -= 1
+    end
+    
   end
   
   def to_html(args = {})

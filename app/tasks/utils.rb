@@ -35,6 +35,7 @@ class Utils
     grid = Grid.new nodes, nil
     
     Grid.group!
+    grid.print
     
     Log.info "Generating body HTML..."    
     
