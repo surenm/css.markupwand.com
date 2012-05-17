@@ -301,44 +301,38 @@ class Grid
   end
   
   def to_html(args = {})
-    #puts "Generating html for #{self.inspect}"
     css = args.fetch :css, {}
     
     self.style_layers.each do |layer_id|
       layer = Layer.find layer_id
       css.update layer.get_css({}, self.root)
     end
+    layers_style_class = PhotoshopItem::StylesHash.add_and_get_class Converter::to_style_string css
     
-    css_class = PhotoshopItem::StylesHash.add_and_get_class Converter::to_style_string css
+    css_classes = []
     
-    if not self.width_class.nil?
-      css_class = "#{css_class} #{self.width_class}"
-    end
-
+    css_classes.push layers_style_class if not layers_style_class.nil?
+    css_classes.push "row" if self.orientation == :left
+    css_classes.push self.width_class if not self.width_class.nil?
+    
+    css_class_string = css_classes.join " "
+    
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
   
     attributes = Hash.new
-    attributes[:class] = css_class if not css_class.nil?
-    
-    children_override_css = Hash.new
-    if self.orientation == :left
-      children_override_css[:float] = 'left' 
-    end
-
-    sub_grid_args = Hash.new
-    sub_grid_args[:css] = children_override_css
+    attributes[:class] = css_class_string if not css_class_string.nil?
     
     if self.render_layer.nil?
       self.children.each do |sub_grid|
-        inner_html += sub_grid.to_html sub_grid_args
+        inner_html += sub_grid.to_html
       end
-      if not self.children.empty?
+      if not self.children.empty? and self.orientation == "left"
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
     else
       render_layer_obj = Layer.find render_layer
-      inner_html += render_layer_obj.to_html sub_grid_args
+      inner_html += render_layer_obj.to_html
     end
 
     html = content_tag tag, inner_html, attributes, false
