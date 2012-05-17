@@ -17,10 +17,10 @@ class PhotoshopItem::Layer
     self.layer  = layer
 
     value    = bound_json[:value]
-    top     = value[:top][:value]
-    bottom  = value[:bottom][:value]
-    left    = value[:left][:value]
-    right   = value[:right][:value]
+    top     = [value[:top][:value], 0].max
+    bottom  = [value[:bottom][:value], 0].max
+    left    = [value[:left][:value], 0].max
+    right   = [value[:right][:value], 0].max
     @is_root = false
 
     @bounds = BoundingBox.new(top, left, bottom, right)
