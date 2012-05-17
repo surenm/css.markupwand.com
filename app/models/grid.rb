@@ -278,6 +278,12 @@ class Grid
           row_grid.save!
         end
       end
+      
+      if row_grid.children.size == 1
+        subgrid = row_grid.children.first
+        subgrid.parent = self
+        row_grid.delete
+      end
     end
     self.save!
   end
