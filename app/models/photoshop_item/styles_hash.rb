@@ -1,14 +1,9 @@
 class PhotoshopItem::StylesHash
+  attr_accessor :css_classes
   
-  attr_accessor :styles, :index
-  
-  def initialize(font_map)
+  def initialize
     @css_classes = Hash.new
     @index  = 0
-  end
-  
-  def debug
-    ENV.has_key? 'DEBUG' and ENV['DEBUG'].to_i > 0
   end
   
   def add_and_get_class(css)
@@ -26,7 +21,21 @@ class PhotoshopItem::StylesHash
     end
   end
   
-  def write_css_file(folder_path)
+  @@instance = PhotoshopItem::StylesHash.new
+  
+  def self.debug
+    ENV.has_key? 'DEBUG' and ENV['DEBUG'].to_i > 0
+  end
+
+  def self.instance
+    return @@instance
+  end
+  
+  def self.add_and_get_class(string)
+    @@instance.add_and_get_class(string)
+  end
+  
+  def self.write_css_file(folder_path)
     css_path = folder_path.join("assets", "css")
     FileUtils.mkdir_p css_path
     
@@ -36,12 +45,12 @@ class PhotoshopItem::StylesHash
     File.open(css_file, 'w') {|f| f.write(generate_css_data) }
   end
   
-  def generate_css_data
-   
-    css_data = ''
+  def self.generate_css_data
+    css_classes = @@instance.css_classes
+    css_data    = ''
     
     # Debugging div positioning
-    if debug
+    if self.debug
       css_data += <<DIV_BLOCK
   div {
     border: 1px #f00 dotted;
@@ -49,7 +58,7 @@ class PhotoshopItem::StylesHash
 DIV_BLOCK
     end
       
-    @css_classes.each do |style, class_name|
+    css_classes.each do |style, class_name|
       style_formatted = style.gsub(";",";\n")
       class_block = <<CLASS_BLOCK
 .#{class_name} {

@@ -41,7 +41,7 @@ class Layer
     left   = value[:left][:value]
     right  = value[:right][:value]
 
-    @bounds = BoundingBox.new(top, left, bottom, right)
+    @bounds = BoundingBox.new(top, left, bottom, right).crop_to(PageGlobals.instance.page_bounds)
   end
   
   def <=>(other_layer)
@@ -100,7 +100,7 @@ class Layer
 
   def get_css(css = {}, is_root = false)
     if @kind == LAYER_TEXT
-      css.update CssParser::parse_text layer_json, @font_map_ref
+      css.update CssParser::parse_text layer_json
     elsif @kind == LAYER_SMARTOBJECT
       # don't do anything
     elsif @kind == LAYER_SOLIDFILL
@@ -108,7 +108,7 @@ class Layer
     end
 
     if self.kind == LAYER_TEXT
-      css.update CssParser::parse_text layer_json, @font_map_ref
+      css.update CssParser::parse_text layer_json
     elsif self.kind == LAYER_SMARTOBJECT
       # don't do anything
     elsif self.kind == LAYER_SOLIDFILL
@@ -127,7 +127,7 @@ class Layer
 
   def class_name(css = {}, is_root = false)
     css = get_css(css, is_root)
-    @styles_hash_ref.add_and_get_class(CssParser::to_style_string(css))
+    PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string(css)
   end
 
   def text
@@ -140,10 +140,8 @@ class Layer
 
   def to_html(args = {})
     #puts "Generating html for #{self.inspect}"
-    css = args.fetch :css, {}
-    @styles_hash_ref = args[:styles_hash]
-    @font_map_ref    = args[:font_map]
-    css_class        = class_name css, @is_root
+    css       = args.fetch :css, {}
+    css_class = class_name css, @is_root
     
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.kind == LAYER_TEXT

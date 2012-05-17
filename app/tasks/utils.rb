@@ -11,17 +11,17 @@ class Utils
     
     # A hash of all layers
     art_layers = psd_data[:art_layers]
-    layer_sets = psd_data[:layer_sets]  
+    layer_sets = psd_data[:layer_sets]
+    
+    #Set page level properties
+    pageglobals = PageGlobals.instance
+    pageglobals.page_bounds = BoundingBox.new(0,0,psd_data[:properties][:height], psd_data[:properties][:width])
 
 
     # Initialize styles hash and font map
-    font_map    = PhotoshopItem::FontMap.new art_layers
-    font_map.find_web_fonts
-    
-    styles_hash = PhotoshopItem::StylesHash.new font_map
+    PhotoshopItem::FontMap.init art_layers
     
     # Layer descriptors of all photoshop layers
-        
     Log.info "Getting nodes..."
     nodes = []
     art_layers.each do |layer_id, node_json|
@@ -44,16 +44,14 @@ class Utils
     # Passing around the reference for styles hash and font map
     # Other way would be to have a singleton function, would change if it gets
     # messier.
-    body_html = grid.to_html({ 
-      :styles_hash => styles_hash, 
-      :font_map => font_map })
+    body_html = grid.to_html
     
     wrapper   = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html      = wrapper.read
     wrapper.close
     
     html.gsub! "{yield}", body_html
-    html.gsub! "{webfonts}", font_map.webfont_code
+    html.gsub! "{webfonts}", PhotoshopItem::FontMap.instance.webfont_code
     
     better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ', '_')
     folder_path      = Rails.root.join("..","generated", better_file_name)
@@ -63,8 +61,7 @@ class Utils
     FileUtils.mkdir_p assets_path
     
     # Write style.css file
-    styles_hash.write_css_file folder_path
-    
+    PhotoshopItem::StylesHash.write_css_file folder_path
     
     # Copy bootstrap to assets folder
     Log.info "Writing bootstrap files"
@@ -84,7 +81,7 @@ class Utils
     system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
     
     Log.info "Successfully completed processing #{better_file_name}."
-    font_map.show_install_urls
+    PhotoshopItem::FontMap.instance.show_install_urls
      
     return
   end

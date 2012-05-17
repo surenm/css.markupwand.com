@@ -377,16 +377,15 @@ class Grid
   
   def to_html(args = {})
     css = args.fetch :css, {}
-
-    styles_hash = args.fetch :styles_hash, nil
     
     self.style_layers.each do |layer_id|
       layer = Layer.find layer_id
       css.update layer.get_css({}, self.root)
     end
+
     css.update get_padding_css
     
-    layers_style_class = styles_hash.add_and_get_class CssParser::to_style_string css
+    layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string css
     
     set_width_class left_padding
     
@@ -405,10 +404,7 @@ class Grid
     attributes[:class]          = css_class_string if not css_class_string.nil?
     attributes[:"data-grid-id"] = self.id.to_s
     
-    sub_grid_args               = Hash.new
-    sub_grid_args[:styles_hash] = styles_hash
-    sub_grid_args[:font_map]    = args[:font_map]
-    
+    sub_grid_args = Hash.new
     if self.render_layer.nil?
       children = self.children.sort { |a, b| a.id.to_s <=> b.id.to_s }
       children.each do |sub_grid|

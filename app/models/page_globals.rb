@@ -1,6 +1,7 @@
 class PageGlobals
   @@instance = nil
-  attr_accessor :grouping_queue, :padding_prefix_buffer
+  attr_accessor :grouping_queue, :padding_prefix_buffer, :page_bounds
+
   private
   def initialize
     self.grouping_queue = Queue.new
