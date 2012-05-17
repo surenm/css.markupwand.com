@@ -15,11 +15,9 @@ class Utils
 
 
     # Initialize styles hash and font map
-    font_map    = PhotoshopItem::FontMap.new art_layers
-    font_map.find_web_fonts
+    PhotoshopItem::FontMap.init art_layers
     
     # Layer descriptors of all photoshop layers
-        
     Log.info "Getting nodes..."
     nodes = []
     art_layers.each do |layer_id, node_json|
@@ -41,14 +39,14 @@ class Utils
     # Passing around the reference for styles hash and font map
     # Other way would be to have a singleton function, would change if it gets
     # messier.
-    body_html = grid.to_html ({:font_map => font_map })
+    body_html = grid.to_html
     
     wrapper   = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html      = wrapper.read
     wrapper.close
     
     html.gsub! "{yield}", body_html
-    html.gsub! "{webfonts}", font_map.webfont_code
+    html.gsub! "{webfonts}", PhotoshopItem::FontMap.instance.webfont_code
     
     better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ', '_')
     folder_path      = Rails.root.join("generated", better_file_name)
@@ -75,7 +73,7 @@ class Utils
     system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
     
     Log.info "Successfully completed processing #{better_file_name}."
-    font_map.show_install_urls
+    PhotoshopItem::FontMap.instance.show_install_urls
      
     return
   end

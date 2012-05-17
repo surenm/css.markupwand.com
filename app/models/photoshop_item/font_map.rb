@@ -1,21 +1,23 @@
 class PhotoshopItem::FontMap
-  
+  attr_accessor :layers, :font_map, :typekit_install_urls
   FONT_MAP = {
     'Helvetica World' => 'Helvetica'
   }
-  
-  attr_accessor :layers, :font_map, :typekit_install_urls
-  
-  def initialize(layers)
-    @layers = layers
-    @font_map = Hash.new
-  end
-  
+
   # Base fonts for browsers
   # http://en.wikipedia.org/wiki/Core_fonts_for_the_Web
   DEFAULT_FONTS = ['Helvetica', 'Lucida Sans', 'Tahoma', 'Andale Mono',
      'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Georgia',
      'Impact', 'Times New Roman', 'Trebuchet MS', 'Verdana', 'Webdings']
+  
+  def initialize
+    @layers   = Hash.new
+    @font_map = Hash.new
+  end
+  
+  def reset(layers)
+    @layers = layers
+  end
   
   # Find out fonts and urls from
   # Google and Typekit
@@ -64,7 +66,6 @@ HTML
   
   def show_install_urls
     # Return the installable fonts to be clicked in UI
-    
     if @typekit_install_urls.length > 0
       Log.info "Install these typekit fonts:" 
       @typekit_install_urls.each do |font_url|
@@ -184,5 +185,16 @@ HTML
         font_name
       end
     end
+  end
+  
+  @@instance = PhotoshopItem::FontMap.new 
+  
+  def self.init(art_layers)
+    @@instance.reset art_layers
+    @@instance.find_web_fonts
+  end
+  
+  def self.instance
+    return @@instance
   end
 end

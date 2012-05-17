@@ -2,7 +2,6 @@ class PhotoshopItem::StylesHash
   attr_accessor :css_classes
   
   def initialize
-    Log.fatal "Creating an instance"
     @css_classes = Hash.new
     @index  = 0
   end

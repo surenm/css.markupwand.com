@@ -141,8 +141,8 @@ class Layer
   def to_html(args = {})
     #puts "Generating html for #{self.inspect}"
     css = args.fetch :css, {}
-    @font_map_ref    = args[:font_map]
-    css_class        = class_name css, @is_root
+    @font_map_ref = PhotoshopItem::FontMap.instance
+    css_class     = class_name css, @is_root
     
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.kind == LAYER_TEXT
