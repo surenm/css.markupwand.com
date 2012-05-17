@@ -2,13 +2,15 @@ class Grid
   include ActionView::Helpers::TagHelper
   attr_accessor :sub_grids, :parent, :bounds, :nodes, :gutter_type, :layer, :orientation
 
+  @@pageglobals = PageGlobals.instance
+
   def self.reset_grouping_queue
-    @pageglobals.grouping_queue.clear
+    @@pageglobals.grouping_queue.clear
   end
 
   def self.group!
-    while not @pageglobals.grouping_queue.empty?
-      grid = @pageglobals.grouping_queue.pop
+    while not @@pageglobals.grouping_queue.empty?
+      grid = @@pageglobals.grouping_queue.pop
       grid.group!
       Log.debug grid
     end
@@ -121,7 +123,6 @@ class Grid
   end
 
   def initialize(nodes, parent)
-    @page_globals = PageGlobals.instance
     @nodes     = nodes    # The layers enclosed by this Grid
     @parent    = parent   # Parent grid for this grid
     @layers    = []       # Set of children style layers for this grid
@@ -133,7 +134,7 @@ class Grid
     if @parent == nil
       Log.info "Setting the root node"
       @is_root = true
-      @pageglobals.grouping_queue.push self
+      @@pageglobals.grouping_queue.push self
     end
 
     if nodes.empty?
@@ -241,7 +242,7 @@ class Grid
             available_nodes.delete style_layer.uid
           end
 
-          @pageglobals.grouping_queue.push grid
+          @@pageglobals.grouping_queue.push grid
           row_grid.sub_grids.push grid
         end
 
