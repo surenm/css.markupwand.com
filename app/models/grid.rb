@@ -9,8 +9,6 @@ class Grid
   belongs_to :parent, :class_name => 'Grid', :inverse_of => :children
 
   has_many :layers, :class_name => 'Layer'
-  has_many :style_layers, :class_name => 'Layer'
-  has_many :render_layers, :class_name => 'Layer'
   
   # fields relevant for a grid
   field :name, :type => String
@@ -18,6 +16,8 @@ class Grid
   field :orientation, :type => String, :default => :normal
   field :root, :type => Boolean, :default => false
   field :optimized, :type => Boolean, :default => false
+  field :render_layer, :type => String, :default => nil
+  field :style_layers, :type => Array, :default => []
   
   field :tag, :type => String, :default => :div
   field :override_tag, :type => String, :default => nil
@@ -184,9 +184,9 @@ class Grid
   def add_style_layers(grid_style_layers)
     if grid_style_layers.class.to_s == "Array"
       grid_style_layers.flatten!
-      grid_style_layers.each { |style_layer| self.style_layers.push style_layer }
+      grid_style_layers.each { |style_layer| self.style_layers.push style_layer.id.to_s }
     else 
-      self.style_layers.push grid_style_layers
+      self.style_layers.push grid_style_layers.id.to_s
     end
   end
     
@@ -195,7 +195,7 @@ class Grid
       get_subgrids
     elsif self.layers.size == 1
       Log.debug "Just one layer #{self.layers.first} is available. Adding to the grid"
-      self.render_layers.push self.layers.first
+      self.render_layer = self.layers.first.id.to_s
     end
     self.save!
   end
@@ -294,7 +294,8 @@ class Grid
     #puts "Generating html for #{self.inspect}"
     css = args.fetch :css, {}
     
-    self.style_layers.each do |layer|
+    self.style_layers.each do |layer_id|
+      layer = Layer.find layer_id
       css.update layer.get_css({}, self.root)
     end
     
@@ -318,15 +319,16 @@ class Grid
     sub_grid_args = Hash.new
     sub_grid_args[:css] = children_override_css
     
-    self.render_layers.each do |layer|
-      inner_html += layer.to_html sub_grid_args
+    if not self.render_layer.nil?
+      render_layer_obj = Layer.find render_layer
+      inner_html += render_layer_obj.to_html sub_grid_args
     end
     
     self.children.each do |sub_grid|
       inner_html += sub_grid.to_html sub_grid_args
     end
     
-    if not self.children.empty? and self.orientation == :left
+    if self.orientation == :left
       inner_html += content_tag :div, " ", { :style => "clear: both" }, false
     end
     
