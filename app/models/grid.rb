@@ -229,8 +229,8 @@ class Grid
       
       row_grid = Grid.new
       row_grid.set [], self
-      
-      row_grid.orientation = row_group.orientation
+
+      row_grid.orientation = :left
       row_layers = current_layers.select { |layer| row_group.bounds.encloses? layer.bounds }
       
       row_style_layers = Grid.get_style_layers row_layers, row_group
