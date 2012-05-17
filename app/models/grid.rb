@@ -307,7 +307,7 @@ class Grid
       layer = Layer.find layer_id
       css.update layer.get_css({}, self.root)
     end
-    layers_style_class = styles_hash.add_and_get_class Converter::to_style_string css
+    layers_style_class = styles_hash.add_and_get_class CssParser::to_style_string css
     
     css_classes = []
     
