@@ -156,7 +156,7 @@ class Grid
     if self.parent == nil
       Log.info "Setting the root node"
       self.root = true
-      Grid::GROUPING_QUEUE.push self
+      @@pageglobals.grouping_queue.push self
     end
     
     if not bounds.nil?
