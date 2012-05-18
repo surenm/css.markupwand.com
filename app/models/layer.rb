@@ -159,6 +159,10 @@ class Layer
     return html
   end
   
+  def to_s
+    "#{self.name} - #{self.bounds}"
+  end
+  
   def print(indent_level = 0)
     spaces = ""
     prefix = "|--"

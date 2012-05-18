@@ -19,11 +19,12 @@ class Grid
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
   field :padding_area, :type => Array, :default => []
+  field :fit_to_grid,  :type => Boolean, :default => true
   
   field :tag, :type => String, :default => :div
   field :override_tag, :type => String, :default => nil
   
-  field :width_class, :type => String
+  field :width_class, :type => String, :default => ''
   field :override_width_class, :type => String, :default => nil
 
   @@pageglobals = PageGlobals.instance
@@ -164,16 +165,23 @@ class Grid
     self.save!
   end
   
+  def manipulated_width
+    width = 0
+    if not self.bounds.nil? 
+      width = self.bounds.width
+      if self.layers.length == 1 and self.layers[0].kind == Layer::LAYER_TEXT
+        width = (self.bounds.width * 1.12).round
+      end
+    end
+
+    width
+  end
+  
+  
   def set_width_class(padding = 0)
     if not self.bounds.nil?
-      width = self.bounds.width - padding
-      if width <= 960
-        is_text_layer = false
-        if self.layers.length == 1 and self.layers[0].kind == Layer::LAYER_TEXT
-          is_text_layer = true
-        end
-        
-        self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(width, is_text_layer = is_text_layer)
+      if manipulated_width != 0 and manipulated_width <= 960   
+          self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(manipulated_width)
       end
     end
   end
@@ -385,9 +393,16 @@ class Grid
 
     css.update get_padding_css
     
+    if self.fit_to_grid
+      set_width_class left_padding
+    elsif
+      if not css.has_key? :width
+        css.update( { :width => (manipulated_width.to_s + 'px') } )
+      end
+    end
+    
     layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string css
     
-    set_width_class left_padding
     
     css_classes = []
     
