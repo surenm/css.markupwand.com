@@ -340,7 +340,20 @@ class Grid
   
   def get_margin_css
     # Find Top and left difference from parent grid
+    margin_css = {}
     
+    if not self.parent.nil? and not self.parent.bounds.nil? and not self.bounds.nil?
+      if self.parent.bounds.left != 0 and self.parent.bounds.left < self.bounds.left
+        margin_css[:'margin-left'] = (self.bounds.left - self.parent.bounds.left).to_s + 'px'
+      end 
+      
+      if self.parent.bounds.top < self.bounds.top
+        margin_css[:'margin-top'] = (self.bounds.top - self.parent.bounds.top).to_s + 'px'
+      end
+      
+    end
+    
+    margin_css
   end
   
   # For css
@@ -392,6 +405,7 @@ class Grid
     end
 
     css.update get_padding_css
+    css.update get_margin_css
     
     if self.fit_to_grid
       set_width_class left_padding
