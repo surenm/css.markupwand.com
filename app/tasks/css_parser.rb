@@ -117,6 +117,15 @@ module CssParser
     end
   end
   
+  def CssParser::parse_text_letter_spacing(font_info)
+    #Same reference as above
+    if not font_info[:tracking].nil? and font_info[:tracking] != 0
+      {:'letter-spacing' => (font_info[:tracking][:value]/20.0).round.to_s + 'px'}
+    else
+      {}
+    end
+  end
+  
   # Returns a hash for CSS styles
   def CssParser::parse_text(layer)
     text_style = layer[:textKey][:value][:textStyleRange][:value].first
@@ -135,6 +144,9 @@ module CssParser
     
     # Line-height
     css.update(parse_text_line_height(font_info))
+    
+    # Letter-spacing
+    css.update(parse_text_letter_spacing(font_info))
     
     # Shadows 
     css.update(parse_font_shadow(layer))

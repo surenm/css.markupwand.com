@@ -176,23 +176,10 @@ class Grid
     self.save!
   end
   
-  def manipulated_width
-    width = 0
-    if not self.bounds.nil? 
-      width = self.bounds.width
-      if self.layers.length == 1 and self.layers[0].kind == Layer::LAYER_TEXT
-        width = (self.bounds.width * 1.12).round
-      end
-    end
-
-    width
-  end
-  
-  
   def set_width_class(padding = 0)
     if not self.bounds.nil?
-      if manipulated_width != 0 and manipulated_width <= 960   
-          self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(manipulated_width)
+      if self.bounds.width != 0 and self.bounds.width <= 960   
+          self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(self.bounds.width)
       end
     end
   end
@@ -423,7 +410,7 @@ class Grid
     if self.fit_to_grid and self.depth < 5
       set_width_class left_padding
     elsif not css.has_key? :width
-      css[:width] = manipulated_width.to_s + 'px' if manipulated_width != 0
+      css[:width] = self.bounds.width.to_s + 'px' if (not self.bounds.nil? and self.bounds.width != 0)
       css[:float] = 'left'
     end
     
