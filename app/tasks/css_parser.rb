@@ -20,6 +20,10 @@ module CssParser
   CssParser::FONT_STYLE = {
     'Italic' => 'italic'
   }
+  
+  CssParser::TEXT_ALIGN = {
+    1131312242 => 'center'
+  } 
 
   def CssParser::parse_color(color_object)
     red   = (Integer(color_object[:value][:red][:value])).to_s(16)
@@ -89,6 +93,18 @@ module CssParser
     { :color => parse_color(color_object) }
   end
   
+  def CssParser::parse_text_align(layer)
+    css = {}
+    paragraph_style = layer[:textKey][:value][:paragraphStyleRange][:value]
+    align_code = paragraph_style.first[:value][:paragraphStyle][:value][:align][:value]
+
+    if CssParser::TEXT_ALIGN.has_key? align_code
+      css[:'text-align'] = CssParser::TEXT_ALIGN[align_code]
+    end
+    
+    css
+  end
+  
   # Returns a hash for CSS styles
   def CssParser::parse_text(layer)
     text_style = layer[:textKey][:value][:textStyleRange][:value].first
@@ -110,6 +126,9 @@ module CssParser
     
     # Opacity
     css.update(parse_opacity(layer))
+    
+    # Alignment
+    css.update(parse_text_align(layer))
 
     # Color
     css.update(parse_text_color(text_style))
