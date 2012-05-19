@@ -176,7 +176,7 @@ class Grid
     self.save!
   end
   
-  def set_width_class(padding = 0)
+  def set_width_class
     if not self.bounds.nil?
       if self.bounds.width != 0 and self.bounds.width <= 960   
           self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(self.bounds.width)
@@ -410,7 +410,7 @@ class Grid
     
     
     if self.fit_to_grid and self.depth < 5
-      set_width_class left_padding
+      set_width_class
     elsif not css.has_key? :width
       css[:width] = self.bounds.width.to_s + 'px' if (not self.bounds.nil? and self.bounds.width != 0)
       if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
