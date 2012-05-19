@@ -24,7 +24,7 @@ window.enableMultiSelect = ->
 $(document).ready ->
   
   $(window).keydown (e) ->
-    if (navigator.userAgent.indexOf('Mac OS X') != -1) and (e.metaKey)
+    if (navigator.userAgent.indexOf('Mac OS X') != -1) and (e.altKey)
       window.enableMultiSelect()
     else if  (navigator.userAgent.indexOf('Mac OS X') == -1) and (e.ctrlKey)
       # Non-mac browsers. Not tested yet.
