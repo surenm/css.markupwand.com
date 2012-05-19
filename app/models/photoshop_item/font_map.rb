@@ -174,17 +174,21 @@ HTML
       text_style = layer[:textKey][:value][:textStyleRange][:value].first
       font_info  = text_style[:value][:textStyle][:value]
       font_name  = font_info[:fontName][:value]
-      
+
       if not raw 
         if FONT_MAP.has_key? font_name
-          FONT_MAP[font_name]
+          return FONT_MAP[font_name]
         elsif @font_map.has_key? font_name
-          "'#{@font_map[font_name]}'"
+          return "'#{@font_map[font_name]}'"
+        else
+          return font_name
         end
       else
-        font_name
+        return font_name
       end
     end
+    
+    nil
   end
   
   @@instance = PhotoshopItem::FontMap.new 

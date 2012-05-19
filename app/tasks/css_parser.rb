@@ -38,8 +38,11 @@ module CssParser
   
   def CssParser::parse_font_name(layer)
     mapped_font = PhotoshopItem::FontMap.instance.get_font_name(layer)
-    
-    {:'font-family' => mapped_font}
+    if not mapped_font.nil?
+      {:'font-family' => mapped_font}
+    else
+      {}
+    end
   end
   
   def CssParser::parse_font_size(font_item)
