@@ -337,40 +337,60 @@ class Grid
   end
   
   
+  # If the position of the element is > 0 and it is stacked up, calculate relative margin, not absolute margin from the Bounding box.
+  # Similar stuff for left margin as well.
+  def relative_margin
+    
+    margin_top  = (self.bounds.top - self.parent.bounds.top)
+    margin_left = (self.bounds.left - self.parent.bounds.left)
+    
+    parent.children.each do |child|
+      break if child == self
+      if parent.orientation == Constants::GRID_ORIENT_NORMAL
+        margin_top -= (child.bounds.height + child.relative_margin[:top]) 
+      else
+        margin_left -= (child.bounds.width + child.relative_margin[:left])
+      end
+    end
+        
+    { :top => margin_top, :left => margin_left }
+  end
+  
+  # Find Top and left difference from parent grid
   def margin_css
-    # Find Top and left difference from parent grid
-    margin_css = {}
+    css = {}
     
     if not self.parent.nil? and not self.parent.bounds.nil? and not self.bounds.nil?
+      
       if self.parent.bounds.left != 0 and self.parent.bounds.left < self.bounds.left
-        margin_css[:'margin-left'] = (self.bounds.left - self.parent.bounds.left).to_s + 'px'
+        css[:'margin-left'] = "#{relative_margin[:left]}px"
       end 
       
       if self.parent.bounds.top < self.bounds.top
-        margin_css[:'margin-top'] = (self.bounds.top - self.parent.bounds.top).to_s + 'px'
+        css[:'margin-top'] = "#{relative_margin[:top]}px"
       end
       
     end
     
-    margin_css
+    css
   end
   
   # For css
-    padding_css = {}
   def padding_css
+    css = {}
     
     if not self.padding_bounding_box.nil?
       if self.bounds.top - self.padding_bounding_box.top > 0
-        padding_css[:'padding-top'] = ( self.bounds.top - self.padding_bounding_box.top).to_s + 'px'
+        css[:'padding-top'] = ( self.bounds.top - self.padding_bounding_box.top).to_s + 'px'
       end
       
       if self.bounds.left - self.padding_bounding_box.left > 0
-        padding_css[:'padding-left'] = (self.bounds.left - self.padding_bounding_box.left).to_s + 'px'
+        css[:'padding-left'] = (self.bounds.left - self.padding_bounding_box.left).to_s + 'px'
       end
       
     end
     
-    padding_css
+    css
   end
   
   def padding_bounding_box
@@ -397,12 +417,21 @@ class Grid
   
   def to_html(args = {})
     
+    
     #TODO Move all these css related stuff to css_parser
     css = args.fetch :css, {}
     
     self.style_layers.each do |layer_id|
       layer = Layer.find layer_id
       css.update layer.get_css({}, self.root)
+    end
+    
+    if self.parent
+      Log.info "--------------------------"
+      Log.info "Parent orientation = #{self.parent.orientation}"
+      Log.info "Position - #{self.parent.children.to_a.index self}"
+      Log.info "Items = #{layers.to_a}"
+      Log.info "Margin = #{margin_css}"
     end
     
     css.update padding_css
