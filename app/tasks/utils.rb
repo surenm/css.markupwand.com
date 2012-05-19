@@ -43,6 +43,11 @@ class Utils
     # Passing around the reference for styles hash and font map
     # Other way would be to have a singleton function, would change if it gets
     # messier.
+    better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ', '_')
+    folder_path      = Rails.root.join("generated", better_file_name)
+        
+    CssParser::set_assets_root folder_path
+
     body_html = grid.to_html
     
     wrapper   = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
@@ -52,15 +57,8 @@ class Utils
     html.gsub! "{yield}", body_html
     html.gsub! "{webfonts}", PhotoshopItem::FontMap.instance.webfont_code
     
-    better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ', '_')
-    folder_path      = Rails.root.join("generated", better_file_name)
-
-    # Create assets folder
-    assets_path = folder_path.join "assets"
-    FileUtils.mkdir_p assets_path
-    
     # Write style.css file
-    PhotoshopItem::StylesHash.write_css_file folder_path
+    PhotoshopItem::StylesHash.write_css_file
     
     # Copy bootstrap to assets folder
     FileUtils.cp_r Rails.root.join("app", "assets", "bootstrap", "docs", "assets", "css"), folder_path.join("assets")
