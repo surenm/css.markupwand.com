@@ -1,12 +1,9 @@
 <%= content_for :content do %>
-  <%= form_for @design_file do |f| %>
-  <%= f.file_field :file %>
-  <%= f.submit %>
-  <% end %>
-
-  <div id="drop-div" style="width: 200px; height: 200px; border: thin solid black;">
-      Drop files here!
+<center style="padding-top: 150px">
+  <div id="drop-div" class="drop">
+      <h2 style="padding-top: 75px">Drag and drop your Photoshop file here!</h2>
   </div>
+</center>
 <% end %>
 
 <%= content_for :javascript do %>
