@@ -13,7 +13,7 @@ class Grid
   # fields relevant for a grid
   field :name, :type => String
   field :hash, :type => String
-  field :orientation, :type => String, :default => :normal
+  field :orientation, :type => String, :default => Constants::GRID_ORIENT_NORMAL
   field :root, :type => Boolean, :default => false
   field :optimized, :type => Boolean, :default => false
   field :render_layer, :type => String, :default => nil
@@ -112,9 +112,9 @@ class Grid
     horizontal_bounds.slice! -1
     vertical_bounds.slice! -1
 
-    root_group = Group.new :normal
+    root_group = Group.new Constants::GRID_ORIENT_NORMAL
     horizontal_bounds.each do |horizontal_bound|
-      row_group = Group.new :left
+      row_group = Group.new Constants::GRID_ORIENT_LEFT
       vertical_bounds.each do |vertical_bound|
         row_group.push BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
       end
@@ -252,7 +252,7 @@ class Grid
       row_grid = Grid.new
       row_grid.set [], self
 
-      row_grid.orientation = :left
+      row_grid.orientation = Constants::GRID_ORIENT_LEFT
       
       row_style_layers = Grid.get_style_layers row_layers, row_group
       Log.info "Row style layers are #{row_style_layers}" if row_style_layers.size > 0
@@ -411,7 +411,9 @@ class Grid
       set_width_class left_padding
     elsif not css.has_key? :width
       css[:width] = self.bounds.width.to_s + 'px' if (not self.bounds.nil? and self.bounds.width != 0)
-      css[:float] = 'left'
+      if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
+        css[:float] = 'left'
+      end
     end
     
     layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string css
@@ -420,7 +422,7 @@ class Grid
     css_classes = []
     
     css_classes.push layers_style_class if not layers_style_class.nil?
-    css_classes.push "row" if self.orientation == :left
+    css_classes.push "row" if self.orientation == Constants::GRID_ORIENT_LEFT
     css_classes.push self.width_class if not self.width_class.nil?
     
     css_class_string = css_classes.join " "
