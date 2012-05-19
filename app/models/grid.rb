@@ -421,7 +421,8 @@ class Grid
     if self.fit_to_grid and self.depth < 5
       set_width_class left_padding
     elsif not css.has_key? :width
-        css.update( { :width => (manipulated_width.to_s + 'px'), :float => 'left' } )
+      css[:width] = manipulated_width.to_s + 'px' if manipulated_width != 0
+      css[:float] = 'left'
     end
     
     layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string css
