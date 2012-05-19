@@ -108,6 +108,15 @@ module CssParser
     css
   end
   
+  def CssParser::parse_text_line_height(font_info)
+    # Reference: http://help.adobe.com/en_US/photoshop/cs/using/WS5EC229CC-1518-4f06-BCB0-E2585D61FC54a.html#WSfd1234e1c4b69f30ea53e41001031ab64-75a4a
+    if not font_info[:leading].nil?
+      {:'line-height' => font_info[:leading][:value].to_s + 'px'}
+    else
+      {}
+    end
+  end
+  
   # Returns a hash for CSS styles
   def CssParser::parse_text(layer)
     text_style = layer[:textKey][:value][:textStyleRange][:value].first
@@ -123,6 +132,9 @@ module CssParser
     
     # Font size
     css.update(parse_font_size(font_info))
+    
+    # Line-height
+    css.update(parse_text_line_height(font_info))
     
     # Shadows 
     css.update(parse_font_shadow(layer))
