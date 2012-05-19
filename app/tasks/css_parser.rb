@@ -24,6 +24,17 @@ module CssParser
   CssParser::TEXT_ALIGN = {
     1131312242 => 'center'
   } 
+  def CssParser::set_assets_root(root)
+    # Create assets folder
+    assets_path = root.join "assets"
+    FileUtils.mkdir_p assets_path
+    
+    ENV["ASSETS_DIR"] = assets_path.to_s
+  end
+  
+  def CssParser::get_assets_root
+    ENV["ASSETS_DIR"]
+  end
 
   def CssParser::parse_color(color_object)
     red   = (Integer(color_object[:value][:red][:value])).to_s(16)
@@ -210,11 +221,16 @@ module CssParser
 
   def CssParser::get_image_path(layer)
     if layer.is_non_smart_image?
-      file = layer.layer_json[:imagePath]
+      image_file_name = layer.layer_json[:imagePath]
     else
-      file = layer.layer_json[:smartObject][:value][:fileReference][:value]
+      image_file_name = layer.layer_json[:smartObject][:value][:fileReference][:value]
     end
-    "assets/img/"+ file
+    src_image_file = "/tmp/" + image_file_name
+    destination_dir = File.join CssParser::get_assets_root, "img"
+    FileUtils.mkdir_p destination_dir
+    FileUtils.cp src_image_file, destination_dir
+
+    return File.join "./assets", "img", image_file_name
   end
 
 end

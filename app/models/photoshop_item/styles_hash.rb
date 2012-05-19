@@ -35,11 +35,11 @@ class PhotoshopItem::StylesHash
     @@instance.add_and_get_class(string)
   end
   
-  def self.write_css_file(folder_path)
-    css_path = folder_path.join("assets", "css")
+  def self.write_css_file
+    css_path = File.join CssParser::get_assets_root, "css"
     FileUtils.mkdir_p css_path
     
-    css_file = css_path.join "style.css"
+    css_file = File.join css_path, "style.css"
     Log.info "Writing css file #{css_file}"
     
     File.open(css_file, 'w') {|f| f.write(generate_css_data) }
