@@ -336,7 +336,8 @@ class Grid
     
   end
   
-  def get_margin_css
+  
+  def margin_css
     # Find Top and left difference from parent grid
     margin_css = {}
     
@@ -355,8 +356,8 @@ class Grid
   end
   
   # For css
-  def get_padding_css
     padding_css = {}
+  def padding_css
     
     if not self.padding_bounding_box.nil?
       if self.bounds.top - self.padding_bounding_box.top > 0
@@ -404,8 +405,9 @@ class Grid
       css.update layer.get_css({}, self.root)
     end
     
-    css.update get_padding_css
-    css.update get_margin_css
+    css.update padding_css
+    css.update margin_css
+    
     
     if self.fit_to_grid and self.depth < 5
       set_width_class left_padding
