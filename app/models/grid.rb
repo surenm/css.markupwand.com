@@ -150,6 +150,17 @@ class Grid
     return style_layers
   end
   
+  def depth
+    depth = 0
+    parent = self.parent
+    while (not parent.nil?)
+      parent = parent.parent
+      depth = depth + 1
+    end
+    
+    depth
+  end
+  
   def set(layers, parent)
     layers.each { |layer| self.layers.push layer }
 
@@ -403,16 +414,14 @@ class Grid
       layer = Layer.find layer_id
       css.update layer.get_css({}, self.root)
     end
-
+    
     css.update get_padding_css
     css.update get_margin_css
     
-    if self.fit_to_grid
+    if self.fit_to_grid and self.depth < 5
       set_width_class left_padding
-    elsif
-      if not css.has_key? :width
-        css.update( { :width => (manipulated_width.to_s + 'px') } )
-      end
+    elsif not css.has_key? :width
+        css.update( { :width => (manipulated_width.to_s + 'px'), :float => 'left' } )
     end
     
     layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string css
