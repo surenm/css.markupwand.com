@@ -23,8 +23,8 @@
         %button.btn Group nodes
     
     %div.multiselect Multiselect enabled  
-    
-  %iframe{:src => '/assets/result.html', :width => '100%', :id => 'editor-iframe'}
+  %div.ide  
+    %iframe{:src => 'http://localhost/mailgun/index.html', :id => 'editor-iframe', :class => 'ide'}
   
 - content_for(:javascript) do
   =javascript_include_tag 'editor' 
