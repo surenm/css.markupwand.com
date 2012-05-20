@@ -178,7 +178,9 @@ class Grid
   
   def set_width_class
     if not self.bounds.nil?
-      if self.bounds.width != 0 and self.bounds.width <= 960   
+      # Add a buffer of (960 + 10), because setting width of 960 in photoshop
+      # is giving 962 in extendscript json. Debug more.
+      if self.bounds.width != 0 and self.bounds.width <= 970
           self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(self.bounds.width)
       end
     end
@@ -416,8 +418,6 @@ class Grid
   end
   
   def to_html(args = {})
-    
-    
     #TODO Move all these css related stuff to css_parser
     css = args.fetch :css, {}
     
@@ -426,17 +426,8 @@ class Grid
       css.update layer.get_css({}, self.root)
     end
     
-    if self.parent
-      Log.info "--------------------------"
-      Log.info "Parent orientation = #{self.parent.orientation}"
-      Log.info "Position - #{self.parent.children.to_a.index self}"
-      Log.info "Items = #{layers.to_a}"
-      Log.info "Margin = #{margin_css}"
-    end
-    
     css.update padding_css
     css.update margin_css
-    
     
     if self.fit_to_grid and self.depth < 5
       set_width_class
@@ -478,7 +469,8 @@ class Grid
       render_layer_obj = Layer.find render_layer, sub_grid_args
       inner_html += render_layer_obj.to_html sub_grid_args
     end
-
+    
+    
     html = content_tag tag, inner_html, attributes, false
     return html
   end
