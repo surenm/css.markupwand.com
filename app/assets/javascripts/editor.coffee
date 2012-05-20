@@ -21,21 +21,33 @@ window.enableMultiSelect = ->
     $('.multiselect').css('visibility','hidden')
     window.Goyaka['multiSelectEnabled'] = false
 
-hoverEnter = (event) ->
-  event.stopPropagation()
-  grid_id = $(this).data('gridId')
-  console.log "Entering #{grid_id}}"
-  $(this).css("border", "2px dotted #000000")
-
-hoverLeave = (event) ->
-  event.stopPropagation()
-  grid_id = $(this).data('gridId')
-  console.log "Leaving #{grid_id}}"
-  $(this).css "border", "0px"
- 
+class Editor
+  constructor: (target) ->
+    @iframe_dom = $(target).contents()
+    
+    # Binding to highlight a div when hovered
+    @iframe_dom.find("div,p").mouseenter {dom: this}, mouseEnterHandler
+    @iframe_dom.find("div,p").mouseleave {dom: this}, mouseLeaveHandler
   
+  reset_highlight: (target) ->
+    @iframe_dom.find("div,p").removeClass "editor-highlight"
+  
+  get_grid_id = (obj) ->
+    grid_id = $(obj).data('gridId')
+    return grid_id
+    
+  mouseEnterHandler = (event) ->
+    event.stopPropagation()
+    event.data.dom.reset_highlight()
+    $(this).addClass "editor-highlight"  
+    
+  mouseLeaveHandler = (event) ->
+    event.stopPropagation()
 
-$(document).ready ->  
+$(document).ready ->
+  $("iframe").load ->
+    editor = new Editor "#editor-iframe"
+
   $(window).keydown (e) ->
     if (navigator.userAgent.indexOf('Mac OS X') != -1) and (e.altKey)
       window.enableMultiSelect()
