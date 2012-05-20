@@ -33,9 +33,6 @@ hoverLeave = (event) ->
   console.log "Leaving #{grid_id}}"
   $(this).css "border", "0px"
  
-window.init = () ->
-  obj = $("iframe#editor-iframe").contents()
-  $(obj).find("div").hover hoverEnter, hoverLeave
   
 
 $(document).ready ->  
