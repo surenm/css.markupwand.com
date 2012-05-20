@@ -198,7 +198,6 @@ module CssParser
   def CssParser::parse_box(layer)
     css                = {}
     bounds             = layer[:bounds][:value]
-    css[:width]        = (bounds[:right][:value] - bounds[:left][:value]).to_s + 'px'
     css[:'min-height'] = (bounds[:bottom][:value] - bounds[:top][:value]).to_s + 'px'
 
     if layer.has_key? :adjustment
