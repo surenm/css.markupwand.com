@@ -6,10 +6,11 @@
   <%= yield :css %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
+  <%= yield :javascript %>
 </head>
 <body>
 <%= yield :content %>
 
-<%= yield :javascript %>
+
 </body>
 </html>

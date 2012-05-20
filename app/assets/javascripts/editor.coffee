@@ -21,8 +21,24 @@ window.enableMultiSelect = ->
     $('.multiselect').css('visibility','hidden')
     window.Goyaka['multiSelectEnabled'] = false
 
-$(document).ready ->
+hoverEnter = (event) ->
+  event.stopPropagation()
+  grid_id = $(this).data('gridId')
+  console.log "Entering #{grid_id}}"
+  $(this).css("border", "2px dotted #000000")
+
+hoverLeave = (event) ->
+  event.stopPropagation()
+  grid_id = $(this).data('gridId')
+  console.log "Leaving #{grid_id}}"
+  $(this).css "border", "0px"
+ 
+window.init = () ->
+  obj = $("iframe#editor-iframe").contents()
+  $(obj).find("div").hover hoverEnter, hoverLeave
   
+
+$(document).ready ->  
   $(window).keydown (e) ->
     if (navigator.userAgent.indexOf('Mac OS X') != -1) and (e.altKey)
       window.enableMultiSelect()
