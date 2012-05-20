@@ -3,18 +3,13 @@
 <head>
   <title>HTMLBox</title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= yield :css %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-<div class="container">
-  <center>
-    <img src="assets/logo.png" /><br>
-    <h1 color=>Magically convert Photoshop designs to valid HTML markup</h1>
-  </center>
 <%= yield :content %>
 
 <%= yield :javascript %>
-</div>
 </body>
 </html>
