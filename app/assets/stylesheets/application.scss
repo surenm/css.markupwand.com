@@ -8,10 +8,51 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
+ *= require bootstrap
+ *= require bootstrap-responsive
+ *= require bootstrap_and_overrides
  *= require_self
- *= require_tree .
+
 */
 
-/*.ide {
-background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJUlEQVQYGWP4jwWcOXMGQ5SJgUgwgAoZQQ4nypkY3gMKDDJfAwB4VFHxgQ7ZmwAAAABJRU5ErkJggg==);
-}*/
+@import "compass/css3";
+@import "compass/css3/images";
+@import "compass/css3/opacity";
+@import "compass/css3/box-shadow";
+@import "compass/utilities";
+
+body {
+  background: url('background-tile.png') repeat transparent;
+}
+
+#landing-page {
+
+  h1 {
+    color: #666666;
+    margin: 30px;
+  }
+  
+  h2 {
+    color: #333;
+  }
+
+  img {
+    margin-top: 30px;
+  }
+  
+  .drop {
+    background-color: #cbabd7;
+    @include border-radius(8px);
+    border: 1px dashed #E1E1E8;
+    width: 80%;
+    min-height: 200px;
+    margin-bottom: 100px;
+  }
+
+  input[type="file"] {
+    background-color: #d9d9d9;
+    height: 40px;
+  }
+}
+  
+
