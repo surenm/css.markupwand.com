@@ -33,6 +33,7 @@ gem 'compass', ">= 0.12.alpha.4"
 gem 'compass-rails'
 gem 'twitter-bootstrap-rails'
 gem 'haml'
+gem 'backbone-rails'
 
 #File upload related gems
 gem 'carrierwave'
