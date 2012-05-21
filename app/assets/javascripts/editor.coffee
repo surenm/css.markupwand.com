@@ -25,12 +25,21 @@ class Editor
   constructor: (target) ->
     @iframe_dom = $(target).contents()
     
+    this.add_editor_stylesheet()
     # Binding to highlight a div when hovered
     @iframe_dom.find("div,p").mouseenter {dom: this}, mouseEnterHandler
     @iframe_dom.find("div,p").mouseleave {dom: this}, mouseLeaveHandler
   
   reset_highlight: (target) ->
     @iframe_dom.find("div,p").removeClass "editor-highlight"
+  add_editor_stylesheet: () ->
+    cssLink = document.createElement("link")
+
+    cssLink.href = "./assets/iframe.css"
+    cssLink.rel  = "stylesheet"
+    cssLink.type = "text/css"
+
+    $(@iframe_dom).find('body').append(cssLink)
   
   get_grid_id = (obj) ->
     grid_id = $(obj).data('gridId')

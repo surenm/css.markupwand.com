@@ -1,0 +1,21 @@
+// CSS to be included in the generated iframe window for editor
+@import "compass/css3";
+@import "compass/css3/images";
+@import "compass/css3/opacity";
+@import "compass/css3/box-shadow";
+@import "compass/utilities";
+
+body {
+  cursor: pointer;
+}
+
+.mouseover {
+  @include single-box-shadow(#aaaaaa, 0, 0, 2px, 5px, false)
+}
+
+.selected {
+  cursor: normal;
+  @include single-box-shadow(#333333, 0, 0, 5px, 5px, false)
+}
+
+
