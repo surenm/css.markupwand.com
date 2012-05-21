@@ -348,6 +348,8 @@ class Grid
     
     parent.children.each do |child|
       break if child == self
+      next if child.bounds.nil?
+      
       if parent.orientation == Constants::GRID_ORIENT_NORMAL
         margin_top -= (child.bounds.height + child.relative_margin[:top]) 
       else
