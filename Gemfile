@@ -44,4 +44,5 @@ group :development do
   gem 'pry-rails', :group => :development
   gem 'pry-stack_explorer', :group => :development
   gem 'rmagick'
+  gem 'ruby-debug19'
 end
