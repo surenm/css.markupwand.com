@@ -2,6 +2,20 @@ class BoundingBox
   attr_accessor :top, :left, :bottom, :right
   attr_reader :width, :height, :area
 
+  private
+  def set_derived_dimensions
+    begin
+      @width = (self.right-self.left).abs
+      @height = (self.bottom-self.top).abs
+      @area = @width * @height
+    rescue
+      @width = nil
+      @height = nil
+      @area = nil
+    end
+  end
+
+  public
   def initialize(top=nil, left=nil, bottom=nil, right=nil)
     set(top, left, bottom, right)
   end
@@ -9,7 +23,7 @@ class BoundingBox
   def reset
     set(nil, nil, nil, nil)
   end
-  
+
   def nil?
     self.top.nil? or self.right.nil? or self.bottom.nil? or self.left.nil?
   end
@@ -19,16 +33,26 @@ class BoundingBox
     self.left = left
     self.bottom = bottom
     self.right = right
+  end
 
-    begin
-      @width = (right-left).abs
-      @height = (bottom-top).abs
-      @area = @width * @height
-    rescue
-      @width = nil
-      @height = nil
-      @area = nil
-    end
+  def left=(left)
+    @left = left
+    set_derived_dimensions
+  end
+
+  def right=(right)
+    @right = right
+    set_derived_dimensions
+  end
+
+  def top=(top)
+    @top = top
+    set_derived_dimensions
+  end
+
+  def bottom=(bottom)
+    @bottom = bottom
+    set_derived_dimensions
   end
 
   def to_s
@@ -57,7 +81,7 @@ class BoundingBox
     if cropped_bounds.bottom > other_box.bottom
       cropped_bounds.bottom = other_box.bottom
     end
-    
+
     return cropped_bounds
   end
 
