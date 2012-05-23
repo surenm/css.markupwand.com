@@ -375,7 +375,16 @@ class Grid
     
     if not self.parent.nil? and not self.parent.bounds.nil? and not self.bounds.nil?
       
-      if self.parent.bounds.left < self.bounds.left
+      
+      # Guess work. For toplevel page wraps, the left margins are huge
+      # and it is the first node in the grid tree
+      
+      is_top_level_page_wrap = ( self.parent.bounds.left == 0 and
+        self.parent.parent == nil and
+        relative_margin[:left] > 200 )
+        
+      
+      if self.parent.bounds.left < self.bounds.left and !is_top_level_page_wrap
         css[:'margin-left'] = "#{relative_margin[:left]}px"
       end 
       
