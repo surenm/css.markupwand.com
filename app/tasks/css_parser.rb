@@ -144,7 +144,7 @@ module CssParser
   def CssParser::parse_box_gradient(layer)
     css = {}
     
-    if layer[:layerEffects][:value].has_key? :gradientFill
+    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :gradientFill
       gradient_array = []
       colors = layer[:layerEffects][:value][:gradientFill][:value][:gradient][:value][:colors][:value]
       angle = layer[:layerEffects][:value][:gradientFill][:value][:angle][:value]
