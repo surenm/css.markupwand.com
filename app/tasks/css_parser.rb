@@ -111,18 +111,68 @@ module CssParser
       {}
     end
   end
-
-  def CssParser::parse_box(layer)
-    css                = {}
-    bounds             = layer[:bounds][:value]
-    css[:'min-height'] = (bounds[:bottom][:value] - bounds[:top][:value]).to_s + 'px'
-
+  
+  def CssParser::parse_box_height(layer)
+    bounds = layer[:bounds][:value]
+    
+    {:'min-height' => (bounds[:bottom][:value] - bounds[:top][:value]).to_s + 'px' }
+    
+  end
+  
+  def CssParser::parse_box_background_color(layer)
+    css = {}
     if layer.has_key? :adjustment
       css[:background]   = parse_color(layer[:adjustment][:value].first[:value][:color])
     end
     
+    css
+  end
+  
+  def CssParser::parse_box_gradient(layer)
+    css = {}
+    
+    if layer[:layerEffects][:value].has_key? :gradientFill
+      gradient_array = []
+      colors = layer[:layerEffects][:value][:gradientFill][:value][:gradient][:value][:colors][:value]
+      angle = layer[:layerEffects][:value][:gradientFill][:value][:angle][:value]
+      gradient_array.push "#{angle}deg"
+      
+      colors.each do |color|
+        color_hash = parse_color(color[:value][:color])
+        position   = ((color[:value][:location][:value] * 100)/4096.0).round.to_s
+        gradient_array.push "#{color_hash} #{position}%"
+      end
+      
+      gradient_value = gradient_array.join ", "
+      css[:'background-image'] = "-webkit-linear-gradient(#{gradient_value})"
+      # FIXME Change data type of css from hash to a data structure that allows duplicate hash keys. 
+    #  css[:'background-image'] = "-o-linear-gradient(#{gradient_value})"
+    #  css[:'background-image'] = "-moz-linear-gradient(#{gradient_value})"
+    #  css[:'background-image'] = "linear-gradient(#{gradient_value})"
+    end
+    
+    css
+    
+  end
+
+
+  def CssParser::parse_box(layer)
+    css                = {}
+    
+    # Min-height
+    css.update(parse_box_height(layer))
+    
+    # Background-color
+    css.update(parse_box_background_color(layer))
+
+    # Box border
     css.update parse_box_border(layer)
-    css.update parse_box_rounded_corners(layer)
+    
+    # Box rounded corners
+    css.update(parse_box_rounded_corners(layer))
+    
+    # Box gradient 
+    css.update(parse_box_gradient(layer))
     
     css
   end
