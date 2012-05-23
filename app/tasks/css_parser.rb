@@ -12,18 +12,7 @@ class Float
 end
 
 module CssParser
-  CssParser::FONT_WEIGHT = {
-    'Regular' => nil,
-    'Bold'    => 'bold'
-  }
-  
-  CssParser::FONT_STYLE = {
-    'Italic' => 'italic'
-  }
-  
-  CssParser::TEXT_ALIGN = {
-    1131312242 => 'center'
-  } 
+
   def CssParser::set_assets_root(root)
     # Create assets folder
     assets_path = root.join "assets"
@@ -36,58 +25,34 @@ module CssParser
     ENV["ASSETS_DIR"]
   end
 
-  def CssParser::parse_color(color_object)
-    red   = (Integer(color_object[:value][:red][:value])).to_s(16)
-    green = (Integer(color_object[:value][:grain][:value])).to_s(16)
-    blue  = (Integer(color_object[:value][:blue][:value])).to_s(16)
-    red   = '0' + red if red.length < 2
-    green = '0' + green if green.length < 2
-    blue  = '0' + blue if blue.length < 2 
-
-    '#' + red + green + blue
-  end
-  
-  def CssParser::parse_font_name(layer)
-    mapped_font = PhotoshopItem::FontMap.instance.get_font_name(layer)
-    if not mapped_font.nil?
-      {:'font-family' => mapped_font}
+  def CssParser::parse_color(color_object, opacity = nil)
+    
+    red   = Integer(color_object[:value][:red][:value])
+    green = Integer(color_object[:value][:grain][:value])
+    blue  = Integer(color_object[:value][:blue][:value])
+        
+    if not opacity.nil?
+      # Use rgb(a,b,c) format when opacity is given
+      color = sprintf("rgb(%d, %d, %d, %0.2f)", red, green, blue, opacity)
     else
-      {}
+      # Use normal hex hash
+      color = sprintf("#%02x%02x%02x", red, green, blue)
     end
+    
+    color
   end
   
-  def CssParser::parse_font_size(font_item)
-    { :'font-size' => font_item[:size][:value].to_s + 'px' }
-  end
-  
-  def CssParser::parse_font_style(font_item)
-    font_modifier = font_item[:fontStyleName][:value]
-    font_modifier_css = {}
-    
-    if not FONT_WEIGHT[font_modifier].nil?
-      font_modifier_css[:'font-weight'] = FONT_WEIGHT[font_modifier]
-    end
-    
-    if not FONT_STYLE[font_modifier].nil?
-      font_modifier_css[:'font-style'] = FONT_STYLE[font_modifier]
-    end
-    
-    font_modifier_css
-  end
-  
-  def CssParser::parse_font_shadow(layer)
-    
-    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
-      {:'text-shadow' =>
-         parse_box_shadow(layer[:layerEffects][:value][:dropShadow]) }
-    else
-      {}
-    end
-  end
   
   def CssParser::parse_box_shadow(shadow)
-    color = parse_color(shadow[:value][:color])
+    opacity = if shadow[:value].has_key? :opacity
+        (shadow[:value][:opacity][:value]/100.0)
+      else
+        nil
+      end
+    
+    color = parse_color(shadow[:value][:color], opacity)
     size  = shadow[:value][:distance][:value]
+    
     "#{size}px #{size}px #{size}px #{color}"
   end
   
@@ -101,41 +66,6 @@ module CssParser
     
   end
   
-  def CssParser::parse_text_color(text_style)
-    color_object = text_style[:value][:textStyle][:value][:color]
-    
-    { :color => parse_color(color_object) }
-  end
-  
-  def CssParser::parse_text_align(layer)
-    css = {}
-    paragraph_style = layer[:textKey][:value][:paragraphStyleRange][:value]
-    align_code = paragraph_style.first[:value][:paragraphStyle][:value][:align][:value]
-
-    if CssParser::TEXT_ALIGN.has_key? align_code
-      css[:'text-align'] = CssParser::TEXT_ALIGN[align_code]
-    end
-    
-    css
-  end
-  
-  def CssParser::parse_text_line_height(font_info)
-    # Reference: http://help.adobe.com/en_US/photoshop/cs/using/WS5EC229CC-1518-4f06-BCB0-E2585D61FC54a.html#WSfd1234e1c4b69f30ea53e41001031ab64-75a4a
-    if not font_info[:leading].nil?
-      {:'line-height' => font_info[:leading][:value].to_s + 'px'}
-    else
-      {}
-    end
-  end
-  
-  def CssParser::parse_text_letter_spacing(font_info)
-    #Same reference as above
-    if not font_info[:tracking].nil? and font_info[:tracking] != 0
-      {:'letter-spacing' => (font_info[:tracking][:value]/20.0).round.to_s + 'px'}
-    else
-      {}
-    end
-  end
   
   # Returns a hash for CSS styles
   def CssParser::parse_text(layer)
@@ -145,31 +75,31 @@ module CssParser
     css                 = {}
     
     # Font name
-    css.update(parse_font_name(layer))
+    css.update(CssTextParser::parse_font_name(layer))
         
     # Font-weight/style
-    css.update(parse_font_style(font_info))
+    css.update(CssTextParser::parse_font_style(font_info))
     
     # Font size
-    css.update(parse_font_size(font_info))
+    css.update(CssTextParser::parse_font_size(font_info))
     
     # Line-height
-    css.update(parse_text_line_height(font_info))
+    css.update(CssTextParser::parse_text_line_height(font_info))
     
     # Letter-spacing
-    css.update(parse_text_letter_spacing(font_info))
+    css.update(CssTextParser::parse_text_letter_spacing(font_info))
     
     # Shadows 
-    css.update(parse_font_shadow(layer))
+    css.update(CssTextParser::parse_font_shadow(layer))
     
     # Opacity
     css.update(parse_opacity(layer))
     
     # Alignment
-    css.update(parse_text_align(layer))
+    css.update(CssTextParser::parse_text_align(layer))
 
     # Color
-    css.update(parse_text_color(text_style))
+    css.update(CssTextParser::parse_text_color(text_style))
     
     css
   end
@@ -194,18 +124,68 @@ module CssParser
       {}
     end
   end
-
-  def CssParser::parse_box(layer)
-    css                = {}
-    bounds             = layer[:bounds][:value]
-    css[:'min-height'] = (bounds[:bottom][:value] - bounds[:top][:value]).to_s + 'px'
-
+  
+  def CssParser::parse_box_height(layer)
+    bounds = layer[:bounds][:value]
+    
+    {:'min-height' => (bounds[:bottom][:value] - bounds[:top][:value]).to_s + 'px' }
+    
+  end
+  
+  def CssParser::parse_box_background_color(layer)
+    css = {}
     if layer.has_key? :adjustment
       css[:background]   = parse_color(layer[:adjustment][:value].first[:value][:color])
     end
     
+    css
+  end
+  
+  def CssParser::parse_box_gradient(layer)
+    css = {}
+    
+    if layer[:layerEffects][:value].has_key? :gradientFill
+      gradient_array = []
+      colors = layer[:layerEffects][:value][:gradientFill][:value][:gradient][:value][:colors][:value]
+      angle = layer[:layerEffects][:value][:gradientFill][:value][:angle][:value]
+      gradient_array.push "#{angle}deg"
+      
+      colors.each do |color|
+        color_hash = parse_color(color[:value][:color])
+        position   = ((color[:value][:location][:value] * 100)/4096.0).round.to_s
+        gradient_array.push "#{color_hash} #{position}%"
+      end
+      
+      gradient_value = gradient_array.join ", "
+      css[:'background-image'] = "-webkit-linear-gradient(#{gradient_value})"
+      # FIXME Change data type of css from hash to a data structure that allows duplicate hash keys. 
+    #  css[:'background-image'] = "-o-linear-gradient(#{gradient_value})"
+    #  css[:'background-image'] = "-moz-linear-gradient(#{gradient_value})"
+    #  css[:'background-image'] = "linear-gradient(#{gradient_value})"
+    end
+    
+    css
+    
+  end
+
+
+  def CssParser::parse_box(layer)
+    css                = {}
+    
+    # Min-height
+    css.update(parse_box_height(layer))
+    
+    # Background-color
+    css.update(parse_box_background_color(layer))
+
+    # Box border
     css.update parse_box_border(layer)
-    css.update parse_box_rounded_corners(layer)
+    
+    # Box rounded corners
+    css.update(parse_box_rounded_corners(layer))
+    
+    # Box gradient 
+    css.update(parse_box_gradient(layer))
     
     css
   end
