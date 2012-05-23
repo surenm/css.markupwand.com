@@ -34,7 +34,8 @@ class Grid
   end
   
   def is_leaf?
-    self.layers.count==1
+#    debugger
+    self.children.count == 0 and not self.render_layer.nil?
   end
   
   def self.reset_grouping_queue

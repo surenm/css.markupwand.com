@@ -82,6 +82,7 @@ class Layer
   end
 
   def tag(is_leaf = false)
+#    debugger
     if self.kind == LAYER_SMARTOBJECT
       if is_leaf
         :img
@@ -103,6 +104,7 @@ class Layer
   end
 
   def get_css(css = {}, is_leaf = false, is_root = false)
+#    debugger
     if @kind == LAYER_TEXT
       css.update CssParser::parse_text layer_json
     elsif @kind == LAYER_SMARTOBJECT
@@ -131,7 +133,7 @@ class Layer
         css[:width] = '960px'
       end
     end
-
+#    debugger
     css
   end
 
