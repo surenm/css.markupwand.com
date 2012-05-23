@@ -25,21 +25,34 @@ module CssParser
     ENV["ASSETS_DIR"]
   end
 
-  def CssParser::parse_color(color_object)
-    red   = (Integer(color_object[:value][:red][:value])).to_s(16)
-    green = (Integer(color_object[:value][:grain][:value])).to_s(16)
-    blue  = (Integer(color_object[:value][:blue][:value])).to_s(16)
-    red   = '0' + red if red.length < 2
-    green = '0' + green if green.length < 2
-    blue  = '0' + blue if blue.length < 2 
-
-    '#' + red + green + blue
+  def CssParser::parse_color(color_object, opacity = nil)
+    
+    red   = Integer(color_object[:value][:red][:value])
+    green = Integer(color_object[:value][:grain][:value])
+    blue  = Integer(color_object[:value][:blue][:value])
+        
+    if not opacity.nil?
+      # Use rgb(a,b,c) format when opacity is given
+      color = sprintf("rgb(%d, %d, %d, %0.2f)", red, green, blue, opacity)
+    else
+      # Use normal hex hash
+      color = sprintf("#%02x%02x%02x", red, green, blue)
+    end
+    
+    color
   end
   
   
   def CssParser::parse_box_shadow(shadow)
-    color = parse_color(shadow[:value][:color])
+    opacity = if shadow[:value].has_key? :opacity
+        (shadow[:value][:opacity][:value]/100.0)
+      else
+        nil
+      end
+    
+    color = parse_color(shadow[:value][:color], opacity)
     size  = shadow[:value][:distance][:value]
+    
     "#{size}px #{size}px #{size}px #{color}"
   end
   
