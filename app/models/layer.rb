@@ -1,16 +1,16 @@
 class Layer
   include Mongoid::Document
   include Mongoid::Timestamps::Created
-  include Mongoid::Timestamps::Updated  
+  include Mongoid::Timestamps::Updated
   include ActionView::Helpers::TagHelper
 
   LAYER_TEXT        = "LayerKind.TEXT"
   LAYER_SMARTOBJECT = "LayerKind.SMARTOBJECT"
   LAYER_SOLIDFILL   = "LayerKind.SOLIDFILL"
   LAYER_NORMAL      = "LayerKind.NORMAL"
-  
+
   belongs_to :grid
-  
+
   field :uid, :type  => String
   field :name, :type => String
   field :kind, :type => String
@@ -25,15 +25,15 @@ class Layer
     self.raw        = layer.to_json.to_s
     self.save!
   end
-  
+
   def inspect
     "Layer: #{self.name}"
   end
-  
+
   def layer_json
     JSON.parse self.raw, :symbolize_names => true, :max_nesting => false
   end
-  
+
   def bounds
     value  = layer_json[:bounds][:value]
     top    = value[:top][:value]
@@ -43,7 +43,7 @@ class Layer
 
     @bounds = BoundingBox.new(top, left, bottom, right).crop_to(PageGlobals.instance.page_bounds)
   end
-  
+
   def <=>(other_layer)
     self.bounds <=> other_layer.bounds
   end
@@ -63,10 +63,10 @@ class Layer
   def intersect?(other)
     return self.bounds.intersect? other.bounds
   end
-  
+
   def is_non_smart_image?
     self.layer_type == 'IMAGE'
-  end 
+  end
 
   def image_path
 
@@ -81,11 +81,15 @@ class Layer
     end
   end
 
-  def tag
+  def tag(is_leaf = false)
     if self.kind == LAYER_SMARTOBJECT
-      :img
+      if is_leaf
+        :img
+      else
+        :div
+      end
     elsif self.kind == LAYER_NORMAL
-      if self.is_non_smart_image?
+      if self.is_non_smart_image? and is_leaf
         :img
       else
         :div
@@ -98,7 +102,7 @@ class Layer
     end
   end
 
-  def get_css(css = {}, is_root = false)
+  def get_css(css = {}, is_leaf = false, is_root = false)
     if @kind == LAYER_TEXT
       css.update CssParser::parse_text layer_json
     elsif @kind == LAYER_SMARTOBJECT
@@ -110,6 +114,12 @@ class Layer
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text layer_json
     elsif self.kind == LAYER_SMARTOBJECT
+      if not is_leaf
+        css[:background] = "url('../../#{image_path}') no-repeat"
+        css[:'background-size'] = "contain"
+        css[:width] = "#{self.bounds.width}px"
+        css[:height] = "#{self.bounds.height}px"
+      end
       # don't do anything
     elsif self.kind == LAYER_SOLIDFILL
       css.update CssParser::parse_box layer_json
@@ -121,12 +131,12 @@ class Layer
         css[:width] = '960px'
       end
     end
-    
+
     css
   end
 
-  def class_name(css = {}, is_root = false)
-    css = get_css(css, is_root)
+  def class_name(css = {}, is_leaf = false, is_root = false)
+    css = get_css(css, is_leaf, is_root)
     PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string(css)
   end
 
@@ -138,36 +148,36 @@ class Layer
     end
   end
 
-  def to_html(args = {})
+  def to_html(args = {}, is_leaf)
     #puts "Generating html for #{self.inspect}"
     css       = args.fetch :css, {}
     css_class = class_name css, @is_root
-    
+
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.kind == LAYER_TEXT
       inner_html = text
     end
-    
+
     attributes = Hash.new
     attributes[:class] = css_class
 
-    if tag == :img
+    if tag(is_leaf) == :img
       html = "<img src='#{image_path}'/>"
     else
       html = content_tag tag, inner_html, attributes, false
     end
     return html
   end
-  
+
   def to_s
     "#{self.name} - #{self.bounds}"
   end
-  
+
   def print(indent_level = 0)
     spaces = ""
     prefix = "|--"
     indent_level.times {|i| spaces+=" "}
     puts "#{spaces}#{prefix} (layer) #{self.name} #{@bounds.to_s}"
   end
-  
+
 end
