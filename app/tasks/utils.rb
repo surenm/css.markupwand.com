@@ -3,7 +3,8 @@ class Utils
     self.process_file "/tmp/mailgun.psd.json"
   end
   
-  def self.process_file(file_name)
+  def self.process_file(file_name, profile = false)
+    RubyProf.start if profile
     Log.info "Beginning to process #{file_name}..."
 
     fptr     = File.read file_name
@@ -79,7 +80,16 @@ class Utils
     
     Log.info "Successfully completed processing #{better_file_name}."
     PhotoshopItem::FontMap.instance.show_install_urls
-     
+    
+    if profile
+      result  = RubyProf.stop
+      printer = RubyProf::GraphHtmlPrinter.new(result)
+      profile_file = '/tmp/profile.html'
+      profile_html = File.new(profile_file, 'w+')
+      printer.print(profile_html, {:min_percent=>10})
+      profile_html.close
+      Log.info "Profile data available at #{profile_file}"
+    end
     return
   end
 end

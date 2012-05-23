@@ -159,6 +159,7 @@ GEM
       columnize (>= 0.3.1)
       linecache19 (>= 0.5.11)
       ruby-debug-base19 (>= 0.11.19)
+    ruby-prof (0.10.8)
     ruby_core_source (0.1.5)
       archive-tar-minitar (>= 0.5.2)
     sanitize (2.0.3)
@@ -232,6 +233,7 @@ DEPENDENCIES
   resque
   rmagick
   ruby-debug19
+  ruby-prof
   sanitize
   sass-rails (~> 3.2.4)
   therubyracer
