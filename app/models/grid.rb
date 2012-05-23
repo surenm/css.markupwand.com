@@ -331,9 +331,13 @@ class Grid
 
     Log.debug "#{spaces}#{prefix} (grid) #{self.bounds.to_s}"
     self.children.each do |subgrid|
-      indent_level += 1
       subgrid.print(indent_level+1)
-      indent_level -= 1
+    end
+    
+    if children.length == 0
+      self.layers.each do |layer|
+        layer.print(indent_level+1)
+      end
     end
     
   end

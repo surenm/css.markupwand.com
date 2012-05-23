@@ -167,7 +167,7 @@ class Layer
     spaces = ""
     prefix = "|--"
     indent_level.times {|i| spaces+=" "}
-    puts "#{spaces}#{prefix} (layer) #{@name} #{@bounds.to_s}"
+    puts "#{spaces}#{prefix} (layer) #{self.name} #{@bounds.to_s}"
   end
   
 end
