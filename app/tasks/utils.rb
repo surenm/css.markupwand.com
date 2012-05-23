@@ -7,7 +7,7 @@ class Utils
     Log.info "Beginning to process #{file_name}..."
 
     fptr     = File.read file_name
-    psd_data = JSON.parse fptr, :symbolize_names => true
+    psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
     
     # A hash of all layers
     art_layers = psd_data[:art_layers]
@@ -37,6 +37,7 @@ class Utils
     grid.set nodes, nil
     
     Grid.group!
+    grid.print
     
     Log.info "Generating body HTML..."    
     

@@ -31,7 +31,7 @@ class Layer
   end
   
   def layer_json
-    JSON.parse self.raw, :symbolize_names => true
+    JSON.parse self.raw, :symbolize_names => true, :max_nesting => false
   end
   
   def bounds

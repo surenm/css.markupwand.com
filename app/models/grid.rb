@@ -329,7 +329,7 @@ class Grid
     prefix = "|--"
     indent_level.times {|i| spaces+=" "}
 
-    puts "#{spaces}#{prefix} (grid) #{self.bounds.to_s}"
+    Log.debug "#{spaces}#{prefix} (grid) #{self.bounds.to_s}"
     self.children.each do |subgrid|
       indent_level += 1
       subgrid.print(indent_level+1)
