@@ -370,7 +370,7 @@ class Grid
     
     if not self.parent.nil? and not self.parent.bounds.nil? and not self.bounds.nil?
       
-      if self.parent.bounds.left != 0 and self.parent.bounds.left < self.bounds.left
+      if self.parent.bounds.left < self.bounds.left
         css[:'margin-left'] = "#{relative_margin[:left]}px"
       end 
       
