@@ -1,18 +1,20 @@
 require 'RMagick'
 class DrawUtil
+  attr_accessor :jsonfile_name, :canvas
+  
   def initialize(jsonfile_name)
     @jsonfile_name = jsonfile_name
   end
   
-  def draw_layer(layer, canvas)
+  def draw_layer(layer)
     bounds = layer[:bounds]
     rectangle = Magick::Draw.new
-    rectangle.stroke('tomato')
+    rectangle.stroke('red')
     rectangle.fill_opacity(0)
-    rectangle.stroke_width(2)
+    rectangle.stroke_width(1)
+    rectangle.stroke_opacity(0.5)
     rectangle.rectangle(bounds[:value][:left][:value], bounds[:value][:top][:value], bounds[:value][:right][:value], bounds[:value][:bottom][:value])
-    Log.info "Drawing #{layer[:name][:value]}"
-    rectangle.draw(canvas)
+    rectangle.draw(@canvas)
   end
   
   def draw_layer_name(layer)
@@ -20,7 +22,7 @@ class DrawUtil
     text   = Magick::Draw.new
     text.font_family = 'helvetica'
     text.pointsize = 10
-    text.fill = 'darkred'
+    text.fill = 'green'
     x = bounds[:value][:left][:value]
     y = bounds[:value][:top][:value]
     text.annotate(@canvas, 0, 0, x, y, layer[:name][:value])
@@ -51,18 +53,47 @@ class DrawUtil
     
     bg_original ="#{@jsonfile_name.sub '.json', ''}.png"
     
-    canvas = Magick::ImageList.new
+    @canvas = Magick::ImageList.new
     
     if File.exists? bg_original
       bg_blob = File.open(bg_original).read
-      canvas.from_blob bg_blob
+      @canvas.from_blob bg_blob
     else
-      canvas.new_image(json_data[:properties][:width], json_data[:properties][:height], Magick::HatchFill.new('white', 'gray90'))
+      @canvas.new_image(json_data[:properties][:width], json_data[:properties][:height], Magick::HatchFill.new('white', 'gray90'))
     end
     
-    json_data[:art_layers].each do |layer|
-      draw_layer(layer.second, canvas)
+    art_layers = json_data[:art_layers]
+    
+    
+    art_layers.each do |layer|
+      Log.info "Drawing #{layer.second[:name][:value]}"
+      draw_layer(layer.second)
+      draw_layer_name(layer.second)
     end
-    canvas.display
+    
+    #Set page level properties
+    pageglobals = PageGlobals.instance
+    pageglobals.page_bounds = BoundingBox.new(0, 0,
+      json_data[:properties][:height], json_data[:properties][:width])
+    
+    
+    nodes = []
+    art_layers.each do |layer_id, node_json|
+      node = Layer.new
+      node.set node_json
+      nodes.push node
+    end
+    
+    Grid.reset_grouping_queue
+    
+    Log.info "Creating grids..."
+    grid = Grid.new 
+    grid.set nodes, nil
+    
+    Grid.group!
+    Log.info "Drawing grids..."
+    draw_grids(grid)
+    Log.info "done"
+    @canvas.display
   end
 end
