@@ -15,14 +15,34 @@ class DrawUtil
     rectangle.draw(canvas)
   end
   
-  def draw_layer_name(layer, canvas)
+  def draw_layer_name(layer)
     bounds = layer[:bounds]
     text   = Magick::Draw.new
     text.font_family = 'helvetica'
-    text.pointsize = 52
-    text.fill = 'red'
-    Log.info "Drawing " + layer[:name][:value]
-    text.annotate(canvas, bounds[:value][:left][:value], bounds[:value][:top][:value], 0, 0, layer[:name][:value])
+    text.pointsize = 10
+    text.fill = 'darkred'
+    x = bounds[:value][:left][:value]
+    y = bounds[:value][:top][:value]
+    text.annotate(@canvas, 0, 0, x, y, layer[:name][:value])
+  end
+  
+  def draw_grids(grid)
+    if not grid.bounds.nil?
+      bounds = grid.bounds
+      rectangle = Magick::Draw.new
+      rectangle.stroke('blue')
+      rectangle.fill_opacity(0)
+      rectangle.stroke_width(1)
+      rectangle.rectangle(bounds.left, bounds.top, bounds.right, bounds.bottom)
+      print "."
+      rectangle.draw(@canvas)
+    end
+    
+    if grid.children.length > 0
+      grid.children.each do |child|
+        draw_grids(child)
+      end
+    end
   end
   
   def draw
