@@ -1,7 +1,23 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
-#   Mayor.create(:name => 'Emanuel', :city => cities.first)
+User.all.delete_all
+Design.all.delete_all
+Grid.all.delete_all
+Layer.all.delete_all
+
+# Create an user
+[ 
+  {
+    "email"      => "bot@goyaka.com",
+    "first_name" => "Goyaka",
+    "last_name"  => "Bot",
+    "name"       => "Goyaka Bot",
+  }
+].each do |user_info|
+  user = User.new user_info
+  user.save!
+end
+
+# TODO: A sample photoshop file
+
+# TODO: A sample photoshop processed file
+
+
