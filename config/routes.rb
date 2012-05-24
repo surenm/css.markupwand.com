@@ -1,4 +1,6 @@
 TransformersWeb::Application.routes.draw do
+  devise_for :users, :controllers => { :omniauth_callbacks => 'auth' }
+
   resources :design_files
   match '/designs/*path'      => "design_files#serve"
   match 'next_unprocessed'    => "design_files#next_unprocessed"
