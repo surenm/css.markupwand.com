@@ -42,7 +42,7 @@ class Design
     Grid.reset_grouping_queue
     
     Log.info "Creating grids..."
-    grid = Grid.new 
+    grid = Grid.new :design => self
     grid.set nodes, nil
     
     Grid.group!

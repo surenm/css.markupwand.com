@@ -4,6 +4,9 @@ class Grid
   include Mongoid::Timestamps::Updated  
   include ActionView::Helpers::TagHelper
 
+  # Belongs to a specific photoshop design
+  belongs_to :design
+
   # self references for children and parent grids
   has_many :children, :class_name => 'Grid', :inverse_of => :parent
   belongs_to :parent, :class_name => 'Grid', :inverse_of => :children
@@ -256,7 +259,7 @@ class Grid
         next
       end
       
-      row_grid = Grid.new
+      row_grid = Grid.new :design => self.design
       row_grid.set [], self
 
       row_grid.orientation = Constants::GRID_ORIENT_LEFT
@@ -294,7 +297,7 @@ class Grid
           Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
           
           nodes_in_region.each {|node| available_nodes.delete node.uid}
-          grid = Grid.new
+          grid = Grid.new :design => self.design
           grid.set nodes_in_region, row_grid
           
           style_layers.each do |style_layer|
