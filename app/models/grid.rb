@@ -33,6 +33,11 @@ class Grid
     self.id
   end
   
+  def is_leaf?
+#    debugger
+    self.children.count == 0 and not self.render_layer.nil?
+  end
+  
   def self.reset_grouping_queue
     @@pageglobals.grouping_queue.clear
   end
@@ -126,7 +131,7 @@ class Grid
   end
 
   # Usually any layer that matches the grouping box's bounds is a style layer
-  def self.get_style_layers(layers, parent_box = nil)
+  def self.get_style_layers(layers, is_leaf, parent_box = nil)
     style_layers = []
     if not parent_box.nil?
 
@@ -138,7 +143,7 @@ class Grid
 
       layers.each do |layer|
         if layer.bounds == max_bounds
-          if layer.kind == Layer::LAYER_SOLIDFILL or layer.kind == Layer::LAYER_NORMAL
+          if layer.kind == Layer::LAYER_SOLIDFILL or layer.kind == Layer::LAYER_NORMAL or (layer.kind == Layer::LAYER_SMARTOBJECT and not is_leaf)
             style_layers.push layer
           end
         end
@@ -232,7 +237,7 @@ class Grid
     available_nodes      = Hash[itr_layers.collect { |item| [item.uid, item] }]
         
     # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
-    root_style_layers = Grid.get_style_layers itr_layers, root_group
+    root_style_layers = Grid.get_style_layers itr_layers, self.is_leaf?, root_group
     Log.info "Root style layers are #{root_style_layers}" if root_style_layers.size > 0
     Log.debug "Root style layers are #{root_style_layers}"
 
@@ -256,7 +261,7 @@ class Grid
 
       row_grid.orientation = Constants::GRID_ORIENT_LEFT
       
-      row_style_layers = Grid.get_style_layers row_layers, row_group
+      row_style_layers = Grid.get_style_layers row_layers, self.is_leaf?, row_group
       Log.info "Row style layers are #{row_style_layers}" if row_style_layers.size > 0
       Log.debug "Row style layers are #{row_style_layers}"
 
@@ -271,7 +276,7 @@ class Grid
         Log.debug "Trying grouping box #{grouping_box}"
         nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
 
-        style_layers = Grid.get_style_layers remaining_nodes, grouping_box
+        style_layers = Grid.get_style_layers remaining_nodes, self.is_leaf?, grouping_box
         Log.info "Style layers are #{style_layers}" if style_layers.size > 0
 
         if nodes_in_region.empty?
@@ -329,11 +334,15 @@ class Grid
     prefix = "|--"
     indent_level.times {|i| spaces+=" "}
 
-    puts "#{spaces}#{prefix} (grid) #{self.bounds.to_s}"
+    Log.debug "#{spaces}#{prefix} (grid) #{self.bounds.to_s}"
     self.children.each do |subgrid|
-      indent_level += 1
       subgrid.print(indent_level+1)
-      indent_level -= 1
+    end
+    
+    if children.length == 0
+      self.layers.each do |layer|
+        layer.print(indent_level+1)
+      end
     end
     
   end
@@ -348,6 +357,8 @@ class Grid
     
     parent.children.each do |child|
       break if child == self
+      next if child.bounds.nil?
+      
       if parent.orientation == Constants::GRID_ORIENT_NORMAL
         margin_top -= (child.bounds.height + child.relative_margin[:top]) 
       else
@@ -364,7 +375,7 @@ class Grid
     
     if not self.parent.nil? and not self.parent.bounds.nil? and not self.bounds.nil?
       
-      if self.parent.bounds.left != 0 and self.parent.bounds.left < self.bounds.left
+      if self.parent.bounds.left < self.bounds.left
         css[:'margin-left'] = "#{relative_margin[:left]}px"
       end 
       
@@ -423,7 +434,7 @@ class Grid
     
     self.style_layers.each do |layer_id|
       layer = Layer.find layer_id
-      css.update layer.get_css({}, self.root)
+      css.update layer.get_css({}, self.is_leaf?, self.root)
     end
     
     css.update padding_css
@@ -437,7 +448,7 @@ class Grid
         css[:float] = 'left'
       end
     end
-    
+
     layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string css
     
     
@@ -467,7 +478,7 @@ class Grid
       end
     else
       render_layer_obj = Layer.find render_layer, sub_grid_args
-      inner_html += render_layer_obj.to_html sub_grid_args
+      inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?
     end
     
     
