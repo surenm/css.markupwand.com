@@ -29,6 +29,9 @@ class Grid
 
   @@pageglobals = PageGlobals.instance
   
+  attr_accessor :relative_margin
+  
+  
   def inspect
     self.id
   end
@@ -352,21 +355,25 @@ class Grid
   # Similar stuff for left margin as well.
   def relative_margin
     
-    margin_top  = (self.bounds.top - self.parent.bounds.top)
-    margin_left = (self.bounds.left - self.parent.bounds.left)
-    
-    parent.children.each do |child|
-      break if child == self
-      next if child.bounds.nil?
+    if not @relative_margin
+      margin_top  = (self.bounds.top - self.parent.bounds.top)
+      margin_left = (self.bounds.left - self.parent.bounds.left)
       
-      if parent.orientation == Constants::GRID_ORIENT_NORMAL
-        margin_top -= (child.bounds.height + child.relative_margin[:top]) 
-      else
-        margin_left -= (child.bounds.width + child.relative_margin[:left])
-      end
-    end
+      parent.children.each do |child|
+        break if child == self
+        next if child.bounds.nil?
         
-    { :top => margin_top, :left => margin_left }
+        if parent.orientation == Constants::GRID_ORIENT_NORMAL
+          margin_top -= (child.bounds.height + child.relative_margin[:top]) 
+        else
+          margin_left -= (child.bounds.width + child.relative_margin[:left])
+        end
+      end
+          
+      @relative_margin = { :top => margin_top, :left => margin_left }
+    end
+    
+    @relative_margin
   end
   
   # Find Top and left difference from parent grid
