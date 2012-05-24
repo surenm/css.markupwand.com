@@ -4,10 +4,11 @@ class DrawUtil
     @jsonfile_name = jsonfile_name
   end
   def draw
-    canvas = Magick::ImageList.new
-    canvas.new_image(1200, 960, Magick::HatchFill.new('white', 'gray90'))
     json_fh     = File.read @jsonfile_name
     json_data = JSON.parse json_fh, :symbolize_names => true
+    
+    canvas = Magick::ImageList.new
+    canvas.new_image(json_data[:properties][:width], json_data[:properties][:height], Magick::HatchFill.new('white', 'gray90'))
     json_data[:art_layers].each do |lyr|
       lyr = lyr.second
       bounds = lyr[:bounds]
