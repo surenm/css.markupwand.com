@@ -12,7 +12,10 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require lib/jquery.client
+//= require lib/jquery.dnd-file-upload
+//= require lib/json2
+//= require lib/underscore
+//= require lib/backbone
 //= require twitter/bootstrap
-//= require jquery.client
-//= require jquery.dnd-file-upload
 //= require utils
