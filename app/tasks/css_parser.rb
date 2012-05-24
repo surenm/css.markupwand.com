@@ -44,7 +44,7 @@ module CssParser
   
   
   def CssParser::parse_box_shadow(shadow)
-    opacity = if shadow[:value].has_key? :opacity
+    opacity = if shadow[:value].has_key? :opacity and shadow[:value][:opacity][:value] < 100 
         (shadow[:value][:opacity][:value]/100.0)
       else
         nil
