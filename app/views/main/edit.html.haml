@@ -28,7 +28,7 @@
     
     %div.multiselect Multiselect enabled  
   %div.ide  
-    %iframe{:src => 'http://localhost:3000/generated/mailgun/index.html', :id => 'editor-iframe', :onload => 'init()'}
+    %iframe{:src => 'http://localhost:3000/generated/mailgun/index.html', :id => 'editor-iframe'}
   
 - content_for(:javascript) do
-  =javascript_include_tag 'editor' 
+  =javascript_include_tag 'editor', "models/grid"

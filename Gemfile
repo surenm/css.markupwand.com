@@ -19,6 +19,12 @@ gem 'multi_json'
 gem 'log4r'
 gem 'log4r-color'
 
+# Login stuff 
+gem 'devise'
+gem 'omniauth-github'
+gem 'omniauth-openid'
+gem 'omniauth-google-apps'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -33,6 +39,7 @@ gem 'compass', ">= 0.12.alpha.4"
 gem 'compass-rails'
 gem 'twitter-bootstrap-rails'
 gem 'haml'
+gem 'backbone-rails'
 
 #File upload related gems
 gem 'carrierwave'
