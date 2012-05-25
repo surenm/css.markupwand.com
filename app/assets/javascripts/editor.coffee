@@ -15,25 +15,26 @@ class EditorRouter extends Backbone.Router
     # Do nothing here
 
 class EditorIframe extends Backbone.View
-  initialize: () ->
-    @iframe_dom = $(this.el).contents()
-    
-    this.add_debug_stylesheet()
+  initialize: (args) ->
+    this.render()
+  
+  render: (url = null) ->
+    if not url?
+      return
 
-    # Event listeners
-    # TODO: This has to move to events. But dunno how to bind events within the iframe using backbone
+    # TODO: Part of this has to move to events. But dunno how to bind events within the iframe using backbone
+    @iframe_dom = $(this.el).contents()
     @children = @iframe_dom.find("div,p")
 
+    # Adding debug stylesheet
+    this.add_debug_stylesheet() 
+    
     # Binding to highlight a div when hovered
     @children.mouseenter {editor: this}, mouseEnterHandler
     @children.mouseleave {editor: this}, mouseLeaveHandler
     
     # Click handler
     @children.click {editor: this}, clickHandler
-  
-  render: ->
-    # Do nothing to render for now
-    this.el.contentWindow.location.reload(true)
   
   add_debug_stylesheet: () ->
     cssLink = document.createElement("link")
