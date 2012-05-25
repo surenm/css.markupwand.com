@@ -43,6 +43,21 @@ class EditorIframe extends Backbone.View
     cssLink.type = "text/css"
 
     $(@iframe_dom).find('body').append(cssLink)
+    
+  set_url: (url) ->
+    console.log "Trying to load the iframe with #{url}"
+    this.el.src = url
+    $editor_iframe = this
+    $(this.el).load ->
+      $editor_iframe.render()
+    
+  set_url_for_design: (design_id, grid_id = null) ->
+    url = "http://localhost:3000/generated/#{design_id}/index.html"
+    if grid_id?
+      url = "#{url}/grid/#{grid_id}"
+    
+    this.set_url url
+    
   
   clear_highlights: (target) ->
     @children.removeClass "mouseover"
