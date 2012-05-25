@@ -18,8 +18,9 @@ class EditorIframe extends Backbone.View
   initialize: () ->
     @iframe_dom = $(this.el).contents()
     
-    this.add_editor_stylesheet()
+    this.add_debug_stylesheet()
     @children = @iframe_dom.find("div,p")
+
     # Binding to highlight a div when hovered
     @children.mouseenter {editor: this}, mouseEnterHandler
     @children.mouseleave {editor: this}, mouseLeaveHandler
@@ -27,7 +28,7 @@ class EditorIframe extends Backbone.View
     # Click handler
     @children.click {editor: this}, clickHandler
   
-  add_editor_stylesheet: () ->
+  add_debug_stylesheet: () ->
     cssLink = document.createElement("link")
 
     cssLink.href = "./assets/iframe.css"
