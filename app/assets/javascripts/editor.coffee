@@ -28,6 +28,10 @@ class EditorIframe extends Backbone.View
     # Click handler
     @children.click {editor: this}, clickHandler
   
+  render: ->
+    # Do nothing to render for now
+    this.el.contentWindow.location.reload(true)
+  
   add_debug_stylesheet: () ->
     cssLink = document.createElement("link")
 
