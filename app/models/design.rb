@@ -85,7 +85,7 @@ class Design
     Log.info "Tidying up the html..."
     system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
     
-    Log.info "Successfully completed processing #{better_file_name}."
+    Log.info "Successfully completed processing #{self.processed_file_path}."
     PhotoshopItem::FontMap.instance.show_install_urls
      
     return
