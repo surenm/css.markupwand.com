@@ -52,4 +52,5 @@ group :development do
   gem 'pry-stack_explorer', :group => :development
   gem 'rmagick'
   gem 'ruby-debug19'
+  gem 'ruby-prof'
 end

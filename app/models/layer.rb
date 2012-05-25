@@ -17,6 +17,10 @@ class Layer
   field :raw, :type  => String
   field :layer_type, :type => String, :default => nil
 
+  # Do not store layer_object, but have in memory
+  
+  attr_accessor :layer_object
+
   def set(layer)
     self.name       = layer[:name][:value]
     self.kind       = layer[:layerKind]
@@ -31,7 +35,13 @@ class Layer
   end
 
   def layer_json
-    JSON.parse self.raw, :symbolize_names => true, :max_nesting => false
+    # Store layer object in memory.  
+    if not @layer_object
+      @layer_object = JSON.parse self.raw, :symbolize_names => true,
+       :max_nesting => false
+    end
+    
+    @layer_object
   end
 
   def bounds
