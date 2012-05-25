@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require lib/jquery.client
 //= require lib/jquery.dnd-file-upload
+//= require lib/jquery.ba-dotimeout.js
 //= require lib/json2
 //= require lib/underscore
 //= require lib/backbone
