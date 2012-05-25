@@ -1,3 +1,18 @@
+class EditorRouter extends Backbone.Router
+  routes: 
+    "design/:design_id": "loadDesign"
+    "design/:design_id/grid/:grid_id": "loadGrid"
+    "*args": "defaultHandler"
+  
+  loadDesign: (design_id) ->
+    console.log "Design: #{design_id}"
+  
+  loadGrid: (design_id, grid_id) ->
+    this.loadDesign(design_id)
+    console.log "Grid: #{grid_id}"
+  
+  defaultHandler: (args) ->
+    # Do nothing here
 
 class EditorIframe extends Backbone.View
   initialize: () ->
