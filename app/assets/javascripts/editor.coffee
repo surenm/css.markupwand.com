@@ -19,6 +19,9 @@ class EditorIframe extends Backbone.View
     @iframe_dom = $(this.el).contents()
     
     this.add_debug_stylesheet()
+
+    # Event listeners
+    # TODO: This has to move to events. But dunno how to bind events within the iframe using backbone
     @children = @iframe_dom.find("div,p")
 
     # Binding to highlight a div when hovered
@@ -73,4 +76,4 @@ $(document).ready ->
   Backbone.history.start();
   
   $("iframe").load ->
-    editor_iframe = new EditorIframe({ el: "#editor-iframe"})    
+    editor_iframe = new EditorIframe({ el: "#editor-iframe"})
