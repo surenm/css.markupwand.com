@@ -198,7 +198,7 @@ class Grid
   end
   
   def inspect
-    "Style Layers: #{@layers}, Sub grids: #{@sub_grids.size}"
+    "Style Layers: #{@layers.to_a}"
   end
 
   def bounds
