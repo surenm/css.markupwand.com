@@ -8,3 +8,5 @@ class Grid extends Backbone.Model
   
   initialize: () ->
     console.log "Initializing a grid"
+    
+window.Grid = Grid
