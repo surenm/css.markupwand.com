@@ -7,9 +7,4 @@ class Grid extends Backbone.Model
     html: ""
   
   initialize: () ->
-    console.log "Hello fucking world"
-    
-grid = new Grid
-console.log grid.save()
-console.log grid.fetch()
-console.log "hello world"
+    console.log "Initializing a grid"
