@@ -1,34 +1,27 @@
-- content_for :css do
-  =stylesheet_link_tag "editor", :media => "all"
-
-
-- content_for(:content) do
-  .editor-controls   
-    %div.edit-tags
-      %form
-        %div.tag-switch-block
-          %label{:for => 'tag-switcher'} Switch Tag
-          %select#tag-switcher
-            %option --
-            %option{:value => 'div'} DIV (Generic Container)
-            %option{:value => 'li'} LI (List Item)
-            %option{:value => 'input'} INPUT (Form Control)
-            %option{:value => 'img'} IMG (Embedded Image)
-      
-        %div.xpath-block
-          %label{:for => 'xpath'} XPath
-          %value#item-xpath -
-        
-        %button.btn Save
-    %div.grouptags
-      %form
-        %div.group-tags-block
-        
-        %button.btn Group nodes
+.editor-controls   
+  %div.edit-tags
+    %form
+      %div.tag-switch-block
+        %label{:for => 'tag-switcher'} Switch Tag
+        %select#tag-switcher
+          %option --
+          %option{:value => 'div'} DIV (Generic Container)
+          %option{:value => 'li'} LI (List Item)
+          %option{:value => 'input'} INPUT (Form Control)
+          %option{:value => 'img'} IMG (Embedded Image)
     
-    %div.multiselect Multiselect enabled  
-  %div.ide  
-    %iframe{:src => 'about:blank', :id => 'editor-iframe'}
+      %div.xpath-block
+        %label{:for => 'xpath'} XPath
+        %value#item-xpath -
+      
+      %button.btn Save
+  %div.grouptags
+    %form
+      %div.group-tags-block
+      
+      %button.btn Group nodes
   
-- content_for(:javascript) do
-  =javascript_include_tag 'editor', "models/grid"
+  %div.multiselect Multiselect enabled  
+%div.ide  
+  %iframe{:src => 'about:blank', :id => 'editor-iframe'}
+
