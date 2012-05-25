@@ -92,8 +92,5 @@ class EditorIframe extends Backbone.View
     
 
 $(document).ready ->
-  editor_router = new EditorRouter
+  editor_router = new EditorRouter("#editor-iframe")
   Backbone.history.start();
-  
-  $("iframe").load ->
-    editor_iframe = new EditorIframe({ el: "#editor-iframe"})
