@@ -53,8 +53,7 @@ class Design
     # Passing around the reference for styles hash and font map
     # Other way would be to have a singleton function, would change if it gets
     # messier.
-    better_file_name = (File.basename file_name, ".psd.json").underscore.gsub(' ', '_')
-    folder_path      = Rails.root.join("..", "generated", better_file_name)
+    folder_path      = Rails.root.join "..", "generated", "#{self.id}"
         
     CssParser::set_assets_root folder_path
 
@@ -86,7 +85,7 @@ class Design
     Log.info "Tidying up the html..."
     system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
     
-    Log.info "Successfully completed processing #{better_file_name}."
+    Log.info "Successfully completed processing #{self.processed_file_path}."
     PhotoshopItem::FontMap.instance.show_install_urls
      
     return

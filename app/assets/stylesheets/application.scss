@@ -25,6 +25,52 @@ body {
   background: url('background-tile.png') repeat transparent;
 }
 
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+.clearfix {
+  clear: both;
+}
+
+#header.navbar {
+  margin-bottom: 50px;
+  height: 60px;
+  min-height: 60px;
+  
+  .navbar-inner {
+    @include background(linear-gradient(top left, #efefef, #ffffff));
+  }
+  
+  .brand {
+    padding: 4px 20px 2px 20px;
+  }
+
+  .nav {
+    .active {
+      a {
+        @include background(linear-gradient(top left, #333, #222));
+        color: #ffffff;
+      }
+    }
+  }
+  
+  ul.nav {
+    margin: 0 20px 0 0;
+    li {
+      a {
+        color: #333;
+        text-shadow: none;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
 #landing-page {
 
   h1 {
@@ -53,6 +99,28 @@ body {
     background-color: #d9d9d9;
     height: 40px;
   }
+}
+
+#designs-list-page {
+  margin-top: 80px;
+  
+  h1 {
+    text-align: center;
+    margin: 20px 0px;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0 15px 0 0;
+  }
+  .design {
+    background-color: #cbabd7;
+    @include border-radius(8px);
+    border: 1px dashed #E1E1E8;
+    padding: 20px 10px;
+    margin: 10px 0px;
+  }
+  
 }
   
 

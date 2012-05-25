@@ -14,8 +14,14 @@
 //= require jquery_ujs
 //= require lib/jquery.client
 //= require lib/jquery.dnd-file-upload
+//= require lib/jquery.ba-dotimeout.js
 //= require lib/json2
 //= require lib/underscore
 //= require lib/backbone
 //= require twitter/bootstrap
 //= require utils
+//= require_directory ./models
+//= require_directory ./collections
+//= require_directory ./views
+//= require_directory ./routers
+
