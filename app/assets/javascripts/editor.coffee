@@ -1,29 +1,7 @@
-window.updateSelected = (tag, xpath)->
-  if window.Goyaka['multiSelectEnabled']
-    $('.group-tags-block').html($('.group-tags-block').html() + ' hello ')
-  else
-    $('#tag-switcher').val(tag)
-    $('#item-xpath').html(xpath)
-    
-window.Goyaka = {}
 
-window.Goyaka['multiSelectEnabled'] = false  
-window.enableMultiSelect = ->
-  if $('.multiselect').css('visibility') == 'hidden'
-    $('.multiselect').css('visibility','visible')
-    $('.edit-tags').hide()
-    $('.grouptags').show()
-    window.Goyaka['multiSelectEnabled'] = true
-    $('.group-tags-block').html('')
-  else
-    $('.edit-tags').show()
-    $('.grouptags').hide()
-    $('.multiselect').css('visibility','hidden')
-    window.Goyaka['multiSelectEnabled'] = false
-
-class Editor
-  constructor: (target) ->
-    @iframe_dom = $(target).contents()
+class EditorIframe extends Backbone.View
+  initialize: () ->
+    @iframe_dom = $(this.el).contents()
     
     this.add_editor_stylesheet()
     @children = @iframe_dom.find("div,p")
@@ -71,13 +49,8 @@ class Editor
     
 
 $(document).ready ->
+  editor_router = new EditorRouter
+  Backbone.history.start();
+  
   $("iframe").load ->
-    editor = new Editor "#editor-iframe"
-
-  $(window).keydown (e) ->
-    if (navigator.userAgent.indexOf('Mac OS X') != -1) and (e.altKey)
-      window.enableMultiSelect()
-    else if  (navigator.userAgent.indexOf('Mac OS X') == -1) and (e.ctrlKey)
-      # Non-mac browsers. Not tested yet.
-      window.enableMultiSelect()
-    return true
+    editor_iframe = new EditorIframe({ el: "#editor-iframe"})    
