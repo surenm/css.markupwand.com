@@ -1,4 +1,12 @@
 require 'RMagick'
+require 'tempfile'
+
+# Helps to find out how grids are drawn.
+# Sample screenshot : http://cl.ly/0b3x2N3I0M152G2u0u1c 
+#
+# Example: 
+# $ rails console
+# => (DrawUtil.new('/tmp/new-home.psd.json')).draw
 class DrawUtil
   attr_accessor :jsonfile_name, :canvas
   
@@ -28,6 +36,18 @@ class DrawUtil
     text.annotate(@canvas, 0, 0, x, y, layer[:name][:value])
   end
   
+  def draw_grid_bound(grid)
+    if not grid.bounds.nil?
+      bounds = grid.bounds
+      text   = Magick::Draw.new
+      text.font_family = 'helvetica'
+      text.pointsize = 10
+      text.fill = 'darkblue'
+      text_value = "(#{bounds.width}x#{bounds.height}) @ #{bounds.left},#{bounds.top}"
+      text.annotate(@canvas, 0, 0, bounds.left, bounds.top + 10, text_value)
+    end
+  end
+  
   def draw_grids(grid)
     if not grid.bounds.nil?
       bounds = grid.bounds
@@ -38,6 +58,7 @@ class DrawUtil
       rectangle.rectangle(bounds.left, bounds.top, bounds.right, bounds.bottom)
       print "."
       rectangle.draw(@canvas)
+      draw_grid_bound(grid)
     end
     
     if grid.children.length > 0
@@ -93,7 +114,10 @@ class DrawUtil
     Grid.group!
     Log.info "Drawing grids..."
     draw_grids(grid)
-    Log.info "done"
-    @canvas.display
+    
+    tmp_file = '/tmp/' + ['gridinspect-', Random.rand(10000).to_s(16) ,'.png'].join("")
+    @canvas.write(tmp_file)
+    Log.info "Written to #{tmp_file}"
+    system("open #{tmp_file}")
   end
 end
