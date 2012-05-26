@@ -345,6 +345,30 @@ class Grid
           
         elsif nodes_in_region.size <= initial_layers_count
           Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
+          if nodes_in_region.size == initial_layers_count
+            # Case when layers are intersecting each other.
+            
+            intersecting_nodes = get_intersecting_nodes nodes_in_region
+            
+            # Remove all intersecting nodes first.
+            available_nodes.delete intersecting_nodes[:left][:uid]
+            available_nodes.delete intersecting_nodes[:right][:uid]
+            nodes_in_region.delete intersecting_nodes[:left]
+            nodes_in_region.delete intersecting_nodes[:right]
+            
+            # Check if there is any error in which a node is almost inside,
+            # but slightly edging out. Crop out that edge.
+            if could_intersect_be_cropped? intersecting_nodes
+              new_intersecting_nodes = crop_smaller_intersect intersecting_nodes
+              
+              new_intersecting_nodes.each do |position, node_item|
+                nodes_in_region.push node_item
+                available_nodes[node_item[:uid]] = node_item
+              end
+              
+            end
+            
+          end
           
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new :design => self.design
