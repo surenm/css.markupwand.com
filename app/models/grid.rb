@@ -340,11 +340,9 @@ class Grid
         Log.info "Style layers are #{style_layers}" if style_layers.size > 0
 
         if nodes_in_region.empty?
-          Log.warn "Stopping, no more nodes in this region"
+          Log.info "Found padding region"
           @@pageglobals.padding_prefix_buffer = grouping_box.clone
           
-          # TODO: This grouping box denotes padding or white space between two regions. Handle that.
-          # Usually a corner case
         elsif nodes_in_region.size == initial_layers_count
           Log.warn "Stopping, no nodes were reduced"
           # TODO: This grouping_box is a superbound of thes nodes.
