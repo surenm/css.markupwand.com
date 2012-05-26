@@ -77,5 +77,7 @@ class EditorIframe extends Backbone.View
     $(this).addClass "selected"
 
     grid = get_grid_obj(this, editor)
+    view = new GridView({model: grid, el: "#editor"})
+    view.render()
     
 window.EditorIframe = EditorIframe
