@@ -40,6 +40,17 @@ class Grid
     self.id
   end
   
+  def attribute_data
+    {
+      :id          => self.id,
+      :name        => self.name,
+      :css         => self.css_properties,
+      :tag         => self.tag,
+      :width_class => self.width_class,
+      :orientation => self.orientation
+    }
+  end
+  
   def is_leaf?
     self.children.count == 0 and not self.render_layer.nil?
   end
