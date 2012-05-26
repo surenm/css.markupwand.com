@@ -87,15 +87,10 @@ class Layer
   end
 
   def image_path
-
-    if self.kind == LAYER_SMARTOBJECT
-      CssParser::get_image_path self
-    elsif self.kind == LAYER_NORMAL
-      if self.is_non_smart_image?
-        return layer_json[:imagePath]
-      else
-        nil
-      end
+    if self.kind == LAYER_SMARTOBJECT || self.kind == LAYER_NORMAL
+      CssParser::get_image_path(self)
+    else
+      nil
     end
   end
 
