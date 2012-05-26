@@ -343,12 +343,7 @@ class Grid
           Log.info "Found padding region"
           @@pageglobals.padding_prefix_buffer = grouping_box.clone
           
-        elsif nodes_in_region.size == initial_layers_count
-          Log.warn "Stopping, no nodes were reduced"
-          # TODO: This grouping_box is a superbound of thes nodes.
-          # Add this as a style to the grid if there exists a layer for this grouping_box
-          # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
-        elsif nodes_in_region.size < initial_layers_count
+        elsif nodes_in_region.size <= initial_layers_count
           Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
           
           nodes_in_region.each {|node| available_nodes.delete node.uid}
