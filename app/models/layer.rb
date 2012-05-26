@@ -19,7 +19,7 @@ class Layer
 
   # Do not store layer_object, but have in memory
   
-  attr_accessor :layer_object
+  attr_accessor :layer_object, :bounds
 
   def set(layer)
     self.name       = layer[:name][:value]
