@@ -43,15 +43,19 @@ class Layer
     
     @layer_object
   end
-
+  
   def bounds
-    value  = layer_json[:bounds][:value]
-    top    = value[:top][:value]
-    bottom = value[:bottom][:value]
-    left   = value[:left][:value]
-    right  = value[:right][:value]
-
-    @bounds = BoundingBox.new(top, left, bottom, right).crop_to(PageGlobals.instance.page_bounds)
+    if @bounds.nil?
+      value  = layer_json[:bounds][:value]
+      top    = value[:top][:value]
+      bottom = value[:bottom][:value]
+      left   = value[:left][:value]
+      right  = value[:right][:value]
+      
+      @bounds = BoundingBox.new(top, left, bottom, right).crop_to(PageGlobals.instance.page_bounds)
+    end
+    
+    @bounds
   end
 
   def <=>(other_layer)
