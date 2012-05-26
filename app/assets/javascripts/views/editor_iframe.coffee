@@ -11,9 +11,8 @@ class EditorIframe extends Backbone.View
     $editor_iframe = this
 
     @grids = new GridCollection()
-    @grids.fetch({design: @design})
-    console.log @grids
-
+    @grids.fetch({data: {design: @design}, processData: true})
+    
     $(this.el).load ->
       $editor_iframe.event_listeners()
     
