@@ -1,24 +1,16 @@
 class GridsController < ApplicationController
-  # GET /grids
-  # GET /grids.json
   def index
-    @grids = Grid.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @grids }
+    @design = Design.find params[:design]
+    
+    response_grids = @design.grids.collect do |grid_obj|
+      grid_obj.attribute_data
     end
+    render :json => response_grids
   end
 
-  # GET /grids/1
-  # GET /grids/1.json
   def show
-    @grid = Grid.find(params[:id])
-
-    respond_to do |format|
-      format.html # show.html.erb
-      format.json { render json: @grid }
-    end
+    grid = Grid.find(params[:id])
+    render :json => grid.attribute_data
   end
 
   # GET /grids/new
