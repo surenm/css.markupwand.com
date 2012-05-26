@@ -54,10 +54,12 @@ class EditorIframe extends Backbone.View
   clear_selection: (target) ->
     @children.removeClass "selected"
   
-  get_grid_id = (obj) ->
+  get_grid_obj = (obj, editor) ->
     grid_id = $(obj).data('gridId')
-    return grid_id
-    
+    grid = editor.grids.get(grid_id)
+    console.log grid
+    return grid
+
   mouseEnterHandler = (event) ->
     event.stopPropagation()
     event.data.editor.clear_highlights()
@@ -72,7 +74,9 @@ class EditorIframe extends Backbone.View
     editor = event.data.editor
     editor.clear_highlights()
     editor.clear_selection()
-    
+
     $(this).addClass "selected"
+
+    grid = get_grid_obj(this, editor)
     
 window.EditorIframe = EditorIframe
