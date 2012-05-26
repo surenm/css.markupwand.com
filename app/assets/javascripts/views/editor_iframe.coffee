@@ -57,7 +57,6 @@ class EditorIframe extends Backbone.View
   get_grid_obj = (obj, editor) ->
     grid_id = $(obj).data('gridId')
     grid = editor.grids.get(grid_id)
-    console.log grid
     return grid
 
   mouseEnterHandler = (event) ->
