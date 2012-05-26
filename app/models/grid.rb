@@ -509,6 +509,7 @@ class Grid
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
     else
+      sub_grid_args[:"data-grid-id"] = self.id.to_s
       render_layer_obj = Layer.find render_layer, sub_grid_args
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?
     end
