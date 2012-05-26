@@ -8,6 +8,12 @@ class Layer
   LAYER_SMARTOBJECT = "LayerKind.SMARTOBJECT"
   LAYER_SOLIDFILL   = "LayerKind.SOLIDFILL"
   LAYER_NORMAL      = "LayerKind.NORMAL"
+  
+  BOUND_MODES = {
+    :NORMAL_BOUNDS => :bounds,
+    :EDGE_BOUNDS => :edge_detected_bounds, 
+    :SNAPPED_BOUNDS => :snapped_bounds
+    }
 
   belongs_to :grid
 
@@ -29,6 +35,13 @@ class Layer
     self.raw        = layer.to_json.to_s
     self.save!
   end
+  
+  def set_bounds_mode(bound_mode)
+    unless BOUND_MODES.include? bound_mode
+      raise "Unknown bound mode #{bound_mode}"
+    end
+    @bound_mode = bound_mode
+  end
 
   def inspect
     "Layer: #{self.name}"
@@ -43,9 +56,15 @@ class Layer
     
     @layer_object
   end
+  
+  def bounds_key
+    key = BOUND_MODES[@bound_mode]
+    key = BOUND_MODES[:NORMAL_BOUNDS] if key.nil?
+  end
 
   def bounds
-    value  = layer_json[:bounds][:value]
+    bounds_key = self.bounds_key
+    value  = layer_json[bounds_key][:value]
     top    = value[:top][:value]
     bottom = value[:bottom][:value]
     left   = value[:left][:value]
@@ -79,7 +98,6 @@ class Layer
   end
 
   def image_path
-
     if self.kind == LAYER_SMARTOBJECT
       CssParser::get_image_path self
     elsif self.kind == LAYER_NORMAL
@@ -92,7 +110,6 @@ class Layer
   end
 
   def tag(is_leaf = false)
-#    debugger
     if self.kind == LAYER_SMARTOBJECT
       if is_leaf
         :img
@@ -114,7 +131,6 @@ class Layer
   end
 
   def get_css(css = {}, is_leaf = false, is_root = false)
-#    debugger
     if @kind == LAYER_TEXT
       css.update CssParser::parse_text layer_json
     elsif @kind == LAYER_SMARTOBJECT
@@ -143,7 +159,7 @@ class Layer
         css[:width] = '960px'
       end
     end
-#    debugger
+    
     css
   end
 
