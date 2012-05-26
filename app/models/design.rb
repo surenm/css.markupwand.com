@@ -13,6 +13,7 @@ class Design
   
   def parse
     file_name = self.processed_file_path
+    self.name = File.basename(self.processed_file_path).sub('.psd.json', '')
     
     Log.info "Beginning to process #{file_name}..."
 
