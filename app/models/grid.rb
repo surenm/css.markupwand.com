@@ -40,7 +40,6 @@ class Grid
   end
   
   def is_leaf?
-#    debugger
     self.children.count == 0 and not self.render_layer.nil?
   end
   
@@ -139,6 +138,7 @@ class Grid
   # Usually any layer that matches the grouping box's bounds is a style layer
   def self.get_style_layers(layers, is_leaf, parent_box = nil)
     style_layers = []
+    
     if not parent_box.nil?
 
       if parent_box.class.to_s == "BoundingBox"
@@ -147,16 +147,14 @@ class Grid
         max_bounds = parent_box.bounds
       end
 
-      layers.each do |layer|
-        if layer.bounds == max_bounds
-          if layer.kind == Layer::LAYER_SOLIDFILL or layer.kind == Layer::LAYER_NORMAL or (layer.kind == Layer::LAYER_SMARTOBJECT and not is_leaf)
-            style_layers.push layer
-          end
-        end
-      end
+      style_layers = layers.select { |layer|
+        layer.bounds == max_bounds and 
+        (layer.kind == Layer::LAYER_SOLIDFILL or 
+          layer.kind == Layer::LAYER_NORMAL or 
+          (layer.kind == Layer::LAYER_SMARTOBJECT and not is_leaf)
+        )
+      }.flatten
     end
-
-    style_layers.flatten!
 
     return style_layers
   end
