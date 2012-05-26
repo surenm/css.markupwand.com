@@ -265,6 +265,25 @@ class Grid
     (intersect_percent_left > 90 or intersect_percent_right > 90)
   end
   
+  # :left and :right are just conventions here. They don't necessarily 
+  # depict their positions.
+  def crop_smaller_intersect(intersecting_nodes)
+    smaller_node = intersecting_nodes[:left]
+    bigger_node  = intersecting_nodes[:right]
+    if intersecting_nodes[:left].bounds.area > intersecting_nodes[:right].bounds.area
+      smaller_node = intersecting_nodes[:right]
+      bigger_node  = intersecting_nodes[:left]
+    end
+    
+    new_bound = BoundingBox.new(smaller_node.bounds.top, 
+      smaller_node.bounds.left, smaller_node.bounds.bottom,
+      smaller_node.bounds.right).crop_to(bigger_node.bounds)
+    
+    smaller_node.bounds = new_bound
+    
+    {:left => smaller_node, :right => bigger_node}
+  end
+
   def get_subgrids
     Log.debug "Getting subgrids (#{self.layers.length} layers in this grid)"
     
