@@ -18,7 +18,6 @@ class Grid
   field :hash, :type => String
   field :orientation, :type => String, :default => Constants::GRID_ORIENT_NORMAL
   field :root, :type => Boolean, :default => false
-  field :optimized, :type => Boolean, :default => false
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
   field :padding_area, :type => Array, :default => []
