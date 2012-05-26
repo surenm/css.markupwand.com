@@ -198,10 +198,6 @@ class Grid
     end
   end
   
-  def inspect
-    "Style Layers: #{@layers.size}, Sub grids: #{self.children.size}"
-  end
-
   def bounds
     if layers.empty?
       bounds = nil
