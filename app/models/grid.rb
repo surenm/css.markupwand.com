@@ -37,13 +37,11 @@ class Grid
   
   attr_accessor :relative_margin
   
-  
   def inspect
     self.id
   end
   
   def is_leaf?
-#    debugger
     self.children.count == 0 and not self.render_layer.nil?
   end
   
@@ -201,7 +199,7 @@ class Grid
   end
   
   def inspect
-    "Style Layers: #{@layers}, Sub grids: #{@sub_grids.size}"
+    "Style Layers: #{@layers.size}, Sub grids: #{self.children.size}"
   end
 
   def bounds
@@ -508,7 +506,6 @@ class Grid
       render_layer_obj = Layer.find render_layer, sub_grid_args
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?
     end
-    
     
     html = content_tag tag, inner_html, attributes, false
     return html
