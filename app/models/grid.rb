@@ -24,6 +24,9 @@ class Grid
   field :padding_area, :type => Array, :default => []
   field :fit_to_grid,  :type => Boolean, :default => true
   
+  field :css_hash, :type => Hash, :default => {}
+  field :override_css_hash, :type => Hash, :default => {}
+  
   field :tag, :type => String, :default => :div
   field :override_tag, :type => String, :default => nil
   
@@ -447,29 +450,35 @@ class Grid
     end
   end
   
-  def to_html(args = {})
-    #TODO Move all these css related stuff to css_parser
-    css = args.fetch :css, {}
-    
-    self.style_layers.each do |layer_id|
-      layer = Layer.find layer_id
-      css.update layer.get_css({}, self.is_leaf?, self.root)
-    end
-    
-    css.update padding_css
-    css.update margin_css
-    
-    if self.fit_to_grid and self.depth < 5
-      set_width_class
-    elsif not css.has_key? :width
-      css[:width] = self.bounds.width.to_s + 'px' if (not self.bounds.nil? and self.bounds.width != 0)
-      if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
-        css[:float] = 'left'
+  def css_properties
+    if self.css_hash.empty?
+      css = {}
+      self.style_layers.each do |layer_id|
+        layer = Layer.find layer_id
+        css.update layer.get_css({}, self.is_leaf?, self.root)
       end
-    end
-
-    layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string css
     
+      css.update padding_css
+      css.update margin_css
+    
+      if self.fit_to_grid and self.depth < 5
+        set_width_class
+      elsif not css.has_key? :width
+        css[:width] = self.bounds.width.to_s + 'px' if (not self.bounds.nil? and self.bounds.width != 0)
+        if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
+          css[:float] = 'left'
+        end
+      end
+      self.css_hash.update css
+      self.save!
+    end
+    
+    raw_properties = self.css_hash
+    return raw_properties
+  end
+  
+  def to_html(args = {})
+    layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string self.css_properties
     
     css_classes = []
     
