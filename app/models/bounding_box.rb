@@ -18,6 +18,7 @@ class BoundingBox
   public
   def initialize(top=nil, left=nil, bottom=nil, right=nil)
     set(top, left, bottom, right)
+    set_derived_dimensions
   end
 
   def reset
