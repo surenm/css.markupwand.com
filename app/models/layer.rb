@@ -77,6 +77,10 @@ class Layer
   def intersect?(other)
     return self.bounds.intersect? other.bounds
   end
+  
+  def intersect_area(other)
+    return self.bounds.intersect_area other.bounds
+  end
 
   def is_non_smart_image?
     self.layer_type == 'IMAGE'
