@@ -1,0 +1,37 @@
+<%= content_for :content do %>
+<div class='editor-controls'>
+  <div class='edit-tags'>
+    <form>
+      <div class='tag-switch-block'>
+        <label for='tag-switcher'>Switch Tag</label>
+        <select id='tag-switcher'>
+          <option>--</option>
+          <option value='div'>DIV (Generic Container)</option>
+          <option value='li'>LI (List Item)</option>
+          <option value='input'>INPUT (Form Control)</option>
+          <option value='img'>IMG (Embedded Image)</option>
+        </select>
+      </div>
+      <div class='xpath-block'>
+        <label for='xpath'>XPath</label>
+        <value id='item-xpath'>-</value>
+      </div>
+      <button class='btn'>Save</button>
+    </form>
+  </div>
+  <div class='grouptags'>
+    <form>
+      <div class='group-tags-block'></div>
+      <button class='btn'>Group nodes</button>
+    </form>
+  </div>
+  <div class='multiselect'>Multiselect enabled</div>
+</div>
+<div class='ide'>
+  <iframe id='editor-iframe' src='about:blank'></iframe>
+</div>
+<% end %>
+
+<%= content_for :javascript do %>
+<%= javascript_include_tag "editor" %>
+<% end %>
