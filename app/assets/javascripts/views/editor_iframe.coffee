@@ -10,9 +10,12 @@ class EditorIframe extends Backbone.View
     this.el.src = url
     $editor_iframe = this
 
+    @grids = new GridCollection()
+    @grids.fetch({design: @design})
+    console.log @grids
+
     $(this.el).load ->
       $editor_iframe.event_listeners()
-    
     
   event_listeners: () ->
     # TODO: Part of this has to move to events. But dunno how to bind events within the iframe using backbone
@@ -27,7 +30,7 @@ class EditorIframe extends Backbone.View
     @children.mouseleave {editor: this}, mouseLeaveHandler
     
     # Click handler
-    @children.click {editor: this}, clickHandler
+    @children.click {editor: this}, clickHandler    
   
   add_debug_stylesheet: (iframe_dom) ->
     cssLink = document.createElement("link")
@@ -39,6 +42,7 @@ class EditorIframe extends Backbone.View
     $(iframe_dom).find('body').append(cssLink)
     
   set_url_for_design: (design_id, grid_id = null) ->
+    @design = design_id
     url = "http://localhost:3000/generated/#{design_id}/index.html"
     if grid_id?
       url = "#{url}/grid/#{grid_id}"
