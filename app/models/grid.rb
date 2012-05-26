@@ -250,6 +250,21 @@ class Grid
     
     return {:left => intersect_node_left, :right => intersect_node_right}
   end
+  
+  # Figures out whether two Layers are worth croppable.
+  # Crop only if any one of them is enclosed in another for more than
+  # 90%
+  def could_intersect_be_cropped?(intersecting_nodes)
+    left  = intersecting_nodes[:left]
+    right = intersecting_nodes[:right]
+    
+    intersect_area = left.intersect_area(right)
+    intersect_percent_left = (intersect_area * 100.0) / Float(left.bounds.area)
+    intersect_percent_right = (intersect_area * 100.0) / Float(right.bounds.area)
+    
+    (intersect_percent_left > 90 or intersect_percent_right > 90)
+  end
+  
   def get_subgrids
     Log.debug "Getting subgrids (#{self.layers.length} layers in this grid)"
     
