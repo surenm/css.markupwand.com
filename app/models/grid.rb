@@ -119,8 +119,8 @@ class Grid
     horizontal_bounds = trailing_horizontal_gutters.zip leading_horizontal_gutters
     vertical_bounds   = trailing_vertical_gutters.zip leading_vertical_gutters
 
-    horizontal_bounds.slice! -1
-    vertical_bounds.slice! -1
+    horizontal_bounds.pop
+    vertical_bounds.pop
 
     root_group = Group.new Constants::GRID_ORIENT_NORMAL
     horizontal_bounds.each do |horizontal_bound|
