@@ -25,14 +25,11 @@ class DrawUtil
   end
   
   def draw_layer(layer)
-    bounds = layer[:bounds]
-    rectangle = Magick::Draw.new
-    rectangle.stroke('red')
-    rectangle.fill_opacity(0)
-    rectangle.stroke_width(1)
-    rectangle.stroke_opacity(0.5)
-    rectangle.rectangle(bounds[:value][:left][:value], bounds[:value][:top][:value], bounds[:value][:right][:value], bounds[:value][:bottom][:value])
-    rectangle.draw(@canvas)
+    bounds = layer[:bounds][:value]
+    
+    draw_rectangle(bounds[:left][:value], bounds[:top][:value],
+      bounds[:right][:value], bounds[:bottom][:value],
+      0.5, 1, 'red')
   end
   
   def draw_layer_name(layer)
@@ -61,13 +58,10 @@ class DrawUtil
   def draw_grids(grid)
     if not grid.bounds.nil?
       bounds = grid.bounds
-      rectangle = Magick::Draw.new
-      rectangle.stroke('blue')
-      rectangle.fill_opacity(0)
-      rectangle.stroke_width(1)
-      rectangle.rectangle(bounds.left, bounds.top, bounds.right, bounds.bottom)
+      draw_rectangle(bounds.left, bounds.top, bounds.right, bounds.bottom,
+        1, 1, 'blue')
+      
       print "."
-      rectangle.draw(@canvas)
       draw_grid_bound(grid)
     end
     
