@@ -1,5 +1,4 @@
 class Grid extends Backbone.Model
-  urlRoot: '/grids'
   
   defaults:
     css: {}
@@ -7,6 +6,8 @@ class Grid extends Backbone.Model
     html: ""
   
   initialize: () ->
-    console.log "Initializing a grid"
+    # do nothing for now
+    
+  fetch: () ->
     
 window.Grid = Grid

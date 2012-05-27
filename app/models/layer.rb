@@ -190,8 +190,11 @@ class Layer
       inner_html = text
     end
 
-    attributes = Hash.new
+    attributes         = Hash.new
     attributes[:class] = css_class
+
+    attributes[:"data-grid-id"]  = args[:"data-grid-id"] if not args[:"data-grid-id"].nil?
+    attributes[:"data-layer-id"] = self.id.to_s
 
     if tag(is_leaf) == :img
       html = "<img src='#{image_path}'/>"
