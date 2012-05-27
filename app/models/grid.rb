@@ -18,11 +18,13 @@ class Grid
   field :hash, :type => String
   field :orientation, :type => String, :default => Constants::GRID_ORIENT_NORMAL
   field :root, :type => Boolean, :default => false
-  field :optimized, :type => Boolean, :default => false
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
   field :padding_area, :type => Array, :default => []
   field :fit_to_grid,  :type => Boolean, :default => true
+  
+  field :css_hash, :type => Hash, :default => {}
+  field :override_css_hash, :type => Hash, :default => {}
   
   field :tag, :type => String, :default => :div
   field :override_tag, :type => String, :default => nil
@@ -34,9 +36,15 @@ class Grid
   
   attr_accessor :relative_margin
   
-  
-  def inspect
-    self.id
+  def attribute_data
+    {
+      :id          => self.id,
+      :name        => self.name,
+      :css         => self.css_properties,
+      :tag         => self.tag,
+      :width_class => self.width_class,
+      :orientation => self.orientation
+    }
   end
   
   def is_leaf?
@@ -516,29 +524,35 @@ class Grid
     end
   end
   
-  def to_html(args = {})
-    #TODO Move all these css related stuff to css_parser
-    css = args.fetch :css, {}
-    
-    self.style_layers.each do |layer_id|
-      layer = Layer.find layer_id
-      css.update layer.get_css({}, self.is_leaf?, self.root)
-    end
-    
-    css.update padding_css
-    css.update margin_css
-    
-    if self.fit_to_grid and self.depth < 5
-      set_width_class
-    elsif not css.has_key? :width
-      css[:width] = self.bounds.width.to_s + 'px' if (not self.bounds.nil? and self.bounds.width != 0)
-      if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
-        css[:float] = 'left'
+  def css_properties
+    if self.css_hash.empty?
+      css = {}
+      self.style_layers.each do |layer_id|
+        layer = Layer.find layer_id
+        css.update layer.get_css({}, self.is_leaf?, self.root)
       end
-    end
-
-    layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string css
     
+      css.update padding_css
+      css.update margin_css
+    
+      if self.fit_to_grid and self.depth < 5
+        set_width_class
+      elsif not css.has_key? :width
+        css[:width] = self.bounds.width.to_s + 'px' if (not self.bounds.nil? and self.bounds.width != 0)
+        if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
+          css[:float] = 'left'
+        end
+      end
+      self.css_hash.update css
+      self.save!
+    end
+    
+    raw_properties = self.css_hash
+    return raw_properties
+  end
+  
+  def to_html(args = {})
+    layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string self.css_properties
     
     css_classes = []
     
@@ -565,10 +579,10 @@ class Grid
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
     else
+      sub_grid_args[:"data-grid-id"] = self.id.to_s
       render_layer_obj = Layer.find render_layer, sub_grid_args
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?
     end
-    
     
     html = content_tag tag, inner_html, attributes, false
     return html

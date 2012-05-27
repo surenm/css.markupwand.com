@@ -1,0 +1,12 @@
+<script id="edit-grid-properties-template" type="text/template">
+<%% 
+if(!_.isNull(css) && !_.isUndefined(css)) 
+var css_properties = css;
+_.each(css_properties, function(value, property){ %>
+  <div class="row span4"> 
+    <div class="span2"> <%%= property %> </div>
+    <div class="span1"> <%%= value %> </div>
+    <div class="clearfix"> </div>
+  </div>
+<%% }); %>
+</script>

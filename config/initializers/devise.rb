@@ -29,7 +29,7 @@ Devise.setup do |config|
 
   config.sign_out_via = :delete
   
-  config.timeout_in = 8.hours
+  config.timeout_in = 64.hours
   
   config.reset_password_within = 6.hours
 end
