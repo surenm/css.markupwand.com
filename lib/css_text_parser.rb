@@ -44,7 +44,7 @@ module CssTextParser
     
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
       {:'text-shadow' =>
-         CssParser::parse_box_shadow(layer[:layerEffects][:value][:dropShadow]) }
+         CssParser::parse_shadow(layer[:layerEffects][:value][:dropShadow]) }
     else
       {}
     end
