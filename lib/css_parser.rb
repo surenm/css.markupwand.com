@@ -199,11 +199,7 @@ module CssParser
   end
 
   def CssParser::get_image_path(layer)
-    if layer.is_non_smart_image?
-      image_file_name = layer.layer_json[:imagePath]
-    else
-      image_file_name = layer.name.gsub(' ','-') + '.png'
-    end
+    image_file_name = layer.layer_json[:imagePath]
     src_image_file = "/tmp/" + image_file_name
     destination_dir = File.join CssParser::get_assets_root, "img"
     FileUtils.mkdir_p destination_dir

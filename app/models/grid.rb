@@ -196,7 +196,7 @@ class Grid
   end
   
   def inspect
-    "Style Layers: #{@layers}, Sub grids: #{@sub_grids.size}"
+    "Style Layers: #{@layers.to_a}"
   end
 
   def bounds
@@ -226,6 +226,60 @@ class Grid
       self.render_layer = self.layers.first.id.to_s
     end
     self.save!
+  end
+
+  # Finds out intersecting nodes in lot of nodes
+  def get_intersecting_nodes(nodes_in_region)
+    
+    intersect_found = false
+    intersect_node_left = intersect_node_right = nil
+    nodes_in_region.each do |node_left|
+      nodes_in_region.each do |node_right|
+        if node_left != node_right and node_left.intersect? node_right and !(node_left.encloses?(node_right) or node_right.encloses?(node_left))
+          
+          intersect_found = true
+          intersect_node_right = node_right
+          intersect_node_left  = node_left
+          break
+        end
+      end
+      break if intersect_found
+    end
+    
+    return {:left => intersect_node_left, :right => intersect_node_right}
+  end
+  
+  # Figures out whether two Layers are worth croppable.
+  # Crop only if any one of them is enclosed in another for more than
+  # 90%
+  def could_intersect_be_cropped?(intersecting_nodes)
+    left  = intersecting_nodes[:left]
+    right = intersecting_nodes[:right]
+    
+    intersect_area = left.intersect_area(right)
+    intersect_percent_left = (intersect_area * 100.0) / Float(left.bounds.area)
+    intersect_percent_right = (intersect_area * 100.0) / Float(right.bounds.area)
+    
+    (intersect_percent_left > 90 or intersect_percent_right > 90)
+  end
+  
+  # :left and :right are just conventions here. They don't necessarily 
+  # depict their positions.
+  def crop_smaller_intersect(intersecting_nodes)
+    smaller_node = intersecting_nodes[:left]
+    bigger_node  = intersecting_nodes[:right]
+    if intersecting_nodes[:left].bounds.area > intersecting_nodes[:right].bounds.area
+      smaller_node = intersecting_nodes[:right]
+      bigger_node  = intersecting_nodes[:left]
+    end
+    
+    new_bound = BoundingBox.new(smaller_node.bounds.top, 
+      smaller_node.bounds.left, smaller_node.bounds.bottom,
+      smaller_node.bounds.right).crop_to(bigger_node.bounds)
+    
+    smaller_node.bounds = new_bound
+    
+    {:left => smaller_node, :right => bigger_node}
   end
 
   def get_subgrids
@@ -284,18 +338,35 @@ class Grid
         Log.info "Style layers are #{style_layers}" if style_layers.size > 0
 
         if nodes_in_region.empty?
-          Log.warn "Stopping, no more nodes in this region"
+          Log.info "Found padding region"
           @@pageglobals.padding_prefix_buffer = grouping_box.clone
           
-          # TODO: This grouping box denotes padding or white space between two regions. Handle that.
-          # Usually a corner case
-        elsif nodes_in_region.size == initial_layers_count
-          Log.warn "Stopping, no nodes were reduced"
-          # TODO: This grouping_box is a superbound of thes nodes.
-          # Add this as a style to the grid if there exists a layer for this grouping_box
-          # Sometimes there is no parent layer for this grouping box, when two big layers are interesecting for applying filters.
-        elsif nodes_in_region.size < initial_layers_count
+        elsif nodes_in_region.size <= initial_layers_count
           Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
+          if nodes_in_region.size == initial_layers_count
+            # Case when layers are intersecting each other.
+            
+            intersecting_nodes = get_intersecting_nodes nodes_in_region
+            
+            # Remove all intersecting nodes first.
+            available_nodes.delete intersecting_nodes[:left][:uid]
+            available_nodes.delete intersecting_nodes[:right][:uid]
+            nodes_in_region.delete intersecting_nodes[:left]
+            nodes_in_region.delete intersecting_nodes[:right]
+            
+            # Check if there is any error in which a node is almost inside,
+            # but slightly edging out. Crop out that edge.
+            if could_intersect_be_cropped? intersecting_nodes
+              new_intersecting_nodes = crop_smaller_intersect intersecting_nodes
+              
+              new_intersecting_nodes.each do |position, node_item|
+                nodes_in_region.push node_item
+                available_nodes[node_item[:uid]] = node_item
+              end
+              
+            end
+            
+          end
           
           nodes_in_region.each {|node| available_nodes.delete node.uid}
           grid = Grid.new :design => self.design

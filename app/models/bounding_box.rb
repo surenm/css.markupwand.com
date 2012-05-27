@@ -18,6 +18,7 @@ class BoundingBox
   public
   def initialize(top=nil, left=nil, bottom=nil, right=nil)
     set(top, left, bottom, right)
+    set_derived_dimensions
   end
 
   def reset
@@ -99,6 +100,15 @@ class BoundingBox
 
   def intersect?(other)
     self.left < other.right and self.right > other.left and self.top < other.bottom and self.bottom > other.top
+  end
+  
+  def intersect_area(other)
+    width  = [0, [self.right, other.right].min - [self.left, other.left].max].max
+    Log.info "Width = #{width}"
+    height = [0, [self.bottom, other.bottom].min - [self.top, other.top].max ].max
+    Log.info "Height = #{height}"
+    
+    width*height
   end
 
   def encloses?(other_box)

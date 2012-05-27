@@ -13,7 +13,8 @@ class Design
 
   def parse
     file_name = self.processed_file_path
-
+    self.name = File.basename(self.processed_file_path).sub('.psd.json', '')
+    
     Log.info "Beginning to process #{file_name}..."
 
     fptr     = File.read file_name
@@ -53,8 +54,8 @@ class Design
     # Passing around the reference for styles hash and font map
     # Other way would be to have a singleton function, would change if it gets
     # messier.
-    folder_path      = Rails.root.join "..", "generated", "#{self.id}"
-
+    folder_path      = Rails.root.join "..", "generated", "#{self.name}-#{self.id}"
+        
     CssParser::set_assets_root folder_path
 
     body_html = grid.to_html

@@ -172,6 +172,7 @@ HTML
   def get_font_name(layer, raw = false)
     if layer[:layerKind] == Layer::LAYER_TEXT
       text_style = layer[:textKey][:value][:textStyleRange][:value].first
+      return nil if text_style.nil?
       font_info  = text_style[:value][:textStyle][:value]
       font_name  = font_info[:fontName][:value]
 

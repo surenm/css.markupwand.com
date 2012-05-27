@@ -25,7 +25,7 @@ class Layer
 
   # Do not store layer_object, but have in memory
   
-  attr_accessor :layer_object
+  attr_accessor :layer_object, :bounds
 
   def set(layer)
     self.name       = layer[:name][:value]
@@ -63,14 +63,18 @@ class Layer
   end
 
   def bounds
-    bounds_key = self.bounds_key
-    value  = layer_json[bounds_key][:value]
-    top    = value[:top][:value]
-    bottom = value[:bottom][:value]
-    left   = value[:left][:value]
-    right  = value[:right][:value]
+    if @bounds.nil?
+      bounds_key = self.bounds_key
+      value  = layer_json[bounds_key][:value]
+      top    = value[:top][:value]
+      bottom = value[:bottom][:value]
+      left   = value[:left][:value]
+      right  = value[:right][:value]
 
-    @bounds = BoundingBox.new(top, left, bottom, right).crop_to(PageGlobals.instance.page_bounds)
+      @bounds = BoundingBox.new(top, left, bottom, right).crop_to(PageGlobals.instance.page_bounds)
+    end
+
+    @bounds
   end
 
   def <=>(other_layer)
@@ -92,20 +96,20 @@ class Layer
   def intersect?(other)
     return self.bounds.intersect? other.bounds
   end
+  
+  def intersect_area(other)
+    return self.bounds.intersect_area other.bounds
+  end
 
   def is_non_smart_image?
     self.layer_type == 'IMAGE'
   end
 
   def image_path
-    if self.kind == LAYER_SMARTOBJECT
-      CssParser::get_image_path self
-    elsif self.kind == LAYER_NORMAL
-      if self.is_non_smart_image?
-        return layer_json[:imagePath]
-      else
-        nil
-      end
+    if self.kind == LAYER_SMARTOBJECT || self.kind == LAYER_NORMAL
+      CssParser::get_image_path(self)
+    else
+      nil
     end
   end
 
