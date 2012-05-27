@@ -54,3 +54,8 @@ group :development do
   gem 'ruby-debug19'
   gem 'ruby-prof'
 end
+
+
+# Deploy stuff
+gem 'thin'
+gem 'foreman'

@@ -7,5 +7,4 @@ test:
   database: transformers_web_test
 
 production:
-  host: localhost
-  database: transformers_web_test
+  uri: <%= ENV['MONGOLAB_URI'] %>
