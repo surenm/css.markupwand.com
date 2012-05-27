@@ -46,6 +46,7 @@ gem 'carrierwave'
 gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
 
 gem 'rmagick'
+gem 'newrelic_rpm'
 
 group :development do
   #Development goodies
