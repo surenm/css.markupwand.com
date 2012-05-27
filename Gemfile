@@ -20,7 +20,6 @@ gem 'resque'
 gem 'multi_json'
 gem 'log4r'
 
-
 # Login stuff 
 gem 'devise'
 gem 'omniauth-github'
@@ -49,6 +48,7 @@ gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
 
 gem 'rmagick'
 gem 'newrelic_rpm'
+gem 'unicorn'
 
 group :development do
   #Development goodies
@@ -57,8 +57,6 @@ group :development do
   gem 'ruby-debug19'
   gem 'ruby-prof'
   gem 'log4r-color'
+  gem 'foreman'
 end
 
-# Deploy stuff
-gem 'thin'
-gem 'foreman'
