@@ -33,7 +33,7 @@ module CssParser
         
     if not opacity.nil?
       # Use rgb(a,b,c) format when opacity is given
-      color = sprintf("rgb(%d, %d, %d, %0.2f)", red, green, blue, opacity)
+      color = sprintf("rgba(%d, %d, %d, %0.2f)", red, green, blue, opacity)
     else
       # Use normal hex hash
       color = sprintf("#%02x%02x%02x", red, green, blue)
