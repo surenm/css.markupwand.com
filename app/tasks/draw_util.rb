@@ -55,6 +55,17 @@ class DrawUtil
     end
   end
   
+  def draw_padding_boxes
+    PageGlobals.instance.padding_boxes.each do |padding_box|
+      draw_rectangle(padding_box.left, padding_box.top, padding_box.right, 
+        padding_box.bottom, 1, 1, 'grey')
+      draw_rectangle(padding_box.left - 1, padding_box.top - 1,
+        padding_box.right - 1, padding_box.bottom - 1, 1, 1, 'pink')
+      draw_rectangle(padding_box.left - 2, padding_box.top - 2,
+        padding_box.right - 2, padding_box.bottom - 2, 1, 1, 'grey')
+    end
+  end
+  
   def draw_grids(grid)
     if not grid.bounds.nil?
       bounds = grid.bounds
@@ -118,6 +129,9 @@ class DrawUtil
     Grid.group!
     Log.info "Drawing grids..."
     draw_grids(grid)
+    
+    Log.info "Drawing padding boxes"
+    draw_padding_boxes
     
     tmp_file = '/tmp/' + ['gridinspect-', Random.rand(10000).to_s(16) ,'.png'].join("")
     @canvas.write(tmp_file)
