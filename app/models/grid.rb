@@ -159,7 +159,7 @@ class Grid
         layer.bounds == max_bounds and 
         (layer.kind == Layer::LAYER_SOLIDFILL or 
           layer.kind == Layer::LAYER_NORMAL or 
-          (layer.kind == Layer::LAYER_SMARTOBJECT and not is_leaf)
+          layer.renderable_image
         )
       }.flatten
     end

@@ -101,8 +101,8 @@ class Layer
     return self.bounds.intersect_area other.bounds
   end
 
-  def is_non_smart_image?
-    self.layer_type == 'IMAGE'
+  def renderable_image?
+    self.layer_object.has_key? :renderImage and self.layer_object[:renderImage]
   end
 
   def image_path
@@ -121,7 +121,7 @@ class Layer
         :div
       end
     elsif self.kind == LAYER_NORMAL
-      if self.is_non_smart_image? and is_leaf
+      if self.renderable_image? and is_leaf
         :img
       else
         :div
