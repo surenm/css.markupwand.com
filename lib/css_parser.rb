@@ -43,7 +43,7 @@ module CssParser
   end
   
   
-  def CssParser::parse_box_shadow(shadow)
+  def CssParser::parse_shadow(shadow)
     opacity = if shadow[:value].has_key? :opacity and shadow[:value][:opacity][:value] < 100 
         (shadow[:value][:opacity][:value]/100.0)
       else
@@ -54,6 +54,19 @@ module CssParser
     size  = shadow[:value][:distance][:value]
     
     "#{size}px #{size}px #{size}px #{color}"
+  end
+  
+  def CssParser::parse_box_shadow(layer)
+    css = {}
+    
+    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
+      shadow_value = layer[:layerEffects][:value][:dropShadow]
+      css[:'box-shadow']         = shadow_value
+      css[:'-webkit-box-shadow'] = shadow_value
+      css[:'-moz-box-shadow']    = shadow_value
+    end
+    
+    css
   end
   
   def CssParser::parse_opacity(layer)
@@ -186,6 +199,9 @@ module CssParser
     
     # Box gradient 
     css.update(parse_box_gradient(layer))
+    
+    # Box shadow
+    css.update(parse_box_shadow(layer))
     
     css
   end
