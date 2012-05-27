@@ -172,9 +172,9 @@ module CssParser
       gradient_value = gradient_array.join ", "
       css[:'background-image'] = "-webkit-linear-gradient(#{gradient_value})"
       # FIXME Change data type of css from hash to a data structure that allows duplicate hash keys. 
-    #  css[:'background-image'] = "-o-linear-gradient(#{gradient_value})"
-    #  css[:'background-image'] = "-moz-linear-gradient(#{gradient_value})"
-    #  css[:'background-image'] = "linear-gradient(#{gradient_value})"
+      #  css[:'background-image'] = "-o-linear-gradient(#{gradient_value})"
+      #  css[:'background-image'] = "-moz-linear-gradient(#{gradient_value})"
+      #  css[:'background-image'] = "linear-gradient(#{gradient_value})"
     end
     
     css
