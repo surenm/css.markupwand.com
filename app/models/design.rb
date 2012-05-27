@@ -54,7 +54,7 @@ class Design
     # Passing around the reference for styles hash and font map
     # Other way would be to have a singleton function, would change if it gets
     # messier.
-    folder_path      = Rails.root.join "..", "generated", "#{self.name}-#{self.id}"
+    folder_path      = Rails.root.join "..", "generated", "#{self.name.gsub(/[^0-9a-zA-Z]/,'_')}-#{self.id}"
         
     CssParser::set_assets_root folder_path
 
