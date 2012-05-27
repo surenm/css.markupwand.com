@@ -14,6 +14,16 @@ class DrawUtil
     @jsonfile_name = jsonfile_name
   end
   
+  def draw_rectangle(left, top, right, bottom, opacity, stroke_size, color)
+      rectangle = Magick::Draw.new
+      rectangle.stroke(color)
+      rectangle.fill_opacity(0)
+      rectangle.stroke_width(stroke_size)
+      rectangle.stroke_opacity(opacity)
+      rectangle.rectangle(left, top, right, bottom)
+      rectangle.draw(@canvas)
+  end
+  
   def draw_layer(layer)
     bounds = layer[:bounds]
     rectangle = Magick::Draw.new
