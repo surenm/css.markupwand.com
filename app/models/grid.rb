@@ -348,6 +348,8 @@ class Grid
         if nodes_in_region.empty?
           Log.info "Found padding region"
           @@pageglobals.padding_prefix_buffer = grouping_box.clone
+          @@pageglobals.padding_boxes.push(grouping_box.clone)
+          @@pageglobals.padding_boxes.uniq!
           
         elsif nodes_in_region.size <= initial_layers_count
           Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
