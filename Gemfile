@@ -17,7 +17,7 @@ gem 'xml-simple'
 gem 'resque'
 gem 'multi_json'
 gem 'log4r'
-gem 'log4r-color'
+
 
 # Login stuff 
 gem 'devise'
@@ -45,16 +45,16 @@ gem 'backbone-rails'
 gem 'carrierwave'
 gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
 
+gem 'rmagick'
 
 group :development do
   #Development goodies
-  gem 'pry-rails', :group => :development
-  gem 'pry-stack_explorer', :group => :development
-  gem 'rmagick'
+  gem 'pry-rails'
+  gem 'pry-stack_explorer'
   gem 'ruby-debug19'
   gem 'ruby-prof'
+  gem 'log4r-color'
 end
-
 
 # Deploy stuff
 gem 'thin'
