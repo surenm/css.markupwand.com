@@ -1,3 +1,3 @@
-[submodule "app/assets/bootstrap"]
-	path = app/assets/bootstrap
+[submodule "app/templates/bootstrap"]
+	path = app/templates/bootstrap
 	url = git@github.com:Goyaka/bootstrap.git
