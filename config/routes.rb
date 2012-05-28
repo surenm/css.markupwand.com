@@ -6,6 +6,7 @@ TransformersWeb::Application.routes.draw do
   match '/designs/*path'   => "design_files#serve"
   match 'next_unprocessed' => "design_files#next_unprocessed"
   match '/upload'          => "design_files#create"
+  match '/getinvite'       => "landing_page#getinvite"
   
   # main controller views
   match 'edit'    => 'main#edit'
@@ -15,5 +16,5 @@ TransformersWeb::Application.routes.draw do
   match 'generated/*uri.*ext' => 'main#generated'
   
   # Main page redirects to index
-  root :to => 'main#index'
+  root :to => 'landing_page#index'
 end
