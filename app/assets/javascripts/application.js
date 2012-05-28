@@ -19,10 +19,10 @@
 //= require lib/json2
 //= require lib/underscore
 //= require lib/backbone
+//= require lib/utils
 //= require twitter/bootstrap
-//= require utils
 //= require_directory ./models
 //= require_directory ./collections
 //= require_directory ./views
 //= require_directory ./routers
-//= require landing_page
+//= require app/landing_page
