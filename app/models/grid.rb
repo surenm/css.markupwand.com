@@ -180,18 +180,13 @@ class Grid
   end
   
   def set(layers, parent)
+    self.parent = parent
+    
     layers.each { |layer| self.layers.push layer }
-
-    self.parent = parent   # Parent grid for this grid
-    
-    if self.parent == nil
-      Log.info "Setting the root node"
-      self.root = true
-      @@grouping_queue.push self
-    end
-    
     self.layers.sort!
     self.save!
+    
+    @@grouping_queue.push self if self.root?
   end
   
   def set_width_class
