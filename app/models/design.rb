@@ -14,6 +14,9 @@ class Design
   def safe_name_prefix
     self.name.gsub(/[^0-9a-zA-Z]/,'_')
   end
+  def assets_root_path
+    # TODO: Point this to the right place
+    Rails.root.join "..", "generated", "#{self.safe_name_prefix}-#{self.id}"
   end
     
 
