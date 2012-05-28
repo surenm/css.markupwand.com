@@ -49,16 +49,13 @@ class Design
     fptr     = File.read self.processed_file_path
     psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
 
-    art_layers = psd_data[:art_layers]
-    layer_sets = psd_data[:layer_sets]
-    
     # Reset the global static classes to work for this PSD's data
     reset_globals psd_data
 
     # Layer descriptors of all photoshop layers
     Log.info "Getting nodes..."
     nodes = []
-    art_layers.each do |layer_id, node_json|
+    psd_data[:art_layers].each do |layer_id, node_json|
       layer = Layer.new
       layer.set node_json
       nodes.push layer
