@@ -60,8 +60,7 @@ class Layer
   def layer_json
     # Store layer object in memory.  
     if not @layer_object
-      @layer_object = JSON.parse self.raw, :symbolize_names => true,
-       :max_nesting => false
+      @layer_object = JSON.parse self.raw, :symbolize_names => true, :max_nesting => false
     end
     
     @layer_object
