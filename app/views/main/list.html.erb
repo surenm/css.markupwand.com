@@ -11,7 +11,7 @@
           Design: <%= design.id %>
         </div>
         <div class = "span1 right">
-          <a href = "/edit/#/design/<%= design.id %>"> Edit </a>
+          <a href = "/edit/#/design/<%= "#{design.safe_name_prefix}-#{design.id}" %>"> Edit </a>
         </div>
         <div class = "clearfix"> </div>
       </div>
