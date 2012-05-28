@@ -123,7 +123,7 @@ class Layer
     end
   end
 
-  def tag(is_leaf = false)
+  def tag_name(is_leaf = false)
     if self.kind == LAYER_SMARTOBJECT
       if is_leaf
         :img
@@ -208,11 +208,11 @@ class Layer
     attributes[:"data-grid-id"]  = args[:"data-grid-id"] if not args[:"data-grid-id"].nil?
     attributes[:"data-layer-id"] = self.id.to_s
 
-    if tag(is_leaf) == :img
+    if tag_name(is_leaf) == :img
       attributes[:src] = image_path
-      html = ActionView::Helpers::TagHelper.tag "img", attributes
+      html = tag "img", attributes
     else
-      html = content_tag tag, inner_html, attributes, false
+      html = content_tag tag_name, inner_html, attributes, false
     end
 
     return html
