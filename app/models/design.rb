@@ -17,24 +17,24 @@ class Design
     
 
   def parse
-    file_name = self.processed_file_path
-    self.name = File.basename(self.processed_file_path).sub('.psd.json', '')
-    self.save!
+    Log.info "Beginning to process #{self.processed_file_path}..."
     
-    Log.info "Beginning to process #{file_name}..."
+    # Set the name of the file
+    self.name = File.basename self.processed_file_path, '.psd.json'
+    self.save!
 
-    fptr     = File.read file_name
-    psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
-
-    # A hash of all layers
+    # Parse the JSON
+    fptr       = File.read self.processed_file_path
+    psd_data   = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
     art_layers = psd_data[:art_layers]
     layer_sets = psd_data[:layer_sets]
 
     #Set page level properties
-    pageglobals = PageGlobals.instance
-    pageglobals.page_bounds = BoundingBox.new 0, 0, psd_data[:properties][:height], psd_data[:properties][:width]
+    page_globals = PageGlobals.instance
+    page_globals.page_bounds = BoundingBox.new 0, 0, psd_data[:properties][:height], psd_data[:properties][:width]
 
-    # Initialize styles hash and font map
+    # Initialize FontMap, a singleton 
+    # Contains all the fonts related info (typekit, google font etc etc) in the current document 
     PhotoshopItem::FontMap.init art_layers
 
     # Layer descriptors of all photoshop layers
@@ -97,4 +97,6 @@ class Design
 
     return
   end
+  
+  
 end
