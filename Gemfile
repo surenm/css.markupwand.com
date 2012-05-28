@@ -39,6 +39,7 @@ gem 'compass', ">= 0.12.alpha.4"
 gem 'compass-rails'
 gem 'sass-rails', '~> 3.2.4'
 gem 'twitter-bootstrap-rails'
+gem 'asset_sync'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -46,7 +47,6 @@ group :assets do
   gem 'coffee-rails', '~> 3.2.2'
   gem 'uglifier', '>= 1.0.3'
   gem 'yui-compressor'
-  gem 'asset_sync'
 end
 
 group :development do
