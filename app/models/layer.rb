@@ -155,7 +155,7 @@ class Layer
 
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
-    elsif self.kind == LAYER_SMARTOBJECT or is_non_smart_image?
+    elsif self.kind == LAYER_SMARTOBJECT or renderable_image?
       if not is_leaf
         css[:background] = "url('../../#{image_path}') no-repeat"
         css[:'background-size'] = "contain"
