@@ -389,7 +389,7 @@ class Grid
           end
           
           if not @@pageglobals.padding_prefix_buffer.nil?
-           grid.padding_bounding_box = @@pageglobals.padding_prefix_buffer.clone
+           grid.offset_bounding_box = @@pageglobals.padding_prefix_buffer.clone
            @@pageglobals.reset_padding_prefix
           end
           
@@ -500,13 +500,13 @@ class Grid
   def buffer_margin
     buffer_margin = {:top => 0, :left => 0}
     
-    if not self.padding_bounding_box.nil?
-      if self.bounds.top - self.padding_bounding_box.top > 0
-        buffer_margin[:top] = ( self.bounds.top - self.padding_bounding_box.top)
+    if not self.offset_bounding_box.nil?
+      if self.bounds.top - self.offset_bounding_box.top > 0
+        buffer_margin[:top] = ( self.bounds.top - self.offset_bounding_box.top)
       end
       
-      if self.bounds.left - self.padding_bounding_box.left > 0
-        buffer_margin[:left] = (self.bounds.left - self.padding_bounding_box.left)
+      if self.bounds.left - self.offset_bounding_box.left > 0
+        buffer_margin[:left] = (self.bounds.left - self.offset_bounding_box.left)
       end
       
     end
@@ -514,7 +514,7 @@ class Grid
     buffer_margin
   end
   
-  def padding_bounding_box
+  def offset_bounding_box
     if not self.padding_area.empty? 
       return BoundingBox.new(padding_area[0], padding_area[1], padding_area[2], padding_area[3])
     else
@@ -522,8 +522,8 @@ class Grid
     end
   end
   
-  def padding_bounding_box=(padding_bound_box)
-    self.padding_area = [padding_bound_box.top, padding_bound_box.left,
+  def offset_bounding_box=(padding_bound_box)
+    self.offset_box = [padding_bound_box.top, padding_bound_box.left,
        padding_bound_box.bottom, padding_bound_box.right]
   end
   
