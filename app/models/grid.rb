@@ -11,7 +11,7 @@ class Grid
   has_many :children, :class_name => 'Grid', :inverse_of => :parent
   belongs_to :parent, :class_name => 'Grid', :inverse_of => :children
 
-  has_many :layers, :class_name => 'Layer'
+  has_and_belongs_to_many :layers, :class_name => 'Layer'
   
   # fields relevant for a grid
   field :name, :type => String

@@ -15,7 +15,7 @@ class Layer
     :SNAPPED_BOUNDS => :snapped_bounds
     }
 
-  belongs_to :grid
+  has_and_belongs_to_many :grids
 
   field :uid, :type  => String
   field :name, :type => String
