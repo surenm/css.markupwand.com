@@ -8,11 +8,13 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
- *= require bootstrap
- *= require bootstrap-responsive
- *= require bootstrap_and_overrides
+ *= require lib/screen.scss
+ *= require lib/ie.scss
+ *= require lib/print.scss
+ *= require lib/bootstrap
+ *= require lib/bootstrap-responsive
+ *= require lib/bootstrap_and_overrides
  *= require_self
-
 */
 
 @import "compass/css3";

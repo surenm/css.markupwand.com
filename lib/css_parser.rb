@@ -33,7 +33,7 @@ module CssParser
         
     if not opacity.nil?
       # Use rgb(a,b,c) format when opacity is given
-      color = sprintf("rgb(%d, %d, %d, %0.2f)", red, green, blue, opacity)
+      color = sprintf("rgba(%d, %d, %d, %0.2f)", red, green, blue, opacity)
     else
       # Use normal hex hash
       color = sprintf("#%02x%02x%02x", red, green, blue)
@@ -43,7 +43,7 @@ module CssParser
   end
   
   
-  def CssParser::parse_box_shadow(shadow)
+  def CssParser::parse_shadow(shadow)
     opacity = if shadow[:value].has_key? :opacity and shadow[:value][:opacity][:value] < 100 
         (shadow[:value][:opacity][:value]/100.0)
       else
@@ -54,6 +54,19 @@ module CssParser
     size  = shadow[:value][:distance][:value]
     
     "#{size}px #{size}px #{size}px #{color}"
+  end
+  
+  def CssParser::parse_box_shadow(layer)
+    css = {}
+    
+    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
+      shadow_value = parse_shadow(layer[:layerEffects][:value][:dropShadow])
+      css[:'box-shadow']         = shadow_value
+      css[:'-webkit-box-shadow'] = shadow_value
+      css[:'-moz-box-shadow']    = shadow_value
+    end
+    
+    css
   end
   
   def CssParser::parse_opacity(layer)
@@ -69,13 +82,14 @@ module CssParser
   
   # Returns a hash for CSS styles
   def CssParser::parse_text(layer)
-    text_style = layer[:textKey][:value][:textStyleRange][:value].first
+    layer_json = layer.layer_json
+    text_style = layer_json[:textKey][:value][:textStyleRange][:value].first
     font_info  = text_style[:value][:textStyle][:value]
     
     css                 = {}
     
     # Font name
-    css.update(CssTextParser::parse_font_name(layer))
+    css.update(CssTextParser::parse_font_name(layer_json))
         
     # Font-weight/style
     css.update(CssTextParser::parse_font_style(font_info))
@@ -84,19 +98,19 @@ module CssParser
     css.update(CssTextParser::parse_font_size(font_info))
     
     # Line-height
-    css.update(CssTextParser::parse_text_line_height(font_info))
+    css.update(CssTextParser::parse_text_line_height(layer))
     
     # Letter-spacing
     css.update(CssTextParser::parse_text_letter_spacing(font_info))
     
     # Shadows 
-    css.update(CssTextParser::parse_font_shadow(layer))
+    css.update(CssTextParser::parse_font_shadow(layer_json))
     
     # Opacity
-    css.update(parse_opacity(layer))
+    css.update(parse_opacity(layer_json))
     
     # Alignment
-    css.update(CssTextParser::parse_text_align(layer))
+    css.update(CssTextParser::parse_text_align(layer_json))
 
     # Color
     css.update(CssTextParser::parse_text_color(text_style))
@@ -159,9 +173,9 @@ module CssParser
       gradient_value = gradient_array.join ", "
       css[:'background-image'] = "-webkit-linear-gradient(#{gradient_value})"
       # FIXME Change data type of css from hash to a data structure that allows duplicate hash keys. 
-    #  css[:'background-image'] = "-o-linear-gradient(#{gradient_value})"
-    #  css[:'background-image'] = "-moz-linear-gradient(#{gradient_value})"
-    #  css[:'background-image'] = "linear-gradient(#{gradient_value})"
+      #  css[:'background-image'] = "-o-linear-gradient(#{gradient_value})"
+      #  css[:'background-image'] = "-moz-linear-gradient(#{gradient_value})"
+      #  css[:'background-image'] = "linear-gradient(#{gradient_value})"
     end
     
     css
@@ -187,6 +201,9 @@ module CssParser
     # Box gradient 
     css.update(parse_box_gradient(layer))
     
+    # Box shadow
+    css.update(parse_box_shadow(layer))
+    
     css
   end
 
@@ -208,36 +225,4 @@ module CssParser
     return File.join "./assets", "img", image_file_name
   end
 
-end
-
-def read_file
-  if ARGV.length < 1
-    puts "Format: ruby CssParser.rb <filename>"
-  else
-    filename = ARGV.first
-    data = (File.open(filename)).read
-    return (JSON.parse data, :symbolize_names => true)
-  end
-end
-
-def parse_file(json)
-  json.each do |item|
-    css = {}
-    if item.has_key? 'textKey'
-      puts "Text item: " +  item[:name][:value]
-      css = CssParser::parse_text(item)
-    elsif item.has_key? 'smartObject'
-      puts "Smart Object: " + item[:name][:value]
-    else
-      puts "Box item: " + item[:name][:value]
-      css = CssParser::parse_box(item)
-    end
-  end
-end
-
-if __FILE__ == $0
-  data = read_file()
-  if data
-    parse_file(data)
-  end
 end

@@ -34,7 +34,7 @@ class EditorIframe extends Backbone.View
   add_debug_stylesheet: (iframe_dom) ->
     cssLink = document.createElement("link")
 
-    cssLink.href = "/assets/iframe.css"
+    cssLink.href = "/assets/app/iframe.css"
     cssLink.rel  = "stylesheet"
     cssLink.type = "text/css"
 

@@ -44,7 +44,7 @@ module CssTextParser
     
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
       {:'text-shadow' =>
-         CssParser::parse_box_shadow(layer[:layerEffects][:value][:dropShadow]) }
+         CssParser::parse_shadow(layer[:layerEffects][:value][:dropShadow]) }
     else
       {}
     end
@@ -68,9 +68,14 @@ module CssTextParser
     css
   end
   
-  def CssTextParser::parse_text_line_height(font_info)
+  def CssTextParser::parse_text_line_height(layer)
     # Reference: http://help.adobe.com/en_US/photoshop/cs/using/WS5EC229CC-1518-4f06-BCB0-E2585D61FC54a.html#WSfd1234e1c4b69f30ea53e41001031ab64-75a4a
-    if not font_info[:leading].nil?
+    
+    layer_json = layer.layer_json
+    text_style = layer_json[:textKey][:value][:textStyleRange][:value].first
+    font_info  = text_style[:value][:textStyle][:value]
+    
+    if not font_info[:leading].nil? and layer.has_newline?
       {:'line-height' => font_info[:leading][:value].to_s + 'px'}
     else
       {}

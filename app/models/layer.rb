@@ -36,6 +36,16 @@ class Layer
     self.save!
   end
   
+  def has_newline?
+    if layer_json.has_key? :textKey and layer_json[:textKey][:value].has_key? :textKey
+      string_data = layer_json[:textKey][:value][:textKey][:value]
+      (string_data =~ /\r/) or (string_data =~ /\n/)
+    else      
+      false
+    end
+  end
+  
+  
   def set_bounds_mode(bound_mode)
     unless BOUND_MODES.include? bound_mode
       raise "Unknown bound mode #{bound_mode}"
@@ -113,7 +123,7 @@ class Layer
     end
   end
 
-  def tag(is_leaf = false)
+  def tag_name(is_leaf = false)
     if self.kind == LAYER_SMARTOBJECT
       if is_leaf
         :img
@@ -136,7 +146,7 @@ class Layer
 
   def get_css(css = {}, is_leaf = false, is_root = false)
     if @kind == LAYER_TEXT
-      css.update CssParser::parse_text layer_json
+      css.update CssParser::parse_text self
     elsif @kind == LAYER_SMARTOBJECT
       # don't do anything
     elsif @kind == LAYER_SOLIDFILL
@@ -144,8 +154,8 @@ class Layer
     end
 
     if self.kind == LAYER_TEXT
-      css.update CssParser::parse_text layer_json
-    elsif self.kind == LAYER_SMARTOBJECT
+      css.update CssParser::parse_text self
+    elsif self.kind == LAYER_SMARTOBJECT or is_non_smart_image?
       if not is_leaf
         css[:background] = "url('../../#{image_path}') no-repeat"
         css[:'background-size'] = "contain"
@@ -183,7 +193,7 @@ class Layer
   def to_html(args = {}, is_leaf)
     #puts "Generating html for #{self.inspect}"
     css       = args.fetch :css, {}
-    css_class = class_name css, @is_root
+    css_class = class_name css, is_leaf, @is_root
 
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.kind == LAYER_TEXT
@@ -191,16 +201,20 @@ class Layer
     end
 
     attributes         = Hash.new
-    attributes[:class] = css_class
+    css_class_list     = (args.has_key? :class ) ? [args[:class]] : []
+    css_class_list.push css_class
+    attributes[:class] = css_class_list.join ' '
 
     attributes[:"data-grid-id"]  = args[:"data-grid-id"] if not args[:"data-grid-id"].nil?
     attributes[:"data-layer-id"] = self.id.to_s
 
-    if tag(is_leaf) == :img
-      html = "<img src='#{image_path}'/>"
+    if tag_name(is_leaf) == :img
+      attributes[:src] = image_path
+      html = tag "img", attributes
     else
-      html = content_tag tag, inner_html, attributes, false
+      html = content_tag tag_name, inner_html, attributes, false
     end
+
     return html
   end
 

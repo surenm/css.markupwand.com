@@ -32,7 +32,8 @@ class Grid
   field :width_class, :type => String, :default => ''
   field :override_width_class, :type => String, :default => nil
 
-  @@pageglobals = PageGlobals.instance
+  @@pageglobals    = PageGlobals.instance
+  @@grouping_queue = Queue.new
   
   attr_accessor :relative_margin
   
@@ -52,12 +53,12 @@ class Grid
   end
   
   def self.reset_grouping_queue
-    @@pageglobals.grouping_queue.clear
+    @@grouping_queue.clear
   end
 
   def self.group!
-    while not @@pageglobals.grouping_queue.empty?
-      grid = @@pageglobals.grouping_queue.pop
+    while not @@grouping_queue.empty?
+      grid = @@grouping_queue.pop
       grid.group!
     end
   end
@@ -186,7 +187,7 @@ class Grid
     if self.parent == nil
       Log.info "Setting the root node"
       self.root = true
-      @@pageglobals.grouping_queue.push self
+      @@grouping_queue.push self
     end
     
     self.layers.sort!
@@ -348,6 +349,8 @@ class Grid
         if nodes_in_region.empty?
           Log.info "Found padding region"
           @@pageglobals.padding_prefix_buffer = grouping_box.clone
+          @@pageglobals.padding_boxes.push(grouping_box.clone)
+          @@pageglobals.padding_boxes.uniq!
           
         elsif nodes_in_region.size <= initial_layers_count
           Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
@@ -391,7 +394,7 @@ class Grid
            @@pageglobals.reset_padding_prefix
           end
           
-          @@pageglobals.grouping_queue.push grid
+          @@grouping_queue.push grid
         end
       end
       
@@ -524,6 +527,22 @@ class Grid
     end
   end
   
+  def is_single_line_text
+    if not self.render_layer.nil?
+      render_layer_obj = Layer.find self.render_layer
+      
+      if render_layer_obj.kind == Layer::LAYER_TEXT and
+        not render_layer_obj.has_newline?
+  
+        return true
+      else
+        return false
+      end
+    else
+      return false
+    end
+  end
+  
   def css_properties
     if self.css_hash.empty?
       css = {}
@@ -535,11 +554,22 @@ class Grid
       css.update padding_css
       css.update margin_css
     
+      css.delete :width if is_single_line_text
+      
       if self.fit_to_grid and self.depth < 5
         set_width_class
       elsif not css.has_key? :width
-        css[:width] = self.bounds.width.to_s + 'px' if (not self.bounds.nil? and self.bounds.width != 0)
-        if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
+        
+        if not is_single_line_text and
+          not self.bounds.nil? and 
+          self.bounds.width != 0
+          
+          css[:width] = self.bounds.width.to_s + 'px'
+        end
+        
+        if not self.parent.nil? and  
+          self.parent.orientation == Constants::GRID_ORIENT_LEFT
+          
           css[:float] = 'left'
         end
       end
@@ -578,13 +608,19 @@ class Grid
       if not self.children.empty? and self.orientation == "left"
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
+      if children.length > 0 
+        html = (content_tag tag, inner_html, attributes, false)
+      else
+        html = ''
+      end
     else
-      sub_grid_args[:"data-grid-id"] = self.id.to_s
+      sub_grid_args.update attributes
       render_layer_obj = Layer.find render_layer, sub_grid_args
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?
+      
+      html = inner_html
     end
     
-    html = content_tag tag, inner_html, attributes, false
     return html
   end
   

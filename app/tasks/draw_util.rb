@@ -14,15 +14,22 @@ class DrawUtil
     @jsonfile_name = jsonfile_name
   end
   
+  def draw_rectangle(left, top, right, bottom, opacity, stroke_size, color)
+      rectangle = Magick::Draw.new
+      rectangle.stroke(color)
+      rectangle.fill_opacity(0)
+      rectangle.stroke_width(stroke_size)
+      rectangle.stroke_opacity(opacity)
+      rectangle.rectangle(left, top, right, bottom)
+      rectangle.draw(@canvas)
+  end
+  
   def draw_layer(layer)
-    bounds = layer[:bounds]
-    rectangle = Magick::Draw.new
-    rectangle.stroke('red')
-    rectangle.fill_opacity(0)
-    rectangle.stroke_width(1)
-    rectangle.stroke_opacity(0.5)
-    rectangle.rectangle(bounds[:value][:left][:value], bounds[:value][:top][:value], bounds[:value][:right][:value], bounds[:value][:bottom][:value])
-    rectangle.draw(@canvas)
+    bounds = layer[:bounds][:value]
+    
+    draw_rectangle(bounds[:left][:value], bounds[:top][:value],
+      bounds[:right][:value], bounds[:bottom][:value],
+      0.5, 1, 'red')
   end
   
   def draw_layer_name(layer)
@@ -48,16 +55,24 @@ class DrawUtil
     end
   end
   
+  def draw_padding_boxes
+    PageGlobals.instance.padding_boxes.each do |padding_box|
+      draw_rectangle(padding_box.left, padding_box.top, padding_box.right, 
+        padding_box.bottom, 1, 1, 'grey')
+      draw_rectangle(padding_box.left - 1, padding_box.top - 1,
+        padding_box.right - 1, padding_box.bottom - 1, 1, 1, 'pink')
+      draw_rectangle(padding_box.left - 2, padding_box.top - 2,
+        padding_box.right - 2, padding_box.bottom - 2, 1, 1, 'grey')
+    end
+  end
+  
   def draw_grids(grid)
     if not grid.bounds.nil?
       bounds = grid.bounds
-      rectangle = Magick::Draw.new
-      rectangle.stroke('blue')
-      rectangle.fill_opacity(0)
-      rectangle.stroke_width(1)
-      rectangle.rectangle(bounds.left, bounds.top, bounds.right, bounds.bottom)
+      draw_rectangle(bounds.left, bounds.top, bounds.right, bounds.bottom,
+        1, 1, 'blue')
+      
       print "."
-      rectangle.draw(@canvas)
       draw_grid_bound(grid)
     end
     
@@ -114,6 +129,12 @@ class DrawUtil
     Grid.group!
     Log.info "Drawing grids..."
     draw_grids(grid)
+    
+    Log.info "Drawing padding boxes"
+    draw_padding_boxes
+    
+    Log.info "Drawing borders"
+    canvas.border!(2, 2, "#000")
     
     tmp_file = '/tmp/' + ['gridinspect-', Random.rand(10000).to_s(16) ,'.png'].join("")
     @canvas.write(tmp_file)
