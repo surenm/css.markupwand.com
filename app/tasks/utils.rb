@@ -11,6 +11,7 @@ class Utils
     design.user = user
     design.save!
     design.parse
+    design.generate_markup
     
     if profile
       result       = RubyProf.stop
