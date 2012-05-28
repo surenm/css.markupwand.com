@@ -19,6 +19,8 @@ TransformersWeb::Application.configure do
 
   # Generate digests for assets URLs
   config.assets.digest = true
+  config.assets.enabled = true
+  config.action_controller.asset_host = "http://d1427ko760vwyx.cloudfront.net"
 
   # Defaults to Rails.root.join("public/assets")
   # config.assets.manifest = YOUR_PATH

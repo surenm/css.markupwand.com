@@ -24,6 +24,7 @@ gem 'newrelic_rpm'
 # Deployment related gems
 gem 'unicorn'
 
+
 #File upload related gems
 gem 'carrierwave'
 gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
@@ -45,6 +46,7 @@ group :assets do
   gem 'coffee-rails', '~> 3.2.2'
   gem 'uglifier', '>= 1.0.3'
   gem 'yui-compressor'
+  gem 'asset_sync'
 end
 
 group :development do
