@@ -78,7 +78,7 @@ class Design
 
     # Copy bootstrap to assets folder
     Log.info "Writing bootstrap files"
-    FileUtils.cp_r Rails.root.join("app", "assets", "bootstrap", "docs", "assets", "css"), folder_path.join("assets")
+    FileUtils.cp_r Rails.root.join("app", "templates", "bootstrap", "docs", "assets", "css"), folder_path.join("assets")
     FileUtils.cp Rails.root.join("app", "assets", "stylesheets", "bootstrap_override.css"), folder_path.join("assets", "css")
 
     raw_file_name  = folder_path.join 'raw.html'
