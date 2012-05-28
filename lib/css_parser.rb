@@ -225,35 +225,3 @@ module CssParser
   end
 
 end
-
-def read_file
-  if ARGV.length < 1
-    puts "Format: ruby CssParser.rb <filename>"
-  else
-    filename = ARGV.first
-    data = (File.open(filename)).read
-    return (JSON.parse data, :symbolize_names => true)
-  end
-end
-
-def parse_file(json)
-  json.each do |item|
-    css = {}
-    if item.has_key? 'textKey'
-      puts "Text item: " +  item[:name][:value]
-      css = CssParser::parse_text(item)
-    elsif item.has_key? 'smartObject'
-      puts "Smart Object: " + item[:name][:value]
-    else
-      puts "Box item: " + item[:name][:value]
-      css = CssParser::parse_box(item)
-    end
-  end
-end
-
-if __FILE__ == $0
-  data = read_file()
-  if data
-    parse_file(data)
-  end
-end
