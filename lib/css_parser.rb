@@ -82,13 +82,14 @@ module CssParser
   
   # Returns a hash for CSS styles
   def CssParser::parse_text(layer)
-    text_style = layer[:textKey][:value][:textStyleRange][:value].first
+    layer_json = layer.layer_json
+    text_style = layer_json[:textKey][:value][:textStyleRange][:value].first
     font_info  = text_style[:value][:textStyle][:value]
     
     css                 = {}
     
     # Font name
-    css.update(CssTextParser::parse_font_name(layer))
+    css.update(CssTextParser::parse_font_name(layer_json))
         
     # Font-weight/style
     css.update(CssTextParser::parse_font_style(font_info))
@@ -97,19 +98,19 @@ module CssParser
     css.update(CssTextParser::parse_font_size(font_info))
     
     # Line-height
-    css.update(CssTextParser::parse_text_line_height(font_info))
+    css.update(CssTextParser::parse_text_line_height(layer))
     
     # Letter-spacing
     css.update(CssTextParser::parse_text_letter_spacing(font_info))
     
     # Shadows 
-    css.update(CssTextParser::parse_font_shadow(layer))
+    css.update(CssTextParser::parse_font_shadow(layer_json))
     
     # Opacity
-    css.update(parse_opacity(layer))
+    css.update(parse_opacity(layer_json))
     
     # Alignment
-    css.update(CssTextParser::parse_text_align(layer))
+    css.update(CssTextParser::parse_text_align(layer_json))
 
     # Color
     css.update(CssTextParser::parse_text_color(text_style))
