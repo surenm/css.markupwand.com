@@ -607,7 +607,11 @@ class Grid
       if not self.children.empty? and self.orientation == "left"
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
-      html = content_tag tag, inner_html, attributes, false
+      if children.length > 0 
+        html = (content_tag tag, inner_html, attributes, false)
+      else
+        html = ''
+      end
     else
       sub_grid_args.update attributes
       render_layer_obj = Layer.find render_layer, sub_grid_args
