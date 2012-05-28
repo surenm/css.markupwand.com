@@ -8,6 +8,8 @@ TransformersWeb::Application.routes.draw do
   match '/upload'          => "design_files#create"
   match '/getinvite'       => "landing_page#getinvite"
   
+  match '/beta'            => "main#index"
+  
   # main controller views
   match 'edit'    => 'main#edit'
   match 'designs' => 'main#list'
