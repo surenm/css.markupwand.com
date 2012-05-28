@@ -32,7 +32,8 @@ class Grid
   field :width_class, :type => String, :default => ''
   field :override_width_class, :type => String, :default => nil
 
-  @@pageglobals = PageGlobals.instance
+  @@pageglobals    = PageGlobals.instance
+  @@grouping_queue = Queue.new
   
   attr_accessor :relative_margin
   
@@ -52,12 +53,12 @@ class Grid
   end
   
   def self.reset_grouping_queue
-    @@pageglobals.grouping_queue.clear
+    @@grouping_queue.clear
   end
 
   def self.group!
-    while not @@pageglobals.grouping_queue.empty?
-      grid = @@pageglobals.grouping_queue.pop
+    while not @@grouping_queue.empty?
+      grid = @@grouping_queue.pop
       grid.group!
     end
   end
@@ -186,7 +187,7 @@ class Grid
     if self.parent == nil
       Log.info "Setting the root node"
       self.root = true
-      @@pageglobals.grouping_queue.push self
+      @@grouping_queue.push self
     end
     
     self.layers.sort!
@@ -393,7 +394,7 @@ class Grid
            @@pageglobals.reset_padding_prefix
           end
           
-          @@pageglobals.grouping_queue.push grid
+          @@grouping_queue.push grid
         end
       end
       
