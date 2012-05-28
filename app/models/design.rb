@@ -20,36 +20,41 @@ class Design
   end
     
 
-  def parse
-    Log.info "Beginning to process #{self.processed_file_path}..."
-    
-    # Set the name of the file
-    self.name = File.basename self.processed_file_path, '.psd.json'
-    self.save!
 
-    # Parse the JSON
-    fptr       = File.read self.processed_file_path
-    psd_data   = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
-    art_layers = psd_data[:art_layers]
-    layer_sets = psd_data[:layer_sets]
-
+  # Start initializing all the singletons classes
+  def reset_globals(psd_data)
     #Set page level properties
     page_globals = PageGlobals.instance
     page_globals.page_bounds = BoundingBox.new 0, 0, psd_data[:properties][:height], psd_data[:properties][:width]
 
-    #--- Start initializing all the singletons classes
     # Initialize FontMap, a singleton
     # Contains all the fonts related info (typekit, google font etc etc) in the current document 
-    PhotoshopItem::FontMap.init art_layers
+    PhotoshopItem::FontMap.init psd_data[:art_layers]
     
     # Reset the grouping queue. Its the FIFO order in which the grids are processed
     Grid.reset_grouping_queue
     
     # Set the root path for this design. That is where all the html and css is saved to.
-    folder_path = Rails.root.join "..", "generated", "#{self.safe_name_prefix}-#{self.id}"
-    CssParser::set_assets_root folder_path
+    CssParser::set_assets_root self.assets_root_path
+  end
+  
+  # Parses the photoshop file json data and decomposes into grids
+  def parse
+    Log.info "Beginning to process #{self.processed_file_path}..."
     
-    #-- End initializing singletons
+    # Set the name of the design
+    self.name = File.basename self.processed_file_path, '.psd.json'
+    self.save!
+
+    # Parse the JSON
+    fptr     = File.read self.processed_file_path
+    psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
+
+    art_layers = psd_data[:art_layers]
+    layer_sets = psd_data[:layer_sets]
+    
+    # Reset the global static classes to work for this PSD's data
+    reset_globals psd_data
 
     # Layer descriptors of all photoshop layers
     Log.info "Getting nodes..."
@@ -68,7 +73,7 @@ class Design
     Log.info "Grouping the grids..."
     Grid.group!
     grid.print
-
+  end
     # This populates the PhotoshopItem::StylesHash css_classes simultaneously even though it returns only the html
     # TODO: make the interface better?
     Log.info "Generating body HTML..."
