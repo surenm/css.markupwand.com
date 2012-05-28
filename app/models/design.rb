@@ -12,7 +12,8 @@ class Design
   field :processed_file_path, :type => String
   
   def safe_name_prefix
-      return self.name.gsub(/[^0-9a-zA-Z]/,'_')
+    self.name.gsub(/[^0-9a-zA-Z]/,'_')
+  end
   end
     
 
