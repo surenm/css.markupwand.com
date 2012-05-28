@@ -553,11 +553,22 @@ class Grid
       css.update padding_css
       css.update margin_css
     
+      css.delete :width if is_single_line_text
+      
       if self.fit_to_grid and self.depth < 5
         set_width_class
       elsif not css.has_key? :width
-        css[:width] = self.bounds.width.to_s + 'px' if (not self.bounds.nil? and self.bounds.width != 0)
-        if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
+        
+        if not is_single_line_text and
+          not self.bounds.nil? and 
+          self.bounds.width != 0
+          
+          css[:width] = self.bounds.width.to_s + 'px'
+        end
+        
+        if not self.parent.nil? and  
+          self.parent.orientation == Constants::GRID_ORIENT_LEFT
+          
           css[:float] = 'left'
         end
       end
