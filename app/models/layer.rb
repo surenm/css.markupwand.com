@@ -146,7 +146,7 @@ class Layer
 
   def get_css(css = {}, is_leaf = false, is_root = false)
     if @kind == LAYER_TEXT
-      css.update CssParser::parse_text layer_json
+      css.update CssParser::parse_text self
     elsif @kind == LAYER_SMARTOBJECT
       # don't do anything
     elsif @kind == LAYER_SOLIDFILL
@@ -154,7 +154,7 @@ class Layer
     end
 
     if self.kind == LAYER_TEXT
-      css.update CssParser::parse_text layer_json
+      css.update CssParser::parse_text self
     elsif self.kind == LAYER_SMARTOBJECT
       if not is_leaf
         css[:background] = "url('../../#{image_path}') no-repeat"
