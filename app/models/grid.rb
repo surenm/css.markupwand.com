@@ -601,14 +601,14 @@ class Grid
     
     sub_grid_args = Hash.new
     if self.render_layer.nil?
-      children = self.children.sort { |a, b| a.id.to_s <=> b.id.to_s }
-      children.each do |sub_grid|
+      child_nodes = self.children.sort { |a, b| a.id.to_s <=> b.id.to_s }
+      child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
       end
-      if not self.children.empty? and self.orientation == "left"
+      if not self.child_nodes.empty? and self.orientation == "left"
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
-      if children.length > 0 
+      if child_nodes.length > 0 
         html = (content_tag tag, inner_html, attributes, false)
       else
         html = ''
