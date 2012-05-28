@@ -56,9 +56,8 @@ class Design
     Log.info "Getting nodes..."
     nodes = []
     psd_data[:art_layers].each do |layer_id, node_json|
-      layer = Layer.new
-      layer.set node_json
-      nodes.push layer
+      layer = Layer.create_from_raw_data node_json
+      layers.push layer
       Log.debug "Added Layer #{layer.name}."
     end
 
