@@ -155,7 +155,7 @@ class Layer
 
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
-    elsif self.kind == LAYER_SMARTOBJECT
+    elsif self.kind == LAYER_SMARTOBJECT or is_non_smart_image?
       if not is_leaf
         css[:background] = "url('../../#{image_path}') no-repeat"
         css[:'background-size'] = "contain"
@@ -193,7 +193,7 @@ class Layer
   def to_html(args = {}, is_leaf)
     #puts "Generating html for #{self.inspect}"
     css       = args.fetch :css, {}
-    css_class = class_name css, @is_root
+    css_class = class_name css, is_leaf, @is_root
 
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.kind == LAYER_TEXT
