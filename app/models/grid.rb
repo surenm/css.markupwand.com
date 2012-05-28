@@ -527,14 +527,6 @@ class Grid
        padding_bound_box.bottom, padding_bound_box.right]
   end
   
-  # For width calculation
-  def left_padding
-    if self.padding_bounding_box and ((self.bounds.left - self.padding_bounding_box.left) > 0)
-      (self.bounds.left - self.padding_bounding_box.left)
-    else
-      0
-    end
-  end
   
   def is_single_line_text
     if not self.render_layer.nil?
