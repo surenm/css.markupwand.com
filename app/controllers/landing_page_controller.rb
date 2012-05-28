@@ -6,8 +6,7 @@ class LandingPageController < ApplicationController
     @email = params[:email]
     users = User.where(:email => @email)
     if(users.size==0)
-      name = @email
-      name.slice!(/\@.*/)
+      name = @email.split("@")[0]
       user = User.create!({:email=>@email, :name=>name})
       user.save
     end
