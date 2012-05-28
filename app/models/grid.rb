@@ -526,6 +526,22 @@ class Grid
     end
   end
   
+  def is_single_line_text
+    if not self.render_layer.nil?
+      render_layer_obj = Layer.find self.render_layer
+      
+      if render_layer_obj.kind == Layer::LAYER_TEXT and
+        not render_layer_obj.has_newline?
+  
+        return true
+      else
+        return false
+      end
+    else
+      return false
+    end
+  end
+  
   def css_properties
     if self.css_hash.empty?
       css = {}
