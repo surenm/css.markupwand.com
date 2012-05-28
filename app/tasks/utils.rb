@@ -1,6 +1,6 @@
 class Utils
   def self.process_test_file
-    self.process_file '/tmp/mailgun.psd.json', true
+    self.process_file '/tmp/mailgun.psd.json'
   end
   
   def self.process_file(file_name, profile = false)
