@@ -462,6 +462,9 @@ class Grid
   def margin_css
     css = {}
     
+    top  = 0
+    left = 0
+    
     if not self.parent.nil? and not self.parent.bounds.nil? and not self.bounds.nil?
       
       
@@ -474,34 +477,41 @@ class Grid
         
       
       if self.parent.bounds.left < self.bounds.left and !is_top_level_page_wrap
-        css[:'margin-left'] = "#{relative_margin[:left]}px"
+        left = relative_margin[:left]
       end 
       
       if self.parent.bounds.top < self.bounds.top
-        css[:'margin-top'] = "#{relative_margin[:top]}px"
+        top = relative_margin[:top]
       end
       
     end
+    
+    top  += buffer_margin[:top]
+    left += buffer_margin[:left]
+    
+    css[:'margin-left'] = "#{left}px" if left > 0
+    css[:'margin-top']  = "#{top}px" if top > 0
     
     css
   end
   
   # For css
-  def padding_css
-    css = {}
+  # FIX Rename this function
+  def buffer_margin
+    buffer_margin = {:top => 0, :left => 0}
     
     if not self.padding_bounding_box.nil?
       if self.bounds.top - self.padding_bounding_box.top > 0
-        css[:'padding-top'] = ( self.bounds.top - self.padding_bounding_box.top).to_s + 'px'
+        buffer_margin[:top] = ( self.bounds.top - self.padding_bounding_box.top)
       end
       
       if self.bounds.left - self.padding_bounding_box.left > 0
-        css[:'padding-left'] = (self.bounds.left - self.padding_bounding_box.left).to_s + 'px'
+        buffer_margin[:left] = (self.bounds.left - self.padding_bounding_box.left)
       end
       
     end
     
-    css
+    buffer_margin
   end
   
   def padding_bounding_box
@@ -550,7 +560,6 @@ class Grid
         css.update layer.get_css({}, self.is_leaf?, self.root)
       end
     
-      css.update padding_css
       css.update margin_css
     
       css.delete :width if is_single_line_text
