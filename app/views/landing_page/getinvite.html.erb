@@ -1,0 +1,29 @@
+<%= content_for :content do %>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=143853925682869";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<%= stylesheet_link_tag "landing_page", :media => "all" %>
+<div id="landing-page">
+  <div class="container">
+    <center>
+      <img src="assets/logo.png" /><br>
+      <h1 style="color: #0E7E24">We'll send you an invite soon!</h1>
+    </center>
+    <center class="content-area">
+      <h3>Meanwhile, let your friends know what you just found</h3><br/>
+      <div>
+        <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.markupwand.com" data-hashtags="Markupwand">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+<div class="fb-like" data-href="http://www.markupwand.com" data-send="true" data-layout="button_count" data-width="100" data-show-faces="true" data-font="lucida grande"></div>
+<div>
+    </center>
+  </div>
+</div>
+<% end %>

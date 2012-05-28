@@ -14,7 +14,8 @@
 //= require jquery_ujs
 //= require lib/jquery.client
 //= require lib/jquery.dnd-file-upload
-//= require lib/jquery.ba-dotimeout.js
+//= require lib/jquery.formdefaults
+//= require lib/jquery.ba-dotimeout
 //= require lib/json2
 //= require lib/underscore
 //= require lib/backbone
@@ -24,4 +25,4 @@
 //= require_directory ./collections
 //= require_directory ./views
 //= require_directory ./routers
-
+//= require landing_page

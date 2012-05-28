@@ -1,0 +1,46 @@
+<%= content_for :content do %>
+<%= stylesheet_link_tag "landing_page", :media => "all" %>
+<%= stylesheet_link_tag "landing_page", :media => "all" %>
+<div id="landing-page">
+  <div class="container">
+    <center>
+      <img src="assets/logo.png" /><br>
+      <h1 color=>Magically convert Photoshop designs to valid HTML markup</h1>
+    </center>
+    <center class="content-area">
+      <h2>Wanna try it early?</h2>
+      <form id="getinvite" action="getinvite" method="POST">
+      <input name="email" class="prefilled-field default-value" id="invite-email" value="email@address.com"/>
+      <input type="submit" class="action-button" value="Request Invite Now!"/>
+      <div id="validation-result" class="error"></div>
+      </form>
+    </center>
+  </div>
+</div>
+<%= content_for :javascript do %>
+<script>
+$(document).ready(function() {
+validateEmail = function(email) {
+  var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
+  if(emailReg.test(email))
+    return true;
+  else
+    return false;
+  };
+  
+$(".default-value").formDefaults();
+$("#getinvite").submit(function(e) {
+  var valid = validateEmail($("#invite-email").val())
+  if(valid) {
+    return true;
+  }
+  else {
+    e.preventDefault();
+    $("#validation-result").text("Enter a valid E-mail address")
+    return false;
+  }
+  });
+});
+</script>
+<% end %>
+<% end %>
