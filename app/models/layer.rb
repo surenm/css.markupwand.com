@@ -209,7 +209,8 @@ class Layer
     attributes[:"data-layer-id"] = self.id.to_s
 
     if tag(is_leaf) == :img
-      html = "<img src='#{image_path}'/>"
+      attributes[:src] = image_path
+      html = ActionView::Helpers::TagHelper.tag "img", attributes
     else
       html = content_tag tag, inner_html, attributes, false
     end
