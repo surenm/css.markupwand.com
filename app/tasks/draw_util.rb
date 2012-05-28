@@ -133,6 +133,9 @@ class DrawUtil
     Log.info "Drawing padding boxes"
     draw_padding_boxes
     
+    Log.info "Drawing borders"
+    canvas.border!(2, 2, "#000")
+    
     tmp_file = '/tmp/' + ['gridinspect-', Random.rand(10000).to_s(16) ,'.png'].join("")
     @canvas.write(tmp_file)
     Log.info "Written to #{tmp_file}"
