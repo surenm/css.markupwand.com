@@ -10,10 +10,16 @@ class Design
   field :name, :type => String
   field :psd_file_path, :type => String
   field :processed_file_path, :type => String
+  
+  def safe_name_prefix
+      return self.name.gsub(/[^0-9a-zA-Z]/,'_')
+  end
+    
 
   def parse
     file_name = self.processed_file_path
     self.name = File.basename(self.processed_file_path).sub('.psd.json', '')
+    self.save!
     
     Log.info "Beginning to process #{file_name}..."
 
@@ -54,7 +60,7 @@ class Design
     # Passing around the reference for styles hash and font map
     # Other way would be to have a singleton function, would change if it gets
     # messier.
-    folder_path      = Rails.root.join "..", "generated", "#{self.name.gsub(/[^0-9a-zA-Z]/,'_')}-#{self.id}"
+    folder_path = Rails.root.join "..", "generated", "#{self.safe_name_prefix}-#{self.id}"
         
     CssParser::set_assets_root folder_path
 

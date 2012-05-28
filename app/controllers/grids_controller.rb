@@ -1,6 +1,7 @@
 class GridsController < ApplicationController
   def index
-    @design = Design.find params[:design]
+    design_id = params[:design].split('-').last
+    @design = Design.find design_id
     
     response_grids = @design.grids.collect do |grid_obj|
       grid_obj.attribute_data
