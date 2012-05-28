@@ -14,12 +14,11 @@ class Design
   def safe_name_prefix
     self.name.gsub(/[^0-9a-zA-Z]/,'_')
   end
+  
   def assets_root_path
     # TODO: Point this to the right place
     Rails.root.join "..", "generated", "#{self.safe_name_prefix}-#{self.id}"
   end
-    
-
 
   # Start initializing all the singletons classes
   def reset_globals(psd_data)
@@ -74,10 +73,14 @@ class Design
     Grid.group!
     grid.print
   end
+  
+  def generate_markup
     # This populates the PhotoshopItem::StylesHash css_classes simultaneously even though it returns only the html
     # TODO: make the interface better?
     Log.info "Generating body HTML..."
-    body_html = grid.to_html
+    root_grid = self.grids.where(:root => true).first
+
+    body_html = root_grid.to_html
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
@@ -85,17 +88,19 @@ class Design
 
     html.gsub! "{yield}", body_html
     html.gsub! "{webfonts}", PhotoshopItem::FontMap.instance.webfont_code
-
+    
+    css = PhotoshopItem::StylesHash.generate_css_data
+    
     # Write style.css file
     PhotoshopItem::StylesHash.write_css_file
 
     # Copy bootstrap to assets folder
     Log.info "Writing bootstrap files"
-    FileUtils.cp_r Rails.root.join("app", "templates", "bootstrap", "docs", "assets", "css"), folder_path.join("assets")
-    FileUtils.cp Rails.root.join("app", "assets", "stylesheets", "lib", "bootstrap_override.css"), folder_path.join("assets", "css")
+    FileUtils.cp_r Rails.root.join("app", "templates", "bootstrap", "docs", "assets", "css"), self.assets_root_path.join("assets")
+    FileUtils.cp Rails.root.join("app", "assets", "stylesheets", "lib", "bootstrap_override.css"), self.assets_root_path.join("assets", "css")
 
-    raw_file_name  = folder_path.join 'raw.html'
-    html_file_name = folder_path.join 'index.html'
+    raw_file_name  = self.assets_root_path.join 'raw.html'
+    html_file_name = self.assets_root_path.join 'index.html'
 
     Log.info "Saving HTML file - #{html_file_name}..."
     html_fptr = File.new raw_file_name, 'w+'
@@ -110,6 +115,4 @@ class Design
 
     return
   end
-  
-  
 end
