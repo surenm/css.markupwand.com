@@ -54,16 +54,16 @@ class Design
 
     # Layer descriptors of all photoshop layers
     Log.info "Getting nodes..."
-    nodes = []
+    layers = []
     psd_data[:art_layers].each do |layer_id, node_json|
       layer = Layer.create_from_raw_data node_json
       layers.push layer
       Log.debug "Added Layer #{layer.name}."
     end
 
-    Log.info "Creating grids..."
-    grid = Grid.new :design => self
-    grid.set nodes, nil
+    Log.info "Creating root grid..."
+    grid = Grid.new :design => self, :root => true
+    grid.set layers, nil
 
     Log.info "Grouping the grids..."
     Grid.group!
@@ -84,8 +84,6 @@ class Design
 
     html.gsub! "{yield}", body_html
     html.gsub! "{webfonts}", PhotoshopItem::FontMap.instance.webfont_code
-    
-    css = PhotoshopItem::StylesHash.generate_css_data
     
     # Write style.css file
     PhotoshopItem::StylesHash.write_css_file
