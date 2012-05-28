@@ -11,7 +11,6 @@ gem 'jquery-rails'
 gem 'json'
 gem 'mongo'
 gem 'mongoid'
-gem 'therubyracer'
 gem 'xml-simple'
 gem 'resque'
 gem 'multi_json'
@@ -46,6 +45,7 @@ group :assets do
 end
 
 group :development do
+  gem 'therubyracer'
   gem 'pry-rails'
   gem 'pry-stack_explorer'
   gem 'ruby-debug19'
