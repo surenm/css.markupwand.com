@@ -3,19 +3,16 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 .action-button {
-
 padding: 10px;
 color: white;
 font-weight: bolder;
 font-size: 120%;
 border: #ff8f45 2px solid;
-
 background-image: linear-gradient(bottom, rgb(255,144,9) 50%, rgb(255,171,68) 71%);
 background-image: -o-linear-gradient(bottom, rgb(255,144,9) 50%, rgb(255,171,68) 71%);
 background-image: -moz-linear-gradient(bottom, rgb(255,144,9) 50%, rgb(255,171,68) 71%);
 background-image: -webkit-linear-gradient(bottom, rgb(255,144,9) 50%, rgb(255,171,68) 71%);
 background-image: -ms-linear-gradient(bottom, rgb(255,144,9) 50%, rgb(255,171,68) 71%);
-
 background-image: -webkit-gradient(
 	linear,
 	left bottom,
@@ -31,7 +28,6 @@ background-image: -o-linear-gradient(bottom, rgb(255,171,68) 50%, rgb(255,144,9)
 background-image: -moz-linear-gradient(bottom, rgb(255,171,68) 50%, rgb(255,144,9) 71%);
 background-image: -webkit-linear-gradient(bottom, rgb(255,171,68) 50%, rgb(255,144,9) 71%);
 background-image: -ms-linear-gradient(bottom, rgb(255,171,68) 50%, rgb(255,144,9) 71%);
-
 background-image: -webkit-gradient(
 	linear,
 	left bottom,
@@ -42,25 +38,22 @@ background-image: -webkit-gradient(
 }
 
 .prefilled-field {
-border: #5f2f72 solid 2px;
 color: #aaa;
 font-size: 120%;
 padding: 10px;
 }
 
 .content-area {
-background-color: rgba(255, 255, 255, 0.5);
+background-color: rgba(0, 0, 0, 0.5);
 padding: 25px;
 border-radius: 10px;
 margin: 50px 150px 50px 150px;
-
--webkit-box-shadow:  2px 3px 1px 1px rgba(180, 180, 180, .8);
-
-box-shadow:  2px 3px 1px 1px rgba(180, 180, 180, .8);
+-webkit-box-shadow: 2px 3px 1px 1px rgba(180, 180, 180, .8);
+box-shadow: 2px 3px 1px 1px rgba(180, 180, 180, .8);
 }
 
-.content-area h2{
-  padding-bottom: 20px;
+.content-area h2 {
+padding-bottom: 20px;
 }
 
 .error {
