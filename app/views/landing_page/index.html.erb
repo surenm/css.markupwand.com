@@ -1,6 +1,8 @@
 <%= content_for :content do %>
 <%= stylesheet_link_tag "landing_page", :media => "all" %>
-<%= stylesheet_link_tag "landing_page", :media => "all" %>
+<% end %>
+
+<%= content_for :content do %>
 <div id="landing-page">
   <div class="container">
     <center>
@@ -17,6 +19,7 @@
     </center>
   </div>
 </div>
+
 <%= content_for :javascript do %>
 <script>
 $(document).ready(function() {
