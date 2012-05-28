@@ -580,13 +580,15 @@ class Grid
       if not self.children.empty? and self.orientation == "left"
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
+      html = content_tag tag, inner_html, attributes, false
     else
-      sub_grid_args[:"data-grid-id"] = self.id.to_s
+      sub_grid_args.update attributes
       render_layer_obj = Layer.find render_layer, sub_grid_args
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?
+      
+      html = inner_html
     end
     
-    html = content_tag tag, inner_html, attributes, false
     return html
   end
   

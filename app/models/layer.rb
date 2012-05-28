@@ -201,7 +201,9 @@ class Layer
     end
 
     attributes         = Hash.new
-    attributes[:class] = css_class
+    css_class_list     = (args.has_key? :class ) ? [args[:class]] : []
+    css_class_list.push css_class
+    attributes[:class] = css_class_list.join ' '
 
     attributes[:"data-grid-id"]  = args[:"data-grid-id"] if not args[:"data-grid-id"].nil?
     attributes[:"data-layer-id"] = self.id.to_s
@@ -211,6 +213,7 @@ class Layer
     else
       html = content_tag tag, inner_html, attributes, false
     end
+
     return html
   end
 
