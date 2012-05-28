@@ -36,6 +36,16 @@ class Layer
     self.save!
   end
   
+  def has_newline?
+    if layer_json.has_key? :textKey and layer_json[:textKey][:value].has_key? :textKey
+      string_data = layer_json[:textKey][:value][:textKey][:value]
+      (string_data =~ /\r/) or (string_data =~ /\n/)
+    else      
+      false
+    end
+  end
+  
+  
   def set_bounds_mode(bound_mode)
     unless BOUND_MODES.include? bound_mode
       raise "Unknown bound mode #{bound_mode}"
