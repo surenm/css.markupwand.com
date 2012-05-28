@@ -6,23 +6,30 @@ gem 'rails', '3.2.0'
 
 gem 'bson'
 gem 'bson_ext'
-gem 'exception_notification' 
 gem 'execjs'
-gem 'htmlentities'
 gem 'jquery-rails'
 gem 'json'
 gem 'mongo'
 gem 'mongoid'
-gem 'sanitize'
 gem 'therubyracer'
 gem 'xml-simple'
 gem 'resque'
 gem 'multi_json'
 gem 'log4r'
+gem 'rmagick'
 
-# Login stuff 
+# monitoring and profiling
+gem 'newrelic_rpm'
+
+# Deployment related gems
+gem 'unicorn'
+
+#File upload related gems
+gem 'carrierwave'
+gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
+
+# Login and user management 
 gem 'devise'
-gem 'omniauth-github'
 gem 'omniauth-openid'
 gem 'omniauth-google-apps'
 
@@ -30,28 +37,15 @@ gem 'omniauth-google-apps'
 # in production environments by default.
 group :assets do
   gem 'coffee-rails', '~> 3.2.2'
+  gem 'compass', ">= 0.12.alpha.4"
+  gem 'compass-rails'
+  gem 'sass-rails', '~> 3.2.4'
+  gem 'twitter-bootstrap-rails'
   gem 'uglifier', '>= 1.0.3'
   gem 'yui-compressor'
 end
 
-# Compass is required in production
-gem 'sass-rails', '~> 3.2.4'
-gem 'compass', ">= 0.12.alpha.4"
-gem 'compass-rails'
-gem 'twitter-bootstrap-rails'
-gem 'haml'
-gem 'backbone-rails'
-
-#File upload related gems
-gem 'carrierwave'
-gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
-
-gem 'rmagick'
-gem 'newrelic_rpm'
-gem 'unicorn'
-
 group :development do
-  #Development goodies
   gem 'pry-rails'
   gem 'pry-stack_explorer'
   gem 'ruby-debug19'
@@ -59,4 +53,3 @@ group :development do
   gem 'log4r-color'
   gem 'foreman'
 end
-
