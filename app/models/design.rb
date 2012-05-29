@@ -17,7 +17,12 @@ class Design
   
   def assets_root_path
     # TODO: Point this to the right place
-    Rails.root.join "..", "generated", "#{self.safe_name_prefix}-#{self.id}"
+    assets_path = Rails.root.join "..", "generated", "#{self.safe_name_prefix}-#{self.id}"
+    if not Dir.exists? assets_path
+      FileUtils.mkdir_p assets_path
+    end
+    
+    return assets_path
   end
 
   # Start initializing all the singletons classes
@@ -95,14 +100,13 @@ class Design
   end
   
   def write_html_files(html_content)
+    Log.info "Saving resultant HTML file..."
     raw_file_name  = self.assets_root_path.join 'raw.html'
     html_file_name = self.assets_root_path.join 'index.html'
 
     html_fptr = File.new raw_file_name, 'w+'
     html_fptr.write html_content
     html_fptr.close
-    
-    Log.info "Saved HTML file - #{html_file_name}."
 
     Log.info "Tidying up the html..."
     system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
@@ -110,7 +114,16 @@ class Design
   
   def write_css_files(css_content)
     # Write style.css file
-    PhotoshopItem::StylesHash.write_css_file
+    css_path = File.join self.assets_root_path, "css"
+    if not Dir.exists? css_path
+      FileUtils.mkdir_p css_path
+    end
+
+    Log.info "Writing css file..."    
+    css_file_name = File.join css_path, "style.css"
+    css_fptr = File.new css_file_name, 'w+'
+    css_fptr.write css_content
+    css_fptr.close
 
     # Copy bootstrap to assets folder
     Log.info "Writing bootstrap files"
@@ -118,4 +131,3 @@ class Design
     FileUtils.cp Rails.root.join("app", "assets", "stylesheets", "lib", "bootstrap_override.css"), self.assets_root_path.join("assets", "css")
   end
 end
-
