@@ -551,32 +551,25 @@ class Grid
   
   # For css
   # FIX Rename this function
-  def buffer_margin
-    buffer_margin = {:top => 0, :left => 0}
+  def offset_box_spacing
+    offset_box_spacing = {:top => 0, :left => 0}
     
     if not self.offset_bounding_box.nil?
       if self.bounds.top - self.offset_bounding_box.top > 0
-        buffer_margin[:top] = ( self.bounds.top - self.offset_bounding_box.top)
+        offset_box_spacing[:top] = ( self.bounds.top - self.offset_bounding_box.top)
       end
       
       if self.bounds.left - self.offset_bounding_box.left > 0
-        buffer_margin[:left] = (self.bounds.left - self.offset_bounding_box.left)
+        offset_box_spacing[:left] = (self.bounds.left - self.offset_bounding_box.left)
       end
-      
     end
     
-    buffer_margin
+    offset_box_spacing
   end
   
-  
+  # Accessor for offset bounding box
   # De-serializes the offset box from mongo data.
-  def offset_bounding_box
-    if not self.offset_box.empty? 
-      return BoundingBox.new(offset_box[0], offset_box[1], offset_box[2], offset_box[3])
-    else
-      return nil
-    end
-  end
+  def offset_bounding_box; BoundingBox.from_mongo(offset_box) end
   
   # Offset box is a box, that is an empty grid that appears before
   # this current grid. The previous sibling being a empty box, it adds itself
@@ -584,9 +577,8 @@ class Grid
   # own offset bounding box.
   #
   # This function is for serializing bounding box and storing it.
-  def offset_bounding_box=(padding_bound_box)
-    self.offset_box = [padding_bound_box.top, padding_bound_box.left,
-       padding_bound_box.bottom, padding_bound_box.right]
+  def offset_bounding_box= padding_bound_box;
+    self.offset_box = padding_bound_box.serialize
   end
   
   def is_single_line_text
