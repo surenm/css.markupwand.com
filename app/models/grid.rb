@@ -20,7 +20,7 @@ class Grid
   field :root, :type => Boolean, :default => false
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
-  field :padding_area, :type => Array, :default => []
+  field :offset_box, :type => Array, :default => []
   field :fit_to_grid,  :type => Boolean, :default => true
   
   field :css_hash, :type => Hash, :default => {}
@@ -385,7 +385,7 @@ class Grid
           end
           
           if not @@pageglobals.padding_prefix_buffer.nil?
-           grid.padding_bounding_box = @@pageglobals.padding_prefix_buffer.clone
+           grid.offset_bounding_box = @@pageglobals.padding_prefix_buffer.clone
            @@pageglobals.reset_padding_prefix
           end
           
@@ -458,6 +458,9 @@ class Grid
   def margin_css
     css = {}
     
+    top  = 0
+    left = 0
+    
     if not self.parent.nil? and not self.parent.bounds.nil? and not self.bounds.nil?
       
       
@@ -470,57 +473,56 @@ class Grid
         
       
       if self.parent.bounds.left < self.bounds.left and !is_top_level_page_wrap
-        css[:'margin-left'] = "#{relative_margin[:left]}px"
+        left = relative_margin[:left]
       end 
       
       if self.parent.bounds.top < self.bounds.top
-        css[:'margin-top'] = "#{relative_margin[:top]}px"
+        top = relative_margin[:top]
       end
       
     end
+    
+    top  += buffer_margin[:top]
+    left += buffer_margin[:left]
+    
+    css[:'margin-left'] = "#{left}px" if left > 0
+    css[:'margin-top']  = "#{top}px" if top > 0
     
     css
   end
   
   # For css
-  def padding_css
-    css = {}
+  # FIX Rename this function
+  def buffer_margin
+    buffer_margin = {:top => 0, :left => 0}
     
-    if not self.padding_bounding_box.nil?
-      if self.bounds.top - self.padding_bounding_box.top > 0
-        css[:'padding-top'] = ( self.bounds.top - self.padding_bounding_box.top).to_s + 'px'
+    if not self.offset_bounding_box.nil?
+      if self.bounds.top - self.offset_bounding_box.top > 0
+        buffer_margin[:top] = ( self.bounds.top - self.offset_bounding_box.top)
       end
       
-      if self.bounds.left - self.padding_bounding_box.left > 0
-        css[:'padding-left'] = (self.bounds.left - self.padding_bounding_box.left).to_s + 'px'
+      if self.bounds.left - self.offset_bounding_box.left > 0
+        buffer_margin[:left] = (self.bounds.left - self.offset_bounding_box.left)
       end
       
     end
     
-    css
+    buffer_margin
   end
   
-  def padding_bounding_box
-    if not self.padding_area.empty? 
-      return BoundingBox.new(padding_area[0], padding_area[1], padding_area[2], padding_area[3])
+  def offset_bounding_box
+    if not self.offset_box.empty? 
+      return BoundingBox.new(offset_box[0], offset_box[1], offset_box[2], offset_box[3])
     else
       return nil
     end
   end
   
-  def padding_bounding_box=(padding_bound_box)
-    self.padding_area = [padding_bound_box.top, padding_bound_box.left,
+  def offset_bounding_box=(padding_bound_box)
+    self.offset_box = [padding_bound_box.top, padding_bound_box.left,
        padding_bound_box.bottom, padding_bound_box.right]
   end
   
-  # For width calculation
-  def left_padding
-    if self.padding_bounding_box and ((self.bounds.left - self.padding_bounding_box.left) > 0)
-      (self.bounds.left - self.padding_bounding_box.left)
-    else
-      0
-    end
-  end
   
   def is_single_line_text
     if not self.render_layer.nil?
@@ -546,7 +548,6 @@ class Grid
         css.update layer.get_css({}, self.is_leaf?, self.root)
       end
     
-      css.update padding_css
       css.update margin_css
     
       css.delete :width if is_single_line_text
@@ -602,14 +603,14 @@ class Grid
     
     sub_grid_args = Hash.new
     if self.render_layer.nil?
-      children = self.children.sort { |a, b| a.id.to_s <=> b.id.to_s }
-      children.each do |sub_grid|
+      child_nodes = self.children.sort { |a, b| a.id.to_s <=> b.id.to_s }
+      child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
       end
       if not self.children.empty? and self.orientation == "left"
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
-      if children.length > 0 
+      if child_nodes.length > 0 
         html = (content_tag tag, inner_html, attributes, false)
       else
         html = ''
