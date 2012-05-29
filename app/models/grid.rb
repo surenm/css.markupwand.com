@@ -458,6 +458,22 @@ class Grid
     @relative_margin
   end
   
+  
+  # Find out bounding box difference from it and its child.
+  # Assumption is that it has only one child
+  def padding_from_child
+    child = children.first
+    spacing = {}
+    
+    if bounds and child.bounds
+      debugger
+      spacing[:top]  = (child.bounds.top  - bounds.top)
+      spacing[:left] = (child.bounds.left - bounds.left)
+    end
+    
+    spacing
+  end
+  
   # Spacing includes margin and padding.
   # Margin  = separate the block from things outside it
   # Padding = to move the contents away from the edges of the block.
