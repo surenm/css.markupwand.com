@@ -459,7 +459,7 @@ class Grid
   end
   
   # Find Top and left difference from parent grid
-  def margin_css
+  def spacing_css
     css = {}
     
     top  = 0
@@ -514,6 +514,8 @@ class Grid
     buffer_margin
   end
   
+  
+  # De-serializes the offset box from mongo data.
   def offset_bounding_box
     if not self.offset_box.empty? 
       return BoundingBox.new(offset_box[0], offset_box[1], offset_box[2], offset_box[3])
@@ -522,10 +524,17 @@ class Grid
     end
   end
   
+  # Offset box is a box, that is an empty grid that appears before
+  # this current grid. The previous sibling being a empty box, it adds itself
+  # to a buffer. And the next item picks it up from buffer and takes it as its 
+  # own offset bounding box.
+  #
+  # This function is for serializing bounding box and storing it.
   def offset_bounding_box=(padding_bound_box)
     self.offset_box = [padding_bound_box.top, padding_bound_box.left,
        padding_bound_box.bottom, padding_bound_box.right]
   end
+  
   
   
   def is_single_line_text
@@ -544,6 +553,23 @@ class Grid
     end
   end
   
+  # If the width has already not been set, set the width.
+  # TODO Find out if there is any case when width is set.
+  def width_css(css)
+    if self.fit_to_grid and self.depth < 5
+      set_width_class
+    elsif not css.has_key? :width
+      if not is_single_line_text and
+        not self.bounds.nil? and 
+        self.bounds.width != 0
+        
+        return {:width => self.bounds.width.to_s + 'px'}
+      end
+    end
+    
+    return {}
+  end
+  
   def css_properties
     if self.css_hash.empty?
       css = {}
@@ -551,29 +577,32 @@ class Grid
         layer = Layer.find layer_id
         css.update layer.get_css({}, self.is_leaf?, self.root)
       end
-    
-      css.update margin_css
-    
-      css.delete :width if is_single_line_text
       
-      if self.fit_to_grid and self.depth < 5
-        set_width_class
-      elsif not css.has_key? :width
+      css.update width_css(css)
+      css.delete :width if is_single_line_text
+
+      # Set float.
+      if not self.parent.nil? and  
+        self.parent.orientation == Constants::GRID_ORIENT_LEFT
         
-        if not is_single_line_text and
-          not self.bounds.nil? and 
-          self.bounds.width != 0
-          
-          css[:width] = self.bounds.width.to_s + 'px'
-        end
-        
-        if not self.parent.nil? and  
-          self.parent.orientation == Constants::GRID_ORIENT_LEFT
-          
-          css[:float] = 'left'
-        end
+        css[:float] = 'left'
       end
+      
+      # Gives out the values for spacing the box model.
+      # Margin and padding
+      css.update spacing_css
+      
+      
       self.css_hash.update css
+      
+      if self.parent and self.parent.children.length == 1
+        Log.error "Only one child for "
+        Log.error "#{self.to_s}"
+        Log.error "Children type:"
+        Log.error "#{self.children.to_a.to_s}"
+        self.css_hash.update({:border => '1px solid #f00'})
+      end
+      
       self.save!
     end
     
@@ -608,7 +637,7 @@ class Grid
       if not self.children.empty? and self.orientation == "left"
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
-      if child_nodes.length > 0 
+      if child_nodes.length > 0
         html = (content_tag tag, inner_html, attributes, false)
       else
         html = ''
