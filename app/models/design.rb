@@ -84,7 +84,31 @@ class Design
 
     html.gsub! "{yield}", body_html
     html.gsub! "{webfonts}", PhotoshopItem::FontMap.instance.webfont_code
+
+    css = PhotoshopItem::StylesHash.generate_css_data
+
+    self.write_html_files(html)
+    self.write_css_files(css)
+  
+    Log.info "Successfully completed processing #{self.processed_file_path}."
+    return
+  end
+  
+  def write_html_files(html_content)
+    raw_file_name  = self.assets_root_path.join 'raw.html'
+    html_file_name = self.assets_root_path.join 'index.html'
+
+    html_fptr = File.new raw_file_name, 'w+'
+    html_fptr.write html_content
+    html_fptr.close
     
+    Log.info "Saved HTML file - #{html_file_name}."
+
+    Log.info "Tidying up the html..."
+    system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
+  end
+  
+  def write_css_files(css_content)
     # Write style.css file
     PhotoshopItem::StylesHash.write_css_file
 
@@ -92,21 +116,6 @@ class Design
     Log.info "Writing bootstrap files"
     FileUtils.cp_r Rails.root.join("app", "templates", "bootstrap", "docs", "assets", "css"), self.assets_root_path.join("assets")
     FileUtils.cp Rails.root.join("app", "assets", "stylesheets", "lib", "bootstrap_override.css"), self.assets_root_path.join("assets", "css")
-
-    raw_file_name  = self.assets_root_path.join 'raw.html'
-    html_file_name = self.assets_root_path.join 'index.html'
-
-    Log.info "Saving HTML file - #{html_file_name}..."
-    html_fptr = File.new raw_file_name, 'w+'
-    html_fptr.write html
-    html_fptr.close
-
-    Log.info "Tidying up the html..."
-    system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
-
-    Log.info "Successfully completed processing #{self.processed_file_path}."
-    PhotoshopItem::FontMap.instance.show_install_urls
-
-    return
   end
 end
+
