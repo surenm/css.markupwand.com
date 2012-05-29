@@ -1,38 +1,3 @@
-.action-button {
-  padding: 10px;
-  color: white;
-  font-weight: bolder;
-  font-size: 120%;
-  border: #ff8f45 2px solid;
-  background-image: linear-gradient(bottom, rgb(255,144,9) 50%, rgb(255,171,68) 71%);
-  background-image: -o-linear-gradient(bottom, rgb(255,144,9) 50%, rgb(255,171,68) 71%);
-  background-image: -moz-linear-gradient(bottom, rgb(255,144,9) 50%, rgb(255,171,68) 71%);
-  background-image: -webkit-linear-gradient(bottom, rgb(255,144,9) 50%, rgb(255,171,68) 71%);
-  background-image: -ms-linear-gradient(bottom, rgb(255,144,9) 50%, rgb(255,171,68) 71%);
-  background-image: -webkit-gradient(
-  linear,
-  left bottom,
-  left top,
-  color-stop(0.5, rgb(255,144,9)),
-  color-stop(0.71, rgb(255,171,68))
-  );
-}
-
-.action-button:hover {
-  background-image: linear-gradient(bottom, rgb(255,171,68) 50%, rgb(255,144,9) 71%);
-  background-image: -o-linear-gradient(bottom, rgb(255,171,68) 50%, rgb(255,144,9) 71%);
-  background-image: -moz-linear-gradient(bottom, rgb(255,171,68) 50%, rgb(255,144,9) 71%);
-  background-image: -webkit-linear-gradient(bottom, rgb(255,171,68) 50%, rgb(255,144,9) 71%);
-  background-image: -ms-linear-gradient(bottom, rgb(255,171,68) 50%, rgb(255,144,9) 71%);
-  background-image: -webkit-gradient(
-  linear,
-  left bottom,
-  left top,
-  color-stop(0.5, rgb(255,171,68)),
-  color-stop(0.71, rgb(255,144,9))
-  );
-}
-
 .prefilled-field {
   color: #aaa;
   font-size: 120%;
