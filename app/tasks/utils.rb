@@ -1,6 +1,6 @@
 class Utils
   def self.process_test_file
-    self.process_file '/tmp/mailgun.psd.json'
+    self.process_file '/tmp/mailgun.psd.json', true
   end
   
   def self.process_file(file_name, profile = false)
@@ -11,6 +11,7 @@ class Utils
     design.user = user
     design.save!
     design.parse
+    design.generate_markup
     
     if profile
       result       = RubyProf.stop

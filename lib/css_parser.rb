@@ -16,8 +16,6 @@ module CssParser
   def CssParser::set_assets_root(root)
     # Create assets folder
     assets_path = root.join "assets"
-    FileUtils.mkdir_p assets_path
-    
     ENV["ASSETS_DIR"] = assets_path.to_s
   end
   
@@ -86,7 +84,7 @@ module CssParser
     text_style = layer_json[:textKey][:value][:textStyleRange][:value].first
     font_info  = text_style[:value][:textStyle][:value]
     
-    css                 = {}
+    css = {}
     
     # Font name
     css.update(CssTextParser::parse_font_name(layer_json))

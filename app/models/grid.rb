@@ -11,7 +11,7 @@ class Grid
   has_many :children, :class_name => 'Grid', :inverse_of => :parent
   belongs_to :parent, :class_name => 'Grid', :inverse_of => :children
 
-  has_many :layers, :class_name => 'Layer'
+  has_and_belongs_to_many :layers, :class_name => 'Layer'
   
   # fields relevant for a grid
   field :name, :type => String
@@ -32,7 +32,8 @@ class Grid
   field :width_class, :type => String, :default => ''
   field :override_width_class, :type => String, :default => nil
 
-  @@pageglobals = PageGlobals.instance
+  @@pageglobals    = PageGlobals.instance
+  @@grouping_queue = Queue.new
   
   attr_accessor :relative_margin
   
@@ -52,12 +53,12 @@ class Grid
   end
   
   def self.reset_grouping_queue
-    @@pageglobals.grouping_queue.clear
+    @@grouping_queue.clear
   end
 
   def self.group!
-    while not @@pageglobals.grouping_queue.empty?
-      grid = @@pageglobals.grouping_queue.pop
+    while not @@grouping_queue.empty?
+      grid = @@grouping_queue.pop
       grid.group!
     end
   end
@@ -159,7 +160,7 @@ class Grid
         layer.bounds == max_bounds and 
         (layer.kind == Layer::LAYER_SOLIDFILL or 
           layer.kind == Layer::LAYER_NORMAL or 
-          (layer.kind == Layer::LAYER_SMARTOBJECT and not is_leaf)
+          layer.renderable_image?
         )
       }.flatten
     end
@@ -179,18 +180,13 @@ class Grid
   end
   
   def set(layers, parent)
+    self.parent = parent
+    
     layers.each { |layer| self.layers.push layer }
-
-    self.parent = parent   # Parent grid for this grid
-    
-    if self.parent == nil
-      Log.info "Setting the root node"
-      self.root = true
-      @@pageglobals.grouping_queue.push self
-    end
-    
     self.layers.sort!
     self.save!
+    
+    @@grouping_queue.push self if self.root?
   end
   
   def set_width_class
@@ -393,7 +389,7 @@ class Grid
            @@pageglobals.reset_padding_prefix
           end
           
-          @@pageglobals.grouping_queue.push grid
+          @@grouping_queue.push grid
         end
       end
       
@@ -631,11 +627,13 @@ class Grid
         
         css[:float] = 'left'
       end
-      
+
       # Gives out the values for spacing the box model.
       # Margin and padding
       css.update spacing_css
-      
+
+      # hack to make css non empty. Couldn't initialize css_hash as nil and check for nil condition
+      css[:processed] = true
       
       self.css_hash.update css
       
@@ -650,7 +648,9 @@ class Grid
       self.save!
     end
     
-    raw_properties = self.css_hash
+    # remove the processed entry hack
+    raw_properties = self.css_hash.clone
+    raw_properties.delete :processed
     return raw_properties
   end
   

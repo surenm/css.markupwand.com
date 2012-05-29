@@ -15,7 +15,7 @@ class Layer
     :SNAPPED_BOUNDS => :snapped_bounds
     }
 
-  belongs_to :grid
+  has_and_belongs_to_many :grids
 
   field :uid, :type  => String
   field :name, :type => String
@@ -26,6 +26,13 @@ class Layer
   # Do not store layer_object, but have in memory
   
   attr_accessor :layer_object, :bounds
+  
+  def self.create_from_raw_data(layer_json)
+    layer = Layer.new
+    layer.set layer_json
+    layer.save!
+    return layer
+  end
 
   def set(layer)
     self.name       = layer[:name][:value]
@@ -60,8 +67,7 @@ class Layer
   def layer_json
     # Store layer object in memory.  
     if not @layer_object
-      @layer_object = JSON.parse self.raw, :symbolize_names => true,
-       :max_nesting => false
+      @layer_object = JSON.parse self.raw, :symbolize_names => true, :max_nesting => false
     end
     
     @layer_object
@@ -111,8 +117,8 @@ class Layer
     return self.bounds.intersect_area other.bounds
   end
 
-  def is_non_smart_image?
-    self.layer_type == 'IMAGE'
+  def renderable_image?
+    !self.layer_object.nil? and self.layer_object.has_key? :renderImage and self.layer_object[:renderImage]
   end
 
   def image_path
@@ -131,7 +137,7 @@ class Layer
         :div
       end
     elsif self.kind == LAYER_NORMAL
-      if self.is_non_smart_image? and is_leaf
+      if self.renderable_image? and is_leaf
         :img
       else
         :div
@@ -155,7 +161,7 @@ class Layer
 
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
-    elsif self.kind == LAYER_SMARTOBJECT or is_non_smart_image?
+    elsif self.kind == LAYER_SMARTOBJECT or renderable_image?
       if not is_leaf
         css[:background] = "url('../../#{image_path}') no-repeat"
         css[:'background-size'] = "contain"

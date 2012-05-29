@@ -115,8 +115,7 @@ class DrawUtil
     
     nodes = []
     art_layers.each do |layer_id, node_json|
-      node = Layer.new
-      node.set node_json
+      node = Layer.create_from_raw_data node_json
       nodes.push node
     end
     
