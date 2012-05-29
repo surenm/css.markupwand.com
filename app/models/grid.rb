@@ -403,11 +403,7 @@ class Grid
   end
 
   def tag
-    if self.root
-      :body
-    else
-      :div
-    end
+    :div
   end
   
   def print(indent_level=0)
