@@ -458,7 +458,25 @@ class Grid
     @relative_margin
   end
   
-  # Find Top and left difference from parent grid
+  # Spacing includes margin and padding.
+  # Margin  = separate the block from things outside it
+  # Padding = to move the contents away from the edges of the block.
+  # 
+  # There are two sources of spacing. 
+  #  1. One is offset box (the empty sibling grid that offsets this box)
+  #    a) This is always margin, never padding.
+  #  2. Another is bounding box difference from its parent grid
+  #    a) If it has a single child, calculate the bounding difference from
+  #       child and add as padding.
+  #    b) If it *is* a single child, do not accept bounding box difference,
+  #       it would have got spacing from parent as padding.
+  #    c) If it has more than one sibling, calculate relative margin. Absolute
+  #       margin (term-invented-by-me) is distance top and left distance from 
+  #       bounding box. Relative margin is the distance from it's sibling   
+  #       (considering width and margins of its siblings.)
+  #
+
+  
   def spacing_css
     css = {}
     
@@ -466,7 +484,6 @@ class Grid
     left = 0
     
     if not self.parent.nil? and not self.parent.bounds.nil? and not self.bounds.nil?
-      
       
       # Guess work. For toplevel page wraps, the left margins are huge
       # and it is the first node in the grid tree
@@ -534,8 +551,6 @@ class Grid
     self.offset_box = [padding_bound_box.top, padding_bound_box.left,
        padding_bound_box.bottom, padding_bound_box.right]
   end
-  
-  
   
   def is_single_line_text
     if not self.render_layer.nil?
