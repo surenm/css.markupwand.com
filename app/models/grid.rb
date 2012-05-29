@@ -568,11 +568,17 @@ class Grid
           css[:float] = 'left'
         end
       end
+
+      # hack to make css non empty. Couldn't initialize css_hash as nil and check for nil condition
+      css[:processed] = true
+      
       self.css_hash.update css
       self.save!
     end
     
-    raw_properties = self.css_hash
+    # remove the processed entry hack
+    raw_properties = self.css_hash.clone
+    raw_properties.delete :processed
     return raw_properties
   end
   
