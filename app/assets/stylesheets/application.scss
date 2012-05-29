@@ -8,12 +8,13 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
- *= require lib/screen.scss
- *= require lib/ie.scss
- *= require lib/print.scss
+ *= require lib/screen
+ *= require lib/ie
+ *= require lib/print
  *= require lib/bootstrap
  *= require lib/bootstrap-responsive
  *= require lib/bootstrap_and_overrides
+ *= require app/buttons
  *= require_self
 */
 
