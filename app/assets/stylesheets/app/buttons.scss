@@ -15,6 +15,7 @@
     @include background-image(linear-gradient(   bottom, rgb(255,171,68) 50%, rgb(255,144,9) 71%));
     text-decoration: none;
     color: white;
+    cursor: pointer;
   }
 }
 
@@ -30,5 +31,6 @@
     @include background-image(linear-gradient(   bottom, rgb(255,171,68) 50%, rgb(255,144,9) 71%));
     text-decoration: none;
     color: white;
+    cursor: pointer;
   }
 }
