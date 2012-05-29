@@ -114,7 +114,8 @@ class Design
   
   def write_css_files(css_content)
     # Write style.css file
-    css_path = File.join self.assets_root_path, "css"
+    css_path = self.assets_root_path.join "assets", "css"
+
     if not Dir.exists? css_path
       FileUtils.mkdir_p css_path
     end
