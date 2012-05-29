@@ -541,11 +541,10 @@ class Grid
       
     end
     
-    top  += buffer_margin[:top]
-    left += buffer_margin[:left]
-    
-    css[:'margin-left'] = "#{left}px" if left > 0
-    css[:'margin-top']  = "#{top}px" if top > 0
+    css[:'margin-left']  = "#{margin[:left]}px"  if margin[:left]  > 0
+    css[:'margin-top']   = "#{margin[:top]}px"   if margin[:top]   > 0
+    css[:'padding-left'] = "#{padding[:left]}px" if padding[:left] > 0
+    css[:'padding-top']  = "#{padding[:top]}px"  if padding[:top]  > 0
     
     css
   end
