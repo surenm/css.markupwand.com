@@ -38,16 +38,20 @@ body {
 }
 
 #header.navbar {
-  margin-bottom: 50px;
-  height: 60px;
-  min-height: 60px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
   
   .navbar-inner {
-    @include background(linear-gradient(top left, #efefef, #ffffff));
+    height: 57px;
+    background: #5f2f72 url("/assets/noise.png") repeat;
+    border-bottom: 3px solid #431555;
   }
   
   .brand {
-    padding: 4px 20px 2px 20px;
+    padding: 8px 20px 2px 40px;
   }
 
   .nav {
@@ -60,10 +64,14 @@ body {
   }
   
   ul.nav {
-    margin: 0 20px 0 0;
+    float: right;
+    font-size: 16px;
+
     li {
       a {
-        color: #333;
+        padding: 20px 30px;   
+        color: #dcdcdc;
+
         text-shadow: none;
         &:hover {
           text-decoration: underline;
@@ -89,9 +97,9 @@ body {
   }
   
   .drop {
-    background-color: #cbabd7;
+    background: #CEDEEB url("/assets/noise.png") repeat;
     @include border-radius(8px);
-    border: 1px dashed #E1E1E8;
+    border: 1px dotted #106AA3;
     width: 80%;
     min-height: 200px;
     margin-bottom: 100px;
@@ -116,9 +124,9 @@ body {
     padding: 0 15px 0 0;
   }
   .design {
-    background-color: #cbabd7;
+    background: #CEDEEB url("/assets/noise.png") repeat;;
     @include border-radius(8px);
-    border: 1px dashed #E1E1E8;
+    border: 1px dotted #106AA3;
     padding: 20px 10px;
     margin: 10px 0px;
   }

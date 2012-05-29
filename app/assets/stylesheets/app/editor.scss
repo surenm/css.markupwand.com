@@ -15,19 +15,11 @@ body {
   }
 
   .editor-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 47px;
-    width: 100%;
-    background: #5f2f72 url("/assets/noise.png") repeat;
-    border-bottom: 3px solid #431555;
-    overflow: hidden;
   }
 
   .editor-controls {
     position: absolute;
-    top: 50px;
+    top: 60px;
     right: 0;
     bottom: 0;
     height: 100%;
@@ -75,7 +67,7 @@ body {
 
   #editor-iframe {
     position: absolute;
-    top: 50px;
+    top: 60px;
     left: 0;
     height: 100%;
     overflow: auto;
