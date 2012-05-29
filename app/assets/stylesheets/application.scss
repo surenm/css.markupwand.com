@@ -57,8 +57,9 @@ body {
   .nav {
     .active {
       a {
-        @include background(linear-gradient(top left, #333, #222));
-        color: #ffffff;
+        @include box-shadow(rgba(41, 23, 37, 0.75) 6px 6px 6px inset, rgba(41, 23, 37, 0.75) -6px -6px 6px inset);
+        background: none;
+        padding: 20px 25px;   
       }
     }
   }
