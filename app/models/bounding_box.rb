@@ -121,6 +121,10 @@ class BoundingBox
     return ((left_distance < self.width or left_distance < other_box.width) and (top_distance < self.height or top_distance < other_box.height))
   end
 
+  def serialize
+    [top, left, bottom, right]
+  end
+  
   #Super bound is the minimal bounding box that encloses a bunch of bounding boxes
   def self.get_super_bounds(bounding_box_list)
     top = left = bottom = right = nil
@@ -155,4 +159,12 @@ class BoundingBox
     return objects_in_region
   end
 
+  def self.from_mongo(serialized_box)
+    if not serialized_box.empty? 
+      return BoundingBox.new(serialized_box[0], serialized_box[1],
+        serialized_box[2], serialized_box[3])
+    else
+      return nil
+    end
+  end
 end
