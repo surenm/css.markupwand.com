@@ -1,4 +1,4 @@
-class EditorIframe extends Backbone.View
+class EditorIframeView extends Backbone.View
   initialize: (args) ->
     this.render()
   
@@ -107,4 +107,4 @@ class EditorIframe extends Backbone.View
     view = new GridView({model: grid, el: "#editor"})
     view.render()
     
-window.EditorIframe = EditorIframe
+window.EditorIframeView = EditorIframeView
