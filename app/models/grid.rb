@@ -20,7 +20,7 @@ class Grid
   field :root, :type => Boolean, :default => false
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
-  field :padding_area, :type => Array, :default => []
+  field :offset_box, :type => Array, :default => []
   field :fit_to_grid,  :type => Boolean, :default => true
   
   field :css_hash, :type => Hash, :default => {}
@@ -515,8 +515,8 @@ class Grid
   end
   
   def offset_bounding_box
-    if not self.padding_area.empty? 
-      return BoundingBox.new(padding_area[0], padding_area[1], padding_area[2], padding_area[3])
+    if not self.offset_box.empty? 
+      return BoundingBox.new(offset_box[0], offset_box[1], offset_box[2], offset_box[3])
     else
       return nil
     end
@@ -605,7 +605,7 @@ class Grid
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
       end
-      if not self.child_nodes.empty? and self.orientation == "left"
+      if not self.children.empty? and self.orientation == "left"
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
       if child_nodes.length > 0 
