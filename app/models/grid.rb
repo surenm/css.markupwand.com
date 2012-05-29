@@ -491,30 +491,52 @@ class Grid
   #       bounding box. Relative margin is the distance from it's sibling   
   #       (considering width and margins of its siblings.)
   #
+  #    2(b) and 2(c) are exclusive.
 
   
   def spacing_css
-    css = {}
+    #TODO. Margin and padding are not always from
+    # left and top. It is from all sides.
+    margin  = offset_box_spacing
+    padding = { :top => 0, :left => 0 }
+    css     = {}
     
-    top  = 0
-    left = 0
+    if self.children.length > 0
+      Log.info "#{self.id.to_s}'s kids"
+      self.children.each do |child|
+        Log.info "#{self.id.to_s} -> #{child.id.to_s}"
+      end
+      Log.info "#{self.children.length} kids"
+      Log.info "My bound #{self.bounds}"
+      debugger
+      Log.info "My kid bound #{self.children.first.bounds}"
+    end
     
-    if not self.parent.nil? and not self.parent.bounds.nil? and not self.bounds.nil?
+    Log.info "#{self.id.to_s}'s parents"
+    if self.parent and self.parent.parent
+      Log.info "#{self.id.to_s} <- #{self.parent.id.to_s} <- #{self.parent.parent.id.to_s}"
+      Log.info "My parent bound #{self.parent.bounds}"
+      Log.info "My bound #{self.bounds}"
+      
+    end
+    
+    if not parent.nil? and not parent.bounds.nil? and not bounds.nil?
       
       # Guess work. For toplevel page wraps, the left margins are huge
       # and it is the first node in the grid tree
-      
-      is_top_level_page_wrap = ( self.parent.bounds.left == 0 and
-        self.parent.parent == nil and
+      is_top_level_page_wrap = ( parent.bounds.left == 0 and
+        parent.parent == nil and
         relative_margin[:left] > 200 )
         
       
-      if self.parent.bounds.left < self.bounds.left and !is_top_level_page_wrap
-        left = relative_margin[:left]
-      end 
-      
-      if self.parent.bounds.top < self.bounds.top
-        top = relative_margin[:top]
+      if parent.children.length > 1
+        if parent.bounds.left < bounds.left and !is_top_level_page_wrap
+          margin[:left] += relative_margin[:left]
+        end 
+        
+        if parent.bounds.top < bounds.top
+          margin[:top]  += relative_margin[:top]
+        end
       end
       
     end
