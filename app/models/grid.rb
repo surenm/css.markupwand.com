@@ -179,7 +179,7 @@ class Grid
   # Figures out whether two Layers are worth croppable.
   # Crop only if any one of them is enclosed in another for more than
   # 90%
-  def could_intersect_be_cropped?(intersecting_nodes)
+  def self.could_intersect_be_cropped?(intersecting_nodes)
     left  = intersecting_nodes[:left]
     right = intersecting_nodes[:right]
     
@@ -192,7 +192,7 @@ class Grid
   
   # :left and :right are just conventions here. They don't necessarily 
   # depict their positions.
-  def crop_smaller_intersect(intersecting_nodes)
+  def self.crop_smaller_intersect(intersecting_nodes)
     smaller_node = intersecting_nodes[:left]
     bigger_node  = intersecting_nodes[:right]
     if intersecting_nodes[:left].bounds.area > intersecting_nodes[:right].bounds.area
@@ -280,8 +280,8 @@ class Grid
         
           # Check if there is any error in which a node is almost inside,
           # but slightly edging out. Crop out that edge.
-          if could_intersect_be_cropped? intersecting_nodes
-            new_intersecting_nodes = crop_smaller_intersect intersecting_nodes
+          if Grid.could_intersect_be_cropped? intersecting_nodes
+            new_intersecting_nodes = Grid.crop_smaller_intersect intersecting_nodes
             new_intersecting_nodes.each do |position, node_item|
               nodes_in_region.push node_item
               available_nodes[node_item[:uid]] = node_item
