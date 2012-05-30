@@ -289,7 +289,7 @@ class Grid
   def get_subgrids
     Log.debug "Getting subgrids (#{self.layers.length} layers in this grid)"
     
-    # Some root grouping of nodes to recursivel add as children
+    # Some root grouping of nodes to recursive add as children
     root_group = Grid.get_grouping_boxes self.layers
     Log.debug "Root groups #{root_group}"
 
@@ -462,7 +462,6 @@ class Grid
     spacing = {}
     
     if bounds and child.bounds
-      debugger
       spacing[:top]  = (child.bounds.top  - bounds.top)
       spacing[:left] = (child.bounds.left - bounds.left)
     end
@@ -496,25 +495,6 @@ class Grid
     margin  = offset_box_spacing
     padding = { :top => 0, :left => 0 }
     css     = {}
-    
-    if self.children.length > 0
-      Log.info "#{self.id.to_s}'s kids"
-      self.children.each do |child|
-        Log.info "#{self.id.to_s} -> #{child.id.to_s}"
-      end
-      Log.info "#{self.children.length} kids"
-      Log.info "My bound #{self.bounds}"
-      debugger
-      Log.info "My kid bound #{self.children.first.bounds}"
-    end
-    
-    Log.info "#{self.id.to_s}'s parents"
-    if self.parent and self.parent.parent
-      Log.info "#{self.id.to_s} <- #{self.parent.id.to_s} <- #{self.parent.parent.id.to_s}"
-      Log.info "My parent bound #{self.parent.bounds}"
-      Log.info "My bound #{self.bounds}"
-      
-    end
     
     if not parent.nil? and not parent.bounds.nil? and not bounds.nil?
       
@@ -636,15 +616,6 @@ class Grid
       css[:processed] = true
       
       self.css_hash.update css
-      
-      if self.parent and self.parent.children.length == 1
-        Log.error "Only one child for "
-        Log.error "#{self.to_s}"
-        Log.error "Children type:"
-        Log.error "#{self.children.to_a.to_s}"
-        self.css_hash.update({:border => '1px solid #f00'})
-      end
-      
       self.save!
     end
     
