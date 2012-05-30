@@ -553,7 +553,7 @@ class Grid
       end
     else
       sub_grid_args.update attributes
-      render_layer_obj = Layer.find render_layer, sub_grid_args
+      render_layer_obj = Layer.find self.render_layer
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?
       
       html = inner_html
