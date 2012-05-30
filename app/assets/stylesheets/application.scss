@@ -132,7 +132,8 @@ body {
   .design {
     background: #CEDEEB url("/assets/noise.png") repeat;;
     @include border-radius(8px);
-    border: 1px dotted #106AA3;
+    border: 1px solid #106AA3;
+    box-shadow: inset 2px 2px 2px 2px #B2C7D5;
     padding: 20px 10px;
     margin: 10px 0px;
     
