@@ -200,6 +200,22 @@ class Layer
     
     font_name
   end
+  
+  def get_font_name
+    raw_font_name = self.get_raw_font_name
+    return nil if raw_font_name.nil?
+    
+    design = self.grids.first.design
+    font_map = design.font_map
+    if font_map.has_key? raw_font_name
+      font_name = font_name[raw_font_name]
+    else
+      font_name = raw_font_name
+    end
+    
+    font_name
+  end
+  
   def text
     if self.kind == LAYER_TEXT
       layer_json[:textKey][:value][:textKey][:value]
