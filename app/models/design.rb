@@ -72,7 +72,7 @@ class Design
 
     Log.info "Grouping the grids..."
     Grid.group!
-    grid.print
+    Log.info "Done grouping grids"
   end
   
   def generate_markup
