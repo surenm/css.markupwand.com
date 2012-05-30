@@ -14,6 +14,9 @@ TransformersWeb::Application.routes.draw do
   match 'edit'    => 'main#edit'
   match 'designs' => 'main#list'
   
+  # grid controllers
+  match 'grids/update' => 'grids#update'
+  
   # Proxy method to view generated files
   match 'generated/*uri.*ext' => 'main#generated'
   
