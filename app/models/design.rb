@@ -29,6 +29,14 @@ class Design
     return assets_path
   end
 
+  def parse_fonts(layers)
+    design_fonts = PhotoshopItem::FontMap.new layers
+    
+    self.font_map.update design_fonts.font_map
+    self.typekit_snippet = design_fonts.typekit_snippet
+    self.google_webfonts_snippet = design_fonts.google_webfonts_snippet
+    self.save!
+  end
   # Start initializing all the singletons classes
   def reset_globals(psd_data)
     #Set page level properties
