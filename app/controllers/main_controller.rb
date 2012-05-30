@@ -7,7 +7,7 @@ class MainController < ApplicationController
   end
   
   def list
-    @designs = @user.designs
+    @designs = @user.designs.reverse
   end
   
   def edit
