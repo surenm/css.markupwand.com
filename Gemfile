@@ -13,8 +13,6 @@ gem 'mongo'
 gem 'mongoid'
 gem 'therubyracer'
 gem 'xml-simple'
-gem 'resque'
-gem 'multi_json'
 gem 'log4r'
 gem 'rmagick'
 
