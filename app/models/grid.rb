@@ -37,6 +37,46 @@ class Grid
   
   attr_accessor :relative_margin
   
+  def set(layers, parent)
+    self.parent = parent
+    
+    # Spent close to fucking one day trying to debug this.
+    # Just trying to access this self.layer once, helps avoiding redundant  
+    # inserts into the same group.
+    #
+    # Just remove the Log.info line below, and code will start breaking.
+    # Magic! 
+    # Pro-tip: http://ryanbigg.com/2010/04/has_and_belongs_to_many-double-insert/#comment-36741
+    
+    Log.info self.layers.to_a
+    layers.each { |layer| self.layers.push layer }
+    self.layers.sort!
+    self.save!
+    
+    @@grouping_queue.push self if self.root?
+  end
+  
+  def to_s
+    "Grid #{self.attribute_data}, Style Layers: #{@layers.to_a}"
+  end
+  
+  def print(indent_level=0)
+    spaces = ""
+    prefix = "|--"
+    indent_level.times {|i| spaces+=" "}
+
+    Log.debug "#{spaces}#{prefix} (grid) #{self.bounds.to_s}"
+    self.children.each do |subgrid|
+      subgrid.print(indent_level+1)
+    end
+    
+    if children.length == 0
+      self.layers.each do |layer|
+        layer.print(indent_level+1)
+      end
+    end  
+  end
+    
   def attribute_data
     {
       :id          => self.id,
@@ -48,9 +88,31 @@ class Grid
     }
   end
   
+  def bounds
+    if layers.empty?
+      bounds = nil
+    else
+      node_bounds = self.layers.collect {|layer| layer.bounds}
+      bounds = BoundingBox.get_super_bounds node_bounds
+    end
+    return bounds
+  end 
+  
   def is_leaf?
     self.children.count == 0 and not self.render_layer.nil?
   end
+  
+  def depth
+    depth = 0
+    parent = self.parent
+    while not parent.nil?
+      parent = parent.parent
+      depth = depth + 1
+    end
+    
+    depth
+  end
+
   
   def self.reset_grouping_queue
     @@grouping_queue.clear
@@ -62,6 +124,17 @@ class Grid
       grid.group!
     end
   end
+  
+  def group!
+    if self.layers.size > 1
+      get_subgrids
+    elsif self.layers.size == 1
+      Log.debug "Just one layer #{self.layers.first} is available. Adding to the grid"
+      self.render_layer = self.layers.first.id.to_s
+    end
+    self.save!
+  end
+  
 
   # Usually any layer that matches the grouping box's bounds is a style layer
   def self.extract_style_layers(grid, available_layers, parent_box = nil)
@@ -91,70 +164,6 @@ class Grid
     return available_layers
   end
   
-  def depth
-    depth = 0
-    parent = self.parent
-    while not parent.nil?
-      parent = parent.parent
-      depth = depth + 1
-    end
-    
-    depth
-  end
-  
-  def set(layers, parent)
-    self.parent = parent
-    
-    # Spent close to fucking one day trying to debug this.
-    # Just trying to access this self.layer once, helps avoiding redundant  
-    # inserts into the same group.
-    #
-    # Just remove the Log.info line below, and code will start breaking.
-    # Magic! 
-    # Pro-tip: http://ryanbigg.com/2010/04/has_and_belongs_to_many-double-insert/#comment-36741
-    
-    Log.info self.layers.to_a
-    layers.each { |layer| self.layers.push layer }
-    self.layers.sort!
-    self.save!
-    
-    @@grouping_queue.push self if self.root?
-  end
-  
-  def set_width_class
-    if not self.bounds.nil?
-      # Add a buffer of (960 + 10), because setting width of 960 in photoshop
-      # is giving 962 in extendscript json. Debug more.
-      if self.bounds.width != 0 and self.bounds.width <= 970
-          self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(self.bounds.width)
-      end
-    end
-  end
-  
-  def inspect
-    "Style Layers: #{@layers.to_a}"
-  end
-
-  def bounds
-    if layers.empty?
-      bounds = nil
-    else
-      node_bounds = self.layers.collect {|layer| layer.bounds}
-      bounds = BoundingBox.get_super_bounds node_bounds
-    end
-    return bounds
-  end
-
-  def group!
-    if self.layers.size > 1
-      get_subgrids
-    elsif self.layers.size == 1
-      Log.debug "Just one layer #{self.layers.first} is available. Adding to the grid"
-      self.render_layer = self.layers.first.id.to_s
-    end
-    self.save!
-  end
-
   # Finds out intersecting nodes in lot of nodes
   def self.get_intersecting_nodes(nodes_in_region)
     
@@ -304,29 +313,6 @@ class Grid
     return available_nodes
   end
 
-  def tag
-    :div
-  end
-  
-  def print(indent_level=0)
-    spaces = ""
-    prefix = "|--"
-    indent_level.times {|i| spaces+=" "}
-
-    Log.debug "#{spaces}#{prefix} (grid) #{self.bounds.to_s}"
-    self.children.each do |subgrid|
-      subgrid.print(indent_level+1)
-    end
-    
-    if children.length == 0
-      self.layers.each do |layer|
-        layer.print(indent_level+1)
-      end
-    end
-    
-  end
-  
-  
   # If the position of the element is > 0 and it is stacked up, calculate relative margin, not absolute margin from the Bounding box.
   # Similar stuff for left margin as well.
   def relative_margin
@@ -463,6 +449,16 @@ class Grid
     return false
   end
   
+  def set_width_class
+    if not self.bounds.nil?
+      # Add a buffer of (960 + 10), because setting width of 960 in photoshop
+      # is giving 962 in extendscript json. Debug more.
+      if self.bounds.width != 0 and self.bounds.width <= 970
+          self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(self.bounds.width)
+      end
+    end
+  end
+  
   # If the width has already not been set, set the width.
   # TODO Find out if there is any case when width is set.
   def width_css(css)
@@ -510,6 +506,10 @@ class Grid
     return raw_properties
   end
   
+  def tag
+    :div
+  end
+  
   def to_html(args = {})
     html = ''
     layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string self.css_properties
@@ -554,9 +554,5 @@ class Grid
     end
     
     return html
-  end
-  
-  def to_s
-    "Grid #{@bounds}"
   end
 end
