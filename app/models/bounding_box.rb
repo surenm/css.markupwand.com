@@ -1,24 +1,9 @@
 class BoundingBox
   attr_accessor :top, :left, :bottom, :right
-  attr_reader :width, :height, :area
-
-  private
-  def set_derived_dimensions
-    begin
-      @width = (self.right-self.left).abs
-      @height = (self.bottom-self.top).abs
-      @area = @width * @height
-    rescue
-      @width = nil
-      @height = nil
-      @area = nil
-    end
-  end
-
+  
   public
   def initialize(top=nil, left=nil, bottom=nil, right=nil)
     set(top, left, bottom, right)
-    set_derived_dimensions
   end
 
   def reset
@@ -35,25 +20,29 @@ class BoundingBox
     self.bottom = bottom
     self.right = right
   end
-
-  def left=(left)
-    @left = left
-    set_derived_dimensions
+  
+  def width
+    if self.right.nil? or self.left.nil?
+      return nil
+    else
+      return (self.right-self.left).abs
+    end
   end
-
-  def right=(right)
-    @right = right
-    set_derived_dimensions
+  
+  def height
+    if self.bottom.nil? or self.top.nil?
+      return nil
+    else
+      return (self.bottom-self.top).abs
+    end
   end
-
-  def top=(top)
-    @top = top
-    set_derived_dimensions
-  end
-
-  def bottom=(bottom)
-    @bottom = bottom
-    set_derived_dimensions
+  
+  def area
+    if self.width.nil? or self.right.nil?
+      return nil
+    else 
+      return self.width * self.height
+    end
   end
 
   def to_s
