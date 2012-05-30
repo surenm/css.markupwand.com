@@ -64,27 +64,30 @@ class Grid
   end
 
   # Usually any layer that matches the grouping box's bounds is a style layer
-  def self.get_style_layers(layers, is_leaf, parent_box = nil)
-    style_layers = []
+  def self.extract_style_layers(grid, available_layers, parent_box = nil)
+    return available_layers if parent_box.nil?
     
-    if not parent_box.nil?
-
-      if parent_box.class.to_s == "BoundingBox"
-        max_bounds = parent_box
-      else
-        max_bounds = parent_box.bounds
-      end
-
-      style_layers = layers.select { |layer|
-        layer.bounds == max_bounds and 
-        (layer.kind == Layer::LAYER_SOLIDFILL or 
-          layer.kind == Layer::LAYER_NORMAL or 
-          layer.renderable_image?
-        )
-      }.flatten
+    # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
+    style_layers = []
+    if parent_box.class.to_s == "BoundingBox"
+      max_bounds = parent_box
+    else
+      max_bounds = parent_box.bounds
+    end
+    
+    layers = {}
+    available_layers.each { |key, layer| layers[key] = layer if max_bounds.encloses? layer.bounds }
+    style_layers = layers.values.select do |layer| 
+      layer.bounds == max_bounds and (layer.kind == Layer::LAYER_SOLIDFILL or layer.kind == Layer::LAYER_NORMAL or layer.renderable_image?)
     end
 
-    return style_layers
+    Log.info "Style layers for Grid #{grid} are #{style_layers}. Adding them to grid..." if style_layers.size > 0
+    grid.add_style_layers style_layers
+
+    Log.debug "Deleting #{style_layers} from grid"
+    style_layers.each { |style_layer| available_layers.delete style_layer.uid}
+
+    return available_layers
   end
   
   def depth
