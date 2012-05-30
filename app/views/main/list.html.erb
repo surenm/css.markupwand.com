@@ -8,7 +8,10 @@
     <li>
       <div class = "design row"> 
         <div class = "span7">
-          Design: <%= design.id %>
+          <div class="name">
+            <%= design.name %>
+          </div> 
+          <small><%= design.created_at.to_formatted_s(:short) %> </small>
         </div>
         <div class = "span1 right">
           <a href = "/edit/#/design/<%= "#{design.safe_name_prefix}-#{design.id}" %>"> Edit </a>

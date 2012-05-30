@@ -125,12 +125,19 @@ body {
     list-style-type: none;
     padding: 0 15px 0 0;
   }
+  
   .design {
     background: #CEDEEB url("/assets/noise.png") repeat;;
     @include border-radius(8px);
     border: 1px dotted #106AA3;
     padding: 20px 10px;
     margin: 10px 0px;
+    
+    .name {
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 1.1em;
+    }
   }
   
 }
