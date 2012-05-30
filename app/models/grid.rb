@@ -20,7 +20,6 @@ class Grid
   field :root, :type => Boolean, :default => false
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
-  field :offset_box, :type => Array, :default => []
   field :fit_to_grid,  :type => Boolean, :default => true
   
   field :css_hash, :type => Hash, :default => {}
@@ -31,11 +30,13 @@ class Grid
   
   field :width_class, :type => String, :default => ''
   field :override_width_class, :type => String, :default => nil
+  
+  field :offset_box, :type => Array, :default => []
+  field :relative_margin_value, :type => Hash
 
   @@pageglobals    = PageGlobals.instance
   @@grouping_queue = Queue.new
   
-  attr_accessor :relative_margin
   
   def set(layers, parent)
     self.parent = parent
@@ -317,7 +318,7 @@ class Grid
   # Similar stuff for left margin as well.
   def relative_margin
     
-    if not @relative_margin
+    if not self.relative_margin_value
       margin_top  = (self.bounds.top - self.parent.bounds.top)
       margin_left = (self.bounds.left - self.parent.bounds.left)
       
@@ -326,16 +327,17 @@ class Grid
         next if child.bounds.nil?
         
         if parent.orientation == Constants::GRID_ORIENT_NORMAL
-          margin_top -= (child.bounds.height + child.relative_margin[:top]) 
+          margin_top -= (child.bounds.height + child.relative_margin['top']) 
         else
-          margin_left -= (child.bounds.width + child.relative_margin[:left])
+          margin_left -= (child.bounds.width + child.relative_margin['left'])
         end
       end
           
-      @relative_margin = { :top => margin_top, :left => margin_left }
+      self.relative_margin_value = { 'top' => margin_top, 'left' => margin_left }
+      self.save!
     end
     
-    @relative_margin
+    self.relative_margin_value
   end
   
   
@@ -384,15 +386,15 @@ class Grid
       
       # Guess work. For toplevel page wraps, the left margins are huge
       # and it is the first node in the grid tree
-      is_top_level_page_wrap = ( parent.bounds.left == 0 and parent.parent == nil and relative_margin[:left] > 200 )
+      is_top_level_page_wrap = ( parent.bounds.left == 0 and parent.parent == nil and relative_margin['left'] > 200 )
         
       if parent.children.length > 1
         if parent.bounds.left < bounds.left and !is_top_level_page_wrap
-          margin[:left] += relative_margin[:left]
+          margin[:left] += relative_margin['left']
         end 
         
         if parent.bounds.top < bounds.top
-          margin[:top]  += relative_margin[:top]
+          margin[:top]  += relative_margin['top']
         end
       end
       
