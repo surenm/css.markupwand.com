@@ -11,6 +11,10 @@ class Design
   field :psd_file_path, :type => String
   field :processed_file_path, :type => String
   
+  field :font_map, :type => Hash, :default => {}
+  field :typekit_snippet, :type => String, :default => ""
+  field :google_webfonts_snippet, :type => String, :default => ""
+  
   def safe_name_prefix
     self.name.gsub(/[^0-9a-zA-Z]/,'_')
   end
