@@ -236,9 +236,7 @@ class Grid
         
         if nodes_in_region.empty?
           Log.info "Found padding region"
-          @@pageglobals.padding_prefix_buffer = grouping_box.clone
-          @@pageglobals.padding_boxes.push(grouping_box.clone)
-          @@pageglobals.padding_boxes.uniq!
+          @@pageglobals.add_padding_box grouping_box
           
         elsif nodes_in_region.size <= initial_layers_count
           grid = Grid.new :design => self.design

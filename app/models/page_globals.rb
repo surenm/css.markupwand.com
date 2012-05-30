@@ -19,4 +19,10 @@ class PageGlobals
     self.padding_prefix_buffer = nil
   end
   
+  def add_padding_box(padding_box)
+    @@instance.padding_prefix_buffer = padding_box
+    @@instance.padding_boxes.push padding_box
+    @@instance.padding_boxes.uniq!
+  end
+  
 end
