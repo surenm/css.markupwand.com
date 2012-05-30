@@ -182,6 +182,15 @@ class Grid
   def set(layers, parent)
     self.parent = parent
     
+    # Spent close to fucking one day trying to debug this.
+    # Just trying to access this self.layer once, helps avoiding redundant  
+    # inserts into the same group.
+    #
+    # Just remove the Log.info line below, and code will start breaking.
+    # Magic! 
+    # Pro-tip: http://ryanbigg.com/2010/04/has_and_belongs_to_many-double-insert/#comment-36741
+    
+    Log.info self.layers.to_a
     layers.each { |layer| self.layers.push layer }
     self.layers.sort!
     self.save!
