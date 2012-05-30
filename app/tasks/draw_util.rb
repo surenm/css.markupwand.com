@@ -121,16 +121,16 @@ class DrawUtil
     
     Grid.reset_grouping_queue
     
-    Log.info "Creating grids..."
-    grid = Grid.new 
-    grid.set nodes, nil
+    user = User.find_by_email 'bot@goyaka.com'
+    design = Design.new :processed_file_path => @jsonfile_name
+    design.user = user
+    design.save!
+    design.parse
     
-    Grid.group!
-    Log.info "Drawing grids..."
-    draw_grids(grid)
+    draw_grids(design.grids.where(:root => true).first)
     
     Log.info "Drawing padding boxes"
-    draw_padding_boxes
+    #draw_padding_boxes
     
     Log.info "Drawing borders"
     canvas.border!(2, 2, "#000")
