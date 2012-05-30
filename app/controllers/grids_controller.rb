@@ -24,7 +24,7 @@ class GridsController < ApplicationController
 
     @design.generate_markup
 
-    render :json => { :success => true }
+    render :json => { :status => :success, :data => {}, :error => nil }
   end
 
 end

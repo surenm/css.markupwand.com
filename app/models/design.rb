@@ -58,8 +58,6 @@ HTML
     # Reset the grouping queue. Its the FIFO order in which the grids are processed
     Grid.reset_grouping_queue
     
-    # Set the root path for this design. That is where all the html and css is saved to.
-    CssParser::set_assets_root self.assets_root_path
   end
   
   # Parses the photoshop file json data and decomposes into grids
@@ -99,6 +97,10 @@ HTML
     # This populates the PhotoshopItem::StylesHash css_classes simultaneously even though it returns only the html
     # TODO: make the interface better?
     Log.info "Generating body HTML..."
+    
+    # Set the root path for this design. That is where all the html and css is saved to.
+    CssParser::set_assets_root self.assets_root_path
+    
     root_grid = self.grids.where(:root => true).first
 
     body_html = root_grid.to_html

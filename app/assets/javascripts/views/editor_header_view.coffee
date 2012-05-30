@@ -14,16 +14,15 @@ class EditorHeaderView extends Backbone.View
     $(this.el).html html
   
   click_handler: (event) ->
-    try 
-      console.log this.options.design
-      $.post(
-        '/grids/update', 
-        design: this.options.design
-        (data, status, jqXHR) ->
-          console.log data    
-      )
-    catch error
-      console.log error
+    $router = this.options.router
+    $design = $router.design
+    $.post(
+      '/grids/update', 
+      design: $router.design
+      (data, status, jqXHR) ->
+        if data.status == "success"
+          $router.loadDesign $design
+    )
 
     
     # return false to the link so that it doesn't go anywhere
