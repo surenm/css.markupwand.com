@@ -25,7 +25,7 @@
 @import "compass/utilities";
 
 body {
-  background: url('background-tile.png') repeat transparent;
+  background: url('bg-notepad.png') repeat transparent;
 }
 
 .left {
@@ -86,8 +86,9 @@ body {
 #landing-page {
 
   h1 {
-    color: #666666;
+    color: #333;
     margin: 30px;
+    font-family: 'Trocchi', serif;
   }
   
   h2 {
@@ -119,6 +120,8 @@ body {
   h1 {
     text-align: center;
     margin: 20px 0px;
+    font-family: 'Trocchi', serif;
+    color: #333;
   }
   
   ul {
