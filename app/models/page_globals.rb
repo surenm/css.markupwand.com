@@ -1,10 +1,9 @@
 class PageGlobals
   @@instance = nil
-  attr_accessor :padding_prefix_buffer, :page_bounds, :padding_boxes
+  attr_accessor :padding_prefix_buffer, :page_bounds
 
   private
   def initialize
-    self.padding_boxes  = []
   end
   
   public
@@ -21,8 +20,6 @@ class PageGlobals
   
   def add_padding_box(padding_box)
     self.padding_prefix_buffer = padding_box
-    self.padding_boxes.push padding_box
-    self.padding_boxes.uniq!
   end
   
 end
