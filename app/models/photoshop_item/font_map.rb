@@ -1,8 +1,7 @@
 class PhotoshopItem::FontMap
-  attr_accessor :layers, :font_map, :typekit_install_urls
-  FONT_MAP = {
-    'Helvetica World' => 'Helvetica'
-  }
+  attr_accessor :layers, :font_map, :typekit_snippet, :google_webfonts_snippet
+
+  FONT_MAP = { 'Helvetica World' => 'Helvetica' }
 
   # Base fonts for browsers
   # http://en.wikipedia.org/wiki/Core_fonts_for_the_Web
@@ -10,68 +9,35 @@ class PhotoshopItem::FontMap
      'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Georgia',
      'Impact', 'Times New Roman', 'Trebuchet MS', 'Verdana', 'Webdings']
   
-  def initialize
-    @layers   = Hash.new
-    @font_map = Hash.new
-  end
-  
-  def reset(layers)
+  def initialize(layers)
     @layers = layers
+    self.find_web_fonts    
   end
   
   # Find out fonts and urls from
   # Google and Typekit
   def find_web_fonts    
     fonts_list = []
-    @layers.each do |layer_id, layer|
-       fonts_list.push get_font_name(layer, raw = true)
+
+    @layers.each do |layer|
+      raw_layer_font = layer.get_raw_font_name
+      if not DEFAULT_FONTS.include? raw_layer_font
+        fonts_list.push raw_layer_font
+      end
     end
+
     fonts_list.uniq!
     fonts_list.compact!
-    
-    # Remove browser default fonts from the list of fonts.
-    fonts_list = fonts_list - DEFAULT_FONTS
-    
+        
     typekit_fonts = find_in_typekit(fonts_list)
     google_fonts  = find_in_google(fonts_list)
     
-    font_map = {}
-    font_map.update typekit_fonts[:map]
-    font_map.update google_fonts[:map]
+    @font_map = {}
+    @font_map.update typekit_fonts[:map]
+    @font_map.update google_fonts[:map]
     
-    @font_map             = font_map
-    @google_webfont_code  = google_fonts[:webfont_code]
-    @typekit_install_urls = typekit_fonts[:install_url]
-  end
-  
-  def webfont_code
-    # TODO Generate this depending upon user
-    # The javascript url is user specific.
-    typekit_code = <<HTML
-    <script type="text/javascript" src="http://use.typekit.com/kdl3dlc.js"></script>
-    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>  
-HTML
-    webfont_code = ''
-  
-    if @typekit_install_urls.length > 0
-      webfont_code += typekit_code
-    end
-    
-    if not @google_webfont_code.empty?
-      webfont_code += @google_webfont_code
-    end
-    
-    webfont_code
-  end
-  
-  def show_install_urls
-    # Return the installable fonts to be clicked in UI
-    if @typekit_install_urls.length > 0
-      Log.info "Install these typekit fonts:" 
-      @typekit_install_urls.each do |font_url|
-        Log.info font_url
-      end
-    end
+    @google_webfonts_snippet = google_fonts[:snippet]
+    @typekit_snippet = typekit_fonts[:snippet]
   end
   
   def find_in_typekit(fonts_list)
@@ -115,7 +81,7 @@ HTML
       end
     end
     
-    { :install_url => font_urls, :map => font_map }
+    { :snippet => font_urls, :map => font_map }
   end
   
   # Gives out a font map to be used in css and 
@@ -166,40 +132,6 @@ HTML
       webfont_code = ''
     end
 
-    {:webfont_code => webfont_code, :map => font_map }
-  end
-  
-  def get_font_name(layer, raw = false)
-    if layer[:layerKind] == Layer::LAYER_TEXT
-      text_style = layer[:textKey][:value][:textStyleRange][:value].first
-      return nil if text_style.nil?
-      font_info  = text_style[:value][:textStyle][:value]
-      font_name  = font_info[:fontName][:value]
-
-      if not raw 
-        if FONT_MAP.has_key? font_name
-          return FONT_MAP[font_name]
-        elsif @font_map.has_key? font_name
-          return "'#{@font_map[font_name]}'"
-        else
-          return font_name
-        end
-      else
-        return font_name
-      end
-    end
-    
-    nil
-  end
-  
-  @@instance = PhotoshopItem::FontMap.new 
-  
-  def self.init(art_layers)
-    @@instance.reset art_layers
-    @@instance.find_web_fonts
-  end
-  
-  def self.instance
-    return @@instance
+    {:snippet => webfont_code, :map => font_map }
   end
 end
