@@ -31,8 +31,10 @@ class Grid
   field :width_class, :type => String, :default => ''
   field :override_width_class, :type => String, :default => nil
   
+
   field :offset_box, :type => Array, :default => []
   field :relative_margin_value, :type => Hash
+  field :grid_depth, :type => Integer, :default => -1
 
   @@pageglobals    = PageGlobals.instance
   @@grouping_queue = Queue.new
@@ -104,14 +106,18 @@ class Grid
   end
   
   def depth
-    depth = 0
-    parent = self.parent
-    while not parent.nil?
-      parent = parent.parent
-      depth = depth + 1
+    if self.grid_depth == -1
+      depth = 0
+      parent = self.parent
+      while not parent.nil?
+        parent = parent.parent
+        depth = depth + 1
+      end
+      self.grid_depth = depth
+      self.save!
     end
     
-    depth
+    self.grid_depth
   end
 
   
@@ -242,7 +248,8 @@ class Grid
   def self.process_row_grouping_box(root_grid, row_grouping_box, available_nodes)
     Log.debug "Trying row grouping box: #{row_grouping_box}"
     
-    row_grid = Grid.new :design => root_grid.design, :orientation => Constants::GRID_ORIENT_LEFT
+    row_grid       = Grid.new :design => root_grid.design, :orientation => Constants::GRID_ORIENT_LEFT
+    row_grid.grid_depth = root_grid.grid_depth + 1
     row_grid.set [], root_grid
             
     available_nodes = Grid.extract_style_layers row_grid, available_nodes, row_grouping_box
@@ -256,6 +263,7 @@ class Grid
     if row_grid.children.size == 1
       subgrid        = row_grid.children.first
       subgrid.parent = root_grid
+      subgrid.grid_depth  = root_grid.grid_depth + 1
       row_grid.delete
     end
     
@@ -272,7 +280,7 @@ class Grid
       @@pageglobals.add_padding_box grouping_box
       
     elsif nodes_in_region.size <= available_nodes.size
-      grid = Grid.new :design => row_grid.design
+      grid = Grid.new :design => row_grid.design, :grid_depth => row_grid.grid_depth + 1
       style_layers = Grid.extract_style_layers grid, available_nodes, grouping_box
       
       Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
