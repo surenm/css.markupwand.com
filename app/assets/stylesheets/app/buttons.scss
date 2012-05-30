@@ -1,0 +1,36 @@
+@import "compass/css3";
+@import "compass/css3/images";
+@import "compass/css3/opacity";
+
+.action-button {
+  padding: 10px;
+  color: white;
+  font-weight: bolder;
+  font-size: 120%;
+  border: #ff8f45 2px solid;
+  @include border-radius(8px);
+  @include background-image(linear-gradient(bottom, rgb(255,144,9) 50%, rgb(255,171,68) 71%));
+  
+  &:hover {
+    @include background-image(linear-gradient(   bottom, rgb(255,171,68) 50%, rgb(255,144,9) 71%));
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+  }
+}
+
+.action-button-small {
+  padding: 6px;
+  color: white;
+  font-weight: bolder;
+  border: #ff8f45 2px solid;
+  @include border-radius(4px);
+  @include background-image(linear-gradient(bottom, rgb(255,144,9) 50%, rgb(255,171,68) 71%));
+  
+  &:hover {
+    @include background-image(linear-gradient(   bottom, rgb(255,171,68) 50%, rgb(255,144,9) 71%));
+    text-decoration: none;
+    color: white;
+    cursor: pointer;
+  }
+}

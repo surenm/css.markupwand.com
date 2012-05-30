@@ -1,4 +1,4 @@
-class EditorIframe extends Backbone.View
+class EditorIframeView extends Backbone.View
   initialize: (args) ->
     this.render()
   
@@ -13,8 +13,12 @@ class EditorIframe extends Backbone.View
     @grids = new GridCollection()
     @grids.fetch({data: {design: @design}, processData: true})
     
+    @selected_object = null
+    @previous_zindex = null
+    
     $(this.el).load ->
       $editor_iframe.event_listeners()
+
     
   event_listeners: () ->
     # TODO: Part of this has to move to events. But dunno how to bind events within the iframe using backbone
@@ -22,8 +26,8 @@ class EditorIframe extends Backbone.View
     @children = @iframe_dom.find("div,p")
     
     # Adding debug stylesheet
-    this.add_debug_stylesheet(@iframe_dom)
-        
+    this.add_debug_elements()
+            
     # Binding to highlight a div when hovered
     @children.mouseenter {editor: this}, mouseEnterHandler
     @children.mouseleave {editor: this}, mouseLeaveHandler
@@ -31,14 +35,21 @@ class EditorIframe extends Backbone.View
     # Click handler
     @children.click {editor: this}, clickHandler    
   
-  add_debug_stylesheet: (iframe_dom) ->
+  add_debug_elements: () ->
     cssLink = document.createElement("link")
 
     cssLink.href = "/assets/app/iframe.css"
     cssLink.rel  = "stylesheet"
     cssLink.type = "text/css"
 
-    $(iframe_dom).find('body').append(cssLink)
+    $(@iframe_dom).find('body').append(cssLink)
+    
+    @overlay_div = document.createElement("div")
+    @overlay_div.id = "overlay"
+    $(@overlay_div).height $(@iframe_dom).height()
+    $(@overlay_div).width $(@iframe_dom).width()
+    $(@overlay_div).hide()
+    $(@iframe_dom).find('body').append(@overlay_div)
     
   set_url_for_design: (design_id, grid_id = null) ->
     @design = design_id
@@ -53,6 +64,22 @@ class EditorIframe extends Backbone.View
 
   clear_selection: (target) ->
     @children.removeClass "selected"
+    
+  focus_selected_object: (selected_object) ->
+    $(@overlay_div).show()
+    console.log $(@overlay_div).css "z-index"
+    if @selected_object?
+      @selected_object.removeClass "selected"
+      if @previous_zindex?
+        @selected_object.css "z-index", @previous_zindex
+    
+    @selected_object = $(selected_object);
+    @previous_zindex = @selected_object.css "z-index"
+
+    $(@selected_object).addClass "selected"
+    console.log @selected_object.css("z-index")
+
+    
   
   get_grid_obj = (obj, editor) ->
     grid_id = $(obj).data('gridId')
@@ -73,11 +100,11 @@ class EditorIframe extends Backbone.View
     editor = event.data.editor
     editor.clear_highlights()
     editor.clear_selection()
-
-    $(this).addClass "selected"
+    
+    editor.focus_selected_object(this)
 
     grid = get_grid_obj(this, editor)
     view = new GridView({model: grid, el: "#editor"})
     view.render()
     
-window.EditorIframe = EditorIframe
+window.EditorIframeView = EditorIframeView

@@ -8,12 +8,13 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
- *= require lib/screen.scss
- *= require lib/ie.scss
- *= require lib/print.scss
+ *= require lib/screen
+ *= require lib/ie
+ *= require lib/print
  *= require lib/bootstrap
  *= require lib/bootstrap-responsive
  *= require lib/bootstrap_and_overrides
+ *= require app/buttons
  *= require_self
 */
 
@@ -38,32 +39,41 @@ body {
 }
 
 #header.navbar {
-  margin-bottom: 50px;
-  height: 60px;
-  min-height: 60px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
   
   .navbar-inner {
-    @include background(linear-gradient(top left, #efefef, #ffffff));
+    height: 57px;
+    background: #5f2f72 url("/assets/noise.png") repeat;
+    border-bottom: 3px solid #431555;
   }
   
   .brand {
-    padding: 4px 20px 2px 20px;
+    padding: 8px 20px 2px 40px;
   }
 
   .nav {
     .active {
       a {
-        @include background(linear-gradient(top left, #333, #222));
-        color: #ffffff;
+        @include box-shadow(rgba(41, 23, 37, 0.75) 6px 6px 6px inset, rgba(41, 23, 37, 0.75) -6px -6px 6px inset);
+        background: none;
+        padding: 20px 25px;   
       }
     }
   }
   
   ul.nav {
-    margin: 0 20px 0 0;
+    float: right;
+    font-size: 16px;
+
     li {
       a {
-        color: #333;
+        padding: 20px 30px;   
+        color: #dcdcdc;
+
         text-shadow: none;
         &:hover {
           text-decoration: underline;
@@ -89,9 +99,9 @@ body {
   }
   
   .drop {
-    background-color: #cbabd7;
+    background: #CEDEEB url("/assets/noise.png") repeat;
     @include border-radius(8px);
-    border: 1px dashed #E1E1E8;
+    border: 1px dotted #106AA3;
     width: 80%;
     min-height: 200px;
     margin-bottom: 100px;
@@ -116,9 +126,9 @@ body {
     padding: 0 15px 0 0;
   }
   .design {
-    background-color: #cbabd7;
+    background: #CEDEEB url("/assets/noise.png") repeat;;
     @include border-radius(8px);
-    border: 1px dashed #E1E1E8;
+    border: 1px dotted #106AA3;
     padding: 20px 10px;
     margin: 10px 0px;
   }
