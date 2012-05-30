@@ -392,7 +392,7 @@ class Grid
     child = children.first
     spacing = {}
     
-    if bounds and child.bounds
+    if bounds and child and child.bounds
       spacing[:top]  = (child.bounds.top  - bounds.top)
       spacing[:left] = (child.bounds.left - bounds.left)
     end
