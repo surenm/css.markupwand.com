@@ -151,6 +151,8 @@ GEM
     pry-stack_explorer (0.4.2)
       binding_of_caller (~> 0.6.2)
       pry (~> 0.9.9)
+    pry_debug (0.0.1)
+      pry (~> 0.9.0)
     rack (1.4.1)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -280,6 +282,7 @@ DEPENDENCIES
   omniauth-openid
   pry-rails
   pry-stack_explorer
+  pry_debug
   rails (= 3.2.0)
   resque
   rmagick
