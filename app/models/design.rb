@@ -37,15 +37,23 @@ class Design
     self.google_webfonts_snippet = design_fonts.google_webfonts_snippet
     self.save!
   end
+  
+  def webfonts_snippet
+    # TODO Generate this depending upon user
+    # The javascript url is user specific.
+    typekit_header = <<HTML
+    <script type="text/javascript" src="http://use.typekit.com/kdl3dlc.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>  
+HTML
+    
+    "#{typekit_header}\n #{self.typekit_snippet} \n #{self.google_webfonts_snippet}"
+  end
+
   # Start initializing all the singletons classes
   def reset_globals(psd_data)
     #Set page level properties
     page_globals = PageGlobals.instance
     page_globals.page_bounds = BoundingBox.new 0, 0, psd_data[:properties][:height], psd_data[:properties][:width]
-
-    # Initialize FontMap, a singleton
-    # Contains all the fonts related info (typekit, google font etc etc) in the current document 
-    PhotoshopItem::FontMap.init psd_data[:art_layers]
     
     # Reset the grouping queue. Its the FIFO order in which the grids are processed
     Grid.reset_grouping_queue
@@ -100,7 +108,7 @@ class Design
     wrapper.close
 
     html.gsub! "{yield}", body_html
-    html.gsub! "{webfonts}", PhotoshopItem::FontMap.instance.webfont_code
+    html.gsub! "{webfonts}", self.webfonts_snippet
 
     css = PhotoshopItem::StylesHash.generate_css_data
 
