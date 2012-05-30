@@ -167,4 +167,86 @@ class BoundingBox
       return nil
     end
   end
+  
+  def self.get_vertical_gutters(bounding_boxes)
+    vertical_lines  = bounding_boxes.collect{|bb| bb.left}
+    vertical_lines += bounding_boxes.collect{|bb| bb.right}
+    vertical_lines.uniq!
+
+    vertical_gutters = []
+    vertical_lines.each do |vertical_line|
+      is_gutter = true
+      bounding_boxes.each do |bb|
+        if bb.left < vertical_line and vertical_line < bb.right
+          is_gutter = false
+        end
+      end
+      vertical_gutters.push vertical_line if is_gutter
+    end
+    vertical_gutters.sort!
+  end
+
+  def self.get_horizontal_gutters(bounding_boxes)
+    horizontal_lines  = bounding_boxes.collect{|bb| bb.top}
+    horizontal_lines += bounding_boxes.collect{|bb| bb.bottom}
+    horizontal_lines.uniq!
+
+    horizontal_gutters = []
+    horizontal_lines.each do |horizontal_line|
+      is_gutter = true
+      bounding_boxes.each do |bb|
+        if bb.top < horizontal_line and horizontal_line < bb.bottom
+          is_gutter = false
+        end
+      end
+      horizontal_gutters.push horizontal_line if is_gutter
+    end
+    horizontal_gutters.sort!
+  end
+  
+  def self.get_grouping_boxes(layers)
+
+    # All layer boundaries to get the gutters
+    bounding_boxes = layers.collect {|layer| layer.bounds}
+
+    # Get the vertical and horizontal gutters at this level
+    vertical_gutters   = BoundingBox.get_vertical_gutters bounding_boxes
+    horizontal_gutters = BoundingBox.get_horizontal_gutters bounding_boxes
+    Log.debug "Vertical Gutters: #{vertical_gutters}"
+    Log.debug "Horizontal Gutters: #{horizontal_gutters}"
+
+    # if empty gutters, then there probably is no children here.
+    # TODO: Find out if this even happens?
+    if vertical_gutters.empty? or horizontal_gutters.empty?
+      return []
+    end
+
+    # get all possible grouping boxes with the available gutters
+    grouping_boxes = []
+
+    trailing_horizontal_gutters = horizontal_gutters
+    leading_horizontal_gutters  = horizontal_gutters.rotate
+
+    trailing_vertical_gutters = vertical_gutters
+    leading_vertical_gutters  = vertical_gutters.rotate
+
+    horizontal_bounds = trailing_horizontal_gutters.zip leading_horizontal_gutters
+    vertical_bounds   = trailing_vertical_gutters.zip leading_vertical_gutters
+
+    horizontal_bounds.pop
+    vertical_bounds.pop
+
+    root_group = Group.new Constants::GRID_ORIENT_NORMAL
+    horizontal_bounds.each do |horizontal_bound|
+      row_group = Group.new Constants::GRID_ORIENT_LEFT
+      vertical_bounds.each do |vertical_bound|
+        row_group.push BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
+      end
+      root_group.push row_group
+    end
+
+    Log.debug root_group
+    return root_group
+  end
+  
 end
