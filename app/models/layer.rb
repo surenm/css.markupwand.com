@@ -187,6 +187,19 @@ class Layer
     PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string(css)
   end
 
+  def get_raw_font_name
+    font_name = nil
+
+    if layer_json[:layerKind] == Layer::LAYER_TEXT
+      text_style = layer_json[:textKey][:value][:textStyleRange][:value].first
+      if not text_style.nil?
+        font_info  = text_style[:value][:textStyle][:value]
+        font_name  = font_info[:fontName][:value]
+      end
+    end    
+    
+    font_name
+  end
   def text
     if self.kind == LAYER_TEXT
       layer_json[:textKey][:value][:textKey][:value]
