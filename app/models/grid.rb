@@ -94,7 +94,7 @@ class Grid
   def depth
     depth = 0
     parent = self.parent
-    while (not parent.nil?)
+    while not parent.nil?
       parent = parent.parent
       depth = depth + 1
     end
@@ -495,7 +495,7 @@ class Grid
 
       # Gives out the values for spacing the box model.
       # Margin and padding
-      css.update spacing_css
+      # css.update spacing_css
 
       # hack to make css non empty. Couldn't initialize css_hash as nil and check for nil condition
       css[:processed] = true
