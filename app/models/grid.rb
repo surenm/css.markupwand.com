@@ -515,6 +515,7 @@ class Grid
   end
   
   def to_html(args = {})
+    html = ''
     layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string self.css_properties
     
     css_classes = []
@@ -528,29 +529,31 @@ class Grid
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
 
-    attributes = Hash.new
+    attributes                  = Hash.new
     attributes[:class]          = css_class_string if not css_class_string.nil?
     attributes[:"data-grid-id"] = self.id.to_s
     
     sub_grid_args = Hash.new
     if self.render_layer.nil?
+
       child_nodes = self.children.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
       end
+
       if not self.children.empty? and self.orientation == "left"
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
+
       if child_nodes.length > 0
-        html = (content_tag tag, inner_html, attributes, false)
-      else
-        html = ''
+        html = content_tag tag, inner_html, attributes, false
       end
+      
     else
       sub_grid_args.update attributes
       render_layer_obj = Layer.find self.render_layer
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?
-      
+
       html = inner_html
     end
     
