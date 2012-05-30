@@ -100,10 +100,11 @@ class Design
   end
   
   def write_html_files(html_content)
-    Log.info "Saving resultant HTML file..."
     raw_file_name  = self.assets_root_path.join 'raw.html'
     html_file_name = self.assets_root_path.join 'index.html'
 
+    Log.info "Saving resultant HTML file #{html_file_name}"
+    
     html_fptr = File.new raw_file_name, 'w+'
     html_fptr.write html_content
     html_fptr.close
