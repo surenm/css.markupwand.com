@@ -156,7 +156,7 @@ class Grid
   end
 
   # Finds out intersecting nodes in lot of nodes
-  def get_intersecting_nodes(nodes_in_region)
+  def self.get_intersecting_nodes(nodes_in_region)
     
     intersect_found = false
     intersect_node_left = intersect_node_right = nil
@@ -213,77 +213,95 @@ class Grid
     Log.debug "Getting subgrids (#{self.layers.length} layers in this grid)"
     
     # Some root grouping of nodes to recursive add as children
-    root_group = BoundingBox.get_grouping_boxes self.layers
-    Log.debug "Root groups #{root_group}"
+    root_grouping_box = BoundingBox.get_grouping_boxes self.layers
+    Log.debug "Trying Root grouping box: #{root_grouping_box}"
 
-    # list of layers in this grid.
-    itr_layers           = self.layers
-    initial_layers_count = itr_layers.size
-    available_nodes      = Hash[itr_layers.collect { |item| [item.uid, item] }]
-        
-    available_nodes = Grid.extract_style_layers self, available_nodes, root_group
+    # list of layers in this grid
+    available_nodes = Hash[self.layers.collect { |item| [item.uid, item] }]
+    
+    # extract out style layers and parse with remaining        
+    available_nodes = Grid.extract_style_layers self, available_nodes, root_grouping_box
 
-    root_group.children.each do |row_group|  
-      row_grid = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT
-      row_grid.set [], self
-              
-      available_nodes = Grid.extract_style_layers row_grid, available_nodes, row_group
+    root_grouping_box.children.each do |row_grouping_box|
+      available_nodes = Grid.process_row_grouping_box self, row_grouping_box, available_nodes
+    end
+    
+    self.save!
+  end
+  
+  def self.process_row_grouping_box(root_grid, row_grouping_box, available_nodes)
+    Log.debug "Trying row grouping box: #{row_grouping_box}"
+    
+    row_grid = Grid.new :design => root_grid.design, :orientation => Constants::GRID_ORIENT_LEFT
+    row_grid.set [], root_grid
+            
+    available_nodes = Grid.extract_style_layers row_grid, available_nodes, row_grouping_box
+    
+    row_grouping_box.children.each do |grouping_box|
+      available_nodes = Grid.process_grouping_box row_grid, grouping_box, available_nodes
+    end
+    
+    row_grid.save!
+    
+    if row_grid.children.size == 1
+      subgrid        = row_grid.children.first
+      subgrid.parent = root_grid
+      row_grid.delete
+    end
+    
+    return available_nodes
+  end
+  
+  def self.process_grouping_box(row_grid, grouping_box, available_nodes)
+    Log.debug "Trying grouping box: #{grouping_box}"
+
+    nodes_in_region = BoundingBox.get_objects_in_region grouping_box, available_nodes.values, :bounds
+    
+    if nodes_in_region.empty?
+      Log.info "Found padding region"
+      @@pageglobals.add_padding_box grouping_box
       
-      row_group.children.each do |grouping_box|
-        Log.debug "Trying grouping box #{grouping_box}"
-
-        nodes_in_region = BoundingBox.get_objects_in_region grouping_box, available_nodes.values, :bounds
+    elsif nodes_in_region.size <= available_nodes.size
+      grid = Grid.new :design => row_grid.design
+      style_layers = Grid.extract_style_layers grid, available_nodes, grouping_box
+      
+      Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
+      if nodes_in_region.size == available_nodes.size
+        # Case when layers are intersecting each other.
+    
+        intersecting_nodes = self.get_intersecting_nodes nodes_in_region
         
-        if nodes_in_region.empty?
-          Log.info "Found padding region"
-          @@pageglobals.add_padding_box grouping_box
-          
-        elsif nodes_in_region.size <= initial_layers_count
-          grid = Grid.new :design => self.design
-          style_layers = Grid.extract_style_layers grid, available_nodes, grouping_box
-          
-          Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
-          if nodes_in_region.size == initial_layers_count    
-            # Case when layers are intersecting each other.
+        if not intersecting_nodes[:left].nil? and not intersecting_nodes[:right].nil?
+          # Remove all intersecting nodes first.
+          available_nodes.delete intersecting_nodes[:left][:uid]
+          available_nodes.delete intersecting_nodes[:right][:uid]
+          nodes_in_region.delete intersecting_nodes[:left]
+          nodes_in_region.delete intersecting_nodes[:right]
         
-            intersecting_nodes = get_intersecting_nodes nodes_in_region
-            
-            # Remove all intersecting nodes first.
-            available_nodes.delete intersecting_nodes[:left][:uid]
-            available_nodes.delete intersecting_nodes[:right][:uid]
-            nodes_in_region.delete intersecting_nodes[:left]
-            nodes_in_region.delete intersecting_nodes[:right]
-            
-            # Check if there is any error in which a node is almost inside,
-            # but slightly edging out. Crop out that edge.
-            if could_intersect_be_cropped? intersecting_nodes
-              new_intersecting_nodes = crop_smaller_intersect intersecting_nodes
-              new_intersecting_nodes.each do |position, node_item|
-                nodes_in_region.push node_item
-                available_nodes[node_item[:uid]] = node_item
-              end
+          # Check if there is any error in which a node is almost inside,
+          # but slightly edging out. Crop out that edge.
+          if could_intersect_be_cropped? intersecting_nodes
+            new_intersecting_nodes = crop_smaller_intersect intersecting_nodes
+            new_intersecting_nodes.each do |position, node_item|
+              nodes_in_region.push node_item
+              available_nodes[node_item[:uid]] = node_item
             end
           end
-          
-          grid.set nodes_in_region, row_grid
-          nodes_in_region.each {|node| available_nodes.delete node.uid}
-                    
-          if not @@pageglobals.padding_prefix_buffer.nil?
-            grid.offset_bounding_box = @@pageglobals.padding_prefix_buffer.clone
-            @@pageglobals.reset_padding_prefix
-          end
-          
-          @@grouping_queue.push grid
         end
       end
       
-      if row_grid.children.size == 1
-        subgrid        = row_grid.children.first
-        subgrid.parent = self
-        row_grid.delete
+      grid.set nodes_in_region, row_grid
+      nodes_in_region.each {|node| available_nodes.delete node.uid}
+                
+      if not @@pageglobals.padding_prefix_buffer.nil?
+        grid.offset_bounding_box = @@pageglobals.padding_prefix_buffer.clone
+        @@pageglobals.reset_padding_prefix
       end
+      
+      # This grid needs to be called with sub_grids, push to grouping procesing queue
+      @@grouping_queue.push grid
     end
-    self.save!
+    return available_nodes
   end
 
   def tag
