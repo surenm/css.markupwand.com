@@ -229,49 +229,19 @@ class Grid
     initial_layers_count = itr_layers.size
     available_nodes      = Hash[itr_layers.collect { |item| [item.uid, item] }]
         
-    # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
-    root_style_layers = Grid.get_style_layers itr_layers, self.is_leaf?, root_group
-    Log.info "Root style layers are #{root_style_layers}" if root_style_layers.size > 0
-    Log.debug "Root style layers are #{root_style_layers}"
+    available_nodes = Grid.extract_style_layers self, available_nodes, root_group
 
-    # First add them as style layers to this grid
-    self.add_style_layers root_style_layers
-
-    # next remove them from the available_layers to process
-    Log.debug "Deleting #{root_style_layers} root style layers..."
-    root_style_layers.each { |root_style_layer| available_nodes.delete root_style_layer.uid}
-
-    root_group.children.each do |row_group|
-      current_layers = available_nodes.values
-
-      row_layers = current_layers.select { |layer| row_group.bounds.encloses? layer.bounds }
-      if row_layers.empty?
-        next
-      end
-      
-      row_grid = Grid.new :design => self.design
+    root_group.children.each do |row_group|  
+      row_grid = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT
       row_grid.set [], self
-
-      row_grid.orientation = Constants::GRID_ORIENT_LEFT
+              
+      available_nodes = Grid.extract_style_layers row_grid, available_nodes, row_group
       
-      row_style_layers = Grid.get_style_layers row_layers, self.is_leaf?, row_group
-      Log.info "Row style layers are #{row_style_layers}" if row_style_layers.size > 0
-      Log.debug "Row style layers are #{row_style_layers}"
-
-      # Add them to row grid style layers and remove from available_layers
-      row_grid.add_style_layers row_style_layers
-
-      Log.debug "Deleting #{row_style_layers} row style layers..."
-      row_style_layers.each {|layer| available_nodes.delete layer.uid}
-
       row_group.children.each do |grouping_box|
-        remaining_nodes = available_nodes.values
         Log.debug "Trying grouping box #{grouping_box}"
-        nodes_in_region = BoundingBox.get_objects_in_region grouping_box, remaining_nodes, :bounds
 
-        style_layers = Grid.get_style_layers remaining_nodes, self.is_leaf?, grouping_box
-        Log.info "Style layers are #{style_layers}" if style_layers.size > 0
-
+        nodes_in_region = BoundingBox.get_objects_in_region grouping_box, available_nodes.values, :bounds
+        
         if nodes_in_region.empty?
           Log.info "Found padding region"
           @@pageglobals.padding_prefix_buffer = grouping_box.clone
@@ -279,10 +249,13 @@ class Grid
           @@pageglobals.padding_boxes.uniq!
           
         elsif nodes_in_region.size <= initial_layers_count
+          grid = Grid.new :design => self.design
+          style_layers = Grid.extract_style_layers grid, available_nodes, grouping_box
+          
           Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
-          if nodes_in_region.size == initial_layers_count
+          if nodes_in_region.size == initial_layers_count    
             # Case when layers are intersecting each other.
-            
+        
             intersecting_nodes = get_intersecting_nodes nodes_in_region
             
             # Remove all intersecting nodes first.
@@ -295,29 +268,19 @@ class Grid
             # but slightly edging out. Crop out that edge.
             if could_intersect_be_cropped? intersecting_nodes
               new_intersecting_nodes = crop_smaller_intersect intersecting_nodes
-              
               new_intersecting_nodes.each do |position, node_item|
                 nodes_in_region.push node_item
                 available_nodes[node_item[:uid]] = node_item
               end
-              
             end
-            
           end
           
-          nodes_in_region.each {|node| available_nodes.delete node.uid}
-          grid = Grid.new :design => self.design
           grid.set nodes_in_region, row_grid
-          
-          style_layers.each do |style_layer|
-            Log.debug "Style node: #{style_layer.name}"
-            grid.add_style_layers style_layer
-            available_nodes.delete style_layer.uid
-          end
-          
+          nodes_in_region.each {|node| available_nodes.delete node.uid}
+                    
           if not @@pageglobals.padding_prefix_buffer.nil?
-           grid.offset_bounding_box = @@pageglobals.padding_prefix_buffer.clone
-           @@pageglobals.reset_padding_prefix
+            grid.offset_bounding_box = @@pageglobals.padding_prefix_buffer.clone
+            @@pageglobals.reset_padding_prefix
           end
           
           @@grouping_queue.push grid
