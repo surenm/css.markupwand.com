@@ -119,9 +119,7 @@ class BoundingBox
   
   def intersect_area(other)
     width  = [0, [self.right, other.right].min - [self.left, other.left].max].max
-    Log.info "Width = #{width}"
     height = [0, [self.bottom, other.bottom].min - [self.top, other.top].max ].max
-    Log.info "Height = #{height}"
     
     width*height
   end
