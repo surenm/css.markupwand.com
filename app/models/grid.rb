@@ -77,16 +77,16 @@ class Grid
     
     layers = {}
     available_layers.each { |key, layer| layers[key] = layer if max_bounds.encloses? layer.bounds }
-    style_layers = layers.values.select do |layer| 
+    grid_style_layers = layers.values.select do |layer| 
       layer.bounds == max_bounds and (layer.kind == Layer::LAYER_SOLIDFILL or layer.kind == Layer::LAYER_NORMAL or layer.renderable_image?)
     end
 
-    Log.info "Style layers for Grid #{grid} are #{style_layers}. Adding them to grid..." if style_layers.size > 0
-    style_layers.flatten!
-    style_layers.each { |style_layer| self.style_layers.push style_layer.id.to_s }
+    Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." if style_layers.size > 0
+    grid_style_layers.flatten!
+    grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
 
     Log.debug "Deleting #{style_layers} from grid"
-    style_layers.each { |style_layer| available_layers.delete style_layer.uid}
+    grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
 
     return available_layers
   end
