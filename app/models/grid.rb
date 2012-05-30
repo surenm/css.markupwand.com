@@ -402,11 +402,8 @@ class Grid
       
       # Guess work. For toplevel page wraps, the left margins are huge
       # and it is the first node in the grid tree
-      is_top_level_page_wrap = ( parent.bounds.left == 0 and
-        parent.parent == nil and
-        relative_margin[:left] > 200 )
+      is_top_level_page_wrap = ( parent.bounds.left == 0 and parent.parent == nil and relative_margin[:left] > 200 )
         
-      
       if parent.children.length > 1
         if parent.bounds.left < bounds.left and !is_top_level_page_wrap
           margin[:left] += relative_margin[:left]
@@ -481,10 +478,7 @@ class Grid
     if self.fit_to_grid and self.depth < 5
       set_width_class
     elsif not css.has_key? :width
-      if not is_single_line_text and
-        not self.bounds.nil? and 
-        self.bounds.width != 0
-        
+      if not is_single_line_text and not self.bounds.nil? and self.bounds.width != 0
         return {:width => self.bounds.width.to_s + 'px'}
       end
     end
@@ -504,9 +498,7 @@ class Grid
       css.delete :width if is_single_line_text
 
       # Set float.
-      if not self.parent.nil? and  
-        self.parent.orientation == Constants::GRID_ORIENT_LEFT
-        
+      if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
         css[:float] = 'left'
       end
 
