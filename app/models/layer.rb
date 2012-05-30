@@ -30,7 +30,6 @@ class Layer
   def self.create_from_raw_data(layer_json)
     layer = Layer.new
     layer.set layer_json
-    layer.save!
     return layer
   end
 
