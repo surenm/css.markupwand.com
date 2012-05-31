@@ -1,4 +1,4 @@
-class Grid extends Backbone.Model
+class GridModel extends Backbone.Model
   
   defaults:
     css: {}
@@ -10,4 +10,4 @@ class Grid extends Backbone.Model
     
   fetch: () ->
     
-window.Grid = Grid
+window.GridModel = GridModel
