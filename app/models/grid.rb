@@ -340,17 +340,7 @@ class Grid
           available_nodes.delete intersecting_nodes[:right][:uid]
           nodes_in_region.delete intersecting_nodes[:left]
           nodes_in_region.delete intersecting_nodes[:right]
-=begin
-          # Check if there is any error in which a node is almost inside,
-          # but slightly edging out. Crop out that edge.
-          if Grid.could_intersect_be_cropped? intersecting_nodes
-            new_intersecting_nodes = Grid.crop_smaller_intersect intersecting_nodes
-            new_intersecting_nodes.each do |position, node_item|
-              nodes_in_region.push node_item
-              available_nodes[node_item[:uid]] = node_item
-            end
-          end
-=end
+
           new_intersecting_nodes = Grid.crop_appropriately intersecting_nodes
         end
       end
