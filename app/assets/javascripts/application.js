@@ -23,8 +23,8 @@
 //= require lib/backbone
 //= require lib/utils
 //= require twitter/bootstrap
-//= require_directory ./models
-//= require_directory ./collections
-//= require_directory ./views
-//= require_directory ./routers
+//= require models
+//= require collections
+//= require views
+//= require routers
 //= require app/landing_page

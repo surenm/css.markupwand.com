@@ -1,3 +1,33 @@
+class EditorHeaderView extends Backbone.View
+  initialize: (args) ->
+    this.render()
+    
+  events: {
+    "click #update-markup": "click_handler"
+  }
+    
+  render: () ->
+    template_string = $("#editor-header-template").html()
+    template_context = this.model.toJSON() if this.model?
+    html = _.template(template_string, template_context)
+    
+    $(this.el).html html
+  
+  click_handler: (event) ->
+    $router = this.options.router
+    $design = $router.design
+    $.post(
+      '/grids/update', 
+      design: $router.design
+      (data, status, jqXHR) ->
+        if data.status == "success"
+          $router.loadDesign $design
+    )
+
+    
+    # return false to the link so that it doesn't go anywhere
+    return false
+
 class EditorIframeView extends Backbone.View
   initialize: (args) ->
     this.render()
@@ -107,4 +137,15 @@ class EditorIframeView extends Backbone.View
     view = new GridView({model: grid, el: "#editor"})
     view.render()
     
+class GridView extends Backbone.View
+  
+  render: () ->
+    template_string = $("#edit-grid-properties-template").html()
+    template_context = this.model.toJSON()
+    html = _.template(template_string, template_context);
+    $(this.el).html html
+
+
+window.EditorHeaderView = EditorHeaderView
 window.EditorIframeView = EditorIframeView
+window.GridView = GridView

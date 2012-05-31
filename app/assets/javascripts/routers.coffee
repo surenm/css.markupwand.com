@@ -21,4 +21,3 @@ class EditorRouter extends Backbone.Router
     # Do nothing here
 
 window.EditorRouter = EditorRouter
-
