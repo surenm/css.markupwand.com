@@ -14,7 +14,7 @@ class EditorHeaderView extends Backbone.View
     $(this.el).html html
   
   click_handler: (event) ->
-    $router = this.options.router
+    $router = app.router
     $design = $router.design
     $.post(
       '/grids/update', 
