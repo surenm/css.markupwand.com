@@ -6,10 +6,6 @@ class MainController < ApplicationController
     @design_file = DesignFile.new
   end
   
-  def list
-    @designs = @user.designs
-  end
-  
   def edit
   end
   
