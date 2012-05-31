@@ -1,5 +1,5 @@
 class GridCollection extends Backbone.Collection
-  model: Grid
+  model: GridModel
   url: '/grids'
   
 window.GridCollection = GridCollection
