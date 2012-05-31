@@ -12,4 +12,10 @@ class ApplicationController < ActionController::Base
       redirect_to user_omniauth_authorize_path :google_openid, :origin => request.fullpath
     end
   end
+  
+  def backdoor
+    user = User.where(:email => "bot@goyaka.com").first
+    sign_in_and_redirect user, :event => :authentication
+  end
+  
 end

