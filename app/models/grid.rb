@@ -307,7 +307,7 @@ class Grid
     
     if overlap_type == :inner
       return Grid.crop_smaller_intersect intersecting_nodes
-    elsif overlap_type = :outer
+    elsif overlap_type == :outer
       return Grid.crop_bottom_intersect intersecting_nodes
     else
       return intersecting_nodes
