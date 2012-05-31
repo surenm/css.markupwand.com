@@ -86,7 +86,7 @@ class Layer
       left   = value[:left][:value]
       right  = value[:right][:value]
 
-      @bounds = BoundingBox.new(top, left, bottom, right).crop_to(PageGlobals.instance.page_bounds)
+      @bounds = BoundingBox.new(top, left, bottom, right).inner_crop(PageGlobals.instance.page_bounds)
     end
 
     @bounds

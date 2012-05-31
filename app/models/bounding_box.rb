@@ -49,7 +49,7 @@ class BoundingBox
     "(#{self.top}, #{self.left}, #{self.bottom}, #{self.right})"
   end
 
-  def crop_to(other_box)
+  def inner_crop(other_box)
     cropped_bounds = self.class.new(self.top, self.left, self.bottom, self.right)
 
     if cropped_bounds.left > other_box.right or cropped_bounds.top > other_box.bottom

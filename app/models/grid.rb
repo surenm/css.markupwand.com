@@ -219,7 +219,7 @@ class Grid
     
     new_bound = BoundingBox.new(smaller_node.bounds.top, 
       smaller_node.bounds.left, smaller_node.bounds.bottom,
-      smaller_node.bounds.right).crop_to(bigger_node.bounds)
+      smaller_node.bounds.right).inner_crop(bigger_node.bounds)
     
     smaller_node.bounds = new_bound
     
