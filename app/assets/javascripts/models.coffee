@@ -1,15 +1,11 @@
 class DesignModel extends Backbone.Model
-  defaults: 
-    name: "My new website design"
-    layers: {}
-    fonts: {}
-    grids: {}
-    colors: {}
-    
+  urlRoot: "/design"
   initialize: () ->
     # do nothing for now here as well
+    this.fetch()
 
 class GridModel extends Backbone.Model
+  urlRoot: "/grids"
   
   defaults:
     css: {}
