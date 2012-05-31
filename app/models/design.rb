@@ -15,6 +15,14 @@ class Design
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
   
+  def attribute_data
+    {
+      :name          => self.name,
+      :psd_file_path => self.psd_file_path,
+      :font_map      => self.font_map
+    }
+  end
+  
   def safe_name_prefix
     self.name.gsub(/[^0-9a-zA-Z]/,'_')
   end
