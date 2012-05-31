@@ -1,6 +1,7 @@
 class EditorRouter extends Backbone.Router
   initialize: (iframe_target) ->
     @editor_iframe = new EditorIframeView({el: iframe_target})
+    @editor_header = new EditorHeaderView({el: "#editor-header", router: self})
     
   routes: 
     "design/:design_id": "loadDesign"
