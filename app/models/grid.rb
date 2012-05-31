@@ -427,7 +427,7 @@ class Grid
     padding = { :top => 0, :left => 0 }
     css     = {}
     
-    if not parent.nil? and not parent.bounds.nil? and not bounds.nil?
+    if not parent.nil? and not parent.bounds.nil? and not bounds.nil? and false
       
       # Guess work. For toplevel page wraps, the left margins are huge
       # and it is the first node in the grid tree
@@ -538,7 +538,7 @@ class Grid
 
       # Gives out the values for spacing the box model.
       # Margin and padding
-      # css.update spacing_css
+      css.update spacing_css
 
       # hack to make css non empty. Couldn't initialize css_hash as nil and check for nil condition
       css[:processed] = true
