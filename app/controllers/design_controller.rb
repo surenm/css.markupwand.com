@@ -13,6 +13,6 @@ class DesignController < ApplicationController
   end
   
   def update
-    render :nothing
+    render :json => {:status => :success}
   end
 end
