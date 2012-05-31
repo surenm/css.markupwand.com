@@ -1,4 +1,4 @@
-class EditorHeaderView extends Backbone.View
+class DesignView extends Backbone.View
   initialize: (args) ->
     this.render()
     
@@ -109,8 +109,7 @@ class EditorIframeView extends Backbone.View
     $(@selected_object).addClass "selected"
     console.log @selected_object.css("z-index")
 
-    
-  
+
   get_grid_obj = (obj, editor) ->
     grid_id = $(obj).data('gridId')
     grid = editor.grids.get(grid_id)
@@ -147,6 +146,6 @@ class GridView extends Backbone.View
     $(this.el).html html
 
 
-window.EditorHeaderView = EditorHeaderView
+window.DesignView = DesignView
 window.EditorIframeView = EditorIframeView
 window.GridView = GridView
