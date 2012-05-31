@@ -13,7 +13,7 @@ module CssTextParser
   } 
   
   def CssTextParser::parse_font_name(layer)
-    mapped_font = PhotoshopItem::FontMap.instance.get_font_name(layer)
+    mapped_font = layer.get_font_name
     if not mapped_font.nil?
       {:'font-family' => mapped_font}
     else

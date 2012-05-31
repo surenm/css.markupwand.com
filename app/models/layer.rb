@@ -30,7 +30,6 @@ class Layer
   def self.create_from_raw_data(layer_json)
     layer = Layer.new
     layer.set layer_json
-    layer.save!
     return layer
   end
 
@@ -188,6 +187,35 @@ class Layer
     PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string(css)
   end
 
+  def get_raw_font_name
+    font_name = nil
+
+    if layer_json[:layerKind] == Layer::LAYER_TEXT
+      text_style = layer_json[:textKey][:value][:textStyleRange][:value].first
+      if not text_style.nil?
+        font_info  = text_style[:value][:textStyle][:value]
+        font_name  = font_info[:fontName][:value]
+      end
+    end    
+    
+    font_name
+  end
+  
+  def get_font_name
+    raw_font_name = self.get_raw_font_name
+    return nil if raw_font_name.nil?
+    
+    design = self.grids.first.design
+    font_map = design.font_map
+    if font_map.has_key? raw_font_name
+      font_name = font_name[raw_font_name]
+    else
+      font_name = raw_font_name
+    end
+    
+    font_name
+  end
+  
   def text
     if self.kind == LAYER_TEXT
       layer_json[:textKey][:value][:textKey][:value]

@@ -25,7 +25,7 @@
 @import "compass/utilities";
 
 body {
-  background: url('background-tile.png') repeat transparent;
+  background: url('bg-notepad.png') repeat transparent;
 }
 
 .left {
@@ -86,8 +86,9 @@ body {
 #landing-page {
 
   h1 {
-    color: #666666;
+    color: #333;
     margin: 30px;
+    font-family: 'Trocchi', serif;
   }
   
   h2 {
@@ -119,18 +120,28 @@ body {
   h1 {
     text-align: center;
     margin: 20px 0px;
+    font-family: 'Trocchi', serif;
+    color: #333;
   }
   
   ul {
     list-style-type: none;
     padding: 0 15px 0 0;
   }
+  
   .design {
     background: #CEDEEB url("/assets/noise.png") repeat;;
     @include border-radius(8px);
-    border: 1px dotted #106AA3;
+    border: 1px solid #106AA3;
+    box-shadow: inset 2px 2px 2px 2px #B2C7D5;
     padding: 20px 10px;
     margin: 10px 0px;
+    
+    .name {
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 1.1em;
+    }
   }
   
 }

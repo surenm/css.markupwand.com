@@ -11,6 +11,10 @@ class Design
   field :psd_file_path, :type => String
   field :processed_file_path, :type => String
   
+  field :font_map, :type => Hash, :default => {}
+  field :typekit_snippet, :type => String, :default => ""
+  field :google_webfonts_snippet, :type => String, :default => ""
+  
   def safe_name_prefix
     self.name.gsub(/[^0-9a-zA-Z]/,'_')
   end
@@ -25,21 +29,35 @@ class Design
     return assets_path
   end
 
+  def parse_fonts(layers)
+    design_fonts = PhotoshopItem::FontMap.new layers
+    
+    self.font_map.update design_fonts.font_map
+    self.typekit_snippet = design_fonts.typekit_snippet
+    self.google_webfonts_snippet = design_fonts.google_webfonts_snippet
+    self.save!
+  end
+  
+  def webfonts_snippet
+    # TODO Generate this depending upon user
+    # The javascript url is user specific.
+    typekit_header = <<HTML
+    <script type="text/javascript" src="http://use.typekit.com/kdl3dlc.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>  
+HTML
+    
+    "#{typekit_header}\n #{self.typekit_snippet} \n #{self.google_webfonts_snippet}"
+  end
+
   # Start initializing all the singletons classes
   def reset_globals(psd_data)
     #Set page level properties
     page_globals = PageGlobals.instance
     page_globals.page_bounds = BoundingBox.new 0, 0, psd_data[:properties][:height], psd_data[:properties][:width]
-
-    # Initialize FontMap, a singleton
-    # Contains all the fonts related info (typekit, google font etc etc) in the current document 
-    PhotoshopItem::FontMap.init psd_data[:art_layers]
     
     # Reset the grouping queue. Its the FIFO order in which the grids are processed
     Grid.reset_grouping_queue
     
-    # Set the root path for this design. That is where all the html and css is saved to.
-    CssParser::set_assets_root self.assets_root_path
   end
   
   # Parses the photoshop file json data and decomposes into grids
@@ -67,7 +85,7 @@ class Design
     end
 
     Log.info "Creating root grid..."
-    grid = Grid.new :design => self, :root => true
+    grid = Grid.new :design => self, :root => true, :grid_depth => 0
     grid.set layers, nil
 
     Log.info "Grouping the grids..."
@@ -79,6 +97,10 @@ class Design
     # This populates the PhotoshopItem::StylesHash css_classes simultaneously even though it returns only the html
     # TODO: make the interface better?
     Log.info "Generating body HTML..."
+    
+    # Set the root path for this design. That is where all the html and css is saved to.
+    CssParser::set_assets_root self.assets_root_path
+    
     root_grid = self.grids.where(:root => true).first
 
     body_html = root_grid.to_html
@@ -88,7 +110,7 @@ class Design
     wrapper.close
 
     html.gsub! "{yield}", body_html
-    html.gsub! "{webfonts}", PhotoshopItem::FontMap.instance.webfont_code
+    html.gsub! "{webfonts}", self.webfonts_snippet
 
     css = PhotoshopItem::StylesHash.generate_css_data
 

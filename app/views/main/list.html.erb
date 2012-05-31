@@ -1,22 +1,25 @@
 <%= content_for :content do %>
-<%= render 'shared/header' %>
+  <%= render 'shared/header' %>
 
-<div id = "designs-list-page" class = "container">
-  <h1> Your photoshop designs </h1>
-  <ul>
-    <% @designs.each do |design| %>
-    <li>
-      <div class = "design row"> 
-        <div class = "span7">
-          Design: <%= design.id %>
+  <div id="designs-list-page" class="container">
+    <h1> Your photoshop designs </h1>
+    <ul>
+      <% @designs.each do |design| %>
+      <li>
+        <div class="design row"> 
+          <div class="span7">
+            <div class="name">
+              <%= design.name %>
+            </div> 
+            <small><%= design.created_at.to_formatted_s(:short) %> </small>
+          </div>
+          <div class="span1 right">
+            <a class="btn" href="/edit/#/design/<%= "#{design.safe_name_prefix}-#{design.id}" %>"> Edit </a>
+          </div>
+          <div class="clearfix"> </div>
         </div>
-        <div class = "span1 right">
-          <a href = "/edit/#/design/<%= "#{design.safe_name_prefix}-#{design.id}" %>"> Edit </a>
-        </div>
-        <div class = "clearfix"> </div>
-      </div>
-      <% end %>
-    </li>
-  </ul>
-</div>
+        <% end %>
+      </li>
+    </ul>
+  </div>
 <% end %>

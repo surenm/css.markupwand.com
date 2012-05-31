@@ -87,7 +87,7 @@ module CssParser
     css = {}
     
     # Font name
-    css.update(CssTextParser::parse_font_name(layer_json))
+    css.update(CssTextParser::parse_font_name(layer))
         
     # Font-weight/style
     css.update(CssTextParser::parse_font_style(font_info))
