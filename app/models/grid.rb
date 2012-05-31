@@ -196,6 +196,7 @@ class Grid
     intersect_area = left.intersect_area(right)
     intersect_percent_left = (intersect_area * 100.0) / Float(left.bounds.area)
     intersect_percent_right = (intersect_area * 100.0) / Float(right.bounds.area)
+    Log.debug "Right: #{right}  |  Left: #{left}   =>   #{intersect_percent_right}, #{intersect_percent_left}"
     
     (intersect_percent_left > 90 or intersect_percent_right > 90)
   end
@@ -262,6 +263,49 @@ class Grid
     return available_nodes
   end
   
+  def self.find_overlap_type(intersecting_nodes)
+    left  = intersecting_nodes[:left]
+    right = intersecting_nodes[:right]
+    
+    intersect_area = left.intersect_area(right)
+    intersect_percent_left = (intersect_area * 100.0) / Float(left.bounds.area)
+    intersect_percent_right = (intersect_area * 100.0) / Float(right.bounds.area)
+    
+    if (intersect_percent_left > 90 or intersect_percent_right > 90)
+      return :inner
+    else
+      return :outer
+    end
+  end
+  
+  def self.crop_bottom_intersect(intersecting_nodes)
+    top_node = intersecting_nodes[:left]
+    bottom_node  = intersecting_nodes[:right]
+    if intersecting_nodes[:left].layer_object[:itemIndex][:value] < intersecting_nodes[:right].layer_object[:itemIndex][:value]
+      top_node = intersecting_nodes[:right]
+      bottom_node  = intersecting_nodes[:left]
+    end
+    
+    BoundingBox.new(bottom_node.bounds.top, bottom_node.bounds.left, bottom_node.bounds.bottom, bottom_node.bounds.right).outer_crop(top_node.bounds)
+    
+    {:left => top_node, :right => bottom_node}
+  end
+  
+  def self.crop_appropriately(intersecting_nodes)
+    if intersecting_nodes[:left].nil? or intersecting_nodes[:right].nil?
+      return intersecting_nodes
+    end
+    overlap_type = find_overlap_type intersecting_nodes
+    
+    if overlap_type == :inner
+      return Grid.crop_smaller_intersect intersecting_nodes
+    elsif overlap_type = :outer
+      return Grid.crop_bottom_intersect intersecting_nodes
+    else
+      return intersecting_nodes
+    end
+  end
+  
   def self.process_grouping_box(row_grid, grouping_box, available_nodes)
     Log.debug "Trying grouping box: #{grouping_box}"
 
@@ -280,14 +324,15 @@ class Grid
         # Case when layers are intersecting each other.
     
         intersecting_nodes = self.get_intersecting_nodes nodes_in_region
+        Log.info "Intersecting layers found - #{intersecting_nodes}"
         
-        if not intersecting_nodes[:left].nil? and not intersecting_nodes[:right].nil?
+        if (not intersecting_nodes[:left].nil?) and (not intersecting_nodes[:right].nil?)
           # Remove all intersecting nodes first.
           available_nodes.delete intersecting_nodes[:left][:uid]
           available_nodes.delete intersecting_nodes[:right][:uid]
           nodes_in_region.delete intersecting_nodes[:left]
           nodes_in_region.delete intersecting_nodes[:right]
-        
+=begin
           # Check if there is any error in which a node is almost inside,
           # but slightly edging out. Crop out that edge.
           if Grid.could_intersect_be_cropped? intersecting_nodes
@@ -297,6 +342,8 @@ class Grid
               available_nodes[node_item[:uid]] = node_item
             end
           end
+=end
+          new_intersecting_nodes = Grid.crop_appropriately intersecting_nodes
         end
       end
       
