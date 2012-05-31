@@ -554,7 +554,11 @@ class Grid
   end
   
   def tag
-    :div
+    if self.root
+      :body
+    else
+      :div
+    end
   end
   
   def to_html(args = {})
