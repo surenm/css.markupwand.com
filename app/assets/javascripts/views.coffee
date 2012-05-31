@@ -41,7 +41,7 @@ class EditorIframeView extends Backbone.View
     $editor_iframe = this
 
     @grids = new GridCollection()
-    @grids.fetch({data: {design: @design}, processData: true})
+    @grids.fetch({data: {design: @design.get("id")}, processData: true})
     
     @selected_object = null
     @previous_zindex = null
@@ -81,12 +81,10 @@ class EditorIframeView extends Backbone.View
     $(@overlay_div).hide()
     $(@iframe_dom).find('body').append(@overlay_div)
     
-  set_url_for_design: (design_id, grid_id = null) ->
-    @design = design_id
-    url = "http://localhost:3000/generated/#{design_id}/index.html"
-    if grid_id?
-      url = "#{url}/grid/#{grid_id}"
-    
+  load_design: (design) ->
+    @design = design
+    design_id = @design.get("id")
+    url = "http://localhost:3000/generated/#{design_id}/index.html"    
     this.render url
     
   clear_highlights: (target) ->
