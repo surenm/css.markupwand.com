@@ -1,4 +1,9 @@
 class DesignView extends Backbone.View
+  defaults:
+    name: "",
+    psd_file_path: ""
+    font_map: {}
+    
   initialize: (args) ->
     this.render()
     
@@ -8,7 +13,7 @@ class DesignView extends Backbone.View
     
   render: () ->
     template_string = $("#editor-header-template").html()
-    template_context = this.model.toJSON() if this.model?
+    template_context = this.model.toJSON()
     html = _.template(template_string, template_context)
     
     $(this.el).html html

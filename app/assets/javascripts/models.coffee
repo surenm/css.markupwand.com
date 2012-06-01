@@ -1,8 +1,9 @@
 class DesignModel extends Backbone.Model
   urlRoot: "/design"
-  initialize: () ->
-    # do nothing for now here as well
-    this.fetch()
+  
+  defaults:
+    name: ""
+    id: null
 
 class GridModel extends Backbone.Model
   urlRoot: "/grids"
@@ -11,11 +12,6 @@ class GridModel extends Backbone.Model
     css: {}
     id: null
     html: ""
-  
-  initialize: () ->
-    # do nothing for now
-    
-  fetch: () ->
-    
+      
 window.GridModel = GridModel
 window.DesignModel = DesignModel
