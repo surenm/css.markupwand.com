@@ -5,7 +5,8 @@ class DesignView extends Backbone.View
     font_map: {}
     
   initialize: (args) ->
-    this.render()
+    _.bindAll(this, 'render');
+    this.model.bind("change", this.render)
     
   events: {
     "click #update-markup": "click_handler"
