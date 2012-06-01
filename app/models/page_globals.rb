@@ -1,9 +1,10 @@
 class PageGlobals
   @@instance = nil
-  attr_accessor :padding_prefix_buffer, :page_bounds
+  attr_accessor :offset_box_buffer, :page_bounds, :offset_box_list
 
   private
   def initialize
+    @offset_box_list = []
   end
   
   public
@@ -14,12 +15,14 @@ class PageGlobals
     return @@instance
   end
   
-  def reset_padding_prefix
-    self.padding_prefix_buffer = nil
+  def reset_offset_buffer
+    self.offset_box_buffer = nil
   end
   
-  def add_padding_box(padding_box)
-    self.padding_prefix_buffer = padding_box
+  def add_offset_box(offset_box)
+    self.offset_box_buffer = offset_box
+    self.offset_box_list.push offset_box.clone
+    self.offset_box_list.uniq!
   end
   
 end
