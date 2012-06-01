@@ -364,9 +364,9 @@ class Grid
   # Assumption is that it has only one child
   def padding_from_child
     child = children.first
-    spacing = {}
+    spacing = { :top => 0, :left => 0 }
     
-    if bounds and child and child.bounds
+    if bounds and child and child.bounds and not self.root
       spacing[:top]  = (child.bounds.top  - bounds.top)
       spacing[:left] = (child.bounds.left - bounds.left)
     end
@@ -398,7 +398,7 @@ class Grid
     #TODO. Margin and padding are not always from
     # left and top. It is from all sides.
     margin  = offset_box_spacing
-    padding = { :top => 0, :left => 0 }
+    padding = padding_from_child
     css     = {}
     
     css[:'margin-left']  = "#{margin[:left]}px"  if margin[:left]  > 0
