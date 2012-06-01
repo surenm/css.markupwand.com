@@ -364,11 +364,16 @@ class Grid
   # Assumption is that it has only one child
   def padding_from_child
     child = children.first
-    spacing = { :top => 0, :left => 0 }
+    spacing = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
     
-    if bounds and child and child.bounds and not self.root
-      spacing[:top]  = (child.bounds.top  - bounds.top)
-      spacing[:left] = (child.bounds.left - bounds.left)
+    if bounds and child and child.bounds
+      spacing[:top]     = (child.bounds.top  - bounds.top)
+      spacing[:bottom]  = (bounds.bottom - child.bounds.bottom)
+      
+      # Root elements are aligned using 960px, auto. Do not modify anything around
+      # them.
+      spacing[:left]  = (child.bounds.left - bounds.left) if not self.root
+      spacing[:right] = (bounds.right - child.bounds.right ) if not self.root
     end
     
     spacing
@@ -400,11 +405,17 @@ class Grid
     margin  = offset_box_spacing
     padding = padding_from_child
     css     = {}
+    positions = [:top, :left, :bottom, :right]
     
-    css[:'margin-left']  = "#{margin[:left]}px"  if margin[:left]  > 0
-    css[:'margin-top']   = "#{margin[:top]}px"   if margin[:top]   > 0
-    css[:'padding-left'] = "#{padding[:left]}px" if padding[:left] > 0
-    css[:'padding-top']  = "#{padding[:top]}px"  if padding[:top]  > 0
+    positions.each do |position|
+      if margin.has_key? position
+        css["margin-#{position}".to_sym] = "#{margin[position]}px" if margin[position] > 0
+      end
+      
+      if padding.has_key? position
+        css["padding-#{position}".to_sym] = "#{padding[position]}px" if padding[position] > 0
+      end  
+    end
     
     css
   end
@@ -452,24 +463,44 @@ class Grid
     return false
   end
   
+  # Width subtracted by padding
+  def unpadded_width
+    if self.bounds.nil? or self.bounds.width.nil?
+      nil 
+    else
+      padding = padding_from_child
+      self.bounds.width - (padding[:left] + padding[:right])
+    end
+  end
+  
+  # Height subtracted by padding
+  def unpadded_height
+    if self.bounds.height.nil?
+      nil 
+    else
+      self.bounds.height - (padding[:top] + padding[:bottom])
+    end
+  end
+  
   def set_width_class
-    if not self.bounds.nil?
+    if not self.unpadded_width.nil?
       # Add a buffer of (960 + 10), because setting width of 960 in photoshop
       # is giving 962 in extendscript json. Debug more.
-      if self.bounds.width != 0 and self.bounds.width <= 970
-          self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(self.bounds.width)
+      if unpadded_width != 0 and unpadded_width <= 970
+          self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(unpadded_width)
       end
     end
   end
   
   # If the width has already not been set, set the width.
   # TODO Find out if there is any case when width is set.
+  
   def width_css(css)
     if self.fit_to_grid and self.depth < 5
       set_width_class
     elsif not css.has_key? :width
-      if not is_single_line_text and not self.bounds.nil? and self.bounds.width != 0
-        return {:width => self.bounds.width.to_s + 'px'}
+      if not is_single_line_text and unpadded_width != 0
+        return {:width => unpadded_width.to_s + 'px'}
       end
     end
     
