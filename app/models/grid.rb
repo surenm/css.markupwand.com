@@ -358,32 +358,6 @@ class Grid
     end
     return available_nodes
   end
-
-  # If the position of the element is > 0 and it is stacked up, calculate relative margin, not absolute margin from the Bounding box.
-  # Similar stuff for left margin as well.
-  def relative_margin
-    
-    if not self.relative_margin_value
-      margin_top  = (self.bounds.top - self.parent.bounds.top)
-      margin_left = (self.bounds.left - self.parent.bounds.left)
-      
-      parent.children.each do |child|
-        break if child == self
-        next if child.bounds.nil?
-        
-        if parent.orientation == Constants::GRID_ORIENT_NORMAL
-          margin_top -= (child.bounds.height + child.relative_margin['top']) 
-        else
-          margin_left -= (child.bounds.width + child.relative_margin['left'])
-        end
-      end
-          
-      self.relative_margin_value = { 'top' => margin_top, 'left' => margin_left }
-      self.save!
-    end
-    
-    self.relative_margin_value
-  end
   
   
   # Find out bounding box difference from it and its child.
@@ -426,24 +400,6 @@ class Grid
     margin  = offset_box_spacing
     padding = { :top => 0, :left => 0 }
     css     = {}
-    
-    if not parent.nil? and not parent.bounds.nil? and not bounds.nil? and false
-      
-      # Guess work. For toplevel page wraps, the left margins are huge
-      # and it is the first node in the grid tree
-      is_top_level_page_wrap = ( parent.bounds.left == 0 and parent.parent == nil and relative_margin['left'] > 200 )
-        
-      if parent.children.length > 1
-        if parent.bounds.left < bounds.left and !is_top_level_page_wrap
-          margin[:left] += relative_margin['left']
-        end 
-        
-        if parent.bounds.top < bounds.top
-          margin[:top]  += relative_margin['top']
-        end
-      end
-      
-    end
     
     css[:'margin-left']  = "#{margin[:left]}px"  if margin[:left]  > 0
     css[:'margin-top']   = "#{margin[:top]}px"   if margin[:top]   > 0
