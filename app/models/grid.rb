@@ -497,7 +497,7 @@ class Grid
   # TODO Find out if there is any case when width is set.
   
   def width_css(css)
-    if self.fit_to_grid and self.depth < 5
+    if self.fit_to_grid and self.depth < 5 and not is_image_grid?
       set_width_class
     elsif not css.has_key? :width
       if not is_single_line_text and unpadded_width != 0
@@ -549,6 +549,15 @@ class Grid
     end
   end
   
+  def is_image_grid?
+    if self.render_layer.nil?
+      false
+    else 
+      render_layer_obj = Layer.find self.render_layer
+      (render_layer_obj.tag_name(self.is_leaf?) == :img)
+    end
+  end
+  
   def to_html(args = {})
     html = ''
     layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string self.css_properties
@@ -557,7 +566,7 @@ class Grid
     
     css_classes.push layers_style_class if not layers_style_class.nil?
     css_classes.push "row" if self.orientation == Constants::GRID_ORIENT_LEFT
-    css_classes.push self.width_class if not self.width_class.nil?
+    css_classes.push self.width_class if (not self.width_class.nil? and not is_image_grid?)
     
     css_class_string = css_classes.join " "
     
