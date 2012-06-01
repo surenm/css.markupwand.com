@@ -38,7 +38,7 @@ body {
   clear: both;
 }
 
-#header.navbar {
+#editor-header.navbar, #header.navbar {
   position: absolute;
   top: 0;
   left: 0;
@@ -80,6 +80,14 @@ body {
         }
       }
     }
+  }
+}
+
+#editor-header {
+  .name {
+    font-size: 18px;
+    text-transform: capitalize;
+    color: #ccc;
   }
 }
 
