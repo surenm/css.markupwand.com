@@ -366,7 +366,7 @@ class Grid
     child = children.first
     spacing = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
     
-    if bounds and child and child.bounds
+    if bounds and child and child.bounds and children.length == 1
       spacing[:top]     = (child.bounds.top  - bounds.top)
       spacing[:bottom]  = (bounds.bottom - child.bounds.bottom)
       
