@@ -6,7 +6,10 @@ class EditorApp
   
   load_design: (design_id) ->
     @design = new DesignModel({id: design_id})
-    @design_view = new DesignView({el: "#editor-header", design: @design})
+    $design = @design
+    @design.fetch()
+    
+    @design_view = new DesignView({el: "#editor-header", model: @design})
     
     @editor_iframe.load_design @design
         
