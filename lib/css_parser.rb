@@ -137,10 +137,9 @@ module CssParser
     end
   end
   
-  def CssParser::parse_box_height(layer)
-    bounds = layer[:bounds][:value]
+  def CssParser::parse_box_height(grid)
     
-    {:'min-height' => (bounds[:bottom][:value] - bounds[:top][:value]).to_s + 'px' }
+    {:'min-height' => (grid.unpadded_height).to_s + 'px' }
     
   end
   
@@ -181,11 +180,11 @@ module CssParser
   end
 
 
-  def CssParser::parse_box(layer)
+  def CssParser::parse_box(layer, grid)
     css                = {}
     
-    # Min-height
-    css.update(parse_box_height(layer))
+    # Min-height, pick it up from grid
+    css.update(parse_box_height(grid))
     
     # Background-color
     css.update(parse_box_background_color(layer))

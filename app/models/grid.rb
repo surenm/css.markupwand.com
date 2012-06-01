@@ -478,6 +478,7 @@ class Grid
     if self.bounds.height.nil?
       nil 
     else
+      padding = padding_from_child
       self.bounds.height - (padding[:top] + padding[:bottom])
     end
   end
@@ -512,7 +513,7 @@ class Grid
       css = {}
       self.style_layers.each do |layer_id|
         layer = Layer.find layer_id
-        css.update layer.get_css({}, self.is_leaf?, self.root)
+        css.update layer.get_css({}, self.is_leaf?, self.root, self)
       end
       
       css.update width_css(css)
