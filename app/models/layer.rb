@@ -217,6 +217,16 @@ class Layer
     font_name
   end
   
+  # A Layer whose bounds are zero
+  def empty?
+    is_empty = false
+    if self.bounds
+     is_empty =  ((self.bounds.top + self.bounds.left + self.bounds.bottom + self.bounds.right) == 0)
+    end
+    
+    is_empty
+  end
+  
   def text
     if self.kind == LAYER_TEXT
       layer_json[:textKey][:value][:textKey][:value]
