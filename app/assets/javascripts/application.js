@@ -16,12 +16,14 @@
 //= require lib/jquery.formdefaults
 //= require lib/jquery.ba-dotimeout
 //= require lib/jquery.ui.widget
+//= require lib/jquery-ui-1.8.20.min
 //= require lib/jquery.iframe-transport
 //= require lib/jquery.fileupload
 //= require lib/json2
 //= require lib/underscore
 //= require lib/backbone
 //= require lib/utils
+
 //= require twitter/bootstrap
 //= require models
 //= require collections

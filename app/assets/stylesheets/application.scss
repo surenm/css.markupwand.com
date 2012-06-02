@@ -14,7 +14,9 @@
  *= require lib/bootstrap
  *= require lib/bootstrap-responsive
  *= require lib/bootstrap_and_overrides
+ *= require lib/jquery-ui-1.8.20
  *= require app/buttons
+
  *= require_self
 */
 
@@ -153,5 +155,7 @@ body {
   }
   
 }
+
+.ui-progressbar-value { background-image: url(/assets/pbar-ani.gif); }
   
 
