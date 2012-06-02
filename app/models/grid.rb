@@ -158,14 +158,14 @@ class Grid
     layers = {}
     available_layers.each { |key, layer| layers[key] = layer if max_bounds.encloses? layer.bounds }
     grid_style_layers = layers.values.select do |layer| 
-      layer.bounds == max_bounds and (layer.kind == Layer::LAYER_SOLIDFILL or layer.kind == Layer::LAYER_NORMAL or layer.renderable_image?)
+      layer.bounds == max_bounds and layer.styleable_layer?
     end
 
     Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." if style_layers.size > 0
     grid_style_layers.flatten!
     grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
 
-    Log.debug "Deleting #{style_layers} from grid"
+    Log.debug "Deleting #{style_layers} from grid" if style_layers.size > 0
     grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
 
     return available_layers
@@ -235,6 +235,9 @@ class Grid
 
     # list of layers in this grid
     available_nodes = Hash[self.layers.collect { |item| [item.uid, item] }]
+    available_nodes = available_nodes.select do |_, node|
+      not node.empty?
+    end
     
     # extract out style layers and parse with remaining        
     available_nodes = Grid.extract_style_layers self, available_nodes, root_grouping_box
