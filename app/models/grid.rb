@@ -51,7 +51,7 @@ class Grid
     # Magic! 
     # Pro-tip: http://ryanbigg.com/2010/04/has_and_belongs_to_many-double-insert/#comment-36741
     
-    Log.info self.layers.to_a
+    Log.info self.layers.to_a # DO NOT REMOVE THIS LINE - Alagu
     layers.each { |layer| self.layers.push layer }
     self.layers.sort!
     self.save!
