@@ -86,7 +86,7 @@ class Layer
       left   = value[:left][:value]
       right  = value[:right][:value]
 
-      @bounds = BoundingBox.new(top, left, bottom, right).crop_to(PageGlobals.instance.page_bounds)
+      @bounds = BoundingBox.new(top, left, bottom, right).inner_crop(PageGlobals.instance.page_bounds)
     end
 
     @bounds
@@ -149,13 +149,13 @@ class Layer
     end
   end
 
-  def get_css(css = {}, is_leaf = false, is_root = false)
+  def get_css(css = {}, is_leaf = false, is_root = false, grid = nil)
     if @kind == LAYER_TEXT
       css.update CssParser::parse_text self
     elsif @kind == LAYER_SMARTOBJECT
       # don't do anything
     elsif @kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_box layer_json
+      css.update CssParser::parse_box layer_json, grid
     end
 
     if self.kind == LAYER_TEXT
@@ -169,7 +169,7 @@ class Layer
       end
       # don't do anything
     elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_box layer_json
+      css.update CssParser::parse_box layer_json, grid
       if is_root
         css.delete :width
         css.delete :height

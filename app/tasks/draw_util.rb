@@ -55,14 +55,14 @@ class DrawUtil
     end
   end
   
-  def draw_padding_boxes
-    PageGlobals.instance.padding_boxes.each do |padding_box|
-      draw_rectangle(padding_box.left, padding_box.top, padding_box.right, 
-        padding_box.bottom, 1, 1, 'grey')
-      draw_rectangle(padding_box.left - 1, padding_box.top - 1,
-        padding_box.right - 1, padding_box.bottom - 1, 1, 1, 'pink')
-      draw_rectangle(padding_box.left - 2, padding_box.top - 2,
-        padding_box.right - 2, padding_box.bottom - 2, 1, 1, 'grey')
+  def draw_offset_boxes
+    PageGlobals.instance.offset_box_list.each do |offset_box|
+      draw_rectangle(offset_box.left, offset_box.top, offset_box.right, 
+        offset_box.bottom, 1, 1, 'grey')
+      draw_rectangle(offset_box.left - 1, offset_box.top - 1,
+        offset_box.right - 1, offset_box.bottom - 1, 1, 1, 'pink')
+      draw_rectangle(offset_box.left - 2, offset_box.top - 2,
+        offset_box.right - 2, offset_box.bottom - 2, 1, 1, 'grey')
     end
   end
   
@@ -121,16 +121,16 @@ class DrawUtil
     
     Grid.reset_grouping_queue
     
-    Log.info "Creating grids..."
-    grid = Grid.new 
-    grid.set nodes, nil
+    user = User.find_by_email 'bot@goyaka.com'
+    design = Design.new :processed_file_path => @jsonfile_name
+    design.user = user
+    design.save!
+    design.parse
     
-    Grid.group!
-    Log.info "Drawing grids..."
-    draw_grids(grid)
+    draw_grids(design.grids.where(:root => true).first)
     
-    Log.info "Drawing padding boxes"
-    draw_padding_boxes
+    Log.info "Drawing offset boxes"
+    draw_offset_boxes
     
     Log.info "Drawing borders"
     canvas.border!(2, 2, "#000")

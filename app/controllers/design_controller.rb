@@ -1,7 +1,7 @@
 class DesignController < ApplicationController
   before_filter :require_login
   def index
-    @designs = @user.designs
+    @designs = @user.designs.reverse
   end
   
   def show

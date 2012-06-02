@@ -60,7 +60,7 @@ class Grid
   end
   
   def to_s
-    "Grid #{self.attribute_data}, Style Layers: #{@layers.to_a}"
+    "Grid #{self.layers.to_a}, Style Layers: #{@layers.to_a}"
   end
   
   def print(indent_level=0)
@@ -202,6 +202,7 @@ class Grid
     intersect_area = left.intersect_area(right)
     intersect_percent_left = (intersect_area * 100.0) / Float(left.bounds.area)
     intersect_percent_right = (intersect_area * 100.0) / Float(right.bounds.area)
+    Log.debug "Right: #{right}  |  Left: #{left}   =>   #{intersect_percent_right}, #{intersect_percent_left}"
     
     (intersect_percent_left > 90 or intersect_percent_right > 90)
   end
@@ -218,7 +219,7 @@ class Grid
     
     new_bound = BoundingBox.new(smaller_node.bounds.top, 
       smaller_node.bounds.left, smaller_node.bounds.bottom,
-      smaller_node.bounds.right).crop_to(bigger_node.bounds)
+      smaller_node.bounds.right).inner_crop(bigger_node.bounds)
     
     smaller_node.bounds = new_bound
     
@@ -270,6 +271,49 @@ class Grid
     return available_nodes
   end
   
+  def self.find_overlap_type(intersecting_nodes)
+    left  = intersecting_nodes[:left]
+    right = intersecting_nodes[:right]
+    
+    intersect_area = left.intersect_area(right)
+    intersect_percent_left = (intersect_area * 100.0) / Float(left.bounds.area)
+    intersect_percent_right = (intersect_area * 100.0) / Float(right.bounds.area)
+    
+    if (intersect_percent_left > 90 or intersect_percent_right > 90)
+      return :inner
+    else
+      return :outer
+    end
+  end
+  
+  def self.crop_bottom_intersect(intersecting_nodes)
+    top_node = intersecting_nodes[:left]
+    bottom_node  = intersecting_nodes[:right]
+    if intersecting_nodes[:left].layer_object[:itemIndex][:value] < intersecting_nodes[:right].layer_object[:itemIndex][:value]
+      top_node = intersecting_nodes[:right]
+      bottom_node  = intersecting_nodes[:left]
+    end
+    
+    BoundingBox.new(bottom_node.bounds.top, bottom_node.bounds.left, bottom_node.bounds.bottom, bottom_node.bounds.right).outer_crop(top_node.bounds)
+    
+    {:left => top_node, :right => bottom_node}
+  end
+  
+  def self.crop_appropriately(intersecting_nodes)
+    if intersecting_nodes[:left].nil? or intersecting_nodes[:right].nil?
+      return intersecting_nodes
+    end
+    overlap_type = find_overlap_type intersecting_nodes
+    
+    if overlap_type == :inner
+      return Grid.crop_smaller_intersect intersecting_nodes
+    elsif overlap_type == :outer
+      return Grid.crop_bottom_intersect intersecting_nodes
+    else
+      return intersecting_nodes
+    end
+  end
+  
   def self.process_grouping_box(row_grid, grouping_box, available_nodes)
     Log.debug "Trying grouping box: #{grouping_box}"
 
@@ -277,7 +321,7 @@ class Grid
     
     if nodes_in_region.empty?
       Log.info "Found padding region"
-      @@pageglobals.add_padding_box grouping_box
+      @@pageglobals.add_offset_box grouping_box
       
     elsif nodes_in_region.size <= available_nodes.size
       grid = Grid.new :design => row_grid.design, :grid_depth => row_grid.grid_depth + 1
@@ -288,32 +332,25 @@ class Grid
         # Case when layers are intersecting each other.
     
         intersecting_nodes = self.get_intersecting_nodes nodes_in_region
+        Log.info "Intersecting layers found - #{intersecting_nodes}"
         
-        if not intersecting_nodes[:left].nil? and not intersecting_nodes[:right].nil?
+        if (not intersecting_nodes[:left].nil?) and (not intersecting_nodes[:right].nil?)
           # Remove all intersecting nodes first.
           available_nodes.delete intersecting_nodes[:left][:uid]
           available_nodes.delete intersecting_nodes[:right][:uid]
           nodes_in_region.delete intersecting_nodes[:left]
           nodes_in_region.delete intersecting_nodes[:right]
-        
-          # Check if there is any error in which a node is almost inside,
-          # but slightly edging out. Crop out that edge.
-          if Grid.could_intersect_be_cropped? intersecting_nodes
-            new_intersecting_nodes = Grid.crop_smaller_intersect intersecting_nodes
-            new_intersecting_nodes.each do |position, node_item|
-              nodes_in_region.push node_item
-              available_nodes[node_item[:uid]] = node_item
-            end
-          end
+
+          new_intersecting_nodes = Grid.crop_appropriately intersecting_nodes
         end
       end
       
       grid.set nodes_in_region, row_grid
       nodes_in_region.each {|node| available_nodes.delete node.uid}
                 
-      if not @@pageglobals.padding_prefix_buffer.nil?
-        grid.offset_bounding_box = @@pageglobals.padding_prefix_buffer.clone
-        @@pageglobals.reset_padding_prefix
+      if not @@pageglobals.offset_box_buffer.nil?
+        grid.offset_bounding_box = @@pageglobals.offset_box_buffer.clone
+        @@pageglobals.reset_offset_buffer
       end
       
       # This grid needs to be called with sub_grids, push to grouping procesing queue
@@ -321,43 +358,22 @@ class Grid
     end
     return available_nodes
   end
-
-  # If the position of the element is > 0 and it is stacked up, calculate relative margin, not absolute margin from the Bounding box.
-  # Similar stuff for left margin as well.
-  def relative_margin
-    
-    if not self.relative_margin_value
-      margin_top  = (self.bounds.top - self.parent.bounds.top)
-      margin_left = (self.bounds.left - self.parent.bounds.left)
-      
-      parent.children.each do |child|
-        break if child == self
-        next if child.bounds.nil?
-        
-        if parent.orientation == Constants::GRID_ORIENT_NORMAL
-          margin_top -= (child.bounds.height + child.relative_margin['top']) 
-        else
-          margin_left -= (child.bounds.width + child.relative_margin['left'])
-        end
-      end
-          
-      self.relative_margin_value = { 'top' => margin_top, 'left' => margin_left }
-      self.save!
-    end
-    
-    self.relative_margin_value
-  end
   
   
   # Find out bounding box difference from it and its child.
   # Assumption is that it has only one child
   def padding_from_child
     child = children.first
-    spacing = {}
+    spacing = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
     
-    if bounds and child.bounds
-      spacing[:top]  = (child.bounds.top  - bounds.top)
-      spacing[:left] = (child.bounds.left - bounds.left)
+    if bounds and child and child.bounds and children.length == 1
+      spacing[:top]     = (child.bounds.top  - bounds.top)
+      spacing[:bottom]  = (bounds.bottom - child.bounds.bottom)
+      
+      # Root elements are aligned using 960px, auto. Do not modify anything around
+      # them.
+      spacing[:left]  = (child.bounds.left - bounds.left) if not self.root
+      spacing[:right] = (bounds.right - child.bounds.right ) if not self.root
     end
     
     spacing
@@ -387,31 +403,19 @@ class Grid
     #TODO. Margin and padding are not always from
     # left and top. It is from all sides.
     margin  = offset_box_spacing
-    padding = { :top => 0, :left => 0 }
+    padding = padding_from_child
     css     = {}
+    positions = [:top, :left, :bottom, :right]
     
-    if not parent.nil? and not parent.bounds.nil? and not bounds.nil?
-      
-      # Guess work. For toplevel page wraps, the left margins are huge
-      # and it is the first node in the grid tree
-      is_top_level_page_wrap = ( parent.bounds.left == 0 and parent.parent == nil and relative_margin['left'] > 200 )
-        
-      if parent.children.length > 1
-        if parent.bounds.left < bounds.left and !is_top_level_page_wrap
-          margin[:left] += relative_margin['left']
-        end 
-        
-        if parent.bounds.top < bounds.top
-          margin[:top]  += relative_margin['top']
-        end
+    positions.each do |position|
+      if margin.has_key? position
+        css["margin-#{position}".to_sym] = "#{margin[position]}px" if margin[position] > 0
       end
       
+      if padding.has_key? position
+        css["padding-#{position}".to_sym] = "#{padding[position]}px" if padding[position] > 0
+      end  
     end
-    
-    css[:'margin-left']  = "#{margin[:left]}px"  if margin[:left]  > 0
-    css[:'margin-top']   = "#{margin[:top]}px"   if margin[:top]   > 0
-    css[:'padding-left'] = "#{padding[:left]}px" if padding[:left] > 0
-    css[:'padding-top']  = "#{padding[:top]}px"  if padding[:top]  > 0
     
     css
   end
@@ -459,24 +463,45 @@ class Grid
     return false
   end
   
+  # Width subtracted by padding
+  def unpadded_width
+    if self.bounds.nil? or self.bounds.width.nil?
+      nil 
+    else
+      padding = padding_from_child
+      self.bounds.width - (padding[:left] + padding[:right])
+    end
+  end
+  
+  # Height subtracted by padding
+  def unpadded_height
+    if self.bounds.height.nil?
+      nil 
+    else
+      padding = padding_from_child
+      self.bounds.height - (padding[:top] + padding[:bottom])
+    end
+  end
+  
   def set_width_class
-    if not self.bounds.nil?
+    if not self.unpadded_width.nil?
       # Add a buffer of (960 + 10), because setting width of 960 in photoshop
       # is giving 962 in extendscript json. Debug more.
-      if self.bounds.width != 0 and self.bounds.width <= 970
-          self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(self.bounds.width)
+      if unpadded_width != 0 and unpadded_width <= 970
+          self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(unpadded_width)
       end
     end
   end
   
   # If the width has already not been set, set the width.
   # TODO Find out if there is any case when width is set.
+  
   def width_css(css)
-    if self.fit_to_grid and self.depth < 5
+    if self.fit_to_grid and self.depth < 5 and not is_image_grid?
       set_width_class
     elsif not css.has_key? :width
-      if not is_single_line_text and not self.bounds.nil? and self.bounds.width != 0
-        return {:width => self.bounds.width.to_s + 'px'}
+      if not is_single_line_text and unpadded_width != 0
+        return {:width => unpadded_width.to_s + 'px'}
       end
     end
     
@@ -488,7 +513,7 @@ class Grid
       css = {}
       self.style_layers.each do |layer_id|
         layer = Layer.find layer_id
-        css.update layer.get_css({}, self.is_leaf?, self.root)
+        css.update layer.get_css({}, self.is_leaf?, self.root, self)
       end
       
       css.update width_css(css)
@@ -501,7 +526,7 @@ class Grid
 
       # Gives out the values for spacing the box model.
       # Margin and padding
-      # css.update spacing_css
+      css.update spacing_css
 
       # hack to make css non empty. Couldn't initialize css_hash as nil and check for nil condition
       css[:processed] = true
@@ -517,7 +542,20 @@ class Grid
   end
   
   def tag
-    :div
+    if self.root
+      :body
+    else
+      :div
+    end
+  end
+  
+  def is_image_grid?
+    if self.render_layer.nil?
+      false
+    else 
+      render_layer_obj = Layer.find self.render_layer
+      (render_layer_obj.tag_name(self.is_leaf?) == :img)
+    end
   end
   
   def to_html(args = {})
@@ -528,7 +566,7 @@ class Grid
     
     css_classes.push layers_style_class if not layers_style_class.nil?
     css_classes.push "row" if self.orientation == Constants::GRID_ORIENT_LEFT
-    css_classes.push self.width_class if not self.width_class.nil?
+    css_classes.push self.width_class if (not self.width_class.nil? and not is_image_grid?)
     
     css_class_string = css_classes.join " "
     
