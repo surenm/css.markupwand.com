@@ -252,6 +252,13 @@ class Layer
 
     return html
   end
+  
+  def styleable_layer?
+    (self.kind == Layer::LAYER_SOLIDFILL or
+     self.kind == Layer::LAYER_NORMAL or
+     self.kind == Layer::LAYER_HUESATURATION or
+     self.renderable_image?)
+  end
 
   def to_s
     "#{self.name} - #{self.bounds}"
