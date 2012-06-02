@@ -4,10 +4,11 @@ class Layer
   include Mongoid::Timestamps::Updated
   include ActionView::Helpers::TagHelper
 
-  LAYER_TEXT        = "LayerKind.TEXT"
-  LAYER_SMARTOBJECT = "LayerKind.SMARTOBJECT"
-  LAYER_SOLIDFILL   = "LayerKind.SOLIDFILL"
-  LAYER_NORMAL      = "LayerKind.NORMAL"
+  LAYER_TEXT          = "LayerKind.TEXT"
+  LAYER_SMARTOBJECT   = "LayerKind.SMARTOBJECT"
+  LAYER_SOLIDFILL     = "LayerKind.SOLIDFILL"
+  LAYER_NORMAL        = "LayerKind.NORMAL"
+  LAYER_HUESATURATION = "LayerKind.HUESATURATION"
   
   BOUND_MODES = {
     :NORMAL_BOUNDS => :bounds,
