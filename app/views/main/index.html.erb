@@ -10,18 +10,14 @@
       <div id="drop-div" class="drop">
         <h2 style="padding-top: 75px">Drag and drop your Photoshop file here!</h2>
       </div>
+      <div id="progressbar" style="height: 22px">
+      </div>
     </center>
+    
   </div>
 </div>
 <% end %>
 
 <%= content_for :javascript do %>
-<script type="text/javascript">
-$(document).ready(function() {
-    $("#drop-div").dropzone({
-        url : "http://localhost:3000/design_files",
-        printLogs : true,
-    });
-});
-</script>
+<%= javascript_include_tag "app/upload" %>
 <% end %>

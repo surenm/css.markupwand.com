@@ -20,6 +20,7 @@ TransformersWeb::Application.routes.draw do
 
   # design controller routes
   match 'designs' => 'design#index'
+  match 'designs/upload' => 'design#upload', :via => :post
   match 'design/*id' => 'design#show', :via => :get
   match 'design/*id' => 'design#update', :via => :put
   
