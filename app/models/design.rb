@@ -1,3 +1,5 @@
+require 'digest'
+
 class Design
   include Mongoid::Document
   include Mongoid::Timestamps::Created
@@ -11,18 +13,25 @@ class Design
   field :psd_file_path, :type => String
   field :processed_file_path, :type => String
   
+  field :hash, :type => String
+  
   field :font_map, :type => Hash, :default => {}
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
   
-  def self.create_from_upload(uploaded_file)
-    file_name = uploaded_file.original_filename
+  def self.create_from_upload(uploaded_file, user)
+    file_name     = uploaded_file.original_filename
     file_contents = uploaded_file.read
+    file_hash     = Digest::MD5.hexdigest file_contents
+
     
-    design = Design.new :name => uploaded_file.original_filename
+    design      = Design.new :name => uploaded_file.original_filename, :hash => file_hash
     design.save!
     
     store_key = Store.write design, file_name, file_contents
+    design.psd_file_path = store_key
+    design.save!
+    
     
   end
   
