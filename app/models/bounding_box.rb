@@ -118,10 +118,16 @@ class BoundingBox
   end
   
   def intersect_area(other)
-    width  = [0, [self.right, other.right].min - [self.left, other.left].max].max
-    height = [0, [self.bottom, other.bottom].min - [self.top, other.top].max ].max
+    intersect_bounds(other).area
+  end
+  
+  def intersect_bounds(other)
+    right    = [self.right, other.right].min
+    left     = [self.left, other.left].max
+    bottom   = [self.bottom, other.bottom].min
+    top      = [self.top, other.top].max
     
-    width*height
+    new self.class(top, left, bottom, right)  
   end
 
   def encloses?(other_box)
