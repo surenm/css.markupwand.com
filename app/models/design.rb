@@ -26,6 +26,9 @@ class Design
   def store_key_prefix
     File.join self.user.email, "#{self.safe_name_prefix}-#{self.id}"
   end
+    
+  def assets_root_path
+    File.join self.store_key_prefix, 'generated'
   end
   
   def self.create_from_upload(uploaded_file, user)
