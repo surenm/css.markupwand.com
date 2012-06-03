@@ -79,7 +79,8 @@ module Store
   
   def Store::copy_from_local_to_S3(src_file, destination_file)
     src_fptr = File.open src_file
-    local_file_contents = src_file.read
+    local_file_contents = src_fptr.read
+    src_fptr.close()
     Store::write_to_S3 destination_file, local_file_contents
   end
   
