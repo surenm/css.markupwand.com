@@ -26,6 +26,7 @@ class Design
 
     
     design      = Design.new :name => uploaded_file.original_filename, :hash => file_hash
+    design.user = user
     design.save!
     
     store_key = Store.write design, file_name, file_contents

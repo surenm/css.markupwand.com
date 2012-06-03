@@ -7,7 +7,7 @@ class DesignController < ApplicationController
   def upload
     uploaded_file = params[:files].first
 
-    design = Design.create_from_upload uploaded_file
+    design = Design.create_from_upload uploaded_file, @user
     render :json => {:status => :failure}
   end
   
