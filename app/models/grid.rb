@@ -310,9 +310,9 @@ class Grid
     overlap_type = find_overlap_type intersecting_nodes
     
     if overlap_type == :inner
-      return Grid.crop_smaller_intersect intersecting_nodes
+      return Grid.crop_inner_intersect intersecting_nodes
     elsif overlap_type == :outer
-      return Grid.crop_bottom_intersect intersecting_nodes
+      return Grid.crop_outer_intersect intersecting_nodes
     else
       return intersecting_nodes
     end
