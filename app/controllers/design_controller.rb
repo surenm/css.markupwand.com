@@ -11,10 +11,19 @@ class DesignController < ApplicationController
   end
   
   def upload
-    uploaded_file = params[:files].first
+    source_file = params[:key]
+    file_name = File.basename source_file
 
-    design = Design.create_from_upload uploaded_file, @user
-    render :json => {:status => :failure}
+    design = Design.new :name => file_name
+    design.user = @user
+    
+    destination_file = File.join design.store_key_prefix, file_name
+    Store.copy_within_S3 source_file, destination_file
+    
+    design.psd_file_path = destination_file
+    design.save!
+
+    redirect_to :action => "index"
   end
   
   def show
