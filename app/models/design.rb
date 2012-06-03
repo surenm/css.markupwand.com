@@ -1,4 +1,5 @@
 require 'digest'
+require 'find'
 
 class Design
   include Mongoid::Document
@@ -147,36 +148,40 @@ HTML
   end
   
   def write_html_files(html_content)
-    raw_file_name  = self.assets_root_path.join 'raw.html'
-    html_file_name = self.assets_root_path.join 'index.html'
+    raw_file_name  = File.join self.assets_root_path, 'raw.html'
+    html_file_name = File.join self.assets_root_path, 'index.html'
 
-    Log.info "Saving resultant HTML file #{html_file_name}"
-    
-    html_fptr = File.new raw_file_name, 'w+'
-    html_fptr.write html_content
-    html_fptr.close
+    Log.info "Saving resultant HTML file #{html_file_name}"    
+    Store.write html_file_name, html_content
 
-    Log.info "Tidying up the html..."
-    system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
+    # Programatically do this so that it works on heroku
+    #Log.info "Tidying up the html..."
+    #system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
   end
   
   def write_css_files(css_content)
-    # Write style.css file
-    css_path = self.assets_root_path.join "assets", "css"
-
-    if not Dir.exists? css_path
-      FileUtils.mkdir_p css_path
-    end
-
     Log.info "Writing css file..."    
+
+    # Write style.css file
+    css_path = File.join self.assets_root_path, "assets", "css"
     css_file_name = File.join css_path, "style.css"
-    css_fptr = File.new css_file_name, 'w+'
-    css_fptr.write css_content
-    css_fptr.close
+    Store.write css_file_name, css_content
 
     # Copy bootstrap to assets folder
     Log.info "Writing bootstrap files"
-    FileUtils.cp_r Rails.root.join("app", "templates", "bootstrap", "docs", "assets", "css"), self.assets_root_path.join("assets")
-    FileUtils.cp Rails.root.join("app", "assets", "stylesheets", "lib", "bootstrap_override.css"), self.assets_root_path.join("assets", "css")
+    bootstrap_base_directory = Rails.root.join "app", "templates", "bootstrap", "docs"
+    bootstrap_templates_directory = bootstrap_base_directory.join "assets"
+    Find.find(bootstrap_templates_directory) do |file_name|
+      # don't do anything if its a directory, just skip
+      next if File.directory? file_name
+      
+      file_path     = Pathname.new file_name
+      relative_path = file_path.relative_path_from(bootstrap_base_directory).to_s
+      destination_path = File.join self.assets_root_path, relative_path
+      Store::copy_from_local file_path, destination_path
+    end
+    
+    bootrap_override_css = Rails.root.join("app", "assets", "stylesheets", "lib", "bootstrap_override.css").to_s
+    Store.copy_from_local bootrap_override_css, File.join(self.assets_root_path, "assets", "css", "bootstrap_override")
   end
 end
