@@ -1,4 +1,10 @@
 CarrierWave.configure do |config|
-  config.grid_fs_connection = Mongoid.database
-  config.storage = :grid_fs
+  
+  config.fog_credentials = {
+    :provider               => 'AWS',
+    :aws_access_key_id      => ENV['AWS_ACCESS_KEY_ID'],
+    :aws_secret_access_key  => ENV['AWS_SECRET_ACCESS_KEY']
+  }
+  
+  config.fog_directory  = "store_#{Rails.env}"
 end
