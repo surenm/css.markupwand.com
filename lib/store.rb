@@ -52,4 +52,50 @@ module Store
       Store::write_to_local file_key, file_contents
     end
   end
+  
+  def Store::copy_within_local(src_file, destination_file)
+    local_store     = Store::get_local_store
+
+    abs_destination_file = File.join local_store, destination_file
+    abs_destination_dir  = File.dirname abs_destination_file
+    if not Dir.exists? abs_destination_dir
+      FileUtils.mkdir_p abs_destination_dir
+    end
+    
+    FileUtils.cp src_file, abs_destination_file
+  end
+  
+  def Store::copy_within_S3(src_file, destination_file)
+    s3_bucket     = Store::get_S3_store
+    src_object    = s3_bucket.objects[src_file]
+    file_basename = File.basename src_file
+
+    destination_object = s3_bucket.objects[destination_file]
+
+    if src_object.exists?
+      src_object.copy_to destination_object
+    end    
+  end
+  
+  def Store::copy_from_local_to_S3(src_file, destination_file)
+    src_fptr = File.open src_file
+    local_file_contents = src_file.read
+    Store::write_to_S3 destination_file, local_file_contents
+  end
+  
+  def Store::copy(src_file_path, destination_file_path)
+    if Rails.env == "production" or ENV['UPLOAD_TO_AWS'] == "true"
+      Store::copy_within_S3 src_file_path, destination_file_path
+    else 
+      Store::copy_within_local src_file_path, destination_file_path
+    end
+  end
+  
+  def Store::copy_from_local(src_file_path, destination_file_path)
+    if Rails.env == "production" or ENV['UPLOAD_TO_AWS'] == "true"
+      Store::copy_from_local_to_S3 src_file_path, destination_file_path
+    else 
+      Store::copy_within_local src_file_path, destination_file_path
+    end
+  end
 end
