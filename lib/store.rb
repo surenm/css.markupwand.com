@@ -19,7 +19,7 @@ module Store
   end
   
   def Store::write(design, file_name, file_contents)
-    key = "#{design.id}/#{file_name}"
+    key = "#{design.user.email}/#{design.safe_name_prefix}-#{design.id}/#{file_name}"
     bucket = Store::get_s3_bucket
     file = bucket.objects[key]
     file.write file_contents
