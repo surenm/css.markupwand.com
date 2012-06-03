@@ -3,7 +3,7 @@ class DesignController < ApplicationController
   
   def new
     @uploader = Design.new.file
-    @uploader.success_action_redirect = root_url
+    @uploader.success_action_redirect = upload_callback_url
   end
   
   def index

@@ -1,7 +1,7 @@
 TransformersWeb::Application.routes.draw do
   devise_for :users, :controllers => { :omniauth_callbacks => 'auth' }
 
-  resources :design_files, :grids
+  resources :grids
   
   #match '/designs/*path'   => "design_files#serve"
   #match 'next_unprocessed' => "design_files#next_unprocessed"
@@ -13,14 +13,14 @@ TransformersWeb::Application.routes.draw do
   # main controller views
   match 'edit'    => 'main#edit'
 
-  
   # Dangerous controller route. 
   # TODO: allow only in development??
   match 'alaguisadude' => 'application#backdoor'
 
   # design controller routes
   match 'designs' => 'design#index'
-  match 'designs/upload' => 'design#upload', :via => :post
+  match 'designs/new' => 'design#new'
+  match 'designs/uploaded' => 'design#upload', :as => :upload_callback
   match 'design/*id' => 'design#show', :via => :get
   match 'design/*id' => 'design#update', :via => :put
   
