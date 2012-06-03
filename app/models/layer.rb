@@ -265,7 +265,6 @@ class Layer
   
   def styleable_layer?
     (self.kind == Layer::LAYER_SOLIDFILL or
-     self.kind == Layer::LAYER_NORMAL or
      self.kind == Layer::LAYER_HUESATURATION or
      self.renderable_image?)
   end
