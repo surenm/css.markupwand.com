@@ -345,6 +345,12 @@ class Grid
           nodes_in_region.delete intersecting_nodes[:right]
 
           new_intersecting_nodes = Grid.crop_appropriately intersecting_nodes
+
+          new_intersecting_nodes.each do |_, node_item|
+            nodes_in_region.push node_item
+            available_nodes[node_item[:uid]] = node_item
+          end
+
         end
       end
       
