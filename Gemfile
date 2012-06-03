@@ -55,7 +55,3 @@ group :development do
   gem 'log4r-color'
   gem 'foreman'
 end
-
-group :rdb do
-  gem 'ruby-debug19'
-end
