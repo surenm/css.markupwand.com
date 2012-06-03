@@ -1,5 +1,11 @@
 class DesignController < ApplicationController
   before_filter :require_login
+  
+  def new
+    @uploader = Design.new.file
+    @uploader.success_action_redirect = root_url
+  end
+  
   def index
     @designs = @user.designs.reverse
   end
