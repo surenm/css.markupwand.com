@@ -297,7 +297,7 @@ class Grid
       bottom_node  = intersecting_nodes[:left]
     end
     
-    BoundingBox.new(bottom_node.bounds.top, bottom_node.bounds.left, bottom_node.bounds.bottom, bottom_node.bounds.right).outer_crop(top_node.bounds)
+    bottom_node.bounds = BoundingBox.new(bottom_node.bounds.top, bottom_node.bounds.left, bottom_node.bounds.bottom, bottom_node.bounds.right).outer_crop(top_node.bounds)
     
     {:left => top_node, :right => bottom_node}
   end
