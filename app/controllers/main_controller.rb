@@ -11,7 +11,7 @@ class MainController < ApplicationController
   
   def generated
     # TODO: Implement user ACL logic here
-    file_path = File.absolute_path File.join Rails.root.to_s, "..", "generated"
+    file_path = File.join Rails.root.to_s, "store", @user.email, params[:design], "generated"
     send_file File.join(file_path, "#{params[:uri]}.#{params[:ext]}"), :disposition => 'inline'
   end
 
