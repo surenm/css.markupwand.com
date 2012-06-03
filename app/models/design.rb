@@ -15,6 +15,17 @@ class Design
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
   
+  def self.create_from_upload(uploaded_file)
+    file_name = uploaded_file.original_filename
+    file_contents = uploaded_file.read
+    
+    design = Design.new :name => uploaded_file.original_filename
+    design.save!
+    
+    store_key = Store.write design, file_name, file_contents
+    
+  end
+  
   def attribute_data
     {
       :name          => self.name,
