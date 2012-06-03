@@ -19,18 +19,22 @@ class Design
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
   
+  def store_key_prefix
+    "#{self.user.email}/#{self.safe_name_prefix}-#{self.id}/"
+  end
+  
   def self.create_from_upload(uploaded_file, user)
     file_name     = uploaded_file.original_filename
     file_contents = uploaded_file.read
     file_hash     = Digest::MD5.hexdigest file_contents
-
-    
+  
     design      = Design.new :name => uploaded_file.original_filename, :hash => file_hash
     design.user = user
     design.save!
     
-    store_key = Store.write design, file_name, file_contents
-    design.psd_file_path = store_key
+    file_key = design.store_key_prefix + file_name
+    Store.write file_key, file_contents
+    design.psd_file_path = file_key
     design.save!
     
     
