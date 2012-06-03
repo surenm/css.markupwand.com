@@ -19,8 +19,13 @@ class Design
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
   
+  def safe_name_prefix
+    self.name.gsub(/[^0-9a-zA-Z]/,'_')
+  end
+
   def store_key_prefix
-    "#{self.user.email}/#{self.safe_name_prefix}-#{self.id}/"
+    File.join self.user.email, "#{self.safe_name_prefix}-#{self.id}"
+  end
   end
   
   def self.create_from_upload(uploaded_file, user)
@@ -32,12 +37,10 @@ class Design
     design.user = user
     design.save!
     
-    file_key = design.store_key_prefix + file_name
+    file_key = File.join design.store_key_prefix, file_name
     Store.write file_key, file_contents
     design.psd_file_path = file_key
-    design.save!
-    
-    
+    design.save!  
   end
   
   def attribute_data
@@ -46,20 +49,6 @@ class Design
       :psd_file_path => self.psd_file_path,
       :font_map      => self.font_map
     }
-  end
-  
-  def safe_name_prefix
-    self.name.gsub(/[^0-9a-zA-Z]/,'_')
-  end
-  
-  def assets_root_path
-    # TODO: Point this to the right place
-    assets_path = Rails.root.join "..", "generated", "#{self.safe_name_prefix}-#{self.id}"
-    if not Dir.exists? assets_path
-      FileUtils.mkdir_p assets_path
-    end
-    
-    return assets_path
   end
 
   def parse_fonts(layers)
