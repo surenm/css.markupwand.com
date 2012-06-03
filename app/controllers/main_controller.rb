@@ -1,11 +1,7 @@
 class MainController < ApplicationController
   before_filter :require_login
   skip_before_filter :require_login, :only => :index
-  
-  def index
-    @design_file = DesignFile.new
-  end
-  
+    
   def edit
   end
   
