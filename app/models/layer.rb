@@ -60,10 +60,8 @@ class Layer
     @bound_mode = bound_mode
   end
 
-  def inspect
-    "Layer: #{self.name}"
-  end
-
+  def inspect; to_s; end
+  
   def layer_json
     # Store layer object in memory.  
     if not @layer_object
