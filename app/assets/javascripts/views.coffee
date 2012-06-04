@@ -110,9 +110,6 @@ class EditorIframeView extends Backbone.View
     @selected_object = $(selected_object);
     @previous_zindex = @selected_object.css "z-index"
 
-    $(@selected_object).addClass "selected"
-    console.log @selected_object.css("z-index")
-
 
   get_grid_obj = (obj, editor) ->
     grid_id = $(obj).data('gridId')
@@ -134,7 +131,7 @@ class EditorIframeView extends Backbone.View
     editor.clear_highlights()
     editor.clear_selection()
     
-    #editor.focus_selected_object(this)
+    editor.focus_selected_object(this)
     $(this).addClass "selected"
     
     grid = get_grid_obj(this, editor)
