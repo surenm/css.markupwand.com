@@ -50,11 +50,26 @@ class Design
   end
   
   def attribute_data
+    grids = self.grids.collect do |grid|
+      grid.attribute_data
+    end
+    
+    layers = {}
+    self.grids.each do |grid|
+      grid.layer_ids.each do |layer_id|
+        layer = Layer.find layer_id
+        layers[layer.uid] = layer.attribute_data
+      end        
+    end
+    
     {
       :name          => self.name,
       :psd_file_path => self.psd_file_path,
-      :font_map      => self.font_map
+      :font_map      => self.font_map,
+      :grids         => grids,
+      :layers        => layers.values
     }
+
   end
 
   def parse_fonts(layers)
