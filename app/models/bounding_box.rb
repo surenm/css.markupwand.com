@@ -78,10 +78,10 @@ class BoundingBox
   def vertical_crop(other_box)
     cropped_bounds = self.class.new(self.top, self.left, self.bottom, self.right)
 
-    if other_box.left < cropped_bounds.left < other_box.right
+    if other_box.left < cropped_bounds.left and cropped_bounds.left < other_box.right
       # Left edge intersecting
       cropped_bounds.left = other_box.right
-    elsif other_box.left < cropped_bounds.right < other_box.right
+    elsif other_box.left < cropped_bounds.right and cropped_bounds.right < other_box.right
       # Right edge intersecting
       cropped_bounds.right = other_box.left
     end
@@ -92,11 +92,11 @@ class BoundingBox
   def horizontal_crop(other_box)
     cropped_bounds = self.class.new(self.top, self.left, self.bottom, self.right)
 
-    if other_box.top < cropped_bounds.top < other_box.bottom
+    if other_box.top < cropped_bounds.top and cropped_bounds.top < other_box.bottom
       # Top edge is intersecting
       cropped_bounds.top = other_box.bottom
 
-    elsif other_box.top < cropped_bounds.bottom < other_box.bottom
+    elsif other_box.top < cropped_bounds.bottom and cropped_bounds.bottom < other_box.bottom
       # Bottom edge is interesecting
 
       cropped_bounds.bottom = other_box.top
