@@ -15,7 +15,7 @@ class Layer
     :SNAPPED_BOUNDS => :snapped_bounds
     }
 
-  has_and_belongs_to_many :grids
+  has_and_belongs_to_many :grids, :class_name => 'Grid'
 
   field :uid, :type  => String
   field :name, :type => String
@@ -40,6 +40,16 @@ class Layer
     self.uid        = layer[:layerID][:value]
     self.raw        = layer.to_json.to_s
     self.save!
+  end
+  
+  def attribute_data
+    {
+      :uid => self.uid,
+      :name => self.name,
+      :kind => self.kind,
+      :layer_type => self.layer_type
+  
+    }
   end
   
   def has_newline?
@@ -97,7 +107,7 @@ class Layer
   end
 
   def == (other_layer)
-    return false if other_layer == nil
+    return false if other_layer.nil?
     return (
     self.bounds == other_layer.bounds and
     self.name == other_layer.name
