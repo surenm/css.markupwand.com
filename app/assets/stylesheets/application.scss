@@ -40,6 +40,10 @@ body {
   clear: both;
 }
 
+small {
+  font-size: 0.75em;
+}
+
 #editor-header.navbar, #header.navbar {
   position: absolute;
   top: 0;
