@@ -17,8 +17,9 @@ _.each(css_properties, function(value, property){ %>
     <div class="action right">
       <a href="" id="update-markup" class="action-button-small"> Update Markup </a>
     </div>
-    <div class="action left">
-      <div class="name"> <%%= name %></div>
+    <div class="action row left">
+      <div class="name span2"><small> Design: </small><%%= name %> </div>
+      <div class="layers span1"> <%%= layers.length %> layers </div>
     </div>
   </div>
   <div class = "clearfix"> </div>
