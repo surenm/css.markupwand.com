@@ -75,30 +75,46 @@ class BoundingBox
     return cropped_bounds
   end
   
-  def outer_crop(other_box)
+  def vertical_crop(other_box)
     cropped_bounds = self.class.new(self.top, self.left, self.bottom, self.right)
-    
-    if not self.intersect? other_box
-      return nil
-    end
-    
-    if cropped_bounds.bottom > other_box.top
-      cropped_bounds.bottom = other_box.top
-    end
-    
-    if cropped_bounds.top < other_box.bottom
-      cropped_bounds.top = other_box.bottom
-    end
-    
-    if cropped_bounds.left < other_box.right
+
+    if other_box.left < cropped_bounds.left < other_box.right
+      # Left edge intersecting
       cropped_bounds.left = other_box.right
-    end
-    
-    if cropped_bounds.right > other_box.left
+    elsif other_box.left < cropped_bounds.right < other_box.right
+      # Right edge intersecting
       cropped_bounds.right = other_box.left
     end
+
+    cropped_bounds
+  end
+  
+  def horizontal_crop(other_box)
+    cropped_bounds = self.class.new(self.top, self.left, self.bottom, self.right)
+
+    if other_box.top < cropped_bounds.top < other_box.bottom
+      # Top edge is intersecting
+      cropped_bounds.top = other_box.bottom
+
+    elsif other_box.top < cropped_bounds.bottom < other_box.bottom
+      # Bottom edge is interesecting
+
+      cropped_bounds.bottom = other_box.top
+    end
+
+    cropped_bounds
+  end
+  
+  def outer_crop(other_box)
+    intersect_bounds_value = intersect_bounds(other_box)
     
-    return cropped_bounds
+    if intersect_bounds_value.height < intersect_bounds_value.width
+      #Horizontal crop
+      return horizontal_crop(other_box)
+    else
+      #Vertical crop
+      return vertical_crop(other_box)
+    end
   end
 
   def ==(other_box)
