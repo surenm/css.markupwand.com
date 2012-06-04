@@ -24,6 +24,10 @@ module CssParser
   end
 
   def CssParser::parse_color(color_object, opacity = nil)
+
+    if color_object.nil?
+      return ""
+    end
     
     red   = Integer(color_object[:value][:red][:value])
     green = Integer(color_object[:value][:grain][:value])
@@ -138,6 +142,9 @@ module CssParser
   end
   
   def CssParser::parse_box_height(grid)
+    if grid.nil?
+      return {}
+    end
     
     {:'min-height' => (grid.unpadded_height).to_s + 'px' }
     
