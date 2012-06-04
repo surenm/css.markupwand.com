@@ -199,6 +199,7 @@ HTML
     end
     
     bootrap_override_css = Rails.root.join("app", "assets", "stylesheets", "lib", "bootstrap_override.css").to_s
-    Store.copy_from_local bootrap_override_css, File.join(self.assets_root_path, "assets", "css", "bootstrap_override")
+    target_css           = File.join self.assets_root_path, "assets", "css", "bootstrap_override.css"
+    Store.copy_from_local bootrap_override_css, target_css
   end
 end
