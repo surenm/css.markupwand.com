@@ -127,7 +127,7 @@ class BoundingBox
     bottom   = [self.bottom, other.bottom].min
     top      = [self.top, other.top].max
     
-    new self.class(top, left, bottom, right)  
+    self.class.new(top, left, bottom, right)
   end
 
   def encloses?(other_box)
