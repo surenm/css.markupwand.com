@@ -1,16 +1,38 @@
-// CSS to be included in the generated iframe window for editor
+/*
+ * CSS to be included in the generated iframe window for editor
+ *= require app/buttons
+ */
 @import "compass/css3";
 @import "compass/css3/images";
 @import "compass/css3/opacity";
 @import "compass/css3/box-shadow";
 @import "compass/utilities";
 
-body {
-  cursor: pointer;
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+.clearfix {
+  clear: both;
+}
+
+#on-focus-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  padding: 5px 10px;
+  z-index: 10000;
+  width: 100%;
+  height: 35px;
+  background: #202020;
+  @include opacity(0.9);
 }
 
 .mouseover {
   @include single-box-shadow(#aaaaaa, 0, 0, 2px, 5px, false);
+  cursor: pointer;
 }
 
 .selected {
@@ -22,8 +44,10 @@ body {
 }
 
 #overlay {
-  position: relative;
-  @include opacity(0.7);
+  top: 0;
+  left: 0;
+  position: absolute;
+  @include opacity(0.8);
   background: url("/assets/overlay-texture.png") repeat;
   z-index: 1000;
 }

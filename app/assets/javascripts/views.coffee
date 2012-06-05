@@ -72,20 +72,25 @@ class EditorIframeView extends Backbone.View
     @children.click {editor: this}, clickHandler    
   
   add_debug_elements: () ->
-    cssLink = document.createElement("link")
-
-    cssLink.href = "/assets/app/iframe.css"
-    cssLink.rel  = "stylesheet"
-    cssLink.type = "text/css"
-
-    $(@iframe_dom).find('body').append(cssLink)
+    @iframe_dom = $(this.el).contents()
+    $editor_iframe = this
     
-    @overlay_div = document.createElement("div")
-    @overlay_div.id = "overlay"
-    $(@overlay_div).height $(@iframe_dom).height()
-    $(@overlay_div).width $(@iframe_dom).width()
-    $(@overlay_div).hide()
-    $(@iframe_dom).find('body').append(@overlay_div)
+    @cssLink = document.createElement("link")
+    @cssLink.id = "debug-css"
+    @cssLink.href = "/assets/app/iframe.css"
+    @cssLink.rel  = "stylesheet"
+    @cssLink.type = "text/css"
+    $(@iframe_dom).find('body').append @cssLink
+    
+    @jsLink = document.createElement("script")
+    @jsLink.id = "debug-js"
+    @jsLink.src = "/assets/app/iframe.js"
+    @jsLink.type = "text/javascript"
+    $(@iframe_dom).find('body').append @jsLink
+
+    $("#overlay, #on-focus-bar").ready ->
+      $editor_iframe.event_listeners()
+
     
   load_design: (design) ->
     @design = design
