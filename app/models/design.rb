@@ -71,9 +71,9 @@ class Design
       :psd_file_path => self.psd_file_path,
       :font_map      => self.font_map,
       :grids         => grids,
-      :layers        => layers.values
+      :layers        => layers.values,
+      :id            => self.safe_name
     }
-
   end
 
   def parse_fonts(layers)
