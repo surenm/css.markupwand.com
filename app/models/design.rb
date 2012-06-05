@@ -25,9 +25,13 @@ class Design
   def safe_name_prefix
     self.name.gsub(/[^0-9a-zA-Z]/,'_')
   end
+  
+  def safe_name
+    "#{self.safe_name_prefix}-#{self.id}"
+  end
 
   def store_key_prefix
-    File.join self.user.email, "#{self.safe_name_prefix}-#{self.id}"
+    File.join self.user.email, self.safe_name
   end
     
   def assets_root_path
