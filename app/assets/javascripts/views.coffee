@@ -41,6 +41,9 @@ class EditorIframeView extends Backbone.View
   initialize: (args) ->
     this.render()
   
+  reload: (args) ->
+    this.el.src = this.el.src
+  
   render: (url = null) ->
     if not url?
       return
@@ -198,8 +201,12 @@ class GridView extends GenericView
   onSuccess: (event) ->
     tag = $(this.el).find("#taginput").attr("value")
     this.model.set "tag", tag
-    this.model.save()
+    this.model.save({},{
+      success: () ->
+        app.editor_iframe.reload()
+    })
     this.render()
+    
     
   onCancel: (event) -> 
     $(this.el).find(".form").hide()
