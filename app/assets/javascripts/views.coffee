@@ -101,7 +101,6 @@ class EditorIframeView extends Backbone.View
     
   focus_selected_object: (selected_object) ->
     $(@overlay_div).show()
-    console.log $(@overlay_div).css "z-index"
     if @selected_object?
       @selected_object.removeClass "selected"
       if @previous_zindex?

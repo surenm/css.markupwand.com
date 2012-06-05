@@ -5,7 +5,6 @@ class EditorRouter extends Backbone.Router
     "*args": "defaultHandler"
     
   loadDesign: () ->
-    console.log "Loading Design"
     app.load_design()
   
   loadGrid: (design_id, grid_id) ->
