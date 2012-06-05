@@ -56,17 +56,23 @@ class EditorIframeView extends Backbone.View
     @previous_zindex = null
     
     $(this.el).load ->
-      $editor_iframe.event_listeners()
-
+      $editor_iframe.add_debug_elements()
     
   event_listeners: () ->
     # TODO: Part of this has to move to events. But dunno how to bind events within the iframe using backbone
-    @iframe_dom = $(this.el).contents()
-    @children = @iframe_dom.find("div,p")
+    $editor_iframe = this
+    @children = @iframe_dom.find("*")
     
-    # Adding debug stylesheet
-    this.add_debug_elements()
-            
+    @overlay_div = @iframe_dom.find("#overlay")
+    $(@overlay_div).height $(@iframe_dom).height()
+    $(@overlay_div).width $(@iframe_dom).width()
+    
+    @on_focus_bar = @iframe_dom.find("#on-focus-bar")
+    
+    @debug_elements = [@overlay_div, @on_focus_bar, @on_focus_bar.find("*")]
+    for element in @debug_elements
+      @children = @children.not element
+    
     # Binding to highlight a div when hovered
     @children.mouseenter {editor: this}, mouseEnterHandler
     @children.mouseleave {editor: this}, mouseLeaveHandler
@@ -94,21 +100,23 @@ class EditorIframeView extends Backbone.View
     $("#overlay, #on-focus-bar").ready ->
       $editor_iframe.event_listeners()
 
-    
   load_design: (design) ->
     @design = design
     design_id = @design.get("id")
     url = "http://localhost:3000/generated/#{design_id}/index.html"    
     this.render url
     
-  clear_highlights: (target) ->
+  clear_highlights: () ->
     @children.removeClass "mouseover"
 
-  clear_selection: (target) ->
+  clear_selection: () ->
     @children.removeClass "selected"
     
   focus_selected_object: (selected_object) ->
-    $(@overlay_div).show()
+
+    @overlay_div.show()
+    @on_focus_bar.show()
+        
     if @selected_object?
       @selected_object.removeClass "selected"
       if @previous_zindex?
@@ -116,8 +124,16 @@ class EditorIframeView extends Backbone.View
     
     @selected_object = $(selected_object);
     @previous_zindex = @selected_object.css "z-index"
+    
+  release_focus: () ->
+    this.clear_highlights()
+    this.clear_selection()
 
-
+    $(@overlay_div).hide()
+    $(@on_focus_bar).hide()
+    
+    $("#editor").html("")
+    
   get_grid_obj = (obj, editor) ->
     grid_id = $(obj).data('gridId')
     grid = editor.grids.get(grid_id)
