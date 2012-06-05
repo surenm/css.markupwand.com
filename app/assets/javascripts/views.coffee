@@ -74,16 +74,21 @@ class EditorIframeView extends Backbone.View
       @children = @children.not element
     
     # Binding to highlight a div when hovered
-    @children.mouseenter mouseEnterHandler
-    @children.mouseleave mouseLeaveHandler
-    
-    # Click handler
-    @children.click clickHandler
+    this.enable_listeners()
     
     # done editing
     @on_focus_bar.find("#done").click (event) ->
       event.stopPropagation()
       $editor_iframe.release_focus()
+      
+  enable_listeners: () ->
+    @children.mouseenter mouseEnterHandler
+    @children.mouseleave mouseLeaveHandler
+    
+    @children.click clickHandler
+    
+  disable_listeners: () ->
+    @children.unbind()
   
   add_debug_elements: () ->
     @iframe_dom = $(this.el).contents()
@@ -118,7 +123,8 @@ class EditorIframeView extends Backbone.View
     @children.removeClass "selected"
     
   focus_selected_object: (selected_object) ->
-
+    this.disable_listeners()
+    
     @overlay_div.show()
     @on_focus_bar.show()
         
@@ -130,7 +136,10 @@ class EditorIframeView extends Backbone.View
     @selected_object = $(selected_object);
     @previous_zindex = @selected_object.css "z-index"
     
+    
   release_focus: () ->
+    this.enable_listeners()
+    
     this.clear_highlights()
     this.clear_selection()
 
