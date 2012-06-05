@@ -165,6 +165,8 @@ class EditorIframeView extends Backbone.View
     grid = get_grid_obj(this, editor)
     view = new GridView({model: grid, el: "#editor"})
     view.render()
+  append: (element) ->  
+    $(@iframe_dom).find('body').append element
     
 class GridView extends GenericView
   template: "#edit-grid-properties-template"
