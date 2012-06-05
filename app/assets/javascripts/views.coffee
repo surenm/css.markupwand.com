@@ -176,6 +176,8 @@ class GridView extends GenericView
     this.render()
   
 
+class StyleView extends GenericView
+  template: "#css-property-template"
 
 window.DesignView = DesignView
 window.EditorIframeView = EditorIframeView

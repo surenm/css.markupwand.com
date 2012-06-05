@@ -51,6 +51,20 @@ body {
       font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
       font-weight: bold;
     }
+    
+    .css-style {
+      margin: 2px 0px;
+      
+      .key {
+        
+      }
+      
+      .value {
+        padding: 2px 4px;
+        background: #000;
+        color: #fff;
+      }
+    }
 
     .edit-tags {
       form {
