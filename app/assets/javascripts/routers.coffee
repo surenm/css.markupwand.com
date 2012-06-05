@@ -1,12 +1,12 @@
 class EditorRouter extends Backbone.Router
   routes: 
-    "design/:design_id": "loadDesign"
-    "design/:design_id/grid/:grid_id": "loadGrid"
+    "": "loadDesign"
+    "grid/:grid_id": "loadGrid"
     "*args": "defaultHandler"
     
-  loadDesign: (design_id) ->
-    console.log "Loading Design: #{design_id}"
-    app.load_design design_id
+  loadDesign: () ->
+    console.log "Loading Design"
+    app.load_design()
   
   loadGrid: (design_id, grid_id) ->
     this.loadDesign(design_id)

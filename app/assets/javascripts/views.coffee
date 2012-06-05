@@ -7,6 +7,7 @@ class DesignView extends Backbone.View
   initialize: (args) ->
     _.bindAll(this, 'render');
     this.model.bind("change", this.render)
+    this.render()
     
   events: {
     "click #update-markup": "click_handler"
@@ -30,7 +31,6 @@ class DesignView extends Backbone.View
           $router.loadDesign $design
     )
 
-    
     # return false to the link so that it doesn't go anywhere
     return false
 
