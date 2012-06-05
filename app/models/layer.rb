@@ -238,6 +238,8 @@ class Layer
     #puts "Generating html for #{self.inspect}"
     css       = args.fetch :css, {}
     css_class = class_name css, is_leaf, @is_root
+    
+    tag = args.fetch :tag, tag_name
 
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.kind == LAYER_TEXT
@@ -256,7 +258,7 @@ class Layer
       attributes[:src] = image_path
       html = tag "img", attributes
     else
-      html = content_tag tag_name, inner_html, attributes, false
+      html = content_tag tag, inner_html, attributes, false
     end
 
     return html

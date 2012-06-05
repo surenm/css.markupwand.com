@@ -26,5 +26,14 @@ class GridsController < ApplicationController
 
     render :json => { :status => :success, :data => {}, :error => nil }
   end
+  
+  def update
+    grid = Grid.find params[:id]
+    grid.override_tag = params[:tag]
+    grid.save!
+    grid.design.generate_markup
+
+    render :json => { :status => :success, :data => {}, :error => nil }
+  end
 
 end
