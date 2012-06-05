@@ -9,26 +9,23 @@ TransformersWeb::Application.routes.draw do
   match '/getinvite'       => "landing_page#getinvite"
   
   # main controller views
-  match 'edit'    => 'main#edit'
-
-  # Dangerous controller route. 
-  # TODO: allow only in development??
-  match 'alaguisadude' => 'application#backdoor'
-
-  # design controller routes
-  match 'designs' => 'design#index'
-  match 'designs/new' => 'design#new'
-  match 'designs/uploaded' => 'design#upload', :as => :upload_callback
-  match 'design/*id' => 'design#show', :via => :get
-  match 'design/*id' => 'design#update', :via => :put
-  
-  # grid controllers
-  match 'grids/update' => 'grids#generate_markup', :via => :post
-  
-
   # Proxy method to view generated files
   match 'generated/:design/*uri.*ext' => 'main#generated'
   
+  # Dangerous controller route.
+  match 'alaguisadude' => 'application#backdoor'
+
+  # design controller routes
+  match 'designs'         => 'design#index'
+  match 'design/new'      => 'design#new'
+  match 'design/uploaded' => 'design#upload', :as => :upload_callback
+  match 'design/*id'      => 'design#show', :via => :get
+  match 'design/*id'      => 'design#update', :via => :put
+  match 'edit'            => 'design#edit'
+  
+  # grid controllers
+  match 'grids/update' => 'grids#generate_markup', :via => :post
+
   # Main page redirects to index
   root :to => 'landing_page#index'
 end

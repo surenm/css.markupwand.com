@@ -37,4 +37,8 @@ class DesignController < ApplicationController
   def update
     render :json => {:status => :success}
   end
+  
+  def edit
+    
+  end
 end
