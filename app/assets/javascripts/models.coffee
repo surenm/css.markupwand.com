@@ -1,3 +1,10 @@
+class WidgetType
+  TEXT: 'text'
+  DROPDOWN: 'dropdown'
+  COLOR: 'color'
+  NUMERIC: 'numeric'
+  GRADIENT: 'gradient'
+
 class DesignModel extends Backbone.Model
   urlRoot: "/design"
   
@@ -12,6 +19,15 @@ class GridModel extends Backbone.Model
     css: {}
     id: null
     html: ""
-      
+
+class StyleModel extends Backbone.Model
+  defaults:
+    key: null
+    value: null
+    widgetType: WidgetType.TEXT
+    
+
+window.WidgetType = WidgetType      
 window.GridModel = GridModel
 window.DesignModel = DesignModel
+window.StyleModel = StyleModel
