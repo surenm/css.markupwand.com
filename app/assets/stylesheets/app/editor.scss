@@ -52,17 +52,25 @@ body {
       font-weight: bold;
     }
     
-    .css-style {
+    .css-style, .property {
       margin: 2px 0px;
       
       .key {
-        
+        float: left;
+        margin: 5px;
+        width: 100px;
       }
       
       .value {
+        margin: 5px;
+        float: left;
         padding: 2px 4px;
         background: #000;
         color: #fff;
+      }
+      
+      input[type=text] {
+        width: 60px;
       }
     }
 
