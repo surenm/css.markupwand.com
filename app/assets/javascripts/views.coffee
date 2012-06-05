@@ -1,4 +1,3 @@
-class DesignView extends Backbone.View
 class GenericView extends Backbone.View
   render: () ->
     template_string = $(this.template).html()
@@ -6,6 +5,10 @@ class GenericView extends Backbone.View
     html = _.template(template_string, template_context)
     
     $(this.el).html html
+
+class DesignView extends GenericView
+  template: "#editor-header-template"
+    
   defaults:
     name: "",
     psd_file_path: ""
@@ -19,13 +22,6 @@ class GenericView extends Backbone.View
   events: {
     "click #update-markup": "click_handler"
   }
-    
-  render: () ->
-    template_string = $("#editor-header-template").html()
-    template_context = this.model.toJSON()
-    html = _.template(template_string, template_context)
-    
-    $(this.el).html html
   
   click_handler: (event) ->
     $router = app.router
@@ -149,13 +145,10 @@ class EditorIframeView extends Backbone.View
     view = new GridView({model: grid, el: "#editor"})
     view.render()
     
-class GridView extends Backbone.View
+class GridView extends GenericView
+  template: "#edit-grid-properties-template"
+  el: "#editor"
   
-  render: () ->
-    template_string = $("#edit-grid-properties-template").html()
-    template_context = this.model.toJSON()
-    html = _.template(template_string, template_context);
-    $(this.el).html html
 
 
 window.DesignView = DesignView
