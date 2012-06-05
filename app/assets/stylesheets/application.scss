@@ -16,7 +16,6 @@
  *= require lib/bootstrap_and_overrides
  *= require lib/jquery-ui-1.8.20
  *= require app/buttons
-
  *= require_self
 */
 
@@ -86,14 +85,6 @@ small {
         }
       }
     }
-  }
-}
-
-#editor-header {
-  .name {
-    font-size: 18px;
-    text-transform: capitalize;
-    color: #ccc;
   }
 }
 

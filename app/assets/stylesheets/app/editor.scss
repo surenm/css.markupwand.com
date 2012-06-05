@@ -15,6 +15,12 @@ body {
   }
 
   #editor-header {
+    .name {
+      font-size: 18px;
+      text-transform: capitalize;
+      color: #ccc;
+    }
+    
     .action {
       margin: 20px;
     }
