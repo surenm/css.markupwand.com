@@ -173,17 +173,37 @@ class EditorIframeView extends Backbone.View
     
     grid = get_grid_obj(this, editor)
     view = new GridView({model: grid})
+
   append: (element) ->  
     $(@iframe_dom).find('body').append element
     
 class GridView extends GenericView
   template: "#edit-grid-properties-template"
   el: "#editor"
-  
+
+  events: {
+    "click .show": "edit"
+    "click #success": "onSuccess"
+    "click #cancel": "onCancel"
+  }
+
   initialize: () ->
     css = this.model.get("css")
     this.render()
-  
+    
+  edit: (event) ->
+    $(this.el).find(".form").show()
+    $(this.el).find(".show").hide()
+    
+  onSuccess: (event) ->
+    tag = $(this.el).find("#taginput").attr("value")
+    this.model.set "tag", tag
+    this.model.save()
+    this.render()
+    
+  onCancel: (event) -> 
+    $(this.el).find(".form").hide()
+    $(this.el).find(".show").show()
 
 class StyleView extends GenericView
   template: "#css-property-template"
