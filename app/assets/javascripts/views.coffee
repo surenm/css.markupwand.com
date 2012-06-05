@@ -1,4 +1,11 @@
 class DesignView extends Backbone.View
+class GenericView extends Backbone.View
+  render: () ->
+    template_string = $(this.template).html()
+    template_context = this.model.toJSON()
+    html = _.template(template_string, template_context)
+    
+    $(this.el).html html
   defaults:
     name: "",
     psd_file_path: ""
