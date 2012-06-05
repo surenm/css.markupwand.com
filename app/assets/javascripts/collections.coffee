@@ -6,3 +6,4 @@ class StyleCollection extends Backbone.Collection
   model: StyleModel
   
 window.GridCollection = GridCollection
+window.StyleCollection = StyleCollection
