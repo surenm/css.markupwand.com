@@ -79,6 +79,11 @@ class EditorIframeView extends Backbone.View
     
     # Click handler
     @children.click clickHandler
+    
+    # done editing
+    @on_focus_bar.find("#done").click (event) ->
+      event.stopPropagation()
+      $editor_iframe.release_focus()
   
   add_debug_elements: () ->
     @iframe_dom = $(this.el).contents()
