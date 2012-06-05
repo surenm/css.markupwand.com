@@ -19,9 +19,9 @@ TransformersWeb::Application.routes.draw do
   match 'designs'         => 'design#index'
   match 'design/new'      => 'design#new'
   match 'design/uploaded' => 'design#upload', :as => :upload_callback
-  match 'design/*id'      => 'design#show', :via => :get
-  match 'design/*id'      => 'design#update', :via => :put
-  match 'edit'            => 'design#edit'
+  match 'design/:id'      => 'design#show', :via => :get
+  match 'design/:id'      => 'design#update', :via => :put
+  match 'design/:id/edit' => 'design#edit'
   
   # grid controllers
   match 'grids/update' => 'grids#generate_markup', :via => :post

@@ -1,6 +1,13 @@
 class DesignController < ApplicationController
   before_filter :require_login
   
+  private
+  def get_design(readable_design_id)
+    design_id = readable_design_id.split('-').last
+    Design.find design_id
+  end 
+  
+  public
   def new
     @uploader = Design.new.file
     @uploader.success_action_redirect = upload_callback_url
@@ -27,18 +34,21 @@ class DesignController < ApplicationController
   end
   
   def show
-    readable_id = params[:id]
-    design_id = readable_id.split('-').last
+    @design = get_design params[:id]
     
-    @design = Design.find design_id
     render :json => @design.attribute_data
   end
   
   def update
+    @design = get_design params[:id]
+    
     render :json => {:status => :success}
   end
   
   def edit
+    @design = get_design params[:id]
     
+    # TODO: Backbone needs a collection to reset to. Find a correct way to do this
+    @designs = Array[@design.attribute_data]
   end
 end
