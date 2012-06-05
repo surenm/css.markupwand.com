@@ -25,13 +25,9 @@ module CssParser
 
   def CssParser::parse_color(color_object, opacity = nil)
 
-    if color_object.nil?
-      return ""
-    end
-    
-    red   = Integer(color_object[:value][:red][:value])
-    green = Integer(color_object[:value][:grain][:value])
-    blue  = Integer(color_object[:value][:blue][:value])
+    red   = Integer(color_object.extract_value(:value, :red, :value))
+    green = Integer(color_object.extract_value(:value, :grain, :value))
+    blue  = Integer(color_object.extract_value(:value, :blue, :value)
         
     if not opacity.nil?
       # Use rgb(a,b,c) format when opacity is given
