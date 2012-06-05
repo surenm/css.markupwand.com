@@ -74,11 +74,11 @@ class EditorIframeView extends Backbone.View
       @children = @children.not element
     
     # Binding to highlight a div when hovered
-    @children.mouseenter {editor: this}, mouseEnterHandler
-    @children.mouseleave {editor: this}, mouseLeaveHandler
+    @children.mouseenter mouseEnterHandler
+    @children.mouseleave mouseLeaveHandler
     
     # Click handler
-    @children.click {editor: this}, clickHandler    
+    @children.click clickHandler
   
   add_debug_elements: () ->
     @iframe_dom = $(this.el).contents()
@@ -141,7 +141,7 @@ class EditorIframeView extends Backbone.View
 
   mouseEnterHandler = (event) ->
     event.stopPropagation()
-    event.data.editor.clear_highlights()
+    app.editor_iframe.clear_highlights()
 
     $(this).addClass "mouseover"  
     
@@ -150,7 +150,7 @@ class EditorIframeView extends Backbone.View
     
   clickHandler = (event) ->
     event.stopPropagation()
-    editor = event.data.editor
+    editor = app.editor_iframe
     editor.clear_highlights()
     editor.clear_selection()
     
