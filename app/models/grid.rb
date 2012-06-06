@@ -299,11 +299,10 @@ class Grid
         intersecting_nodes.each do |intersector|
           intersecting_nodes.each do |target|
             if intersector.intersect? target and
-              intersector[:uid] != target[:uid]
-              target.intersectors ||= []
-              target.intersectors.push intersector.name
-              Log.info "#{intersector} intersects #{target}"
-              Log.info "#{target} intersectors = #{target.intersectors}"
+              intersector[:uid] != target[:uid] and
+              not intersector.overlays.include? target[:uid]
+              intersector.am_i_overlay = true
+              target.overlays.push intersector[:uid]
             end
           end
         end
