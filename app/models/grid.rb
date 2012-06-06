@@ -282,17 +282,8 @@ class Grid
       
       if overlap_type == :inner
         # Less than 90% croppable
-        available_nodes.delete intersecting_nodes[0][:uid]
-        available_nodes.delete intersecting_nodes[1][:uid]
-        nodes_in_region.delete intersecting_nodes[0]
-        nodes_in_region.delete intersecting_nodes[1]
         
-        new_intersecting_nodes = crop_inner_intersect intersecting_nodes
-        
-        new_intersecting_nodes.each do |node_item|
-          nodes_in_region.push node_item
-          available_nodes[node_item[:uid]] = node_item
-        end
+        return crop_inner_intersect intersecting_nodes
       else
         Log.error "Should position relatively for #{intersecting_nodes}"
         
