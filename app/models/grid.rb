@@ -21,6 +21,7 @@ class Grid
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
   field :fit_to_grid,  :type => Boolean, :default => true
+  field :positioned_layers, :type => Array, :default => []
   
   field :css_hash, :type => Hash, :default => {}
   field :override_css_hash, :type => Hash, :default => {}
@@ -33,8 +34,8 @@ class Grid
   
 
   field :offset_box, :type => Array, :default => []
-  field :relative_margin_value, :type => Hash
   field :grid_depth, :type => Integer, :default => -1
+  
 
   @@pageglobals    = PageGlobals.instance
   @@grouping_queue = Queue.new
