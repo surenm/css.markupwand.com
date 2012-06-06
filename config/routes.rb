@@ -13,7 +13,9 @@ TransformersWeb::Application.routes.draw do
   match 'generated/:design/*uri.*ext' => 'main#generated'
   
   # Dangerous controller route.
-  match 'alaguisadude' => 'application#backdoor'
+  if not Rails.env.production?
+    match 'alaguisadude' => 'application#backdoor'
+  end
 
   # design controller routes
   match 'designs'         => 'design#index'

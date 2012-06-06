@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::Base
-  before_filter :restrict_to_development, :only => [:backdoor]
   protect_from_forgery
   
   def get_user
