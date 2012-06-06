@@ -81,7 +81,7 @@ HTML
     psd_data[:art_layers].each do |layer_id, node_json|
       layer = Layer.create_from_raw_data node_json
       layers.push layer
-      Log.debug "Added Layer #{layer.name}."
+      Log.debug "Added Layer #{layer}."
     end
 
     Log.info "Creating root grid..."
