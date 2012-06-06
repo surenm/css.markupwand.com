@@ -9,6 +9,11 @@ class Design
 
   belongs_to :user
   has_many :grids
+  
+  # Design status types
+  Design::STATUS_QUEUED     = :queued
+  Design::STATUS_PROCESSING = :processing
+  Design::STATUS_PROCESSED  = :processed
 
   field :name, :type => String
   field :psd_file_path, :type => String
@@ -19,6 +24,7 @@ class Design
   field :font_map, :type => Hash, :default => {}
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
+  field :status, :type => String, :default => Design::STATUS_QUEUED
 
   mount_uploader :file, DesignUploader
   
