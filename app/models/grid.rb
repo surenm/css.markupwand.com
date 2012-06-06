@@ -274,35 +274,6 @@ class Grid
     {:left => smaller_node, :right => bigger_node}
   end
   
-  
-  def self.crop_outer_intersect(intersecting_nodes)
-    top_node = intersecting_nodes[:left]
-    bottom_node  = intersecting_nodes[:right]
-    if intersecting_nodes[:left].layer_object[:itemIndex][:value] < intersecting_nodes[:right].layer_object[:itemIndex][:value]
-      top_node = intersecting_nodes[:right]
-      bottom_node  = intersecting_nodes[:left]
-    end
-    
-    bottom_node.bounds = BoundingBox.new(bottom_node.bounds.top, bottom_node.bounds.left, bottom_node.bounds.bottom, bottom_node.bounds.right).outer_crop(top_node.bounds)
-    
-    {:left => top_node, :right => bottom_node}
-  end
-  
-  def self.crop_appropriately(intersecting_nodes)
-    if intersecting_nodes[:left].nil? or intersecting_nodes[:right].nil?
-      return intersecting_nodes
-    end
-    overlap_type = find_overlap_type intersecting_nodes
-    
-    if overlap_type == :inner
-      return Grid.crop_inner_intersect intersecting_nodes
-    elsif overlap_type == :outer
-      return Grid.crop_outer_intersect intersecting_nodes
-    else
-      return intersecting_nodes
-    end
-  end
-  
   def self.process_grouping_box(row_grid, grouping_box, available_nodes)
     Log.debug "Trying grouping box: #{grouping_box}"
 
