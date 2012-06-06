@@ -15,6 +15,12 @@ body {
   }
 
   #editor-header {
+    .name {
+      font-size: 18px;
+      text-transform: capitalize;
+      color: #ccc;
+    }
+    
     .action {
       margin: 20px;
     }
@@ -44,6 +50,28 @@ body {
       color: #1D2A5B;
       font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
       font-weight: bold;
+    }
+    
+    .css-style, .property {
+      margin: 2px 0px;
+      
+      .key {
+        float: left;
+        margin: 5px;
+        width: 100px;
+      }
+      
+      .value {
+        margin: 5px;
+        float: left;
+        padding: 2px 4px;
+        background: #000;
+        color: #fff;
+      }
+      
+      input[type=text] {
+        width: 60px;
+      }
     }
 
     .edit-tags {

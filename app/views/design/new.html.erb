@@ -1,0 +1,6 @@
+<%= content_for :content do %>
+<%= direct_upload_form_for @uploader do |f| %>
+  <%= f.file_field :file %>
+  <%= f.submit %>
+<% end %>
+<% end %>

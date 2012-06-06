@@ -1,0 +1,25 @@
+<%= content_for :content do %>
+  <%= render 'shared/header' %>
+
+  <div id="designs-list-page" class="container">
+    <h1> Your photoshop designs </h1>
+    <ul>
+      <% @designs.each do |design| %>
+      <li>
+        <div class="design row"> 
+          <div class="span7">
+            <div class="name">
+              <%= design.name %>
+            </div> 
+            <small><%= design.created_at.to_formatted_s(:short) %> </small>
+          </div>
+          <div class="span1 right">
+            <a class="btn" href="/design/<%= design.safe_name %>/edit/#"> Edit </a>
+          </div>
+          <div class="clearfix"> </div>
+        </div>
+        <% end %>
+      </li>
+    </ul>
+  </div>
+<% end %>

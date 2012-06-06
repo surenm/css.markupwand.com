@@ -530,14 +530,16 @@ class Grid
       self.save!
     end
     
-    # remove the processed entry hack
-    raw_properties = self.css_hash.clone
-    raw_properties.delete :processed
+    # remove the processed css hack
+    raw_properties = self.css_hash
+    raw_properties.delete "processed"
     return raw_properties
   end
   
   def tag
-    if self.root
+    if not self.override_tag.nil?
+      self.override_tag
+    elsif self.root
       :body
     else
       :div
@@ -590,6 +592,7 @@ class Grid
       
     else
       sub_grid_args.update attributes
+      sub_grid_args[:tag] = tag
       render_layer_obj = Layer.find self.render_layer
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?
 

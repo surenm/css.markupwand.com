@@ -15,16 +15,15 @@
 //= require lib/jquery.client
 //= require lib/jquery.formdefaults
 //= require lib/jquery.ba-dotimeout
-//= require lib/jquery.ui.widget
-//= require lib/jquery.iframe-transport
-//= require lib/jquery.fileupload
+//= require lib/jquery-ui-1.8.20.min
 //= require lib/json2
 //= require lib/underscore
 //= require lib/backbone
 //= require lib/utils
+
 //= require twitter/bootstrap
-//= require_directory ./models
-//= require_directory ./collections
-//= require_directory ./views
-//= require_directory ./routers
+//= require models
+//= require collections
+//= require views
+//= require routers
 //= require app/landing_page

@@ -15,7 +15,7 @@ module CssParser
 
   def CssParser::set_assets_root(root)
     # Create assets folder
-    assets_path = root.join "assets"
+    assets_path = File.join root, "assets"
     ENV["ASSETS_DIR"] = assets_path.to_s
   end
   
@@ -224,10 +224,11 @@ module CssParser
 
   def CssParser::get_image_path(layer)
     image_file_name = layer.layer_json[:imagePath]
-    src_image_file = "/tmp/" + image_file_name
-    destination_dir = File.join CssParser::get_assets_root, "img"
-    FileUtils.mkdir_p destination_dir
-    FileUtils.cp src_image_file, destination_dir
+    src_image_file   = "/tmp/" + image_file_name
+    destination_file = File.join CssParser::get_assets_root, "img", image_file_name
+
+    # TODO: as processed image file directory changes to Store, this changes to Store:copy
+    Store::copy_from_local src_image_file, destination_file
 
     return File.join "./assets", "img", image_file_name
   end

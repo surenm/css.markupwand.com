@@ -15,6 +15,7 @@ gem 'therubyracer'
 gem 'xml-simple'
 gem 'log4r'
 gem 'rmagick'
+gem 'aws-sdk'
 
 # monitoring and profiling
 gem 'newrelic_rpm'
@@ -22,10 +23,10 @@ gem 'newrelic_rpm'
 # Deployment related gems
 gem 'unicorn'
 
-
 #File upload related gems
 gem 'carrierwave'
-gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
+gem 'carrierwave_direct'
+gem 'carrierwave-mongoid'
 
 # Login and user management 
 gem 'devise'

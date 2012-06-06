@@ -14,6 +14,7 @@
  *= require lib/bootstrap
  *= require lib/bootstrap-responsive
  *= require lib/bootstrap_and_overrides
+ *= require lib/jquery-ui-1.8.20
  *= require app/buttons
  *= require_self
 */
@@ -25,7 +26,7 @@
 @import "compass/utilities";
 
 body {
-  background: url('background.png') repeat transparent;
+  background: url('bg-notepad.png') repeat transparent;
 }
 
 .left {
@@ -38,7 +39,11 @@ body {
   clear: both;
 }
 
-#header.navbar {
+small {
+  font-size: 0.75em;
+}
+
+#editor-header.navbar, #header.navbar {
   position: absolute;
   top: 0;
   left: 0;
@@ -104,8 +109,7 @@ body {
     @include border-radius(8px);
     border: 1px dotted #106AA3;
     width: 80%;
-    min-height: 200px;
-    margin-bottom: 100px;
+    min-height: 200px;  
   }
 
   input[type="file"] {
@@ -145,5 +149,7 @@ body {
   }
   
 }
+
+.ui-progressbar-value { background-image: url(/assets/pbar-ani.gif); }
   
 

@@ -1,8 +1,24 @@
-$(document).ready ->
-  editor_router = new EditorRouter("#editor-iframe")
-  Backbone.history.start();
+class EditorApp
+  constructor: (design_target, iframe_target, grid_target) ->
+    @editor_iframe = new EditorIframeView({el: iframe_target})
+    @router = new EditorRouter
+  
+  load_design: () ->
+    designCollection = new Backbone.Collection;
+    designCollection.model = DesignModel;
+    designCollection.reset(designs);
+    
+    @design = designCollection.at 0
 
-  editor_header = new EditorHeaderView({model: null, el: "#editor-header", router: editor_router})
+    @design_view = new DesignView({el: "#editor-header", model: @design})    
+    @editor_iframe.load_design @design
+        
+$(document).ready ->
+  editor_app = new EditorApp("#editor-header", "#editor-iframe", "")
+  window.app = editor_app
+  
+  Backbone.history.start()
+
     
   
   

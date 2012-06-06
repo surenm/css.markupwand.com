@@ -4,7 +4,7 @@ include Log4r
 module Log
   LOGGER = Log4r::Logger.new 'logger'
   LOGGER.outputters = Log4r::FileOutputter.new 'debugger', :filename => File.join(Rails.root, "log", "#{Rails.env}-debug.log")
-  if Rails.env == "development"
+  if Rails.env.development?
     LOGGER.add ColorOutputter.new 'color', {:colors => 
       { 
         :debug  => :light_blue, 

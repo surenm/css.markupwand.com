@@ -1,3 +1,6 @@
+require 'digest'
+require 'find'
+
 class Design
   include Mongoid::Document
   include Mongoid::Timestamps::Created
@@ -6,27 +9,77 @@ class Design
 
   belongs_to :user
   has_many :grids
+  
+  # Design status types
+  Design::STATUS_QUEUED     = :queued
+  Design::STATUS_PROCESSING = :processing
+  Design::STATUS_PROCESSED  = :processed
 
   field :name, :type => String
   field :psd_file_path, :type => String
   field :processed_file_path, :type => String
   
+  field :hash, :type => String
+  
   field :font_map, :type => Hash, :default => {}
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
+  field :status, :type => String, :default => Design::STATUS_QUEUED
+
+  mount_uploader :file, DesignUploader
   
   def safe_name_prefix
     self.name.gsub(/[^0-9a-zA-Z]/,'_')
   end
   
+  def safe_name
+    "#{self.safe_name_prefix}-#{self.id}"
+  end
+
+  def store_key_prefix
+    File.join self.user.email, self.safe_name
+  end
+    
   def assets_root_path
-    # TODO: Point this to the right place
-    assets_path = Rails.root.join "..", "generated", "#{self.safe_name_prefix}-#{self.id}"
-    if not Dir.exists? assets_path
-      FileUtils.mkdir_p assets_path
+    File.join self.store_key_prefix, 'generated'
+  end
+  
+  def self.create_from_upload(uploaded_file, user)
+    file_name     = uploaded_file.original_filename
+    file_contents = uploaded_file.read
+    file_hash     = Digest::MD5.hexdigest file_contents
+  
+    design      = Design.new :name => uploaded_file.original_filename, :hash => file_hash
+    design.user = user
+    design.save!
+    
+    file_key = File.join design.store_key_prefix, file_name
+    Store.write file_key, file_contents
+    design.psd_file_path = file_key
+    design.save!  
+  end
+  
+  def attribute_data
+    grids = self.grids.collect do |grid|
+      grid.attribute_data
     end
     
-    return assets_path
+    layers = {}
+    self.grids.each do |grid|
+      grid.layer_ids.each do |layer_id|
+        layer = Layer.find layer_id
+        layers[layer.uid] = layer.attribute_data
+      end        
+    end
+    
+    {
+      :name          => self.name,
+      :psd_file_path => self.psd_file_path,
+      :font_map      => self.font_map,
+      :grids         => grids,
+      :layers        => layers.values,
+      :id            => self.safe_name
+    }
   end
 
   def parse_fonts(layers)
@@ -122,36 +175,41 @@ HTML
   end
   
   def write_html_files(html_content)
-    raw_file_name  = self.assets_root_path.join 'raw.html'
-    html_file_name = self.assets_root_path.join 'index.html'
+    raw_file_name  = File.join self.assets_root_path, 'raw.html'
+    html_file_name = File.join self.assets_root_path, 'index.html'
 
-    Log.info "Saving resultant HTML file #{html_file_name}"
-    
-    html_fptr = File.new raw_file_name, 'w+'
-    html_fptr.write html_content
-    html_fptr.close
+    Log.info "Saving resultant HTML file #{html_file_name}"    
+    Store.write html_file_name, html_content
 
-    Log.info "Tidying up the html..."
-    system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
+    # Programatically do this so that it works on heroku
+    #Log.info "Tidying up the html..."
+    #system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
   end
   
   def write_css_files(css_content)
-    # Write style.css file
-    css_path = self.assets_root_path.join "assets", "css"
-
-    if not Dir.exists? css_path
-      FileUtils.mkdir_p css_path
-    end
-
     Log.info "Writing css file..."    
+
+    # Write style.css file
+    css_path = File.join self.assets_root_path, "assets", "css"
     css_file_name = File.join css_path, "style.css"
-    css_fptr = File.new css_file_name, 'w+'
-    css_fptr.write css_content
-    css_fptr.close
+    Store.write css_file_name, css_content
 
     # Copy bootstrap to assets folder
     Log.info "Writing bootstrap files"
-    FileUtils.cp_r Rails.root.join("app", "templates", "bootstrap", "docs", "assets", "css"), self.assets_root_path.join("assets")
-    FileUtils.cp Rails.root.join("app", "assets", "stylesheets", "lib", "bootstrap_override.css"), self.assets_root_path.join("assets", "css")
+    bootstrap_base_directory = Rails.root.join "app", "templates", "bootstrap", "docs"
+    bootstrap_templates_directory = bootstrap_base_directory.join "assets"
+    Find.find(bootstrap_templates_directory) do |file_name|
+      # don't do anything if its a directory, just skip
+      next if File.directory? file_name
+      
+      file_path     = Pathname.new file_name
+      relative_path = file_path.relative_path_from(bootstrap_base_directory).to_s
+      destination_path = File.join self.assets_root_path, relative_path
+      Store::copy_from_local file_path, destination_path
+    end
+    
+    bootrap_override_css = Rails.root.join("app", "assets", "stylesheets", "lib", "bootstrap_override.css").to_s
+    target_css           = File.join self.assets_root_path, "assets", "css", "bootstrap_override.css"
+    Store.copy_from_local bootrap_override_css, target_css
   end
 end
