@@ -33,6 +33,7 @@ class DesignController < ApplicationController
     
     design.psd_file_path = destination_file
     design.save!
+    design.push_to_queue
 
     redirect_to :action => "index"
   end
@@ -49,6 +50,8 @@ class DesignController < ApplicationController
     
     design.psd_file_path = destination_file
     design.save!
+    
+    design.push_to_queue
     
     redirect_to :action => "index"
   end

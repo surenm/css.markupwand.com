@@ -63,6 +63,14 @@ class Design
       :id            => self.safe_name
     }
   end
+  
+  def push_to_queue
+    self.status = Design::STATUS_PROCESSING
+    self.save!
+  
+    TaskQueue.push self.id.to_s
+  end
+  
 
   def parse_fonts(layers)
     design_fonts = PhotoshopItem::FontMap.new layers
