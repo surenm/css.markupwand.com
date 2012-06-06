@@ -174,23 +174,22 @@ class Grid
   
   # Finds out intersecting nodes in lot of nodes
   def get_intersecting_nodes(nodes_in_region)
+    intersecting_nodes = []
     
     intersect_found = false
     intersect_node_left = intersect_node_right = nil
     nodes_in_region.each do |node_left|
       nodes_in_region.each do |node_right|
         if node_left != node_right and node_left.intersect? node_right and !(node_left.encloses?(node_right) or node_right.encloses?(node_left))
-          
-          intersect_found = true
-          intersect_node_right = node_right
-          intersect_node_left  = node_left
-          break
+          intersecting_nodes.push node_right
+          intersecting_nodes.push node_left
         end
       end
-      break if intersect_found
     end
     
-    return {:left => intersect_node_left, :right => intersect_node_right}
+    intersecting_nodes.uniq!
+    
+    return intersecting_nodes
   end
 
   def get_subgrids
