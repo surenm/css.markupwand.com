@@ -1,8 +1,8 @@
-# encoding: utf-8
-
 class DesignUploader < CarrierWave::Uploader::Base
-  include CarrierWaveDirect::Uploader
+  storage :fog
   
-  include ActiveModel::Conversion
-  extend ActiveModel::Naming
+  def store_dir
+    "uploads/#{model.id.to_s}"
+  end
+  
 end
