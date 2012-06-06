@@ -4,7 +4,7 @@ module Store
   
   # Prefix for all buckets in AWS
   Store::BUCKET_ROOT = "store"
-
+  
   def Store::get_s3_bucket_name
     "#{Store::BUCKET_ROOT}_#{Rails.env}"
   end
@@ -46,7 +46,7 @@ module Store
   end
   
   def Store::write(file_key, file_contents)
-    if Rails.env == "production" or ENV['UPLOAD_TO_AWS'] == "true"
+    if Constants::store_remote?
       Store::write_to_S3 file_key, file_contents
     else 
       Store::write_to_local file_key, file_contents
@@ -85,7 +85,7 @@ module Store
   end
   
   def Store::copy(src_file_path, destination_file_path)
-    if Rails.env == "production" or ENV['UPLOAD_TO_AWS'] == "true"
+    if Constants::store_remote?
       Store::copy_within_S3 src_file_path, destination_file_path
     else 
       Store::copy_within_local src_file_path, destination_file_path
@@ -93,7 +93,7 @@ module Store
   end
   
   def Store::copy_from_local(src_file_path, destination_file_path)
-    if Rails.env == "production" or ENV['UPLOAD_TO_AWS'] == "true"
+    if Constants::store_remote?
       Store::copy_from_local_to_S3 src_file_path, destination_file_path
     else 
       Store::copy_within_local src_file_path, destination_file_path
