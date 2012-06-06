@@ -4,11 +4,10 @@ module Store
     Store::S3 = AWS::S3.new
   end
   
-  # Prefix for all buckets in AWS
-  Store::BUCKET_ROOT = "store"
+  Store::LOCAL_STORE = File.join Dir.home, "store"
   
   def Store::get_s3_bucket_name
-    "#{Store::BUCKET_ROOT}_#{Rails.env}"
+    "store_#{Rails.env}"
   end
   
   def Store::get_S3_store
@@ -21,8 +20,8 @@ module Store
   end
   
   def Store::get_local_store
-    root_dir = File.join Rails.root.to_s, 'store'
-    if not Dir.exists? root_dir 
+    root_dir = Store::LOCAL_STORE
+    if not Dir.exists? root_dir
       Dir.mkdir root_dir
     end
     root_dir
