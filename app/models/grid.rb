@@ -291,6 +291,11 @@ class Grid
         # Keep appending them
         intersecting_nodes.sort! { |node1, node2|  node2.layer_object[:itemIndex][:value] <=>  node1.layer_object[:itemIndex][:value] }
         
+        intersecting_nodes.each { |node| node.overlays = [] }
+
+        # If some layerx is intersecting other layery, then layery needs to be just there,
+        # layerx needs to be relatively positioned.
+        # So, add layerx to layery's list of intersecting nodes.
         intersecting_nodes.each do |intersector|
           intersecting_nodes.each do |target|
             if intersector.intersect? target and
