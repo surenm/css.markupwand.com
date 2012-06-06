@@ -18,6 +18,7 @@ TransformersWeb::Application.routes.draw do
   # design controller routes
   match 'designs'         => 'design#index'
   match 'design/new'      => 'design#new'
+  match 'design/local'    => 'design#local'
   match 'design/uploaded' => 'design#upload', :as => :upload_callback
   match 'design/:id'      => 'design#show', :via => :get
   match 'design/:id'      => 'design#update', :via => :put
