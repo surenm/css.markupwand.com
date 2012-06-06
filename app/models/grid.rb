@@ -275,10 +275,7 @@ class Grid
     {:left => smaller_node, :right => bigger_node}
   end
   
-  def resolve_intersecting_nodes
-    if nodes_in_region.size == available_nodes.size
-      # Case when layers are intersecting each other.
-  
+  def resolve_intersecting_nodes(grid, nodes_in_region)
       intersecting_nodes = get_intersecting_nodes nodes_in_region
       Log.info "Intersecting layers found - #{intersecting_nodes}"
       
@@ -319,7 +316,14 @@ class Grid
       
     elsif nodes_in_region.size <= available_nodes.size
       grid = Grid.new :design => row_grid.design, :grid_depth => row_grid.grid_depth + 1
-      style_layers = extract_style_layers grid, available_nodes, grouping_box
+      
+      # Reduce the set of nodes, remove style layers.
+      nodes_in_region = extract_style_layers grid, nodes_in_region, grouping_box
+      
+      # Resolve intersecting layers also.
+      if nodes_in_region.size == available_nodes.size
+        nodes_in_region = resolve_intersecting_nodes grid, nodes_in_region 
+      end
       
       Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
       
