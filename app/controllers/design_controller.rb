@@ -13,23 +13,15 @@ class DesignController < ApplicationController
     @uploader.success_action_redirect = upload_callback_url
   end
   
-  def local
+  def local_new
     @design = Design.new
   end
   
   def index
-    if request.method == "GET"
-      @designs = @user.designs.reverse    
-    else 
-      @design = Design.new
-      @design.file = params[:design]["file"]
-      @design.save!
-      
-      render :json => { :status => :success}
-    end
+    @designs = @user.designs.reverse    
   end
   
-  def upload
+  def uploaded
     source_file = params[:key]
     file_name = File.basename source_file
 
@@ -43,6 +35,14 @@ class DesignController < ApplicationController
     design.save!
 
     redirect_to :action => "index"
+  end
+  
+  def local_uploaded
+    @design = Design.new
+    @design.file = params[:design]["file"]
+    @design.save!
+
+    render :json => { :status => :success}
   end
   
   def show
