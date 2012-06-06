@@ -38,11 +38,19 @@ class DesignController < ApplicationController
   end
   
   def local_uploaded
-    @design = Design.new
-    @design.file = params[:design]["file"]
-    @design.save!
+    file_name   = params[:design]["file"].original_filename
+    design      = Design.new :name => file_name
+    design.user = @user    
+    design.file = params[:design]["file"]
+    design.save!
 
-    render :json => { :status => :success}
+    destination_file = File.join design.store_key_prefix, file_name
+    Store.copy_within_local design.file.current_path, destination_file
+    
+    design.psd_file_path = destination_file
+    design.save!
+    
+    redirect_to :action => "index"
   end
   
   def show
