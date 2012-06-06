@@ -295,19 +295,25 @@ class Grid
         Log.info "Intersecting layers found - #{intersecting_nodes}"
         
         if (not intersecting_nodes[:left].nil?) and (not intersecting_nodes[:right].nil?)
-          # Remove all intersecting nodes first.
-          available_nodes.delete intersecting_nodes[:left][:uid]
-          available_nodes.delete intersecting_nodes[:right][:uid]
-          nodes_in_region.delete intersecting_nodes[:left]
-          nodes_in_region.delete intersecting_nodes[:right]
+          overlap_type = find_overlap_type intersecting_nodes
 
-          new_intersecting_nodes = Grid.crop_appropriately intersecting_nodes
-
-          new_intersecting_nodes.each do |_, node_item|
-            nodes_in_region.push node_item
-            available_nodes[node_item[:uid]] = node_item
+          
+          if overlap_type == :inner
+            # Less than 90% croppable
+            available_nodes.delete intersecting_nodes[:left][:uid]
+            available_nodes.delete intersecting_nodes[:right][:uid]
+            nodes_in_region.delete intersecting_nodes[:left]
+            nodes_in_region.delete intersecting_nodes[:right]
+            
+            new_intersecting_nodes = Grid.crop_inner_intersect intersecting_nodes
+            
+            new_intersecting_nodes.each do |_, node_item|
+              nodes_in_region.push node_item
+              available_nodes[node_item[:uid]] = node_item
+            end
+          else
+            # Position elements relatively
           end
-
         end
       end
       
