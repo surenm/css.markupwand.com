@@ -210,18 +210,18 @@ class Grid
     available_nodes = extract_style_layers self, available_nodes, root_grouping_box
 
     root_grouping_box.children.each do |row_grouping_box|
-      available_nodes = process_row_grouping_box self, row_grouping_box, available_nodes
+      available_nodes = process_row_grouping_box row_grouping_box, available_nodes
     end
     
     self.save!
   end
   
-  def process_row_grouping_box(root_grid, row_grouping_box, available_nodes)
+  def process_row_grouping_box(row_grouping_box, available_nodes)
     Log.debug "Trying row grouping box: #{row_grouping_box}"
     
-    row_grid       = Grid.new :design => root_grid.design, :orientation => Constants::GRID_ORIENT_LEFT
-    row_grid.grid_depth = root_grid.grid_depth + 1
-    row_grid.set [], root_grid
+    row_grid       = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT
+    row_grid.grid_depth = self.grid_depth + 1
+    row_grid.set [], self
             
     available_nodes = extract_style_layers row_grid, available_nodes, row_grouping_box
     
@@ -233,8 +233,8 @@ class Grid
     
     if row_grid.children.size == 1
       subgrid        = row_grid.children.first
-      subgrid.parent = root_grid
-      subgrid.grid_depth  = root_grid.grid_depth + 1
+      subgrid.parent = self
+      subgrid.grid_depth  = self.grid_depth + 1
       row_grid.delete
     end
     
