@@ -470,7 +470,7 @@ class Grid
   
   # Height subtracted by padding
   def unpadded_height
-    if self.bounds.height.nil?
+    if self.bounds.nil? or self.bounds.height.nil?
       nil 
     else
       padding = padding_from_child
