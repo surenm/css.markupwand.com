@@ -281,15 +281,15 @@ class Grid
       
       
       if overlap_type == :inner
-        # Less than 90% croppable
+        # Less than 90%, crop them.
         
-        return crop_inner_intersect intersecting_nodes
+        return crop_inner_intersect(intersecting_nodes)
       else
-        Log.error "Should position relatively for #{intersecting_nodes}"
+        # More than 90%, relatively position them
         
         # Sort Layers by their layer index.
         # Keep appending them
-        intersecting_nodes.sort! { |node1, node2| node1.layer_object[:itemIndex][:value] <=> node2.layer_object[:itemIndex][:value] }
+        intersecting_nodes.sort! { |node1, node2|  node2.layer_object[:itemIndex][:value] <=>  node1.layer_object[:itemIndex][:value] }
         
         intersecting_nodes.each do |intersector|
           intersecting_nodes.each do |target|
