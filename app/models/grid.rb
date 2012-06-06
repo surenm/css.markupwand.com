@@ -241,28 +241,26 @@ class Grid
   end
   
   def find_intersect_type(intersecting_nodes)
-    left  = intersecting_nodes[:left]
-    right = intersecting_nodes[:right]
-    
-    intersect_area = left.intersect_area(right)
-    intersect_percent_left = (intersect_area * 100.0) / Float(left.bounds.area)
-    intersect_percent_right = (intersect_area * 100.0) / Float(right.bounds.area)
-    
-    if (intersect_percent_left > 90 or intersect_percent_right > 90)
-      return :inner
-    else
-      return :outer
+    if intersecting_nodes.length == 2 
+      intersect_area = intersecting_nodes.first.intersect_area(intersecting_nodes.second)
+      intersect_percent_left = (intersect_area * 100.0) / Float(intersecting_nodes.first.bounds.area)
+      intersect_percent_right = (intersect_area * 100.0) / Float(intersecting_nodes.second.bounds.area)
+      if (intersect_percent_left > 90 or intersect_percent_right > 90)
+        return :inner
+      end
     end
+    
+    return :outer
   end
   
   # :left and :right are just conventions here. They don't necessarily 
   # depict their positions.
   def crop_inner_intersect(intersecting_nodes)
-    smaller_node = intersecting_nodes[:left]
-    bigger_node  = intersecting_nodes[:right]
-    if intersecting_nodes[:left].bounds.area > intersecting_nodes[:right].bounds.area
-      smaller_node = intersecting_nodes[:right]
-      bigger_node  = intersecting_nodes[:left]
+    smaller_node = intersecting_nodes[0]
+    bigger_node  = intersecting_nodes[1]
+    if intersecting_nodes[0].bounds.area > intersecting_nodes[1].bounds.area
+      smaller_node = intersecting_nodes[1]
+      bigger_node  = intersecting_nodes[0]
     end
     
     new_bound = BoundingBox.new(smaller_node.bounds.top, 
@@ -271,37 +269,37 @@ class Grid
     
     smaller_node.bounds = new_bound
     
-    {:left => smaller_node, :right => bigger_node}
+    [smaller_node, bigger_node]
   end
   
   def resolve_intersecting_nodes(grid, nodes_in_region)
-      intersecting_nodes = get_intersecting_nodes nodes_in_region
-      Log.info "Intersecting layers found - #{intersecting_nodes}"
+    intersecting_nodes = get_intersecting_nodes nodes_in_region
+    Log.info "Intersecting layers found - #{intersecting_nodes}"
+    
+    if intersecting_nodes.length > 0
+      overlap_type = find_intersect_type intersecting_nodes
       
-      if (not intersecting_nodes[:left].nil?) and (not intersecting_nodes[:right].nil?)
-        overlap_type = find_intersect_type intersecting_nodes
-
+      
+      if overlap_type == :inner
+        # Less than 90% croppable
+        available_nodes.delete intersecting_nodes[0][:uid]
+        available_nodes.delete intersecting_nodes[1][:uid]
+        nodes_in_region.delete intersecting_nodes[0]
+        nodes_in_region.delete intersecting_nodes[1]
         
-        if overlap_type == :inner
-          # Less than 90% croppable
-          available_nodes.delete intersecting_nodes[:left][:uid]
-          available_nodes.delete intersecting_nodes[:right][:uid]
-          nodes_in_region.delete intersecting_nodes[:left]
-          nodes_in_region.delete intersecting_nodes[:right]
-          
-          new_intersecting_nodes = crop_inner_intersect intersecting_nodes
-          
-          new_intersecting_nodes.each do |_, node_item|
-            nodes_in_region.push node_item
-            available_nodes[node_item[:uid]] = node_item
-          end
-        else
-          
-            # Position elements relatively
+        new_intersecting_nodes = crop_inner_intersect intersecting_nodes
+        
+        new_intersecting_nodes.each do |node_item|
+          nodes_in_region.push node_item
+          available_nodes[node_item[:uid]] = node_item
         end
+      else
+        Log.error "Should position relatively"
+          # Position elements relatively
       end
     end
     
+    nodes_in_region
   end
   
   def process_grouping_box(row_grid, grouping_box, available_nodes)
