@@ -275,7 +275,40 @@ class Grid
     {:left => smaller_node, :right => bigger_node}
   end
   
-  def self.process_grouping_box(row_grid, grouping_box, available_nodes)
+  def resolve_intersecting_nodes
+    if nodes_in_region.size == available_nodes.size
+      # Case when layers are intersecting each other.
+  
+      intersecting_nodes = get_intersecting_nodes nodes_in_region
+      Log.info "Intersecting layers found - #{intersecting_nodes}"
+      
+      if (not intersecting_nodes[:left].nil?) and (not intersecting_nodes[:right].nil?)
+        overlap_type = find_intersect_type intersecting_nodes
+
+        
+        if overlap_type == :inner
+          # Less than 90% croppable
+          available_nodes.delete intersecting_nodes[:left][:uid]
+          available_nodes.delete intersecting_nodes[:right][:uid]
+          nodes_in_region.delete intersecting_nodes[:left]
+          nodes_in_region.delete intersecting_nodes[:right]
+          
+          new_intersecting_nodes = crop_inner_intersect intersecting_nodes
+          
+          new_intersecting_nodes.each do |_, node_item|
+            nodes_in_region.push node_item
+            available_nodes[node_item[:uid]] = node_item
+          end
+        else
+          
+            # Position elements relatively
+        end
+      end
+    end
+    
+  end
+  
+  def process_grouping_box(row_grid, grouping_box, available_nodes)
     Log.debug "Trying grouping box: #{grouping_box}"
 
     nodes_in_region = BoundingBox.get_objects_in_region grouping_box, available_nodes.values, :bounds
@@ -289,34 +322,6 @@ class Grid
       style_layers = extract_style_layers grid, available_nodes, grouping_box
       
       Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
-      if nodes_in_region.size == available_nodes.size
-        # Case when layers are intersecting each other.
-    
-        intersecting_nodes = self.get_intersecting_nodes nodes_in_region
-        Log.info "Intersecting layers found - #{intersecting_nodes}"
-        
-        if (not intersecting_nodes[:left].nil?) and (not intersecting_nodes[:right].nil?)
-          overlap_type = find_overlap_type intersecting_nodes
-
-          
-          if overlap_type == :inner
-            # Less than 90% croppable
-            available_nodes.delete intersecting_nodes[:left][:uid]
-            available_nodes.delete intersecting_nodes[:right][:uid]
-            nodes_in_region.delete intersecting_nodes[:left]
-            nodes_in_region.delete intersecting_nodes[:right]
-            
-            new_intersecting_nodes = Grid.crop_inner_intersect intersecting_nodes
-            
-            new_intersecting_nodes.each do |_, node_item|
-              nodes_in_region.push node_item
-              available_nodes[node_item[:uid]] = node_item
-            end
-          else
-            # Position elements relatively
-          end
-        end
-      end
       
       grid.set nodes_in_region, row_grid
       nodes_in_region.each {|node| available_nodes.delete node.uid}
