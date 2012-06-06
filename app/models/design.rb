@@ -1,4 +1,3 @@
-require 'digest'
 require 'find'
 
 class Design
@@ -18,8 +17,6 @@ class Design
   field :name, :type => String
   field :psd_file_path, :type => String
   field :processed_file_path, :type => String
-  
-  field :hash, :type => String
   
   field :font_map, :type => Hash, :default => {}
   field :typekit_snippet, :type => String, :default => ""
@@ -42,21 +39,6 @@ class Design
     
   def assets_root_path
     File.join self.store_key_prefix, 'generated'
-  end
-  
-  def self.create_from_upload(uploaded_file, user)
-    file_name     = uploaded_file.original_filename
-    file_contents = uploaded_file.read
-    file_hash     = Digest::MD5.hexdigest file_contents
-  
-    design      = Design.new :name => uploaded_file.original_filename, :hash => file_hash
-    design.user = user
-    design.save!
-    
-    file_key = File.join design.store_key_prefix, file_name
-    Store.write file_key, file_contents
-    design.psd_file_path = file_key
-    design.save!  
   end
   
   def attribute_data
