@@ -148,9 +148,14 @@ module CssParser
     if grid.nil?
       return {}
     end
-    
-    {:'min-height' => (grid.unpadded_height).to_s + 'px' }
-    
+
+    height = grid.unpadded_height
+
+    if not height.nil?
+      {:'min-height' => (grid.unpadded_height).to_s + 'px' }
+    else
+      {}
+    end
   end
   
   def CssParser::parse_box_background_color(layer)
