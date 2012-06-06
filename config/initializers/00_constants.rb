@@ -10,4 +10,14 @@ module Constants
   def Constants::round_to_nearest_five(num)
     (((num + 5 )/5)-1)*5
   end  
+
+  # Just the store location in the initializer. All other Store definition in Store library
+  def Constants::store_remote?
+    return true if Rails.env.production? or ENV['UPLOAD_TO_AWS'] == "true"
+    return false if Rails.env.development?
+  end
+  
+  def Constants::store_local?
+    !Constants::store_remote?
+  end
 end
