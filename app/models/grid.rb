@@ -294,8 +294,24 @@ class Grid
           available_nodes[node_item[:uid]] = node_item
         end
       else
-        Log.error "Should position relatively"
-          # Position elements relatively
+        Log.error "Should position relatively for #{intersecting_nodes}"
+        
+        # Sort Layers by their layer index.
+        # Keep appending them
+        intersecting_nodes.sort! { |node1, node2| node1.layer_object[:itemIndex][:value] <=> node2.layer_object[:itemIndex][:value] }
+        
+        intersecting_nodes.each do |intersector|
+          intersecting_nodes.each do |target|
+            if intersector.intersect? target and
+              intersector[:uid] != target[:uid]
+              target.intersectors ||= []
+              target.intersectors.push intersector.name
+              Log.info "#{intersector} intersects #{target}"
+              Log.info "#{target} intersectors = #{target.intersectors}"
+            end
+          end
+        end
+        
       end
     end
     
