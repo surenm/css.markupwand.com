@@ -307,10 +307,15 @@ class Grid
           end
         end
         
+        positioned_layers = intersecting_nodes.select { |node| node.am_i_overlay == true }
+        grid.positioned_layers = positioned_layers.map { |node| node.id.to_s }
+        normal_layout_nodes = intersecting_nodes.select { |node| node.am_i_overlay != true }
+        
+        return normal_layout_nodes
       end
+    else
+      Log.error "No intersecting node found, and no nodes reduced as well"
     end
-    
-    nodes_in_region
   end
   
   def process_grouping_box(row_grid, grouping_box, available_nodes)
@@ -328,7 +333,7 @@ class Grid
       # Reduce the set of nodes, remove style layers.
       extract_style_layers grid, available_nodes, grouping_box
       
-      # Resolve intersecting layers also.
+      # Removes all intersecting layers also.
       if nodes_in_region.size == available_nodes.size
         nodes_in_region = resolve_intersecting_nodes grid, nodes_in_region 
       end
