@@ -315,7 +315,7 @@ class Grid
       grid = Grid.new :design => row_grid.design, :grid_depth => row_grid.grid_depth + 1
       
       # Reduce the set of nodes, remove style layers.
-      nodes_in_region = extract_style_layers grid, nodes_in_region, grouping_box
+      extract_style_layers grid, available_nodes, grouping_box
       
       # Resolve intersecting layers also.
       if nodes_in_region.size == available_nodes.size
