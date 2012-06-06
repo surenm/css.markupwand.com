@@ -1,6 +1,8 @@
 module Store
   # Static instance to reference to access AWS S3 instance
-  Store::S3 = AWS::S3.new
+  if Constants::store_remote?
+    Store::S3 = AWS::S3.new
+  end
   
   # Prefix for all buckets in AWS
   Store::BUCKET_ROOT = "store"
