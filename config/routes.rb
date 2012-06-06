@@ -2,10 +2,10 @@ TransformersWeb::Application.routes.draw do
   devise_for :users, :controllers => { :omniauth_callbacks => 'auth' }
 
   resources :grids
+  # grid controllers
+  match 'grids/update' => 'grids#generate_markup', :via => :post
   
-  #match '/designs/*path'   => "design_files#serve"
-  #match 'next_unprocessed' => "design_files#next_unprocessed"
-  #match '/upload'          => "design_files#create"
+  # Landing page controller views
   match '/getinvite'       => "landing_page#getinvite"
   
   # main controller views
@@ -26,8 +26,6 @@ TransformersWeb::Application.routes.draw do
   match 'design/:id'      => 'design#update', :via => :put
   match 'design/:id/edit' => 'design#edit'
   
-  # grid controllers
-  match 'grids/update' => 'grids#generate_markup', :via => :post
 
   # Main page redirects to index
   root :to => 'landing_page#index'
