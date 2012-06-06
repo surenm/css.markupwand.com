@@ -144,7 +144,7 @@ class Grid
   
 
   # Usually any layer that matches the grouping box's bounds is a style layer
-  def self.extract_style_layers(grid, available_layers, parent_box = nil)
+  def extract_style_layers(grid, available_layers, parent_box = nil)
     return available_layers if parent_box.nil?
     
     # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
@@ -172,7 +172,7 @@ class Grid
   end
   
   # Finds out intersecting nodes in lot of nodes
-  def self.get_intersecting_nodes(nodes_in_region)
+  def get_intersecting_nodes(nodes_in_region)
     
     intersect_found = false
     intersect_node_left = intersect_node_right = nil
@@ -206,26 +206,26 @@ class Grid
     end
     
     # extract out style layers and parse with remaining        
-    available_nodes = Grid.extract_style_layers self, available_nodes, root_grouping_box
+    available_nodes = extract_style_layers self, available_nodes, root_grouping_box
 
     root_grouping_box.children.each do |row_grouping_box|
-      available_nodes = Grid.process_row_grouping_box self, row_grouping_box, available_nodes
+      available_nodes = process_row_grouping_box self, row_grouping_box, available_nodes
     end
     
     self.save!
   end
   
-  def self.process_row_grouping_box(root_grid, row_grouping_box, available_nodes)
+  def process_row_grouping_box(root_grid, row_grouping_box, available_nodes)
     Log.debug "Trying row grouping box: #{row_grouping_box}"
     
     row_grid       = Grid.new :design => root_grid.design, :orientation => Constants::GRID_ORIENT_LEFT
     row_grid.grid_depth = root_grid.grid_depth + 1
     row_grid.set [], root_grid
             
-    available_nodes = Grid.extract_style_layers row_grid, available_nodes, row_grouping_box
+    available_nodes = extract_style_layers row_grid, available_nodes, row_grouping_box
     
     row_grouping_box.children.each do |grouping_box|
-      available_nodes = Grid.process_grouping_box row_grid, grouping_box, available_nodes
+      available_nodes = process_grouping_box row_grid, grouping_box, available_nodes
     end
     
     row_grid.save!
@@ -240,7 +240,7 @@ class Grid
     return available_nodes
   end
   
-  def self.find_overlap_type(intersecting_nodes)
+  def find_intersect_type(intersecting_nodes)
     left  = intersecting_nodes[:left]
     right = intersecting_nodes[:right]
     
@@ -257,7 +257,7 @@ class Grid
   
   # :left and :right are just conventions here. They don't necessarily 
   # depict their positions.
-  def self.crop_inner_intersect(intersecting_nodes)
+  def crop_inner_intersect(intersecting_nodes)
     smaller_node = intersecting_nodes[:left]
     bigger_node  = intersecting_nodes[:right]
     if intersecting_nodes[:left].bounds.area > intersecting_nodes[:right].bounds.area
@@ -285,7 +285,7 @@ class Grid
       
     elsif nodes_in_region.size <= available_nodes.size
       grid = Grid.new :design => row_grid.design, :grid_depth => row_grid.grid_depth + 1
-      style_layers = Grid.extract_style_layers grid, available_nodes, grouping_box
+      style_layers = extract_style_layers grid, available_nodes, grouping_box
       
       Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
       if nodes_in_region.size == available_nodes.size
