@@ -26,7 +26,7 @@ class Layer
 
   # Do not store layer_object, but have in memory
   
-  attr_accessor :layer_object, :bounds, :intersect_count, :intersectors
+  attr_accessor :layer_object, :bounds, :intersect_count, :overlays, :am_i_overlay
   
   def self.create_from_raw_data(layer_json)
     layer = Layer.new
