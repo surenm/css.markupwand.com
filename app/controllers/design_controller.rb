@@ -13,8 +13,20 @@ class DesignController < ApplicationController
     @uploader.success_action_redirect = upload_callback_url
   end
   
+  def local
+    @design = Design.new
+  end
+  
   def index
-    @designs = @user.designs.reverse
+    if request.method == "GET"
+      @designs = @user.designs.reverse    
+    else 
+      @design = Design.new
+      @design.file = params[:design]["file"]
+      @design.save!
+      
+      render :json => { :status => :success}
+    end
   end
   
   def upload
