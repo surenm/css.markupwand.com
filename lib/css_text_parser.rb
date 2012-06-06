@@ -51,17 +51,18 @@ module CssTextParser
   end
   
   def CssTextParser::parse_text_color(text_style)
-    color_object = text_style[:value][:textStyle][:value][:color]
-    
-    { :color => CssParser::parse_color(color_object) }
+    color = ""
+    color_object = text_style.extract_value(:value, :textStyle, :value, :color) unless text_style.nil?
+    color = CssParser::parse_color(color_object) if not color_object.nil?
+    { :color =>  color }
   end
   
   def CssTextParser::parse_text_align(layer)
     css = {}
-    paragraph_style = layer[:textKey][:value][:paragraphStyleRange][:value]
-    align_code = paragraph_style.first[:value][:paragraphStyle][:value][:align][:value]
+    paragraph_style = layer.extract_value(:textKey, :value, :paragraphStyleRange, :value)
+    align_code = paragraph_style.first.extract_value(:value, :paragraphStyle, :value, :align, :value) unless paragraph_style.nil? or paragraph_style.first.nil?
 
-    if TEXT_ALIGN.has_key? align_code
+    if !align_code.nil? and TEXT_ALIGN.has_key? align_code
       css[:'text-align'] = TEXT_ALIGN[align_code]
     end
     

@@ -32,7 +32,6 @@ GEM
     activesupport (3.2.0)
       i18n (~> 0.6)
       multi_json (~> 1.0)
-    archive-tar-minitar (0.5.2)
     arel (3.0.2)
     asset_sync (0.4.1)
       activemodel
@@ -68,7 +67,6 @@ GEM
       execjs
     coffee-script-source (1.3.1)
     colorize (0.5.8)
-    columnize (0.3.6)
     commonjs (0.2.6)
     compass (0.12.1)
       chunky_png (~> 1.2)
@@ -117,8 +115,6 @@ GEM
       actionpack (>= 3.1)
       less (~> 2.2.0)
     libv8 (3.3.10.4)
-    linecache19 (0.5.12)
-      ruby_core_source (>= 0.1.4)
     log4r (1.1.10)
     log4r-color (1.2)
       colorize
@@ -198,21 +194,11 @@ GEM
     rdoc (3.12)
       json (~> 1.4)
     rmagick (2.13.1)
-    ruby-debug-base19 (0.11.25)
-      columnize (>= 0.3.1)
-      linecache19 (>= 0.5.11)
-      ruby_core_source (>= 0.1.4)
-    ruby-debug19 (0.11.6)
-      columnize (>= 0.3.1)
-      linecache19 (>= 0.5.11)
-      ruby-debug-base19 (>= 0.11.19)
     ruby-hmac (0.4.0)
     ruby-openid (2.1.8)
     ruby-openid-apps-discovery (1.2.0)
       ruby-openid (>= 2.1.7)
     ruby-prof (0.10.8)
-    ruby_core_source (0.1.5)
-      archive-tar-minitar (>= 0.5.2)
     sass (3.1.16)
     sass-rails (3.2.5)
       railties (~> 3.2.0)
@@ -289,7 +275,6 @@ DEPENDENCIES
   pry_debug
   rails (= 3.2.0)
   rmagick
-  ruby-debug19
   ruby-prof
   sass-rails (~> 3.2.4)
   therubyracer

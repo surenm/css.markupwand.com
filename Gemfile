@@ -52,7 +52,6 @@ group :development do
   gem 'pry-rails'
   gem 'pry-stack_explorer'
   gem 'pry_debug'
-  gem 'ruby-debug19'
   gem 'ruby-prof'
   gem 'log4r-color'
   gem 'foreman'

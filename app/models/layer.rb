@@ -4,10 +4,11 @@ class Layer
   include Mongoid::Timestamps::Updated
   include ActionView::Helpers::TagHelper
 
-  LAYER_TEXT        = "LayerKind.TEXT"
-  LAYER_SMARTOBJECT = "LayerKind.SMARTOBJECT"
-  LAYER_SOLIDFILL   = "LayerKind.SOLIDFILL"
-  LAYER_NORMAL      = "LayerKind.NORMAL"
+  LAYER_TEXT          = "LayerKind.TEXT"
+  LAYER_SMARTOBJECT   = "LayerKind.SMARTOBJECT"
+  LAYER_SOLIDFILL     = "LayerKind.SOLIDFILL"
+  LAYER_NORMAL        = "LayerKind.NORMAL"
+  LAYER_HUESATURATION = "LayerKind.HUESATURATION"
   
   BOUND_MODES = {
     :NORMAL_BOUNDS => :bounds,
@@ -69,10 +70,8 @@ class Layer
     @bound_mode = bound_mode
   end
 
-  def inspect
-    "Layer: #{self.name}"
-  end
-
+  def inspect; to_s; end
+  
   def layer_json
     # Store layer object in memory.  
     if not @layer_object
@@ -226,6 +225,16 @@ class Layer
     font_name
   end
   
+  # A Layer whose bounds are zero
+  def empty?
+    is_empty = false
+    if self.bounds
+     is_empty =  ((self.bounds.top + self.bounds.left + self.bounds.bottom + self.bounds.right) == 0)
+    end
+    
+    is_empty
+  end
+  
   def text
     if self.kind == LAYER_TEXT
       layer_json[:textKey][:value][:textKey][:value]
@@ -262,6 +271,12 @@ class Layer
     end
 
     return html
+  end
+  
+  def styleable_layer?
+    (self.kind == Layer::LAYER_SOLIDFILL or
+     self.kind == Layer::LAYER_HUESATURATION or
+     self.renderable_image?)
   end
 
   def to_s

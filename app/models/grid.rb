@@ -51,7 +51,7 @@ class Grid
     # Magic! 
     # Pro-tip: http://ryanbigg.com/2010/04/has_and_belongs_to_many-double-insert/#comment-36741
     
-    Log.info self.layers.to_a
+    #Log.info self.layers.to_a # DO NOT REMOVE THIS LINE - Alagu
     layers.each { |layer| self.layers.push layer }
     self.layers.sort!
     self.save!
@@ -158,14 +158,14 @@ class Grid
     layers = {}
     available_layers.each { |key, layer| layers[key] = layer if max_bounds.encloses? layer.bounds }
     grid_style_layers = layers.values.select do |layer| 
-      layer.bounds == max_bounds and (layer.kind == Layer::LAYER_SOLIDFILL or layer.kind == Layer::LAYER_NORMAL or layer.renderable_image?)
+      layer.bounds == max_bounds and layer.styleable_layer?
     end
 
     Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." if style_layers.size > 0
     grid_style_layers.flatten!
     grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
 
-    Log.debug "Deleting #{style_layers} from grid"
+    Log.debug "Deleting #{style_layers} from grid" if style_layers.size > 0
     grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
 
     return available_layers
@@ -206,25 +206,6 @@ class Grid
     
     (intersect_percent_left > 90 or intersect_percent_right > 90)
   end
-  
-  # :left and :right are just conventions here. They don't necessarily 
-  # depict their positions.
-  def self.crop_smaller_intersect(intersecting_nodes)
-    smaller_node = intersecting_nodes[:left]
-    bigger_node  = intersecting_nodes[:right]
-    if intersecting_nodes[:left].bounds.area > intersecting_nodes[:right].bounds.area
-      smaller_node = intersecting_nodes[:right]
-      bigger_node  = intersecting_nodes[:left]
-    end
-    
-    new_bound = BoundingBox.new(smaller_node.bounds.top, 
-      smaller_node.bounds.left, smaller_node.bounds.bottom,
-      smaller_node.bounds.right).inner_crop(bigger_node.bounds)
-    
-    smaller_node.bounds = new_bound
-    
-    {:left => smaller_node, :right => bigger_node}
-  end
 
   def get_subgrids
     Log.debug "Getting subgrids (#{self.layers.length} layers in this grid)"
@@ -235,6 +216,9 @@ class Grid
 
     # list of layers in this grid
     available_nodes = Hash[self.layers.collect { |item| [item.uid, item] }]
+    available_nodes = available_nodes.select do |_, node|
+      not node.empty?
+    end
     
     # extract out style layers and parse with remaining        
     available_nodes = Grid.extract_style_layers self, available_nodes, root_grouping_box
@@ -286,7 +270,27 @@ class Grid
     end
   end
   
-  def self.crop_bottom_intersect(intersecting_nodes)
+  # :left and :right are just conventions here. They don't necessarily 
+  # depict their positions.
+  def self.crop_inner_intersect(intersecting_nodes)
+    smaller_node = intersecting_nodes[:left]
+    bigger_node  = intersecting_nodes[:right]
+    if intersecting_nodes[:left].bounds.area > intersecting_nodes[:right].bounds.area
+      smaller_node = intersecting_nodes[:right]
+      bigger_node  = intersecting_nodes[:left]
+    end
+    
+    new_bound = BoundingBox.new(smaller_node.bounds.top, 
+      smaller_node.bounds.left, smaller_node.bounds.bottom,
+      smaller_node.bounds.right).inner_crop(bigger_node.bounds)
+    
+    smaller_node.bounds = new_bound
+    
+    {:left => smaller_node, :right => bigger_node}
+  end
+  
+  
+  def self.crop_outer_intersect(intersecting_nodes)
     top_node = intersecting_nodes[:left]
     bottom_node  = intersecting_nodes[:right]
     if intersecting_nodes[:left].layer_object[:itemIndex][:value] < intersecting_nodes[:right].layer_object[:itemIndex][:value]
@@ -294,7 +298,7 @@ class Grid
       bottom_node  = intersecting_nodes[:left]
     end
     
-    BoundingBox.new(bottom_node.bounds.top, bottom_node.bounds.left, bottom_node.bounds.bottom, bottom_node.bounds.right).outer_crop(top_node.bounds)
+    bottom_node.bounds = BoundingBox.new(bottom_node.bounds.top, bottom_node.bounds.left, bottom_node.bounds.bottom, bottom_node.bounds.right).outer_crop(top_node.bounds)
     
     {:left => top_node, :right => bottom_node}
   end
@@ -306,9 +310,9 @@ class Grid
     overlap_type = find_overlap_type intersecting_nodes
     
     if overlap_type == :inner
-      return Grid.crop_smaller_intersect intersecting_nodes
+      return Grid.crop_inner_intersect intersecting_nodes
     elsif overlap_type == :outer
-      return Grid.crop_bottom_intersect intersecting_nodes
+      return Grid.crop_outer_intersect intersecting_nodes
     else
       return intersecting_nodes
     end
@@ -342,6 +346,12 @@ class Grid
           nodes_in_region.delete intersecting_nodes[:right]
 
           new_intersecting_nodes = Grid.crop_appropriately intersecting_nodes
+
+          new_intersecting_nodes.each do |_, node_item|
+            nodes_in_region.push node_item
+            available_nodes[node_item[:uid]] = node_item
+          end
+
         end
       end
       
