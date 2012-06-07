@@ -312,6 +312,7 @@ class Grid
         positioned_layers.each { |node| node.save! }
         
         grid.positioned_layers = positioned_layers.map { |node| node.id.to_s }
+        grid.save!
         normal_layout_nodes = intersecting_nodes.select { |node| node.am_i_overlay != true }
         
         return normal_layout_nodes
@@ -570,7 +571,7 @@ class Grid
     html = ''
     self.positioned_layers.each do |layer_id|
       layer = Layer.find layer_id
-      html += layer.to_html(subgrid_args, self.is_leaf?)
+      html += layer.to_html(subgrid_args, self.is_leaf?, self)
     end
     
     html
@@ -619,7 +620,7 @@ class Grid
       render_layer_obj = Layer.find self.render_layer
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
 
-      html = inner_html
+      html = inner_html + positioned_layers_html(sub_grid_args)
     end
     
     return html
