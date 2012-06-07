@@ -23,10 +23,11 @@ class Layer
   field :kind, :type => String
   field :raw, :type  => String
   field :layer_type, :type => String, :default => nil
+  field :am_i_overlay, :type => Boolean
 
   # Do not store layer_object, but have in memory
   
-  attr_accessor :layer_object, :bounds, :intersect_count, :overlays, :am_i_overlay
+  attr_accessor :layer_object, :bounds, :intersect_count, :overlays, 
   
   def self.create_from_raw_data(layer_json)
     layer = Layer.new
