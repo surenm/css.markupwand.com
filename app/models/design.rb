@@ -136,6 +136,11 @@ HTML
       layers.push layer
       Log.debug "Added Layer #{layer}."
     end
+    
+    Log.info "Layer bounds"
+    layers.each do |layer|
+      Log.info "#{layer.bounds}"
+    end
 
     Log.info "Creating root grid..."
     grid = Grid.new :design => self, :root => true, :grid_depth => 0
