@@ -196,10 +196,13 @@ module CssParser
   
   def CssParser::position_absolutely(layer, grid)
     css =  {}
-    css[:position] = 'absolute'
-    css[:top] = '10px'
-    css[:left] = '20px'
-    css[:'z-index'] = layer.layer_json.extract_value(:itemIndex, :value)
+    if grid.bounds
+      css[:position]  = 'absolute'
+      css[:top]       = (layer.bounds.top - grid.bounds.top).to_s + 'px'
+      css[:left]      = (layer.bounds.left - grid.bounds.left).to_s + 'px'
+      css[:'z-index'] = layer.layer_json.extract_value(:itemIndex, :value)
+    end
+    
     css
   end
 
