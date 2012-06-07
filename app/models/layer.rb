@@ -168,7 +168,7 @@ class Layer
       css.update CssParser::parse_box layer_json, grid
     end
     
-    css.update CssParser::position_absolutely(layer_json, grid) if self.am_i_overlay
+    css.update CssParser::position_absolutely(self, grid) if self.am_i_overlay
 
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
