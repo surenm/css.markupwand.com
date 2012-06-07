@@ -161,7 +161,7 @@ module CssParser
   def CssParser::parse_box_background_color(layer)
     css = {}
     if layer.has_key? :adjustment
-      css[:background]   = parse_color(layer[:adjustment][:value].first[:value][:color])
+      css[:'background-color']   = parse_color(layer[:adjustment][:value].first[:value][:color])
     end
     
     css
