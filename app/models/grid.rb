@@ -276,7 +276,7 @@ class Grid
     intersecting_nodes = get_intersecting_nodes nodes_in_region
     Log.info "Intersecting layers found - #{intersecting_nodes}"
     
-    if intersecting_nodes.length > 0
+    if intersecting_nodes.length > 1
       overlap_type = find_intersect_type intersecting_nodes
       
       
