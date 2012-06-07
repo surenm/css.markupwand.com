@@ -522,6 +522,10 @@ class Grid
       if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
         css[:float] = 'left'
       end
+      
+      if self.positioned_layers.length > 0
+        css[:position] = 'relative'
+      end
 
       # Gives out the values for spacing the box model.
       # Margin and padding
