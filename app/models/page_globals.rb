@@ -8,6 +8,12 @@ class PageGlobals
   end
   
   public
+  def self.input_dir
+    @@input_dir ||= ENV['INPUTDIR']
+    @@input_dir ||= 'tmp'
+    return @@input_dir
+  end
+
   def self.instance
     if @@instance.nil?
       @@instance = self.new()
