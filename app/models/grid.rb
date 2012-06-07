@@ -555,6 +555,16 @@ class Grid
     end
   end
   
+  def positioned_layers_html(subgrid_args)
+    html = ''
+    self.positioned_layers.each do |layer_id|
+      layer = Layer.find layer_id
+      html += layer.to_html(subgrid_args, self.is_leaf?)
+    end
+    
+    html
+  end
+  
   def to_html(args = {})
     html = ''
     layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string self.css_properties
@@ -581,6 +591,8 @@ class Grid
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
       end
+      
+      inner_html += positioned_layers_html(sub_grid_args)
 
       if not self.children.empty? and self.orientation == "left"
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
