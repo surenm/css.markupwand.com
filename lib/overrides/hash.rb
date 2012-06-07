@@ -9,7 +9,7 @@ class Hash
       if self[key].class!=Array and self[key].class!=Hash or i==keys.size-1
         return self[key]
       else
-        return self[key].extract_value()
+        return self[key].extract_value(*keys.slice(i+1,keys.size-i-1))
       end
     end
   end
