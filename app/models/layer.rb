@@ -191,8 +191,8 @@ class Layer
     css
   end
 
-  def class_name(css = {}, is_leaf = false, is_root = false)
-    css = get_css(css, is_leaf, is_root)
+  def class_name(css = {}, is_leaf, is_root, grid)
+    css = get_css(css, is_leaf, is_root, grid)
     PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string(css)
   end
 
@@ -243,10 +243,10 @@ class Layer
     end
   end
 
-  def to_html(args = {}, is_leaf)
+  def to_html(args = {}, is_leaf, grid)
     #puts "Generating html for #{self.inspect}"
     css       = args.fetch :css, {}
-    css_class = class_name css, is_leaf, @is_root
+    css_class = class_name css, is_leaf, @is_root, grid
     
     tag = args.fetch :tag, tag_name
 
