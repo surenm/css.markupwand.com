@@ -193,7 +193,15 @@ module CssParser
     css
     
   end
-
+  
+  def CssParser::position_absolutely(layer, grid)
+    css =  {}
+    css[:position] = 'absolute'
+    css[:top] = '10px'
+    css[:left] = '20px'
+    
+    css
+  end
 
   def CssParser::parse_box(layer, grid)
     css                = {}
