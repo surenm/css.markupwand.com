@@ -167,6 +167,8 @@ class Layer
     elsif self.kind == LAYER_SOLIDFILL
       css.update CssParser::parse_box layer_json, grid
     end
+    
+    css.update CssParser::position_absolutely(layer_json, grid) if self.am_i_overlay
 
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
