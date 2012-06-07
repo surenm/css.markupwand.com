@@ -6,10 +6,11 @@ class Hash
       if self.nil?
         return nil
       end
-      if self[key].class!=Array and self[key].class!=Hash or i==keys.size-1
+      if self[key].class != Array and self[key].class != Hash or i == keys.size-1
         return self[key]
       else
-        return self[key].extract_value(*keys.slice(i+1,keys.size-i-1))
+        remaining_keys = keys.slice(i+1,keys.size-i-1)
+        return self[key].extract_value(*remaining_keys)
       end
     end
   end
