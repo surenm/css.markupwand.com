@@ -319,6 +319,7 @@ class Grid
       end
     else
       Log.error "No intersecting node found, and no nodes reduced as well"
+      return nodes_in_region
     end
   end
   
@@ -335,7 +336,7 @@ class Grid
       grid = Grid.new :design => row_grid.design, :grid_depth => row_grid.grid_depth + 1
       
       # Reduce the set of nodes, remove style layers.
-      extract_style_layers grid, available_nodes, grouping_box
+      available_nodes = extract_style_layers grid, available_nodes, grouping_box
       
       # Removes all intersecting layers also.
       if nodes_in_region.size == available_nodes.size
