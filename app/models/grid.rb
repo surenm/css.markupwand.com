@@ -335,7 +335,11 @@ class Grid
       
       # Removes all intersecting layers also.
       if nodes_in_region.size == available_nodes.size
-        nodes_in_region = resolve_intersecting_nodes grid, nodes_in_region 
+        nodes_in_region = resolve_intersecting_nodes grid, nodes_in_region
+        grid.positioned_layers.each do |layer_id|
+          layer = Layer.find layer_id
+          available_nodes.delete layer.uid
+        end
       end
       
       Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
