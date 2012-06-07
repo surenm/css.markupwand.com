@@ -199,7 +199,7 @@ module CssParser
     css[:position] = 'absolute'
     css[:top] = '10px'
     css[:left] = '20px'
-    
+    css[:'z-index'] = layer.extract_value(:itemIndex, :value)
     css
   end
 
