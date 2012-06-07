@@ -240,7 +240,7 @@ module CssParser
 
   def CssParser::get_image_path(layer)
     image_file_name = layer.layer_json[:imagePath]
-    src_image_file   = "/tmp/" + image_file_name
+    src_image_file   =  "#{PageGlobals.data_dir}/#{image_file_name}"
     destination_file = File.join CssParser::get_assets_root, "img", image_file_name
 
     # TODO: as processed image file directory changes to Store, this changes to Store:copy

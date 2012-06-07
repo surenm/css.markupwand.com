@@ -8,10 +8,10 @@ class PageGlobals
   end
   
   public
-  def self.input_dir
-    @@input_dir ||= ENV['INPUTDIR']
-    @@input_dir ||= 'tmp'
-    return @@input_dir
+  def self.data_dir
+    @@data_dir ||= ENV['DATADIR']
+    @@data_dir ||= '/tmp'
+    return @@data_dir
   end
 
   def self.instance
