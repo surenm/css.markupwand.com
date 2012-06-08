@@ -210,22 +210,22 @@ module CssParser
     css                = {}
     
     # Min-height, pick it up from grid
-    css.update(parse_box_height(grid))
+    css.update(parse_box_height(layer, grid))
     
     # Background-color
-    css.update(parse_box_background_color(layer))
+    css.update(parse_box_background_color(layer.layer_json))
 
     # Box border
-    css.update parse_box_border(layer)
+    css.update parse_box_border(layer.layer_json)
     
     # Box rounded corners
-    css.update(parse_box_rounded_corners(layer))
+    css.update(parse_box_rounded_corners(layer.layer_json))
     
     # Box gradient 
-    css.update(parse_box_gradient(layer))
+    css.update(parse_box_gradient(layer.layer_json))
     
     # Box shadow
-    css.update(parse_box_shadow(layer))
+    css.update(parse_box_shadow(layer.layer_json))
     
     css
   end
