@@ -165,7 +165,7 @@ class Layer
     elsif self.kind == LAYER_SMARTOBJECT
       # don't do anything
     elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_box layer_json, grid
+      css.update CssParser::parse_box self, grid
     end
     
     css.update CssParser::position_absolutely(self, grid) if self.am_i_overlay
@@ -181,7 +181,7 @@ class Layer
       end
       # don't do anything
     elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_box layer_json, grid
+      css.update CssParser::parse_box self, grid
       if is_root
         css.delete :width
         css.delete :height
@@ -266,7 +266,7 @@ class Layer
     attributes[:"data-grid-id"]  = args[:"data-grid-id"] if not args[:"data-grid-id"].nil?
     attributes[:"data-layer-id"] = self.id.to_s
 
-    if tag_name(is_leaf) == :img
+    if tag == :img
       attributes[:src] = image_path
       html = tag "img", attributes
     else
