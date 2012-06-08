@@ -61,7 +61,7 @@ class Grid
   end
   
   def to_s
-    "Grid #{self.layers.to_a}, Style Layers: #{@layers.to_a}"
+    "Grid #{self.layers.to_a}, Style Layers: #{self.style_layers.to_a}"
   end
   
   def print(indent_level=0)
