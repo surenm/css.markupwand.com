@@ -309,8 +309,11 @@ class Grid
         
         # Once information is set that they are overlaid, remember them.
         positioned_layers = intersecting_nodes.select { |node| node.am_i_overlay == true }
-        positioned_layers.each { |node| node.save! }
-        
+        positioned_layers.each do |node|
+          Log.info "Relatively positioning #{node}"
+          node.save!
+        end
+            
         grid.positioned_layers = positioned_layers.map { |node| node.id.to_s }
         grid.save!
         normal_layout_nodes = intersecting_nodes.select { |node| node.am_i_overlay != true }
