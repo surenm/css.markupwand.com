@@ -144,15 +144,19 @@ module CssParser
     end
   end
   
-  def CssParser::parse_box_height(grid)
-    if grid.nil?
+  def CssParser::parse_box_height(layer, grid)
+    if grid.nil? and not layer.am_i_overlay
       return {}
     end
-
-    height = grid.unpadded_height
+    
+    if layer.am_i_overlay
+      height = layer.bounds.height
+    else
+      height = grid.unpadded_height
+    end
 
     if not height.nil?
-      {:'min-height' => (grid.unpadded_height).to_s + 'px' }
+      {:'min-height' => height.to_s + 'px' }
     else
       {}
     end
@@ -201,6 +205,7 @@ module CssParser
       css[:top]       = (layer.bounds.top - grid.bounds.top).to_s + 'px'
       css[:left]      = (layer.bounds.left - grid.bounds.left).to_s + 'px'
       css[:'z-index'] = layer.layer_json.extract_value(:itemIndex, :value)
+      css[:width]     = layer.bounds.width.to_s + 'px'
     end
     
     css
