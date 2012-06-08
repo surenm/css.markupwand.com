@@ -14,6 +14,10 @@ class PageGlobals
     return @@data_dir
   end
 
+  def self.data_dir=(dir)
+    @@data_dir = dir
+  end
+
   def self.instance
     if @@instance.nil?
       @@instance = self.new()
