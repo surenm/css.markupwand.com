@@ -146,7 +146,7 @@ class Grid
 
   # Usually any layer that matches the grouping box's bounds is a style layer
   def extract_style_layers(grid, available_layers, parent_box = nil)
-    return available_layers if parent_box.nil?
+    return available_layers if (parent_box.nil? or available_layers.size == 1)
     
     # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
     style_layers = []
