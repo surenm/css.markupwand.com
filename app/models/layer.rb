@@ -127,7 +127,7 @@ class Layer
   end
 
   def renderable_image?
-    !self.layer_object.nil? and self.layer_object.has_key? :renderImage and self.layer_object[:renderImage]
+    !self.layer_json.nil? and self.layer_json.has_key? :renderImage and self.layer_json[:renderImage]
   end
 
   def image_path
@@ -165,23 +165,22 @@ class Layer
     elsif self.kind == LAYER_SMARTOBJECT
       # don't do anything
     elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_box layer_json, grid
+      css.update CssParser::parse_box self, grid
     end
     
     css.update CssParser::position_absolutely(self, grid) if self.am_i_overlay
 
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
-    elsif self.kind == LAYER_SMARTOBJECT or renderable_image?
-      if not is_leaf
-        css[:background] = "url('../../#{image_path}') no-repeat"
-        css[:'background-size'] = "contain"
-        css[:width] = "#{self.bounds.width}px"
-        css[:height] = "#{self.bounds.height}px"
-      end
+    elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
+      #TODO Replace into a css parser function
+      css[:background] = "url('../../#{image_path}') no-repeat"
+      css[:'background-size'] = "contain"
+      css[:width] = "#{self.bounds.width}px"
+      css[:height] = "#{self.bounds.height}px"
       # don't do anything
     elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_box layer_json, grid
+      css.update CssParser::parse_box self, grid
       if is_root
         css.delete :width
         css.delete :height
@@ -251,7 +250,7 @@ class Layer
     css       = args.fetch :css, {}
     css_class = class_name css, is_leaf, @is_root, grid
     
-    tag = args.fetch :tag, tag_name(is_leaf)
+    tag = tag_name(is_leaf)
 
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.kind == LAYER_TEXT
@@ -266,7 +265,7 @@ class Layer
     attributes[:"data-grid-id"]  = args[:"data-grid-id"] if not args[:"data-grid-id"].nil?
     attributes[:"data-layer-id"] = self.id.to_s
 
-    if tag_name(is_leaf) == :img
+    if tag == :img
       attributes[:src] = image_path
       html = tag "img", attributes
     else
@@ -279,6 +278,7 @@ class Layer
   def styleable_layer?
     (self.kind == Layer::LAYER_SOLIDFILL or
      self.kind == Layer::LAYER_HUESATURATION or
+     self.kind == Layer::LAYER_NORMAL or
      self.renderable_image?)
   end
 

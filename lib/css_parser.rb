@@ -144,15 +144,19 @@ module CssParser
     end
   end
   
-  def CssParser::parse_box_height(grid)
-    if grid.nil?
+  def CssParser::parse_box_height(layer, grid)
+    if grid.nil? and not layer.am_i_overlay
       return {}
     end
-
-    height = grid.unpadded_height
+    
+    if layer.am_i_overlay
+      height = layer.bounds.height
+    else
+      height = grid.unpadded_height
+    end
 
     if not height.nil?
-      {:'min-height' => (grid.unpadded_height).to_s + 'px' }
+      {:'min-height' => height.to_s + 'px' }
     else
       {}
     end
@@ -201,6 +205,7 @@ module CssParser
       css[:top]       = (layer.bounds.top - grid.bounds.top).to_s + 'px'
       css[:left]      = (layer.bounds.left - grid.bounds.left).to_s + 'px'
       css[:'z-index'] = layer.layer_json.extract_value(:itemIndex, :value)
+      css[:width]     = layer.bounds.width.to_s + 'px'
     end
     
     css
@@ -210,22 +215,22 @@ module CssParser
     css                = {}
     
     # Min-height, pick it up from grid
-    css.update(parse_box_height(grid))
+    css.update(parse_box_height(layer, grid))
     
     # Background-color
-    css.update(parse_box_background_color(layer))
+    css.update(parse_box_background_color(layer.layer_json))
 
     # Box border
-    css.update parse_box_border(layer)
+    css.update parse_box_border(layer.layer_json)
     
     # Box rounded corners
-    css.update(parse_box_rounded_corners(layer))
+    css.update(parse_box_rounded_corners(layer.layer_json))
     
     # Box gradient 
-    css.update(parse_box_gradient(layer))
+    css.update(parse_box_gradient(layer.layer_json))
     
     # Box shadow
-    css.update(parse_box_shadow(layer))
+    css.update(parse_box_shadow(layer.layer_json))
     
     css
   end

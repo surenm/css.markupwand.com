@@ -61,7 +61,7 @@ class Grid
   end
   
   def to_s
-    "Grid #{self.layers.to_a}, Style Layers: #{@layers.to_a}"
+    "Grid #{self.layers.to_a}, Style Layers: #{self.style_layers.to_a}"
   end
   
   def print(indent_level=0)
@@ -146,7 +146,7 @@ class Grid
 
   # Usually any layer that matches the grouping box's bounds is a style layer
   def extract_style_layers(grid, available_layers, parent_box = nil)
-    return available_layers if parent_box.nil?
+    return available_layers if (parent_box.nil? or available_layers.size == 1)
     
     # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
     style_layers = []
@@ -276,7 +276,7 @@ class Grid
     intersecting_nodes = get_intersecting_nodes nodes_in_region
     Log.info "Intersecting layers found - #{intersecting_nodes}"
     
-    if intersecting_nodes.length > 0
+    if intersecting_nodes.length > 1
       overlap_type = find_intersect_type intersecting_nodes
       
       
@@ -309,8 +309,11 @@ class Grid
         
         # Once information is set that they are overlaid, remember them.
         positioned_layers = intersecting_nodes.select { |node| node.am_i_overlay == true }
-        positioned_layers.each { |node| node.save! }
-        
+        positioned_layers.each do |node|
+          Log.info "Relatively positioning #{node}"
+          node.save!
+        end
+            
         grid.positioned_layers = positioned_layers.map { |node| node.id.to_s }
         grid.save!
         normal_layout_nodes = intersecting_nodes.select { |node| node.am_i_overlay != true }
@@ -319,6 +322,7 @@ class Grid
       end
     else
       Log.error "No intersecting node found, and no nodes reduced as well"
+      return nodes_in_region
     end
   end
   
@@ -335,7 +339,7 @@ class Grid
       grid = Grid.new :design => row_grid.design, :grid_depth => row_grid.grid_depth + 1
       
       # Reduce the set of nodes, remove style layers.
-      extract_style_layers grid, available_nodes, grouping_box
+      available_nodes = extract_style_layers grid, available_nodes, grouping_box
       
       # Removes all intersecting layers also.
       if nodes_in_region.size == available_nodes.size
@@ -618,7 +622,6 @@ class Grid
       
     else
       sub_grid_args.update attributes
-      sub_grid_args[:tag] = tag
       render_layer_obj = Layer.find self.render_layer
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
 
