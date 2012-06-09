@@ -93,7 +93,7 @@ class Grid
   end
   
   def bounds
-    if layers.empty?
+    if self.layers.empty?
       bounds = nil
     else
       node_bounds = self.layers.collect {|layer| layer.bounds}
@@ -232,6 +232,7 @@ class Grid
     
     if row_grid.children.size == 1
       subgrid        = row_grid.children.first
+      subgrid.style_layers = row_grid.style_layers
       subgrid.parent = self
       subgrid.grid_depth  = self.grid_depth + 1
       row_grid.delete
