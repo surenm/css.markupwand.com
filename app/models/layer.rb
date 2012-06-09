@@ -127,7 +127,7 @@ class Layer
   end
 
   def renderable_image?
-    !self.layer_object.nil? and self.layer_object.has_key? :renderImage and self.layer_object[:renderImage]
+    !self.layer_json.nil? and self.layer_json.has_key? :renderImage and self.layer_json[:renderImage]
   end
 
   def image_path
