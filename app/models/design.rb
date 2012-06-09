@@ -1,4 +1,3 @@
-require 'digest'
 require 'find'
 
 class Design
@@ -18,8 +17,6 @@ class Design
   field :name, :type => String
   field :psd_file_path, :type => String
   field :processed_file_path, :type => String
-  
-  field :hash, :type => String
   
   field :font_map, :type => Hash, :default => {}
   field :typekit_snippet, :type => String, :default => ""
@@ -44,21 +41,6 @@ class Design
     File.join self.store_key_prefix, 'generated'
   end
   
-  def self.create_from_upload(uploaded_file, user)
-    file_name     = uploaded_file.original_filename
-    file_contents = uploaded_file.read
-    file_hash     = Digest::MD5.hexdigest file_contents
-  
-    design      = Design.new :name => uploaded_file.original_filename, :hash => file_hash
-    design.user = user
-    design.save!
-    
-    file_key = File.join design.store_key_prefix, file_name
-    Store.write file_key, file_contents
-    design.psd_file_path = file_key
-    design.save!  
-  end
-  
   def attribute_data
     grids = self.grids.collect do |grid|
       grid.attribute_data
@@ -81,6 +63,14 @@ class Design
       :id            => self.safe_name
     }
   end
+  
+  def push_to_queue
+    self.status = Design::STATUS_PROCESSING
+    self.save!
+  
+    TaskQueue.push self.id.to_s
+  end
+  
 
   def parse_fonts(layers)
     design_fonts = PhotoshopItem::FontMap.new layers
