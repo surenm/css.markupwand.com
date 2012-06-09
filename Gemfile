@@ -40,6 +40,13 @@ gem 'sass-rails', '~> 3.2.4'
 gem 'twitter-bootstrap-rails'
 gem 'asset_sync'
 
+#Testing
+gem 'rspec-rails'
+group :test do
+  gem 'capybara'
+  gem 'factory_girl_rails', "~> 3.0"
+end
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do

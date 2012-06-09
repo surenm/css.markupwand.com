@@ -1,13 +1,13 @@
 class Utils
   def self.process_test_file
-    self.process_file '/tmp/mailgun.psd.json', true
+    self.process_file "#{PageGlobals.data_dir}/mailgun.psd.json", true
   end
   
   def self.process_file(file_name, profile = false)
     RubyProf.start if profile
     
     user = User.find_by_email 'bot@goyaka.com'
-    design = Design.new :processed_file_path => file_name
+    design = Design.new :processed_file_path => "#{PageGlobals.data_dir}/#{file_name}.psd.json"
     design.user = user
     design.save!
     design.parse
@@ -16,7 +16,7 @@ class Utils
     if profile
       result       = RubyProf.stop
       printer      = RubyProf::GraphHtmlPrinter.new(result)
-      profile_file = '/tmp/profile.html'
+      profile_file = "#{PageGlobals.data_dir}/profile.html"
       profile_html = File.new(profile_file, 'w+')
       printer.print(profile_html, {:min_percent => 10})
       profile_html.close

@@ -135,7 +135,7 @@ class DrawUtil
     Log.info "Drawing borders"
     canvas.border!(2, 2, "#000")
     
-    tmp_file = '/tmp/' + ['gridinspect-', Random.rand(10000).to_s(16) ,'.png'].join("")
+    tmp_file = PageGlobals.data_dir + ['gridinspect-', Random.rand(10000).to_s(16) ,'.png'].join("")
     @canvas.write(tmp_file)
     Log.info "Written to #{tmp_file}"
     system("open #{tmp_file}")

@@ -557,6 +557,8 @@ class Grid
       self.override_tag
     elsif self.root
       :body
+    elsif self.is_image_grid?
+      :img
     else
       :div
     end

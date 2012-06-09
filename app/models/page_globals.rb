@@ -8,6 +8,16 @@ class PageGlobals
   end
   
   public
+  def self.data_dir
+    @@data_dir ||= ENV['DATADIR']
+    @@data_dir ||= '/tmp'
+    return @@data_dir
+  end
+
+  def self.data_dir=(dir)
+    @@data_dir = dir
+  end
+
   def self.instance
     if @@instance.nil?
       @@instance = self.new()

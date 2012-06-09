@@ -251,7 +251,7 @@ class Layer
     css_class = class_name css, is_leaf, @is_root, grid
     
     tag = tag_name(is_leaf)
-    
+
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.kind == LAYER_TEXT
       inner_html = text
