@@ -172,13 +172,12 @@ class Layer
 
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
-    elsif self.kind == LAYER_SMARTOBJECT or renderable_image?
-      if not is_leaf
-        css[:background] = "url('../../#{image_path}') no-repeat"
-        css[:'background-size'] = "contain"
-        css[:width] = "#{self.bounds.width}px"
-        css[:height] = "#{self.bounds.height}px"
-      end
+    elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
+      #TODO Replace into a css parser function
+      css[:background] = "url('../../#{image_path}') no-repeat"
+      css[:'background-size'] = "contain"
+      css[:width] = "#{self.bounds.width}px"
+      css[:height] = "#{self.bounds.height}px"
       # don't do anything
     elsif self.kind == LAYER_SOLIDFILL
       css.update CssParser::parse_box self, grid
@@ -251,8 +250,8 @@ class Layer
     css       = args.fetch :css, {}
     css_class = class_name css, is_leaf, @is_root, grid
     
-    tag = args.fetch :tag, tag_name(is_leaf)
-
+    tag = tag_name(is_leaf)
+    
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.kind == LAYER_TEXT
       inner_html = text
