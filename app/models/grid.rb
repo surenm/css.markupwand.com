@@ -557,8 +557,6 @@ class Grid
       self.override_tag
     elsif self.root
       :body
-    elsif self.is_image_grid?
-      :img
     else
       :div
     end
@@ -622,7 +620,6 @@ class Grid
       
     else
       sub_grid_args.update attributes
-      sub_grid_args[:tag] = tag
       render_layer_obj = Layer.find self.render_layer
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
 
