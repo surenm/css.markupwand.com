@@ -461,14 +461,12 @@ class Grid
   end
   
   def is_single_line_text
-    if not self.render_layer.nil?
-      render_layer_obj = Layer.find self.render_layer
-      if render_layer_obj.kind == Layer::LAYER_TEXT and not render_layer_obj.has_newline?
+    if not self.render_layer.nil? and
+      not (Layer.find self.render_layer).has_newline?
         return true
-      end
+    else
+      return false
     end
-    
-    return false
   end
   
   # Width subtracted by padding
@@ -505,12 +503,10 @@ class Grid
   # TODO Find out if there is any case when width is set.
   
   def width_css(css)
-    if self.fit_to_grid and self.depth < 5 and not is_image_grid?
-      set_width_class
-    elsif not css.has_key? :width
-      if not is_single_line_text and unpadded_width != 0
+    if not css.has_key? :width and
+      not is_single_line_text and
+      unpadded_width != 0
         return {:width => unpadded_width.to_s + 'px'}
-      end
     end
     
     return {}
@@ -591,8 +587,7 @@ class Grid
     css_classes = []
     
     css_classes.push layers_style_class if not layers_style_class.nil?
-    css_classes.push "row" if self.orientation == Constants::GRID_ORIENT_LEFT
-    css_classes.push self.width_class if (not self.width_class.nil? and not is_image_grid?)
+    css_classes.push "clearfix" if self.orientation == Constants::GRID_ORIENT_LEFT
     
     css_class_string = css_classes.join " "
     
