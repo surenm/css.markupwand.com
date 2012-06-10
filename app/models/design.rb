@@ -206,19 +206,12 @@ HTML
 
     # Copy bootstrap to assets folder
     Log.info "Writing bootstrap files"
-    bootstrap_base_directory = Rails.root.join "app", "templates", "bootstrap", "docs"
-    bootstrap_templates_directory = bootstrap_base_directory.join "assets"
-    Find.find(bootstrap_templates_directory) do |file_name|
-      # don't do anything if its a directory, just skip
-      next if File.directory? file_name
-      
-      file_path     = Pathname.new file_name
-      relative_path = file_path.relative_path_from(bootstrap_base_directory).to_s
-      destination_path = File.join self.assets_root_path, relative_path
-      Store::copy_from_local file_path, destination_path
-    end
     
-    bootrap_override_css = Rails.root.join("app", "assets", "stylesheets", "lib", "bootstrap_override.css").to_s
+    bootrap_css = Rails.root.join("app", "templates", "bootstrap.css").to_s
+    target_css  = File.join self.assets_root_path, "assets", "css", "bootstrap_override.css"
+    Store.copy_from_local bootrap_css, target_css
+    
+    bootrap_override_css = Rails.root.join("app", "templates", "bootstrap_override.css").to_s
     target_css           = File.join self.assets_root_path, "assets", "css", "bootstrap_override.css"
     Store.copy_from_local bootrap_override_css, target_css
   end
