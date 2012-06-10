@@ -10,17 +10,17 @@ module TaskQueue
   def TaskQueue::push_to_SQS(message)
     queue = TaskQueue::get_queue
     queue.send_message message
-    Log.fatal "Pushed design #{message} to #{queue}"
+    Log.fatal "Pushed design: '#{message}' to #{queue}"
   end
   
-  def TaskQueue::poll_local(message)
+  def TaskQueue::parse_locally(message)
     #TODO: Extend script might be up and running. Poll it saying new design has arrived
-    Log.fatal "Polling local instance with message"
+    Log.fatal "Polling local photoshop with '#{message}'"
   end
   
   def TaskQueue::push(message)
     if Constants::store_local?
-      TaskQueue::poll_local message
+      TaskQueue::parse_locally message
     else
       TaskQueue::push_to_SQS message
     end
