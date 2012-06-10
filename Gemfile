@@ -16,6 +16,7 @@ gem 'xml-simple'
 gem 'log4r'
 gem 'rmagick'
 gem 'aws-sdk'
+gem 'resque'
 
 # monitoring and profiling
 gem 'newrelic_rpm'
@@ -62,4 +63,5 @@ group :development do
   gem 'ruby-prof'
   gem 'log4r-color'
   gem 'foreman'
+  gem 'redis'
 end
