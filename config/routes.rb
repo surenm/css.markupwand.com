@@ -32,7 +32,9 @@ TransformersWeb::Application.routes.draw do
   match 'design/:id'      => 'design#update', :via => :put
   match 'design/:id/edit' => 'design#edit'
   
-
+  # TODO: add admin authentication for Admin URL's 
+  mount Resque::Server.new, :at => "/resque"
+  
   # Main page redirects to index
   root :to => 'landing_page#index'
 end

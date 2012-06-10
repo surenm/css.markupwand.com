@@ -1,3 +1,5 @@
+require 'resque/server'
+
 config_file   = Rails.root.join "config", "resque.yml"
 resque_config = YAML.load_file(config_file)[Rails.env]
 
