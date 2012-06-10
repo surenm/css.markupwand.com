@@ -13,7 +13,7 @@ module Constants
 
   # Just the store location in the initializer. All other Store definition in Store library
   def Constants::store_remote?
-    return true if Rails.env.production? or ENV['UPLOAD_TO_AWS'] == "true"
+    return true if Rails.env.production? or ENV['REMOTE'] == "true"
     return false if Rails.env.development?
   end
   
