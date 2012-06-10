@@ -9,13 +9,23 @@ module TaskQueue
   
   def TaskQueue::push_to_SQS(message)
     queue = TaskQueue::get_queue
+
+    Log.info "Pushing design: '#{message}' to #{queue.url}..."
     queue.send_message message
-    Log.fatal "Pushed design: '#{message}' to #{queue}"
   end
   
   def TaskQueue::parse_locally(message)
-    #TODO: Extend script might be up and running. Poll it saying new design has arrived
-    Log.fatal "Polling local photoshop with '#{message}'"
+    Log.info "Polling local photoshop with '#{message}'..."
+    scripts_dir = File.join Constants::local_scripts_folder
+    if not Dir.exists? scripts_dir
+      Log.fatal "Scripts directory does not exists... Make sure to 'rake deploy' transformers"
+      return
+    end
+    
+    local_command = "cd '#{scripts_dir}' && rake handle_local_message['#{message}']"
+    Log.info local_command
+    system(local_command)    
+    
   end
   
   def TaskQueue::push(message)
