@@ -20,4 +20,11 @@ module Constants
   def Constants::store_local?
     !Constants::store_remote?
   end
+  
+  def Constants::local_scripts_folder
+    # shouldn't even come here if this is production
+    if Constants::store_local?
+      return File.join ENV['HOME'], "Library", "Application Support", "Transformers"
+    end
+  end
 end
