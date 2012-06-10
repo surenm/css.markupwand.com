@@ -59,10 +59,10 @@ module CssTextParser
   
   def CssTextParser::parse_text_align(layer)
     css = {}
-    paragraph_style = layer.extract_value(:textKey, :value, :paragraphStyleRange, :value)
+    paragraph_style = layer.layer_json.extract_value(:textKey, :value, :paragraphStyleRange, :value)
     align_code = paragraph_style.first.extract_value(:value, :paragraphStyle, :value, :align, :value) unless paragraph_style.nil? or paragraph_style.first.nil?
 
-    if !align_code.nil? and TEXT_ALIGN.has_key? align_code
+    if !align_code.nil? and TEXT_ALIGN.has_key? align_code and layer.has_newline?
       css[:'text-align'] = TEXT_ALIGN[align_code]
     end
     
