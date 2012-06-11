@@ -327,7 +327,7 @@ class Grid
             
         grid.positioned_layers = positioned_layers.map { |node| node.id.to_s }
         grid.save!
-        normal_layout_nodes = intersecting_nodes.select { |node| node.am_i_overlay != true }
+        normal_layout_nodes = (nodes_in_region - positioned_layers)
         
         return normal_layout_nodes
       end
