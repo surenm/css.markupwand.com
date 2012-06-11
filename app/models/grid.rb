@@ -214,6 +214,8 @@ class Grid
       available_nodes = process_row_grouping_box row_grouping_box, available_nodes
     end
     
+    Log.warn "Ignored nodes = #{available_nodes}" if available_nodes.length > 0
+    
     self.save!
   end
   
