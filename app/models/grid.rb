@@ -214,7 +214,13 @@ class Grid
       available_nodes = process_row_grouping_box row_grouping_box, available_nodes
     end
     
-    Log.warn "Ignored nodes = #{available_nodes}" if available_nodes.length > 0
+    Log.warn "Ignored nodes (#{available_nodes}) = #{available_nodes} in region #{self.bounds}" if available_nodes.length > 0
+    if available_nodes.length > 0
+      Log.error self.bounds
+      available_nodes.each do |_, node|
+        Log.info "#{node.bounds}"
+      end
+    end
     
     self.save!
   end
