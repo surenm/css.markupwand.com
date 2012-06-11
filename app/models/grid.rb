@@ -230,10 +230,10 @@ class Grid
     
     row_grid.save!
     
+    # Bug here. 
     if row_grid.children.size == 1 and
-      not row_grid.style_layers.empty? and
-      not is_padded_wrap?(row_grid)
-
+        not is_padded_wrap?(row_grid)
+      
       subgrid        = row_grid.children.first
       subgrid.parent = self
       subgrid.grid_depth  = self.grid_depth + 1
