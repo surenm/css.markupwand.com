@@ -235,9 +235,7 @@ class Grid
     row_grid.save!
     
     # Bug here. 
-    if row_grid.children.size == 1 and
-        not is_padded_wrap?(row_grid)
-      
+    if row_grid.children.size == 1 and row_grid.style_layers.length == 0
       subgrid        = row_grid.children.first
       subgrid.parent = self
       subgrid.grid_depth  = self.grid_depth + 1
@@ -464,12 +462,6 @@ class Grid
   # This function is for serializing bounding box and storing it.
   def offset_bounding_box= padding_bound_box;
     self.offset_box = padding_bound_box.serialize
-  end
-  
-  # Checks whether the current grid is a wrapping for a single child
-  # and the bounding boxes are not the same.
-  def is_padded_wrap?(grid_with_one_child)
-    grid_with_one_child.bounds != grid_with_one_child.children.first.bounds
   end
   
   def is_single_line_text
