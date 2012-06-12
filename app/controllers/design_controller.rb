@@ -1,5 +1,5 @@
 class DesignController < ApplicationController
-  before_filter :require_login
+  before_filter :require_login, :except => [:processed]
   
   private
   def get_design(readable_design_id)
@@ -73,5 +73,10 @@ class DesignController < ApplicationController
     
     # TODO: Backbone needs a collection to reset to. Find a correct way to do this
     @designs = Array[@design.attribute_data]
+  end
+  
+  def processed
+    #@design = get_design params[:design]
+    render :json => {}
   end
 end
