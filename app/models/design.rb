@@ -92,7 +92,10 @@ class Design
     ProcessingQueue.push message
   end
   
-
+  def push_to_generation_queue
+    Resque.enqueue MarkupGeneratorJob, self.id
+  end
+  
   def parse_fonts(layers)
     design_fonts = PhotoshopItem::FontMap.new layers
     

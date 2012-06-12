@@ -76,7 +76,8 @@ class DesignController < ApplicationController
   end
   
   def processed
-    #@design = get_design params[:design]
-    render :json => {}
+    design = get_design params[:design]
+    design.push_to_generation_queue
+    render :json => {:status => :success}
   end
 end
