@@ -8,11 +8,25 @@
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
   <%= yield :javascript %>
-  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="shortcut icon" href="/favicon.ico"/>
 </head>
 <body>
 <%= yield :content %>
 
+<script type='text/javascript'>
+  var __wtw_lucky_ref_id = 48969;
+  var __wtw_lucky_setup_key = {};
+  __wtw_lucky_setup_key.id = '3979';
+  __wtw_lucky_setup_key.key = 'z5HTv5WTCawynpXGUz25pjZVJBhmsZgz';
 
+  (function () {
+    var wa = document.createElement('script');
+    wa.type = 'text/javascript';
+    wa.async = true;
+    wa.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://ca195139') + '.luckyorange.com/w.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(wa, s);
+  })();
+</script>
 </body>
 </html>

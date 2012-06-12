@@ -1,6 +1,18 @@
 <%= content_for :content do %>
-<%= direct_upload_form_for @uploader do |f| %>
-  <%= f.file_field :file %>
-  <%= f.submit %>
-<% end %>
+  <%= render 'shared/header' %>
+  <div id="design-upload-page" class="container">
+    <div id="file-upload-form">
+      <%= direct_upload_form_for @uploader do |f| %>
+        <div id="file-select-zone">
+          <div id="file-selector">
+            [+] Click to select your photoshop file
+          </div>
+          <div id='file-input-enclosure'>
+            <%= f.file_field :file %>
+          </div>
+        </div>
+        <%= f.submit "Get HTML / CSS »", :id => "file-upload-submit" %>
+      <% end %>
+    </div>
+  </div>
 <% end %>
