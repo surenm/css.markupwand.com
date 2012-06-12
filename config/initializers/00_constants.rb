@@ -6,6 +6,9 @@ module Constants
   Constants::GRID_ORIENT_LEFT = 'left'
   Constants::GRID_ORIENT_NORMAL = 'normal'
   
+  # Queues:
+  Constants::PROCESSING_QUEUE = "markupwand-processing"
+  
   # Round to nearest 5
   def Constants::round_to_nearest_five(num)
     (((num + 5 )/5)-1)*5

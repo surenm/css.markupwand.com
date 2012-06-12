@@ -2,6 +2,16 @@ module ProcessingQueue
   if Constants::store_remote?
     ProcessingQueue::SQS = AWS::SQS.new
   end
+  
+  def ProcessingQueue::get_queue
+    queue_name = Constants::PROCESSING_QUEUE
+    begin
+      queue = ProcessingQueue::SQS.queues.named queue_name
+    rescue AWS::SQS::Errors::NonExistentQueue
+      queue = ProcessingQueue::SQS.queues.create queue_name
+    end
+    return queue
+  end
 
   def ProcessingQueue::push_to_SQS(message)
     queue = ProcessingQueue::get_queue
@@ -30,15 +40,5 @@ module ProcessingQueue
     else
       ProcessingQueue::push_to_SQS message
     end
-  end
-  
-  def ProcessingQueue::get_queue
-    queue_name = Constants::PROCESSING_QUEUE
-    begin
-      queue = ProcessingQueue::SQS.queues.named queue_name
-    rescue AWS::SQS::Errors::NonExistentQueue
-      queue = ProcessingQueue::SQS.queues.create queue_name
-    end
-    return queue
   end
 end

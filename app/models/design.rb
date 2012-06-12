@@ -85,7 +85,7 @@ class Design
     message[:user]   = self.user.email
     message[:design] = self.safe_name
     
-    TaskQueue.push message.to_json.to_s
+    ProcessingQueue.push message.to_json.to_s
   end
   
 
