@@ -52,6 +52,7 @@ class DesignController < ApplicationController
     design.psd_file_path = destination_file
     design.save!
     
+    design.set_status Design::STATUS_PROCESSING
     design.push_to_processing_queue processed_callback_url
     
     redirect_to :action => "index"
@@ -78,6 +79,8 @@ class DesignController < ApplicationController
   
   def processed
     design = get_design params[:design]
+    design.set_status Design::STATUS_PROCESSED
+    
     design.push_to_generation_queue
     render :json => {:status => :success}
   end

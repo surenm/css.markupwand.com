@@ -13,10 +13,12 @@ class Design
   Design::STATUS_QUEUED     = :queued
   Design::STATUS_PROCESSING = :processing
   Design::STATUS_PROCESSED  = :processed
+  Design::STATUS_GENERATING = :generating
+  Design::STATUS_COMPLETED  = :completed
 
   field :name, :type => String
   field :psd_file_path, :type => String
-  field :processed_file_path, :type => String
+  field :processed_file_path, :type => String, :default => nil
   
   field :font_map, :type => Hash, :default => {}
   field :typekit_snippet, :type => String, :default => ""
@@ -63,6 +65,11 @@ class Design
       :layers        => layers.values,
       :id            => self.safe_name
     }
+  end
+  
+  def set_status(status)
+    self.status = status
+    self.save!
   end
   
   def push_to_processing_queue(callback_url)
