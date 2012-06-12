@@ -64,11 +64,13 @@ class Design
     }
   end
   
-  def push_to_queue
+  def push_to_queue(callback_url)
     self.status = Design::STATUS_PROCESSING
     self.save!
     
     message = Hash.new
+
+    message[:callback_uri] = callback_url
 
     if Constants::store_remote?
       message[:location] = "remote"
@@ -85,7 +87,9 @@ class Design
     message[:user]   = self.user.email
     message[:design] = self.safe_name
     
-    ProcessingQueue.push message.to_json.to_s
+    # message will be something like "remote store_production callback_url bot@goyaka.com test_psd_#{design_mongo_id}"
+    message = "#{message[:location]} #{message[:bucket]} #{message[:callback_uri]} #{message[:user]} #{message[:design]}"
+    ProcessingQueue.push message
   end
   
 

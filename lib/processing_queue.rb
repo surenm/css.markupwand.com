@@ -28,7 +28,7 @@ module ProcessingQueue
       return
     end
     
-    local_command = "cd '#{scripts_dir}' && rake handle_local_message['#{message}']"
+    local_command = "cd '#{scripts_dir}' && rake --trace handle_local_message['#{message}']"
     Log.info local_command
     system(local_command)    
     
