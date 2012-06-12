@@ -119,9 +119,10 @@ module Store
   
   def Store::fetch_from_local_store(remote_folder)
     local_store  = Store::get_local_store
-    local_folder = Rails.root.join 'tmp', 'store'
+
+    tmp_folder = Rails.root.join 'tmp', 'store', remote_folder
     
-    Log.info "Fetching #{remote_folder} from local store #{local_store} to #{local_folder}..."
+    Log.info "Fetching #{remote_folder} from local store #{local_store} to #{tmp_folder}..."
 
     absolute_remote_folder_path = File.join local_store, remote_folder
     files = Dir["#{absolute_remote_folder_path}/**/*"]
@@ -131,7 +132,7 @@ module Store
       file_pathname  = Pathname.new file
       store_file_key = file_pathname.relative_to(Pathname.new remote_folder)
       
-      absolute_destination_file = File.join local_folder, store_file_key
+      absolute_destination_file = File.join tmp_folder.to_s, store_file_key
       Log.info "Fetching #{store_file_key} from local store to #{absolute_destination_file}"
       Store::write_contents_to_local_file absolute_destination_file, contents
     end   
