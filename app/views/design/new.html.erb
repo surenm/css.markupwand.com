@@ -8,7 +8,7 @@
             [+] Click to select your photoshop file
           </div>
           <div id='file-input-enclosure'>
-            <%= f.file_field :file %>
+            <%= f.file_field :file, :id=>"design_file" %>
           </div>
         </div>
         <%= f.submit "Get HTML / CSS »", :id => "file-upload-submit" %>
