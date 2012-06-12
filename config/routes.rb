@@ -21,16 +21,20 @@ TransformersWeb::Application.routes.draw do
   match 'designs'         => 'design#index'
 
   if Constants::store_remote?
-    match 'design/new'      => 'design#new'
-    match 'design/uploaded' => 'design#uploaded', :as => :upload_callback
+    match 'design/new'       => 'design#new'
+    match 'design/uploaded'  => 'design#uploaded', :as => :upload_callback
   else
     match 'design/new'      => 'design#local_new'
     match 'design/uploaded' => 'design#local_uploaded', :as => :upload_callback
   end
   
-  match 'design/:id'      => 'design#show', :via => :get
-  match 'design/:id'      => 'design#update', :via => :put
-  match 'design/:id/edit' => 'design#edit'
+  # photoshop machines will ping back on this url
+  match 'design/processed' => 'design#processed'
+
+  # get, put and edit designs
+  match 'design/:id'       => 'design#show', :via => :get
+  match 'design/:id'       => 'design#update', :via => :put
+  match 'design/:id/edit'  => 'design#edit'
   
   # TODO: add admin authentication for Admin URL's 
   mount Resque::Server.new, :at => "/resque"
