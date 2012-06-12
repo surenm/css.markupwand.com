@@ -102,7 +102,7 @@ module Store
   end
   
   def Store::fetch_from_remote_store(remote_folder)
-    remote_bucket = Store::get_remote_store
+    bucket = Store::get_remote_store
     local_folder  = Rails.root.join 'tmp', 'store'
     
     Log.info "Fetching #{remote_folder} from Remote store #{bucket} to #{local_folder}..."
