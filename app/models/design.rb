@@ -199,7 +199,7 @@ HTML
     html_file_name = File.join self.assets_root_path, 'index.html'
 
     Log.info "Saving resultant HTML file #{html_file_name}"    
-    Store.write html_file_name, html_content
+    Store.write_contents_to_store html_file_name, html_content
 
     # Programatically do this so that it works on heroku
     #Log.info "Tidying up the html..."
@@ -212,7 +212,7 @@ HTML
     # Write style.css file
     css_path = File.join self.assets_root_path, "assets", "css"
     css_file_name = File.join css_path, "style.css"
-    Store.write css_file_name, css_content
+    Store.write_contents_to_store css_file_name, css_content
 
     # Copy bootstrap to assets folder
     Log.info "Writing bootstrap files..."
