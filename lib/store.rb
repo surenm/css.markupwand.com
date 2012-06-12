@@ -126,11 +126,14 @@ module Store
 
     absolute_remote_folder_path = File.join local_store, remote_folder
     files = Dir["#{absolute_remote_folder_path}/**/*"]
+    Log.debug files
     files.each do |file|
-      contents = File.read file
+      next if File.directory? file
 
+      contents = File.read file
+      
       file_pathname  = Pathname.new file
-      store_file_key = file_pathname.relative_to(Pathname.new remote_folder)
+      store_file_key = file_pathname.relative_path_from(Pathname.new absolute_remote_folder_path)
       
       absolute_destination_file = File.join tmp_folder.to_s, store_file_key
       Log.info "Fetching #{store_file_key} from local store to #{absolute_destination_file}"
