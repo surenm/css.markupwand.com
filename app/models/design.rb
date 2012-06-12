@@ -67,23 +67,25 @@ class Design
   def push_to_queue
     self.status = Design::STATUS_PROCESSING
     self.save!
+    
+    message = Hash.new
 
     if Constants::store_remote?
-      store_location = "remote"
+      message[:location] = "remote"
       if Rails.env.production? 
-        bucket = "store_production"
+        message[:bucket] = "store_production"
       else 
-        bucket = "store_development"
+        message[:bucket] = "store_development"
       end
     else 
-      store_location = "local"
-      bucket = "store"
+      message[:location] = "local"
+      message[:bucket]   = "store"
     end
     
-    # message will be something like "remote store_production bot@goyaka.com test_psd_#{design_mongo_id}" 
-    # Assumption: None of them would have spaces in them
-    message = "#{store_location} #{bucket} #{self.user.email} #{self.safe_name}"
-    TaskQueue.push message
+    message[:user]   = self.user.email
+    message[:design] = self.safe_name
+    
+    TaskQueue.push message.to_json.to_s
   end
   
 
