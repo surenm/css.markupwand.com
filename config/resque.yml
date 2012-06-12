@@ -1,5 +1,5 @@
 development:
-  redis_uri: localhost:6379
+  redis_uri: "redis://localhost:6379"
 
 production:
   redis_uri: <%= ENV['REDISTOGO_URL'] %>
