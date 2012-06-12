@@ -64,7 +64,7 @@ class Design
     }
   end
   
-  def push_to_queue(callback_url)
+  def push_to_processing_queue(callback_url)
     self.status = Design::STATUS_PROCESSING
     self.save!
     
