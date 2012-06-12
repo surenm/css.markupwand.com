@@ -215,14 +215,14 @@ HTML
     Store.write css_file_name, css_content
 
     # Copy bootstrap to assets folder
-    Log.info "Writing bootstrap files"
+    Log.info "Writing bootstrap files..."
     
     bootrap_css = Rails.root.join("app", "templates", "bootstrap.css").to_s
     target_css  = File.join self.assets_root_path, "assets", "css", "bootstrap_override.css"
-    Store.copy_from_local bootrap_css, target_css
+    Store.save_to_store bootrap_css, target_css
     
     bootrap_override_css = Rails.root.join("app", "templates", "bootstrap_override.css").to_s
     target_css           = File.join self.assets_root_path, "assets", "css", "bootstrap_override.css"
-    Store.copy_from_local bootrap_override_css, target_css
+    Store.save_to_store bootrap_override_css, target_css
   end
 end
