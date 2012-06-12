@@ -249,7 +249,7 @@ module CssParser
     destination_file = File.join CssParser::get_assets_root, "img", image_file_name
 
     # TODO: as processed image file directory changes to Store, this changes to Store:copy
-    Store::copy_from_local src_image_file, destination_file
+    Store::save_to_store src_image_file, destination_file
 
     return File.join "./assets", "img", image_file_name
   end

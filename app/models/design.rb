@@ -13,15 +13,18 @@ class Design
   Design::STATUS_QUEUED     = :queued
   Design::STATUS_PROCESSING = :processing
   Design::STATUS_PROCESSED  = :processed
+  Design::STATUS_GENERATING = :generating
+  Design::STATUS_COMPLETED  = :completed
 
   field :name, :type => String
   field :psd_file_path, :type => String
-  field :processed_file_path, :type => String
+  field :processed_file_path, :type => String, :default => nil
   
   field :font_map, :type => Hash, :default => {}
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
   field :status, :type => String, :default => Design::STATUS_QUEUED
+  field :storage, :type => String, :default => "local"
 
   mount_uploader :file, DesignUploader
   
@@ -64,29 +67,43 @@ class Design
     }
   end
   
-  def push_to_queue
-    self.status = Design::STATUS_PROCESSING
+  def set_status(status)
+    self.status = status
     self.save!
-
-    if Constants::store_remote?
-      store_location = "remote"
-      if Rails.env.production? 
-        bucket = "store_production"
-      else 
-        bucket = "store_development"
-      end
-    else 
-      store_location = "local"
-      bucket = "store"
-    end
-    
-    # message will be something like "remote store_production bot@goyaka.com test_psd_#{design_mongo_id}" 
-    # Assumption: None of them would have spaces in them
-    message = "#{store_location} #{bucket} #{self.user.email} #{self.safe_name}"
-    TaskQueue.push message
   end
   
+  def push_to_processing_queue(callback_url)
+    self.status = Design::STATUS_PROCESSING
+    self.save!
+    
+    message = Hash.new
 
+    message[:callback_uri] = callback_url
+
+    if Constants::store_remote?
+      message[:location] = "remote"
+      if Rails.env.production? 
+        message[:bucket] = "store_production"
+      else 
+        message[:bucket] = "store_development"
+      end
+    else 
+      message[:location] = "local"
+      message[:bucket]   = "store"
+    end
+    
+    message[:user]   = self.user.email
+    message[:design] = self.safe_name
+    
+    # message will be something like "remote store_production callback_url bot@goyaka.com test_psd_#{design_mongo_id}"
+    message = "#{message[:location]} #{message[:bucket]} #{message[:callback_uri]} #{message[:user]} #{message[:design]}"
+    ProcessingQueue.push message
+  end
+  
+  def push_to_generation_queue
+    Resque.enqueue MarkupGeneratorJob, self.id
+  end
+  
   def parse_fonts(layers)
     design_fonts = PhotoshopItem::FontMap.new layers
     
@@ -120,6 +137,11 @@ HTML
   
   # Parses the photoshop file json data and decomposes into grids
   def parse
+    if self.processed_file_path.nil? or self.processed_file_path.empty?
+      Log.fatal "Processed file not specified"
+      exit
+    end
+    
     Log.info "Beginning to process #{self.processed_file_path}..."
     
     # Set the name of the design
@@ -189,7 +211,7 @@ HTML
     html_file_name = File.join self.assets_root_path, 'index.html'
 
     Log.info "Saving resultant HTML file #{html_file_name}"    
-    Store.write html_file_name, html_content
+    Store.write_contents_to_store html_file_name, html_content
 
     # Programatically do this so that it works on heroku
     #Log.info "Tidying up the html..."
@@ -202,24 +224,17 @@ HTML
     # Write style.css file
     css_path = File.join self.assets_root_path, "assets", "css"
     css_file_name = File.join css_path, "style.css"
-    Store.write css_file_name, css_content
+    Store.write_contents_to_store css_file_name, css_content
 
     # Copy bootstrap to assets folder
-    Log.info "Writing bootstrap files"
-    bootstrap_base_directory = Rails.root.join "app", "templates", "bootstrap", "docs"
-    bootstrap_templates_directory = bootstrap_base_directory.join "assets"
-    Find.find(bootstrap_templates_directory) do |file_name|
-      # don't do anything if its a directory, just skip
-      next if File.directory? file_name
-      
-      file_path     = Pathname.new file_name
-      relative_path = file_path.relative_path_from(bootstrap_base_directory).to_s
-      destination_path = File.join self.assets_root_path, relative_path
-      Store::copy_from_local file_path, destination_path
-    end
+    Log.info "Writing bootstrap files..."
     
-    bootrap_override_css = Rails.root.join("app", "assets", "stylesheets", "lib", "bootstrap_override.css").to_s
+    bootrap_css = Rails.root.join("app", "templates", "bootstrap.css").to_s
+    target_css  = File.join self.assets_root_path, "assets", "css", "bootstrap_override.css"
+    Store.save_to_store bootrap_css, target_css
+    
+    bootrap_override_css = Rails.root.join("app", "templates", "bootstrap_override.css").to_s
     target_css           = File.join self.assets_root_path, "assets", "css", "bootstrap_override.css"
-    Store.copy_from_local bootrap_override_css, target_css
+    Store.save_to_store bootrap_override_css, target_css
   end
 end
