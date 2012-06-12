@@ -55,7 +55,10 @@ class Layer
   end
   
   def has_newline?
-    if layer_json.has_key? :textKey and layer_json[:textKey][:value].has_key? :textKey
+    if self.kind == Layer::LAYER_TEXT and 
+      layer_json.has_key? :textKey and
+      layer_json.extract_value(:textKey, :value).has_key? :textKey
+      
       string_data = layer_json[:textKey][:value][:textKey][:value]
       (string_data =~ /\r/) or (string_data =~ /\n/)
     else      

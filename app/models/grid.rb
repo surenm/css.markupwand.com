@@ -60,6 +60,8 @@ class Grid
     @@grouping_queue.push self if self.root?
   end
   
+  def inspect; to_s; end
+  
   def to_s
     "Grid #{self.layers.to_a}, Style Layers: #{self.style_layers.to_a}"
   end
@@ -93,7 +95,7 @@ class Grid
   end
   
   def bounds
-    if layers.empty?
+    if self.layers.empty?
       bounds = nil
     else
       node_bounds = self.layers.collect {|layer| layer.bounds}
@@ -137,7 +139,7 @@ class Grid
     if self.layers.size > 1
       get_subgrids
     elsif self.layers.size == 1
-      Log.debug "Just one layer #{self.layers.first} is available. Adding to the grid"
+      Log.info "Just one layer #{self.layers.first} is available. Adding to the grid"
       self.render_layer = self.layers.first.id.to_s
     end
     self.save!
@@ -166,7 +168,7 @@ class Grid
     grid_style_layers.flatten!
     grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
 
-    Log.debug "Deleting #{style_layers} from grid" if style_layers.size > 0
+    Log.info "Deleting #{style_layers} from grid" if style_layers.size > 0
     grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
 
     return available_layers
@@ -193,11 +195,11 @@ class Grid
   end
 
   def get_subgrids
-    Log.debug "Getting subgrids (#{self.layers.length} layers in this grid)"
+    Log.info "Getting subgrids (#{self.layers.length} layers in this grid)"
     
     # Some root grouping of nodes to recursive add as children
     root_grouping_box = BoundingBox.get_grouping_boxes self.layers
-    Log.debug "Trying Root grouping box: #{root_grouping_box}"
+    Log.info "Trying Root grouping box: #{root_grouping_box}"
 
     # list of layers in this grid
     available_nodes = Hash[self.layers.collect { |item| [item.uid, item] }]
@@ -212,11 +214,19 @@ class Grid
       available_nodes = process_row_grouping_box row_grouping_box, available_nodes
     end
     
+    Log.warn "Ignored nodes (#{available_nodes}) = #{available_nodes} in region #{self.bounds}" if available_nodes.length > 0
+    if available_nodes.length > 0
+      Log.error self.bounds
+      available_nodes.each do |_, node|
+        Log.info "#{node.bounds}"
+      end
+    end
+    
     self.save!
   end
   
   def process_row_grouping_box(row_grouping_box, available_nodes)
-    Log.debug "Trying row grouping box: #{row_grouping_box}"
+    Log.info "Trying row grouping box: #{row_grouping_box}"
     
     row_grid       = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT
     row_grid.grid_depth = self.grid_depth + 1
@@ -230,7 +240,8 @@ class Grid
     
     row_grid.save!
     
-    if row_grid.children.size == 1
+    # Bug here. 
+    if row_grid.children.size == 1 and row_grid.style_layers.length == 0
       subgrid        = row_grid.children.first
       subgrid.parent = self
       subgrid.grid_depth  = self.grid_depth + 1
@@ -316,18 +327,18 @@ class Grid
             
         grid.positioned_layers = positioned_layers.map { |node| node.id.to_s }
         grid.save!
-        normal_layout_nodes = intersecting_nodes.select { |node| node.am_i_overlay != true }
+        normal_layout_nodes = (nodes_in_region - positioned_layers)
         
         return normal_layout_nodes
       end
     else
-      Log.error "No intersecting node found, and no nodes reduced as well"
+      Log.info "No intersecting node found, and no nodes reduced as well"
       return nodes_in_region
     end
   end
   
   def process_grouping_box(row_grid, grouping_box, available_nodes)
-    Log.debug "Trying grouping box: #{grouping_box}"
+    Log.info "Trying grouping box: #{grouping_box}"
 
     nodes_in_region = BoundingBox.get_objects_in_region grouping_box, available_nodes.values, :bounds
     
@@ -460,14 +471,12 @@ class Grid
   end
   
   def is_single_line_text
-    if not self.render_layer.nil?
-      render_layer_obj = Layer.find self.render_layer
-      if render_layer_obj.kind == Layer::LAYER_TEXT and not render_layer_obj.has_newline?
+    if not self.render_layer.nil? and
+      not (Layer.find self.render_layer).has_newline?
         return true
-      end
+    else
+      return false
     end
-    
-    return false
   end
   
   # Width subtracted by padding
@@ -504,12 +513,10 @@ class Grid
   # TODO Find out if there is any case when width is set.
   
   def width_css(css)
-    if self.fit_to_grid and self.depth < 5 and not is_image_grid?
-      set_width_class
-    elsif not css.has_key? :width
-      if not is_single_line_text and unpadded_width != 0
+    if not css.has_key? :width and
+      not is_single_line_text and
+      unpadded_width != 0
         return {:width => unpadded_width.to_s + 'px'}
-      end
     end
     
     return {}
@@ -590,8 +597,7 @@ class Grid
     css_classes = []
     
     css_classes.push layers_style_class if not layers_style_class.nil?
-    css_classes.push "row" if self.orientation == Constants::GRID_ORIENT_LEFT
-    css_classes.push self.width_class if (not self.width_class.nil? and not is_image_grid?)
+    css_classes.push "clearfix" if self.orientation == Constants::GRID_ORIENT_LEFT
     
     css_class_string = css_classes.join " "
     

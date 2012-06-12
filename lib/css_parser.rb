@@ -115,7 +115,7 @@ module CssParser
     css.update(parse_opacity(layer_json))
     
     # Alignment
-    css.update(CssTextParser::parse_text_align(layer_json))
+    css.update(CssTextParser::parse_text_align(layer))
 
     # Color
     css.update(CssTextParser::parse_text_color(text_style))

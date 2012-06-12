@@ -247,8 +247,8 @@ class BoundingBox
     # Get the vertical and horizontal gutters at this level
     vertical_gutters   = BoundingBox.get_vertical_gutters bounding_boxes
     horizontal_gutters = BoundingBox.get_horizontal_gutters bounding_boxes
-    Log.debug "Vertical Gutters: #{vertical_gutters}"
-    Log.debug "Horizontal Gutters: #{horizontal_gutters}"
+    Log.info "Vertical Gutters: #{vertical_gutters}"
+    Log.info "Horizontal Gutters: #{horizontal_gutters}"
 
     # if empty gutters, then there probably is no children here.
     # TODO: Find out if this even happens?
@@ -279,8 +279,7 @@ class BoundingBox
       end
       root_group.push row_group
     end
-
-    Log.debug root_group
+    
     return root_group
   end
   
