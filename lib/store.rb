@@ -142,7 +142,7 @@ module Store
     if Constants::store_remote?
       Store::fetch_from_remote_store remote_folder
     else 
-      Store::fetch_from_local_store local_folder
+      Store::fetch_from_local_store remote_folder
     end
   end
 end
