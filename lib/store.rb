@@ -4,14 +4,14 @@ module Store
     Store::S3 = AWS::S3.new
   end
   
-  Store::LOCAL_STORE = File.join Dir.home, "store"
+  Store::LOCAL_STORE = File.join Dir.home, "store_local"
   
-  def Store::get_s3_bucket_name
+  def Store::get_S3_bucket_name
     "store_#{Rails.env}"
   end
   
-  def Store::get_S3_store
-    bucket_name = Store::get_s3_bucket_name
+  def Store::get_remote_store
+    bucket_name = Store::get_S3_bucket_name
     bucket = Store::S3.buckets[bucket_name]
     if not bucket.exists?
       bucket = Store::S3.buckets.create bucket_name
@@ -24,80 +24,124 @@ module Store
     if not Dir.exists? root_dir
       Dir.mkdir root_dir
     end
+    
     root_dir
   end
   
-  def Store::write_to_S3(file_key, file_contents)
-    s3_bucket = Store::get_S3_store
-    fptr = s3_bucket.objects[file_key]
-    fptr.write file_contents
-  end
+  def Store::write_contents_to_local_file(file_path, file_contents)
+    file_dir = File.dirname file_path
   
-  def Store::write_to_local(file_key, file_contents)
-    local_store = Store::get_local_store
-    file_path   = File.join local_store, file_key
-    file_dir    = File.dirname file_path
-    if not Dir.exists? file_dir
-      FileUtils.mkdir_p file_dir
-    end
+    FileUtils.mkdir_p file_dir  if not Dir.exists? file_dir
     
     fptr = File.open file_path, 'wb'
     fptr.write file_contents
     fptr.close
   end
   
-  def Store::write(file_key, file_contents)
+  def Store::write_contents_to_remote_store(file_key, file_contents)
+    s3_bucket = Store::get_remote_store
+
+    fptr = s3_bucket.objects[file_key]
+    fptr.write file_contents
+  end
+  
+  def Store::write_contents_to_local_store(file_key, file_contents)
+    local_store = Store::get_local_store
+    file_path   = File.join local_store, file_key
+    Store::write_contents_to_local_file file_path, file_contents
+  end
+  
+  def Store::write_contents_to_store(file_key, file_contents)
     if Constants::store_remote?
-      Store::write_to_S3 file_key, file_contents
+      Store::write_contents_to_remote_store file_key, file_contents
     else 
-      Store::write_to_local file_key, file_contents
+      Store::write_contents_to_local_store file_key, file_contents
     end
   end
   
-  def Store::copy_within_local(src_file, destination_file)
-    local_store     = Store::get_local_store
+  def Store::copy_within_local_store(src_path, destination_path)
+    local_store = Store::get_local_store
+    
+    abs_src_file = File.join local_store, src_path
 
-    abs_destination_file = File.join local_store, destination_file
+    abs_destination_file = File.join local_store, destination_path
     abs_destination_dir  = File.dirname abs_destination_file
     if not Dir.exists? abs_destination_dir
       FileUtils.mkdir_p abs_destination_dir
     end
     
-    FileUtils.cp src_file, abs_destination_file
+    FileUtils.cp abs_src_file, abs_destination_file
   end
   
-  def Store::copy_within_S3(src_file, destination_file)
-    s3_bucket     = Store::get_S3_store
-    src_object    = s3_bucket.objects[src_file]
-    file_basename = File.basename src_file
+  def Store::copy_within_remote_store(src_path, destination_path)
+    s3_bucket = Store::get_remote_store
 
-    destination_object = s3_bucket.objects[destination_file]
+    source_object      = s3_bucket.objects[src_path]
+    destination_object = s3_bucket.objects[destination_path]
 
-    if src_object.exists?
-      src_object.copy_to destination_object
+    if source_object.exists?
+      source_object.copy_to destination_object
     end    
   end
   
-  def Store::copy_from_local_to_S3(src_file, destination_file)
-    src_fptr = File.open src_file
-    local_file_contents = src_fptr.read
-    src_fptr.close()
-    Store::write_to_S3 destination_file, local_file_contents
-  end
-  
-  def Store::copy(src_file_path, destination_file_path)
+  def Store::copy_within_store(src_file_path, destination_file_path)
     if Constants::store_remote?
-      Store::copy_within_S3 src_file_path, destination_file_path
+      Store::copy_within_remote_store src_file_path, destination_file_path
     else 
-      Store::copy_within_local src_file_path, destination_file_path
+      Store::copy_within_local_store src_file_path, destination_file_path
+    end
+  end
+    
+  def Store::save_to_store(src_file_path, destination_file_path)
+    src_file_contents = File.read src_file_path
+    if Constants::store_remote?
+      Store::write_contents_to_remote_store destination_file_path, src_file_contents
+    else 
+      Store::write_contents_to_local_store destination_file_path, src_file_contents
     end
   end
   
-  def Store::copy_from_local(src_file_path, destination_file_path)
+  def Store::fetch_from_remote_store(remote_folder)
+    remote_bucket = Store::get_remote_store
+    local_folder  = Rails.root.join 'tmp', 'store'
+    
+    Log.info "Fetching #{remote_folder} from Remote store #{bucket} to #{local_folder}..."
+
+    files = bucket.objects.with_prefix remote_folder
+    files.each do |file|
+      contents = file.read
+      absolute_destination_file = File.join local_folder, file.key
+      
+      Log.info "Fetching #{file.key} from Remote store to #{absolute_destination_file}"
+      Store::write_contents_to_local_file absolute_destination_file, contents
+    end
+  end
+  
+  def Store::fetch_from_local_store(remote_folder)
+    local_store  = Store::get_local_store
+    local_folder = Rails.root.join 'tmp', 'store'
+    
+    Log.info "Fetching #{remote_folder} from local store #{local_store} to #{local_folder}..."
+
+    absolute_remote_folder_path = File.join local_store, remote_folder
+    files = Dir["#{absolute_remote_folder_path}/**/*"]
+    files.each do |file|
+      contents = File.read file
+
+      file_pathname  = Pathname.new file
+      store_file_key = file_pathname.relative_to(Pathname.new remote_folder)
+      
+      absolute_destination_file = File.join local_folder, store_file_key
+      Log.info "Fetching #{store_file_key} from local store to #{absolute_destination_file}"
+      Store::write_contents_to_local_file absolute_destination_file, contents
+    end   
+  end
+  
+  def Store::fetch_from_store(remote_folder)
     if Constants::store_remote?
-      Store::copy_from_local_to_S3 src_file_path, destination_file_path
+      Store::fetch_from_remote_store remote_folder
     else 
-      Store::copy_within_local src_file_path, destination_file_path
+      Store::fetch_from_local_store local_folder
     end
   end
 end
