@@ -22,6 +22,7 @@ class Design
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
   field :status, :type => String, :default => Design::STATUS_QUEUED
+  field :storage, :type => String, :default => "local"
 
   mount_uploader :file, DesignUploader
   

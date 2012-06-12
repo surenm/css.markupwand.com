@@ -25,7 +25,7 @@ class DesignController < ApplicationController
     source_file = params[:key]
     file_name = File.basename source_file
 
-    design = Design.new :name => file_name
+    design = Design.new :name => file_name, :store => Store::get_S3_bucket_name
     design.user = @user
     
     destination_file = File.join design.store_key_prefix, file_name
