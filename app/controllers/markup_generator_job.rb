@@ -19,6 +19,6 @@ class MarkupGeneratorJob
     
     design.parse
     design.generate_markup
-    design.setstatus Design::STATUS_COMPLETED
+    design.set_status Design::STATUS_COMPLETED
   end
 end
