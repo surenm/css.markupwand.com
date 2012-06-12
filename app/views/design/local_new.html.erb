@@ -1,12 +1,19 @@
 <%= content_for :content do %>
   <%= render 'shared/header' %>
-  <div class="container">
-    <%= form_for @design, :url => :upload_callback, :html => {:multipart => true} do |f| %>
-      <p>
-        <%= f.file_field :file %>
-        <%= f.hidden_field :file_cache %>
-        <%= f.submit "done" %>
-      </p>
-    <% end %>
+  <div id="design-upload-page" class="container">
+    <div id="file-upload-form">
+      <%= form_for @design, :url => :upload_callback, :html => {:multipart => true} do |f| %>
+        <div id="file-select-zone">
+          <div id="file-selector">
+            [+] Click to select your photoshop file
+          </div>
+          <div id='file-input-enclosure'>
+            <%= f.file_field :file %>
+            <%= f.hidden_field :file_cache %>
+          </div>
+        </div>
+        <%= f.submit "Get HTML / CSS »", :id => "file-upload-submit" %>
+      <% end %>
+    </div>
   </div>
 <% end %>
