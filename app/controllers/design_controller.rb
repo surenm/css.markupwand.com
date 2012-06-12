@@ -28,8 +28,9 @@ class DesignController < ApplicationController
     design = Design.new :name => file_name, :store => Store::get_S3_bucket_name
     design.user = @user
     
+    
     destination_file = File.join design.store_key_prefix, file_name
-    Store.copy_within_S3 source_file, destination_file
+    Store.copy_within_remote_store source_file, destination_file
     
     design.psd_file_path = destination_file
     design.save!
@@ -46,7 +47,7 @@ class DesignController < ApplicationController
     design.save!
 
     destination_file = File.join design.store_key_prefix, file_name
-    Store.copy_within_local design.file.current_path, destination_file
+    Store.save_to_store design.file.current_path, destination_file
     
     design.psd_file_path = destination_file
     design.save!
