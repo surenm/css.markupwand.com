@@ -1,20 +1,16 @@
-module TaskQueue
+module ProcessingQueue
   if Constants::store_remote?
-    TaskQueue::SQS = AWS::SQS.new
+    ProcessingQueue::SQS = AWS::SQS.new
   end
-  
-  def TaskQueue::get_queue_name
-    "markupwand_#{Rails.env}"
-  end
-  
-  def TaskQueue::push_to_SQS(message)
-    queue = TaskQueue::get_queue
+
+  def ProcessingQueue::push_to_SQS(message)
+    queue = ProcessingQueue::get_queue
 
     Log.info "Pushing design: '#{message}' to #{queue.url}..."
     queue.send_message message
   end
   
-  def TaskQueue::parse_locally(message)
+  def ProcessingQueue::parse_locally(message)
     Log.info "Polling local photoshop with '#{message}'..."
     scripts_dir = File.join Constants::local_scripts_folder
     if not Dir.exists? scripts_dir
@@ -28,20 +24,20 @@ module TaskQueue
     
   end
   
-  def TaskQueue::push(message)
+  def ProcessingQueue::push(message)
     if Constants::store_local?
-      TaskQueue::parse_locally message
+      ProcessingQueue::parse_locally message
     else
-      TaskQueue::push_to_SQS message
+      ProcessingQueue::push_to_SQS message
     end
   end
   
-  def TaskQueue::get_queue
-    queue_name = TaskQueue::get_queue_name
+  def ProcessingQueue::get_queue
+    queue_name = Constants::PROCESSING_QUEUE
     begin
-      queue = TaskQueue::SQS.queues.named queue_name
+      queue = ProcessingQueue::SQS.queues.named queue_name
     rescue AWS::SQS::Errors::NonExistentQueue
-      queue = TaskQueue::SQS.queues.create queue_name
+      queue = ProcessingQueue::SQS.queues.create queue_name
     end
     return queue
   end
