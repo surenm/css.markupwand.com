@@ -90,13 +90,12 @@ class DesignController < ApplicationController
     
     # ACL logic - if the current user is not owner of this design, redirect
     redirect_to :action => index if @user != design.user
-    
-    # Fetch contents to temp folder if not already there
-    temp_folder = File.join Rails.root.to_s, "tmp", "store", design.store_generated_key
-    Store::fetch_from_store design.store_generated_key if not Dir.exists? temp_folder
+
+    remote_file = design.store_generated_key, "#{params[:uri]}.#{params[:ext]}"
+    temp_file   = Store::fetch_object_from_store remote_file
     
     # Send the fetched file
-    send_file File.join(temp_folder, "#{params[:uri]}.#{params[:ext]}"), :disposition => 'inline'
+    send_file temp_file, :disposition => 'inline'
   end
   
 end
