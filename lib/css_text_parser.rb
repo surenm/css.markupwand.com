@@ -26,7 +26,7 @@ module CssTextParser
   end
   
   def CssTextParser::parse_font_style(font_item)
-    font_modifier = font_item[:fontStyleName][:value]
+    font_modifier = font_item.extract_value(:fontStyleName, :value)
     font_modifier_css = {}
     
     if not FONT_WEIGHT[font_modifier].nil?
