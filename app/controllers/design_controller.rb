@@ -91,7 +91,7 @@ class DesignController < ApplicationController
     # ACL logic - if the current user is not owner of this design, redirect
     redirect_to :action => index if @user != design.user
 
-    remote_file = design.store_generated_key, "#{params[:uri]}.#{params[:ext]}"
+    remote_file = File.join design.store_generated_key, "#{params[:uri]}.#{params[:ext]}"
     temp_file   = Store::fetch_object_from_store remote_file
     
     # Send the fetched file

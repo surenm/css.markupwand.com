@@ -154,23 +154,23 @@ module Store
     end    
   end
   
-  def Store::fetch_object_from_remote_store(remote_file)
+  def Store::fetch_object_from_remote_store(remote_file_path)
     bucket      = Store::get_remote_store
-    remote_file = bucket.objects[remote_file]
+    remote_file = bucket.objects[remote_file_path]
 
-    tmp_file = Rails.root.join 'tmp', 'store', remote_file
+    tmp_file = Rails.root.join 'tmp', 'store', remote_file_path
     contents = remote_file.read
-    Log.info "Fetching #{remote_file} from remote store #{bucket.nam} to #{tmp_file}..."    
+    Log.info "Fetching #{remote_file_path} from remote store #{bucket.name} to #{tmp_file}..."    
     Store::write_contents_to_local_file tmp_file, contents
     
     return tmp_file
   end
   
-  def Store::fetch_object_from_local_store(remote_file)
+  def Store::fetch_object_from_local_store(remote_file_path)
     local_store = Store::get_local_store
-    remote_file = File.join local_store, remote_file
+    remote_file = File.join local_store, remote_file_path
     
-    tmp_file = Rails.root.join 'tmp', 'store', remote_file
+    tmp_file = Rails.root.join 'tmp', 'store', remote_file_path
     contents = File.read remote_file
     
     Log.info "Fetching #{remote_file} from local store #{local_store} to #{tmp_file}..."    
