@@ -228,7 +228,7 @@ HTML
     Log.info "Writing bootstrap files..."
     
     bootrap_css = Rails.root.join("app", "templates", "bootstrap.css").to_s
-    target_css  = File.join self.store_generated_key, "assets", "css", "bootstrap_override.css"
+    target_css  = File.join self.store_generated_key, "assets", "css", "bootstrap.css"
     Store.save_to_store bootrap_css, target_css
     
     override_css = Rails.root.join("app", "templates", "bootstrap_override.css").to_s
