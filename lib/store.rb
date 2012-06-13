@@ -151,6 +151,39 @@ module Store
       Store::fetch_from_remote_store remote_folder
     else 
       Store::fetch_from_local_store remote_folder
-    end
+    end    
+  end
+  
+  def Store::fetch_object_from_remote_store(remote_file)
+    bucket      = Store::get_remote_store
+    remote_file = bucket.objects[remote_file]
+
+    tmp_file = Rails.root.join 'tmp', 'store', remote_file
+    contents = remote_file.read
+    Log.info "Fetching #{remote_file} from remote store #{bucket.nam} to #{tmp_file}..."    
+    Store::write_contents_to_local_file tmp_file, contents
+    
+    return tmp_file
+  end
+  
+  def Store::fetch_object_from_local_store(remote_file)
+    local_store = Store::get_local_store
+    remote_file = File.join local_store, remote_file
+    
+    tmp_file = Rails.root.join 'tmp', 'store', remote_file
+    contents = File.read remote_file
+    
+    Log.info "Fetching #{remote_file} from local store #{local_store} to #{tmp_file}..."    
+    Store::write_contents_to_local_file tmp_file, contents
+    
+    return tmp_file
+  end
+  
+  def Store::fetch_object_from_store(remote_file)
+    if Constants::store_remote?
+      return Store::fetch_object_from_remote_store remote_file
+    else 
+      return Store::fetch_object_from_local_store remote_file
+    end    
   end
 end
