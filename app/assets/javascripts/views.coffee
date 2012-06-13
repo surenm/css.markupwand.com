@@ -116,7 +116,7 @@ class EditorIframeView extends Backbone.View
   load_design: (design) ->
     @design = design
     design_id = @design.get("id")
-    url = "http://localhost:3000/generated/#{design_id}/index.html"    
+    url = "/generated/#{design_id}/index.html"    
     this.render url
     
   clear_highlights: () ->
