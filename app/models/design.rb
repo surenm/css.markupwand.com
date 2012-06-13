@@ -11,11 +11,12 @@ class Design
   has_many :layers
   
   # Design status types
-  Design::STATUS_QUEUED     = :queued
-  Design::STATUS_PROCESSING = :processing
-  Design::STATUS_PROCESSED  = :processed
-  Design::STATUS_GENERATING = :generating
-  Design::STATUS_COMPLETED  = :completed
+  Design::STATUS_QUEUED       = :queued
+  Design::STATUS_PROCESSING   = :processing
+  Design::STATUS_PROCESSED    = :processed
+  Design::STATUS_GENERATING   = :generating
+  Design::STATUS_REGENERATING = :regenerating
+  Design::STATUS_COMPLETED    = :completed
 
   field :name, :type => String
   field :psd_file_path, :type => String
