@@ -25,6 +25,8 @@ class Layer
   field :raw, :type  => String
   field :layer_type, :type => String, :default => nil
   field :is_overlay, :type => Boolean
+  
+  field :layer_bounds, :type => String, :default => nil
 
   # Do not store layer_object, but have in memory
   
@@ -43,6 +45,18 @@ class Layer
     self.layer_type = layer[:layerType]
     self.uid        = layer[:layerID][:value]
     self.raw        = layer.to_json.to_s
+    
+    bounds_key = self.bounds_key
+    value  = self.layer_json[bounds_key][:value]
+    top    = value[:top][:value]
+    bottom = value[:bottom][:value]
+    left   = value[:left][:value]
+    right  = value[:right][:value]
+
+    design_bounds = BoundingBox.new 0, 0, self.design.height, self.design.width
+    layer_bounds  = BoundingBox.new(top, left, bottom, right).inner_crop(design_bounds)
+    
+    self.layer_bounds = BoundingBox.pickle layer_bounds
     self.save!
   end
   
@@ -93,19 +107,7 @@ class Layer
   end
 
   def bounds
-    if @bounds.nil?
-      bounds_key = self.bounds_key
-      value  = layer_json[bounds_key][:value]
-      top    = value[:top][:value]
-      bottom = value[:bottom][:value]
-      left   = value[:left][:value]
-      right  = value[:right][:value]
-
-      design_bounds = BoundingBox.new 0, 0, self.design.height, self.design.width
-      @bounds       = BoundingBox.new(top, left, bottom, right).inner_crop(design_bounds)
-    end
-
-    @bounds
+    BoundingBox.depickle self.layer_bounds
   end
 
   def <=>(other_layer)
