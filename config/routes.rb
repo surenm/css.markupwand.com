@@ -9,8 +9,6 @@ TransformersWeb::Application.routes.draw do
   match '/getinvite'       => "landing_page#getinvite"
   
   # main controller views
-  # Proxy method to view generated files
-  match 'generated/:design/*uri.*ext' => 'main#generated'
   
   # Dangerous controller route.
   if not Rails.env.production?
@@ -35,6 +33,10 @@ TransformersWeb::Application.routes.draw do
   match 'design/:id'       => 'design#show', :via => :get
   match 'design/:id'       => 'design#update', :via => :put
   match 'design/:id/edit'  => 'design#edit'
+  
+  # Proxy method to view generated files
+  match 'generated/:design/*uri.*ext' => 'design#generated'
+  
   
   # TODO: add admin authentication for Admin URL's 
   mount Resque::Server.new, :at => "/resque"
