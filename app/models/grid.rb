@@ -33,7 +33,7 @@ class Grid
   field :override_width_class, :type => String, :default => nil
   
 
-  field :offset_box, :type => Array, :default => []
+  field :offset_box, :type => String, :default => nil
   field :grid_depth, :type => Integer, :default => -1
   
 
@@ -54,7 +54,6 @@ class Grid
     
     #Log.info self.layers.to_a # DO NOT REMOVE THIS LINE - Alagu
     layers.each { |layer| self.layers.push layer }
-    self.layers.sort!
     self.save!
     
     @@grouping_queue.push self if self.root?
@@ -458,7 +457,9 @@ class Grid
   
   # Accessor for offset bounding box
   # De-serializes the offset box from mongo data.
-  def offset_bounding_box; BoundingBox.from_mongo(offset_box) end
+  def offset_bounding_box
+    BoundingBox.depickle self.offset_box
+  end
   
   # Offset box is a box, that is an empty grid that appears before
   # this current grid. The previous sibling being a empty box, it adds itself
@@ -467,7 +468,7 @@ class Grid
   #
   # This function is for serializing bounding box and storing it.
   def offset_bounding_box= padding_bound_box;
-    self.offset_box = padding_bound_box.serialize
+    self.offset_box = BoundingBox.pickle padding_bound_box
   end
   
   def is_single_line_text

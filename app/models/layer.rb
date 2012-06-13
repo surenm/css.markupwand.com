@@ -17,20 +17,27 @@ class Layer
     }
 
   has_and_belongs_to_many :grids, :class_name => 'Grid'
+  belongs_to :design
 
   field :uid, :type  => String
   field :name, :type => String
   field :kind, :type => String
   field :raw, :type  => String
   field :layer_type, :type => String, :default => nil
-  field :am_i_overlay, :type => Boolean
+  field :is_overlay, :type => Boolean
+  
+  field :layer_bounds, :type => String, :default => nil
 
   # Do not store layer_object, but have in memory
   
   attr_accessor :layer_object, :bounds, :intersect_count, :overlays
 
-  def self.create_from_raw_data(layer_json)
+  def self.create_from_raw_data(layer_json, design_id)
     layer = Layer.new
+    design = Design.find design_id
+    layer.design = design
+    layer.save!
+    
     layer.set layer_json
     return layer
   end
@@ -41,6 +48,18 @@ class Layer
     self.layer_type = layer[:layerType]
     self.uid        = layer[:layerID][:value]
     self.raw        = layer.to_json.to_s
+    
+    bounds_key = self.bounds_key
+    value  = self.layer_json[bounds_key][:value]
+    top    = value[:top][:value]
+    bottom = value[:bottom][:value]
+    left   = value[:left][:value]
+    right  = value[:right][:value]
+
+    design_bounds = BoundingBox.new 0, 0, self.design.height, self.design.width
+    layer_bounds  = BoundingBox.new(top, left, bottom, right).inner_crop(design_bounds)
+    
+    self.layer_bounds = BoundingBox.pickle layer_bounds
     self.save!
   end
   
@@ -50,7 +69,6 @@ class Layer
       :name => self.name,
       :kind => self.kind,
       :layer_type => self.layer_type
-  
     }
   end
   
@@ -66,7 +84,6 @@ class Layer
     end
   end
   
-  
   def set_bounds_mode(bound_mode)
     unless BOUND_MODES.include? bound_mode
       raise "Unknown bound mode #{bound_mode}"
@@ -74,8 +91,6 @@ class Layer
     @bound_mode = bound_mode
   end
 
-  def inspect; to_s; end
-  
   def layer_json
     # Store layer object in memory.  
     if not @layer_object
@@ -91,18 +106,7 @@ class Layer
   end
 
   def bounds
-    if @bounds.nil?
-      bounds_key = self.bounds_key
-      value  = layer_json[bounds_key][:value]
-      top    = value[:top][:value]
-      bottom = value[:bottom][:value]
-      left   = value[:left][:value]
-      right  = value[:right][:value]
-
-      @bounds = BoundingBox.new(top, left, bottom, right).inner_crop(PageGlobals.instance.page_bounds)
-    end
-
-    @bounds
+    BoundingBox.depickle self.layer_bounds
   end
 
   def <=>(other_layer)
@@ -111,10 +115,7 @@ class Layer
 
   def == (other_layer)
     return false if other_layer.nil?
-    return (
-    self.bounds == other_layer.bounds and
-    self.name == other_layer.name
-    )
+    return (self.bounds == other_layer.bounds and self.name == other_layer.name)
   end
 
   def encloses?(other_layer)
@@ -134,11 +135,7 @@ class Layer
   end
 
   def image_path
-    if self.kind == LAYER_SMARTOBJECT || self.kind == LAYER_NORMAL
-      CssParser::get_image_path(self)
-    else
-      nil
-    end
+    CssParser::get_image_path(self) if self.kind == LAYER_SMARTOBJECT or self.kind == LAYER_NORMAL
   end
 
   def tag_name(is_leaf = false)
@@ -171,7 +168,7 @@ class Layer
       css.update CssParser::parse_box self, grid
     end
     
-    css.update CssParser::position_absolutely(self, grid) if self.am_i_overlay
+    css.update CssParser::position_absolutely(self, grid) if self.is_overlay?
 
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
@@ -287,6 +284,10 @@ class Layer
 
   def to_s
     "#{self.name} - #{self.bounds}"
+  end
+  
+  def inspect
+    self.to_s
   end
 
   def print(indent_level = 0)

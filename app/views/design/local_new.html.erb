@@ -2,7 +2,7 @@
   <%= render 'shared/header' %>
   <div id="design-upload-page" class="container">
     <div id="file-upload-form">
-      <%= form_for @design, :url => :upload_callback, :html => {:multipart => true} do |f| %>
+      <%= form_for @design, :url => :uploaded_callback, :html => {:multipart => true} do |f| %>
         <div id="file-select-zone">
           <div id="file-selector">
             [+] Click to select your photoshop file

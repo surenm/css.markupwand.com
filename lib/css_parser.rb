@@ -1,4 +1,3 @@
-# Runs through nodejs.
 # Format: ruby CssParser.rb <filename>
 require 'rubygems'
 require 'json'
@@ -145,11 +144,11 @@ module CssParser
   end
   
   def CssParser::parse_box_height(layer, grid)
-    if grid.nil? and not layer.am_i_overlay
+    if grid.nil? and not layer.is_overlay?
       return {}
     end
     
-    if layer.am_i_overlay
+    if layer.is_overlay?
       height = layer.bounds.height
     else
       height = grid.unpadded_height
@@ -245,11 +244,14 @@ module CssParser
 
   def CssParser::get_image_path(layer)
     image_file_name = layer.layer_json[:imagePath]
-    src_image_file   =  "#{PageGlobals.data_dir}/#{image_file_name}"
+
+    design = layer.design
+
+    src_image_file   = Rails.root.join("tmp", "store", design.store_processed_key, image_file_name).to_s
     destination_file = File.join CssParser::get_assets_root, "img", image_file_name
 
     # TODO: as processed image file directory changes to Store, this changes to Store:copy
-    Store::copy_from_local src_image_file, destination_file
+    Store::save_to_store src_image_file, destination_file
 
     return File.join "./assets", "img", image_file_name
   end

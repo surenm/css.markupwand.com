@@ -8,20 +8,27 @@ class Design
 
   belongs_to :user
   has_many :grids
+  has_many :layers
   
   # Design status types
   Design::STATUS_QUEUED     = :queued
   Design::STATUS_PROCESSING = :processing
   Design::STATUS_PROCESSED  = :processed
+  Design::STATUS_GENERATING = :generating
+  Design::STATUS_COMPLETED  = :completed
 
   field :name, :type => String
   field :psd_file_path, :type => String
-  field :processed_file_path, :type => String
+  field :processed_file_path, :type => String, :default => nil
   
   field :font_map, :type => Hash, :default => {}
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
   field :status, :type => String, :default => Design::STATUS_QUEUED
+  field :storage, :type => String, :default => "local"
+  
+  field :height, :type => Integer
+  field :width, :type => Integer
 
   mount_uploader :file, DesignUploader
   
@@ -36,9 +43,13 @@ class Design
   def store_key_prefix
     File.join self.user.email, self.safe_name
   end
-    
-  def assets_root_path
-    File.join self.store_key_prefix, 'generated'
+  
+  def store_generated_key
+    File.join self.store_key_prefix, "generated"
+  end
+  
+  def store_processed_key
+    File.join self.store_key_prefix, "processed"
   end
   
   def attribute_data
@@ -64,29 +75,43 @@ class Design
     }
   end
   
-  def push_to_queue
-    self.status = Design::STATUS_PROCESSING
+  def set_status(status)
+    self.status = status
     self.save!
-
-    if Constants::store_remote?
-      store_location = "remote"
-      if Rails.env.production? 
-        bucket = "store_production"
-      else 
-        bucket = "store_development"
-      end
-    else 
-      store_location = "local"
-      bucket = "store"
-    end
-    
-    # message will be something like "remote store_production bot@goyaka.com test_psd_#{design_mongo_id}" 
-    # Assumption: None of them would have spaces in them
-    message = "#{store_location} #{bucket} #{self.user.email} #{self.safe_name}"
-    TaskQueue.push message
   end
   
+  def push_to_processing_queue(callback_url)
+    self.status = Design::STATUS_PROCESSING
+    self.save!
+    
+    message = Hash.new
 
+    message[:callback_uri] = callback_url
+
+    if Constants::store_remote?
+      message[:location] = "remote"
+      if Rails.env.production? 
+        message[:bucket] = "store_production"
+      else 
+        message[:bucket] = "store_development"
+      end
+    else 
+      message[:location] = "local"
+      message[:bucket]   = "store"
+    end
+    
+    message[:user]   = self.user.email
+    message[:design] = self.safe_name
+    
+    # message will be something like "remote store_production callback_url bot@goyaka.com test_psd_#{design_mongo_id}"
+    message = "#{message[:location]} #{message[:bucket]} #{message[:callback_uri]} #{message[:user]} #{message[:design]}"
+    ProcessingQueue.push message
+  end
+  
+  def push_to_generation_queue
+    Resque.enqueue MarkupGeneratorJob, self.id
+  end
+  
   def parse_fonts(layers)
     design_fonts = PhotoshopItem::FontMap.new layers
     
@@ -107,37 +132,32 @@ HTML
     "#{typekit_header}\n #{self.typekit_snippet} \n #{self.google_webfonts_snippet}"
   end
 
-  # Start initializing all the singletons classes
-  def reset_globals(psd_data)
-    #Set page level properties
-    page_globals = PageGlobals.instance
-    page_globals.page_bounds = BoundingBox.new 0, 0, psd_data[:properties][:height], psd_data[:properties][:width]
-    
-    # Reset the grouping queue. Its the FIFO order in which the grids are processed
-    Grid.reset_grouping_queue
-    
-  end
-  
   # Parses the photoshop file json data and decomposes into grids
   def parse
-    Log.info "Beginning to process #{self.processed_file_path}..."
+    if self.processed_file_path.nil? or self.processed_file_path.empty?
+      Log.fatal "Processed file not specified"
+      exit
+    end
     
-    # Set the name of the design
-    self.name = File.basename self.processed_file_path, '.psd.json'
-    self.save!
+    Log.info "Beginning to process #{self.processed_file_path}..."
 
     # Parse the JSON
     fptr     = File.read self.processed_file_path
     psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
 
+    self.height = psd_data[:properties][:height]
+    self.width  = psd_data[:properties][:width]
+    self.save!
+    
     # Reset the global static classes to work for this PSD's data
-    reset_globals psd_data
-
+    Grid.reset_grouping_queue
+    
     # Layer descriptors of all photoshop layers
     Log.info "Getting nodes..."
     layers = []
     psd_data[:art_layers].each do |layer_id, node_json|
-      layer = Layer.create_from_raw_data node_json
+      layer = Layer.create_from_raw_data node_json, self.id
+      layer.save!
       layers.push layer
       Log.debug "Added Layer #{layer}."
     end
@@ -162,7 +182,7 @@ HTML
     Log.info "Generating body HTML..."
     
     # Set the root path for this design. That is where all the html and css is saved to.
-    CssParser::set_assets_root self.assets_root_path
+    CssParser::set_assets_root self.store_generated_key
     
     root_grid = self.grids.where(:root => true).first
 
@@ -185,11 +205,11 @@ HTML
   end
   
   def write_html_files(html_content)
-    raw_file_name  = File.join self.assets_root_path, 'raw.html'
-    html_file_name = File.join self.assets_root_path, 'index.html'
+    raw_file_name  = File.join self.store_generated_key, 'raw.html'
+    html_file_name = File.join self.store_generated_key, 'index.html'
 
     Log.info "Saving resultant HTML file #{html_file_name}"    
-    Store.write html_file_name, html_content
+    Store.write_contents_to_store html_file_name, html_content
 
     # Programatically do this so that it works on heroku
     #Log.info "Tidying up the html..."
@@ -200,26 +220,20 @@ HTML
     Log.info "Writing css file..."    
 
     # Write style.css file
-    css_path = File.join self.assets_root_path, "assets", "css"
+    css_path = File.join self.store_generated_key, "assets", "css"
     css_file_name = File.join css_path, "style.css"
-    Store.write css_file_name, css_content
+    Store.write_contents_to_store css_file_name, css_content
 
     # Copy bootstrap to assets folder
-    Log.info "Writing bootstrap files"
-    bootstrap_base_directory = Rails.root.join "app", "templates", "bootstrap", "docs"
-    bootstrap_templates_directory = bootstrap_base_directory.join "assets"
-    Find.find(bootstrap_templates_directory) do |file_name|
-      # don't do anything if its a directory, just skip
-      next if File.directory? file_name
-      
-      file_path     = Pathname.new file_name
-      relative_path = file_path.relative_path_from(bootstrap_base_directory).to_s
-      destination_path = File.join self.assets_root_path, relative_path
-      Store::copy_from_local file_path, destination_path
-    end
+    Log.info "Writing bootstrap files..."
     
-    bootrap_override_css = Rails.root.join("app", "assets", "stylesheets", "lib", "bootstrap_override.css").to_s
-    target_css           = File.join self.assets_root_path, "assets", "css", "bootstrap_override.css"
-    Store.copy_from_local bootrap_override_css, target_css
+    bootrap_css = Rails.root.join("app", "templates", "bootstrap.css").to_s
+    target_css  = File.join self.store_generated_key, "assets", "css", "bootstrap.css"
+    Store.save_to_store bootrap_css, target_css
+    
+    override_css = Rails.root.join("app", "templates", "bootstrap_override.css").to_s
+    target_css   = File.join self.store_generated_key, "assets", "css", "bootstrap_override.css"
+
+    Store.save_to_store override_css, target_css
   end
 end

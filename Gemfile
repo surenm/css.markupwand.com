@@ -16,6 +16,8 @@ gem 'xml-simple'
 gem 'log4r'
 gem 'rmagick'
 gem 'aws-sdk'
+gem 'resque'
+gem 'redis'
 
 # monitoring and profiling
 gem 'newrelic_rpm'
