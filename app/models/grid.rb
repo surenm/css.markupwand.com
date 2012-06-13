@@ -311,14 +311,14 @@ class Grid
             if intersector.intersect? target and
               intersector[:uid] != target[:uid] and
               not intersector.overlays.include? target[:uid]
-              intersector.am_i_overlay = true
+              intersector.is_overlay = true
               target.overlays.push intersector[:uid]
             end
           end
         end
         
         # Once information is set that they are overlaid, remember them.
-        positioned_layers = intersecting_nodes.select { |node| node.am_i_overlay == true }
+        positioned_layers = intersecting_nodes.select { |node| node.is_overlay == true }
         positioned_layers.each do |node|
           Log.info "Relatively positioning #{node}"
           node.save!
