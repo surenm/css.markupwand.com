@@ -1,4 +1,3 @@
-# Runs through nodejs.
 # Format: ruby CssParser.rb <filename>
 require 'rubygems'
 require 'json'
@@ -245,7 +244,12 @@ module CssParser
 
   def CssParser::get_image_path(layer)
     image_file_name = layer.layer_json[:imagePath]
-    src_image_file   =  "#{PageGlobals.data_dir}/#{image_file_name}"
+    
+    grid_id = layer.grid_ids.first
+    grid    = Grid.find grid_id
+    design  = grid.design
+    
+    src_image_file   = Rails.root.join("tmp", "store", design.store_processed_key, image_file_name).to_s
     destination_file = File.join CssParser::get_assets_root, "img", image_file_name
 
     # TODO: as processed image file directory changes to Store, this changes to Store:copy
