@@ -32,9 +32,8 @@ class Layer
   
   attr_accessor :layer_object, :bounds, :intersect_count, :overlays
 
-  def self.create_from_raw_data(layer_json, design)
+  def self.create_from_raw_data(layer_json)
     layer = Layer.new
-    layer.design = design
     layer.set layer_json
     return layer
   end
