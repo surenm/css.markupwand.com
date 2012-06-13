@@ -41,12 +41,17 @@ module Store
   def Store::write_contents_to_remote_store(file_key, file_contents)
     s3_bucket = Store::get_remote_store
 
+    Log.info "Saving contents to #{file_key} in remote store #{s3_bucket.name}..."
+
     fptr = s3_bucket.objects[file_key]
     fptr.write file_contents
   end
   
   def Store::write_contents_to_local_store(file_key, file_contents)
     local_store = Store::get_local_store
+    
+    Log.info "Saving contents to #{file_key} in local store..."
+    
     file_path   = File.join local_store, file_key
     Store::write_contents_to_local_file file_path, file_contents
   end
@@ -105,7 +110,7 @@ module Store
     bucket = Store::get_remote_store
     local_folder  = Rails.root.join 'tmp', 'store'
     
-    Log.info "Fetching #{remote_folder} from Remote store #{bucket} to #{local_folder}..."
+    Log.info "Fetching #{remote_folder} from Remote store #{bucket.name} to #{local_folder}..."
 
     files = bucket.objects.with_prefix remote_folder
     files.each do |file|

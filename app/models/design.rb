@@ -39,9 +39,13 @@ class Design
   def store_key_prefix
     File.join self.user.email, self.safe_name
   end
-    
-  def assets_root_path
-    File.join self.store_key_prefix, 'generated'
+  
+  def store_generated_key
+    File.join self.store_key_prefix, "generated"
+  end
+  
+  def store_processed_key
+    File.join self.store_key_prefix, "processed"
   end
   
   def attribute_data
@@ -143,10 +147,6 @@ HTML
     end
     
     Log.info "Beginning to process #{self.processed_file_path}..."
-    
-    # Set the name of the design
-    self.name = File.basename self.processed_file_path, '.psd.json'
-    self.save!
 
     # Parse the JSON
     fptr     = File.read self.processed_file_path
@@ -184,7 +184,7 @@ HTML
     Log.info "Generating body HTML..."
     
     # Set the root path for this design. That is where all the html and css is saved to.
-    CssParser::set_assets_root self.assets_root_path
+    CssParser::set_assets_root self.store_generated_key
     
     root_grid = self.grids.where(:root => true).first
 
@@ -207,8 +207,8 @@ HTML
   end
   
   def write_html_files(html_content)
-    raw_file_name  = File.join self.assets_root_path, 'raw.html'
-    html_file_name = File.join self.assets_root_path, 'index.html'
+    raw_file_name  = File.join self.store_generated_key, 'raw.html'
+    html_file_name = File.join self.store_generated_key, 'index.html'
 
     Log.info "Saving resultant HTML file #{html_file_name}"    
     Store.write_contents_to_store html_file_name, html_content
@@ -222,7 +222,7 @@ HTML
     Log.info "Writing css file..."    
 
     # Write style.css file
-    css_path = File.join self.assets_root_path, "assets", "css"
+    css_path = File.join self.store_generated_key, "assets", "css"
     css_file_name = File.join css_path, "style.css"
     Store.write_contents_to_store css_file_name, css_content
 
@@ -230,11 +230,12 @@ HTML
     Log.info "Writing bootstrap files..."
     
     bootrap_css = Rails.root.join("app", "templates", "bootstrap.css").to_s
-    target_css  = File.join self.assets_root_path, "assets", "css", "bootstrap_override.css"
+    target_css  = File.join self.store_generated_key, "assets", "css", "bootstrap_override.css"
     Store.save_to_store bootrap_css, target_css
     
-    bootrap_override_css = Rails.root.join("app", "templates", "bootstrap_override.css").to_s
-    target_css           = File.join self.assets_root_path, "assets", "css", "bootstrap_override.css"
+    override_css = Rails.root.join("app", "templates", "bootstrap_override.css").to_s
+    target_css   = File.join self.store_generated_key, "assets", "css", "bootstrap_override.css"
+
     Store.save_to_store bootrap_override_css, target_css
   end
 end
