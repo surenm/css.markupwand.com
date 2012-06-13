@@ -26,6 +26,9 @@ class Design
   field :google_webfonts_snippet, :type => String, :default => ""
   field :status, :type => String, :default => Design::STATUS_QUEUED
   field :storage, :type => String, :default => "local"
+  
+  field :height, :type => Integer
+  field :width, :type => Integer
 
   mount_uploader :file, DesignUploader
   
@@ -129,17 +132,6 @@ HTML
     "#{typekit_header}\n #{self.typekit_snippet} \n #{self.google_webfonts_snippet}"
   end
 
-  # Start initializing all the singletons classes
-  def reset_globals(psd_data)
-    #Set page level properties
-    page_globals = PageGlobals.instance
-    page_globals.page_bounds = BoundingBox.new 0, 0, psd_data[:properties][:height], psd_data[:properties][:width]
-    
-    # Reset the grouping queue. Its the FIFO order in which the grids are processed
-    Grid.reset_grouping_queue
-    
-  end
-  
   # Parses the photoshop file json data and decomposes into grids
   def parse
     if self.processed_file_path.nil? or self.processed_file_path.empty?
@@ -153,9 +145,13 @@ HTML
     fptr     = File.read self.processed_file_path
     psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
 
+    self.height = psd_data[:properties][:height]
+    self.width  = psd_data[:properties][:width]
+    self.save!
+    
     # Reset the global static classes to work for this PSD's data
-    reset_globals psd_data
-
+    Grid.reset_grouping_queue
+    
     # Layer descriptors of all photoshop layers
     Log.info "Getting nodes..."
     layers = []

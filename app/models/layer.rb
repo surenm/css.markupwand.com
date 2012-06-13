@@ -101,7 +101,8 @@ class Layer
       left   = value[:left][:value]
       right  = value[:right][:value]
 
-      @bounds = BoundingBox.new(top, left, bottom, right).inner_crop(PageGlobals.instance.page_bounds)
+      design_bounds = BoundingBox.new 0, 0, self.design.height, self.design.width
+      @bounds       = BoundingBox.new(top, left, bottom, right).inner_crop(design_bounds)
     end
 
     @bounds

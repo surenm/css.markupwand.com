@@ -1,6 +1,6 @@
 class PageGlobals
   @@instance = nil
-  attr_accessor :offset_box_buffer, :page_bounds, :offset_box_list
+  attr_accessor :offset_box_buffer, :offset_box_list
 
   private
   def initialize
