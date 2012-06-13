@@ -8,6 +8,7 @@ class Design
 
   belongs_to :user
   has_many :grids
+  has_many :layers
   
   # Design status types
   Design::STATUS_QUEUED     = :queued
@@ -159,7 +160,7 @@ HTML
     Log.info "Getting nodes..."
     layers = []
     psd_data[:art_layers].each do |layer_id, node_json|
-      layer = Layer.create_from_raw_data node_json
+      layer = Layer.create_from_raw_data node_json, self
       layers.push layer
       Log.debug "Added Layer #{layer}."
     end

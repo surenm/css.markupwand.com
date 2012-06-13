@@ -17,6 +17,7 @@ class Layer
     }
 
   has_and_belongs_to_many :grids, :class_name => 'Grid'
+  belongs_to :design
 
   field :uid, :type  => String
   field :name, :type => String
@@ -29,8 +30,9 @@ class Layer
   
   attr_accessor :layer_object, :bounds, :intersect_count, :overlays
 
-  def self.create_from_raw_data(layer_json)
+  def self.create_from_raw_data(layer_json, design)
     layer = Layer.new
+    layer.design = design
     layer.set layer_json
     return layer
   end
