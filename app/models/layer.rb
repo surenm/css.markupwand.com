@@ -66,7 +66,6 @@ class Layer
       :name => self.name,
       :kind => self.kind,
       :layer_type => self.layer_type
-  
     }
   end
   
@@ -82,7 +81,6 @@ class Layer
     end
   end
   
-  
   def set_bounds_mode(bound_mode)
     unless BOUND_MODES.include? bound_mode
       raise "Unknown bound mode #{bound_mode}"
@@ -90,8 +88,6 @@ class Layer
     @bound_mode = bound_mode
   end
 
-  def inspect; to_s; end
-  
   def layer_json
     # Store layer object in memory.  
     if not @layer_object
@@ -116,10 +112,7 @@ class Layer
 
   def == (other_layer)
     return false if other_layer.nil?
-    return (
-    self.bounds == other_layer.bounds and
-    self.name == other_layer.name
-    )
+    return (self.bounds == other_layer.bounds and self.name == other_layer.name)
   end
 
   def encloses?(other_layer)
@@ -139,11 +132,7 @@ class Layer
   end
 
   def image_path
-    if self.kind == LAYER_SMARTOBJECT || self.kind == LAYER_NORMAL
-      CssParser::get_image_path(self)
-    else
-      nil
-    end
+    CssParser::get_image_path(self) if self.kind == LAYER_SMARTOBJECT or self.kind == LAYER_NORMAL
   end
 
   def tag_name(is_leaf = false)
@@ -292,6 +281,10 @@ class Layer
 
   def to_s
     "#{self.name} - #{self.bounds}"
+  end
+  
+  def inspect
+    self.to_s
   end
 
   def print(indent_level = 0)
