@@ -24,7 +24,7 @@ class Layer
   field :kind, :type => String
   field :raw, :type  => String
   field :layer_type, :type => String, :default => nil
-  field :am_i_overlay, :type => Boolean
+  field :is_overlay, :type => Boolean
 
   # Do not store layer_object, but have in memory
   
@@ -174,7 +174,7 @@ class Layer
       css.update CssParser::parse_box self, grid
     end
     
-    css.update CssParser::position_absolutely(self, grid) if self.am_i_overlay
+    css.update CssParser::position_absolutely(self, grid) if self.is_overlay?
 
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self

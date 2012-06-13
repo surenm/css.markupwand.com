@@ -144,11 +144,11 @@ module CssParser
   end
   
   def CssParser::parse_box_height(layer, grid)
-    if grid.nil? and not layer.am_i_overlay
+    if grid.nil? and not layer.is_overlay?
       return {}
     end
     
-    if layer.am_i_overlay
+    if layer.is_overlay?
       height = layer.bounds.height
     else
       height = grid.unpadded_height
