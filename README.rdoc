@@ -1,5 +1,93 @@
 Convert PSD to HTML5/CSS3
 
+Stack:
+
+Servers: type of processes
+    Web server:
+        web dynos in heroku prod and passenger in local
+    Worker server
+        resque worker dynos in heroku prod and resque thread started manually in local
+    Photoshop server
+        windows photoshop in prod and MAC osX photoshop in local
+    
+Store: Data storage type
+    store_local
+        Web server run in local mode. All files are stored in localhost in ~/store_local. TODO: make this configurable
+        use for all local development
+    store_development
+        Web server run in local mode. All files are stored in S3 at store_development bucket
+        use for all web development but photoshop processing happens in production instead of local. 
+        Assumes no change in transformers code
+    store_production
+        Web server run in heroku prod mode. All files are stored in S3 at store_production bucket
+        pure production mode
+    tmp
+        Rails tmp directory for web servers and workers
+        ~/tmp directory for photoshop servers
+        could be deleted without any effect (ideally :))
+        
+Tasks:
+    Uploading: Upload a file from client to store
+        web servers handle this. Uses carrierwave
+
+    Processing: Process a PSD file and generate json file
+        photoshop servers handle this. 
+        has two parts - ruby master and extendscript slave
+        master, on new unprocessed file arrival
+            fetches files from store to tmp
+            runs a slave applescript/vbscript which invokes extendscript
+            extendscript processes the psd and puts all processed files same folder as psd
+            uploads processed directory from tmp back to store
+            Pings webserver with a processed call
+    
+    Generation: generates markup from psd.json and asset files
+        on processed call from photoshop server, a resque job - MarkupGeneratorJob is spawn
+        the resque thread/worker dyno processes the job
+            fetches the processed files from store to tmp
+            generates the html in tmp
+            uploads back the generated folder to store
+            sets design status to completed
+    
+    Serving: Show generated markup and ability to regenerate markup on need
+        handled by web server 
+        on annotator call, shows the generated files in iframe
+            fetches the required generated file from store to tmp
+            send_file from tmp
+        
+        TODO: regenerate markup
+
+Queues: happens at interfaces
+    Processing: 
+        SQS queue in production
+            on file upload in web server, a message is sent to SQS queue to process it
+            photoshop server listens to this queue by polling
+        Direct call in local:
+            Web server expects the master ruby script to be in Application data folder.
+            Directly calls this script on file upload.
+            
+    Generation:
+        store_production and local:
+            photoshop server pings web server at /processed url
+        store_development:
+            TODO: poller that listens to S3 for completion
+   
+Running in local:
+    store_local mode
+        webserver: passenger start
+        resque: QUEUE=* rake environment resque:work
+        keep photoshop open
+        
+        on updating transformers, do "rake deploy" everytime
+    
+    store_development mode:
+        webserver: export REMOTE=true; export AWS KEYS;  passenger start
+        resque: QUEUE=* rake environment resque:work
+        
+Individual task:
+    Just generate:
+        "MarkupGeneratorJob.perform design.id" in rails console where design is a mongo object
+    
+        
 
 Fetching font data
 ------------------
