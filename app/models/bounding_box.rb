@@ -156,10 +156,21 @@ class BoundingBox
     return ((left_distance < self.width or left_distance < other_box.width) and (top_distance < self.height or top_distance < other_box.height))
   end
 
-  def serialize
-    [top, left, bottom, right]
+  def self.pickle(bounding_box)
+    return "#{bounding_box.top} #{bounding_box.left} #{bounding_box.bottom} #{bounding_box.right}" if not self.nil?  
   end
   
+  def self.depickle(serialized_bounding_box)
+    if not serialized_bounding_box.nil? and not serialized_bounding_box.empty? 
+      coordinates = serialized_bounding_box.split " "
+      top    = coordinates[0].to_i
+      left   = coordinates[1].to_i
+      bottom = coordinates[2].to_i
+      right  = coordinates[3].to_i
+      return BoundingBox.new top, left, bottom, right
+    end
+  end
+    
   #Super bound is the minimal bounding box that encloses a bunch of bounding boxes
   def self.get_super_bounds(bounding_box_list)
     top = left = bottom = right = nil
@@ -192,15 +203,6 @@ class BoundingBox
     Log.info "#{objects_in_region} are within #{region}"
 
     return objects_in_region
-  end
-
-  def self.from_mongo(serialized_box)
-    if not serialized_box.empty? 
-      return BoundingBox.new(serialized_box[0], serialized_box[1],
-        serialized_box[2], serialized_box[3])
-    else
-      return nil
-    end
   end
   
   def self.get_vertical_gutters(bounding_boxes)
