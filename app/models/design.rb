@@ -233,6 +233,6 @@ HTML
     override_css = Rails.root.join("app", "templates", "bootstrap_override.css").to_s
     target_css   = File.join self.store_generated_key, "assets", "css", "bootstrap_override.css"
 
-    Store.save_to_store bootrap_override_css, target_css
+    Store.save_to_store override_css, target_css
   end
 end
