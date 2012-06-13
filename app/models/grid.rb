@@ -54,7 +54,6 @@ class Grid
     
     #Log.info self.layers.to_a # DO NOT REMOVE THIS LINE - Alagu
     layers.each { |layer| self.layers.push layer }
-    self.layers.sort!
     self.save!
     
     @@grouping_queue.push self if self.root?
