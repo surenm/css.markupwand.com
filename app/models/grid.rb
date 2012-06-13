@@ -608,6 +608,7 @@ class Grid
     attributes                  = Hash.new
     attributes[:class]          = css_class_string if not css_class_string.nil?
     attributes[:"data-grid-id"] = self.id.to_s
+    attributes[:tag]            = self.tag
     
     sub_grid_args = Hash.new
     if self.render_layer.nil?
