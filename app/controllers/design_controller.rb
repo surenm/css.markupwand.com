@@ -84,4 +84,19 @@ class DesignController < ApplicationController
     design.push_to_generation_queue
     render :json => {:status => :success}
   end
+  
+  def generated
+    design = get_design params[:design]
+    
+    # ACL logic - if the current user is not owner of this design, redirect
+    redirect_to :action => index if @user != design.user
+    
+    # Fetch contents to temp folder if not already there
+    temp_folder = File.join Rails.root.to_s, "tmp", "store", design.store_generated_key
+    Store::fetch_from_store design.store_generated_key if not Dir.exists? temp_folder
+    
+    # Send the fetched file
+    send_file File.join(temp_folder, "#{params[:uri]}.#{params[:ext]}"), :disposition => 'inline'
+  end
+  
 end
