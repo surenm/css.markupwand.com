@@ -181,9 +181,6 @@ class Layer
       # don't do anything
     elsif self.kind == LAYER_SOLIDFILL
       css.update CssParser::parse_box self, grid
-      if is_root
-        #TODO Handle root properly
-      end
     end
     
     css
@@ -242,7 +239,6 @@ class Layer
   end
 
   def to_html(args = {}, is_leaf, grid)
-    #puts "Generating html for #{self.inspect}"
     css       = args.fetch :css, {}
     css_class = class_name css, is_leaf, @is_root, grid
     
