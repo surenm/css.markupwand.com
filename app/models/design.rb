@@ -107,6 +107,10 @@ class Design
     # message will be something like "remote store_production callback_url bot@goyaka.com test_psd_#{design_mongo_id}"
     message = "#{message[:location]} #{message[:bucket]} #{message[:callback_uri]} #{message[:user]} #{message[:design]}"
     ProcessingQueue.push message
+    
+    if Constants::store_remote? and Store::get_S3_bucket_name == "store_development" 
+      Resque.enqueue PollerJob, self.id, callback_url
+    end
   end
   
   def push_to_generation_queue
