@@ -41,7 +41,8 @@ class Layer
     layer.set layer_json
     return layer
   end
-
+  
+  
   def set(layer)
     self.name       = layer[:name][:value]
     self.kind       = layer[:layerKind]
@@ -61,6 +62,11 @@ class Layer
     
     self.layer_bounds = BoundingBox.pickle layer_bounds
     self.save!
+  end
+  
+  # TODO Change object property and initialize when we are making properties inside.
+  def zindex
+    layer_json.extract_value(:itemIndex, :value)
   end
   
   def attribute_data

@@ -299,7 +299,7 @@ class Grid
         
         # Sort Layers by their layer index.
         # Keep appending them
-        intersecting_nodes.sort! { |node1, node2|  node2.layer_object[:itemIndex][:value] <=>  node1.layer_object[:itemIndex][:value] }
+        intersecting_nodes.sort! { |node1, node2|  node2.zindex <=>  node1.zindex }
         
         intersecting_nodes.each { |node| node.overlays = [] }
 

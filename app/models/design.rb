@@ -164,7 +164,7 @@ HTML
       layer = Layer.create_from_raw_data node_json, self.id
       layer.save!
       layers.push layer
-      Log.debug "Added Layer #{layer}."
+      Log.debug "Added Layer #{layer} (#{layer.zindex})"
     end
     
     Log.info "Layer bounds"
