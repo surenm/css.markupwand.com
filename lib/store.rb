@@ -108,41 +108,41 @@ module Store
   
   def Store::fetch_from_remote_store(remote_folder)
     bucket = Store::get_remote_store
-    local_folder  = Rails.root.join 'tmp', 'store'
     
-    Log.info "Fetching #{remote_folder} from Remote store #{bucket.name} to #{local_folder}..."
+    tmp_folder  = Rails.root.join 'tmp', 'store'
+    Log.info "Fetching #{remote_folder} from Remote store #{bucket.name} to #{tmp_folder}..."
 
     files = bucket.objects.with_prefix remote_folder
     files.each do |file|
       contents = file.read
-      absolute_destination_file = File.join local_folder, file.key
+
+      destination_path = File.join tmp_folder, file.key
       
-      Log.info "Fetching #{file.key} from Remote store to #{absolute_destination_file}"
-      Store::write_contents_to_local_file absolute_destination_file, contents
+      Log.info "Fetching #{file.key} from Remote store to #{destination_path}"
+      Store::write_contents_to_local_file destination_path, contents
     end
   end
   
   def Store::fetch_from_local_store(remote_folder)
     local_store  = Store::get_local_store
-
-    tmp_folder = Rails.root.join 'tmp', 'store', remote_folder
+    abs_remote_folder = File.join local_store, remote_folder
     
+    tmp_folder = Rails.root.join 'tmp', 'store', remote_folder
     Log.info "Fetching #{remote_folder} from local store #{local_store} to #{tmp_folder}..."
 
-    absolute_remote_folder_path = File.join local_store, remote_folder
-    files = Dir["#{absolute_remote_folder_path}/**/*"]
+    files = Dir["#{abs_remote_folder}/**/*"]
     Log.debug files
     files.each do |file|
       next if File.directory? file
 
       contents = File.read file
-      
+
       file_pathname  = Pathname.new file
-      store_file_key = file_pathname.relative_path_from(Pathname.new absolute_remote_folder_path)
+      store_file_key = file_pathname.relative_path_from(Pathname.new abs_remote_folder)      
+      destination_path = File.join tmp_folder, store_file_key
       
-      absolute_destination_file = File.join tmp_folder.to_s, store_file_key
-      Log.info "Fetching #{store_file_key} from local store to #{absolute_destination_file}"
-      Store::write_contents_to_local_file absolute_destination_file, contents
+      Log.info "Fetching #{store_file_key} from local store to #{destination_path}"
+      Store::write_contents_to_local_file destination_path, contents
     end   
   end
   

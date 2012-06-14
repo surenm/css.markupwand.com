@@ -11,11 +11,12 @@ class Design
   has_many :layers
   
   # Design status types
-  Design::STATUS_QUEUED     = :queued
-  Design::STATUS_PROCESSING = :processing
-  Design::STATUS_PROCESSED  = :processed
-  Design::STATUS_GENERATING = :generating
-  Design::STATUS_COMPLETED  = :completed
+  Design::STATUS_QUEUED       = :queued
+  Design::STATUS_PROCESSING   = :processing
+  Design::STATUS_PROCESSED    = :processed
+  Design::STATUS_GENERATING   = :generating
+  Design::STATUS_REGENERATING = :regenerating
+  Design::STATUS_COMPLETED    = :completed
 
   field :name, :type => String
   field :psd_file_path, :type => String
@@ -106,6 +107,10 @@ class Design
     # message will be something like "remote store_production callback_url bot@goyaka.com test_psd_#{design_mongo_id}"
     message = "#{message[:location]} #{message[:bucket]} #{message[:callback_uri]} #{message[:user]} #{message[:design]}"
     ProcessingQueue.push message
+    
+    if Constants::store_remote? and Store::get_S3_bucket_name == "store_development" 
+      Resque.enqueue PollerJob, self.id, callback_url
+    end
   end
   
   def push_to_generation_queue

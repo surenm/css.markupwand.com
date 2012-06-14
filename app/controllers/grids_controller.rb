@@ -31,7 +31,8 @@ class GridsController < ApplicationController
     grid = Grid.find params[:id]
     grid.override_tag = params[:tag]
     grid.save!
-    grid.design.generate_markup
+
+    MarkupRegeneratorJob.perform grid.design.id
 
     render :json => { :status => :success, :data => {}, :error => nil }
   end
