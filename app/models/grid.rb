@@ -9,6 +9,7 @@ class Grid
 
   # self references for children and parent grids
   has_many :children, :class_name => 'Grid', :inverse_of => :parent
+  has_many :positioned_grids, :class_name => 'Grid', :inverse_of => :parent
   belongs_to :parent, :class_name => 'Grid', :inverse_of => :children
 
   has_and_belongs_to_many :layers, :class_name => 'Layer'
@@ -21,7 +22,6 @@ class Grid
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
   field :fit_to_grid,  :type => Boolean, :default => true
-  field :positioned_layers, :type => Array, :default => []
   
   field :css_hash, :type => Hash, :default => {}
   field :override_css_hash, :type => Hash, :default => {}
