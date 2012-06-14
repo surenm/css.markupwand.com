@@ -22,7 +22,7 @@ module CssTextParser
   end
   
   def CssTextParser::parse_font_size(font_item)
-    { :'font-size' => font_item[:size][:value].to_s + 'px' }
+    { :'font-size' => font_item[:size][:value].to_i.to_s + 'px' }
   end
   
   def CssTextParser::parse_font_style(font_item)
