@@ -1,3 +1,9 @@
+@import "compass/css3";
+@import "compass/css3/images";
+@import "compass/css3/opacity";
+@import "compass/css3/box-shadow";
+@import "compass/utilities";
+
 body {
   background: #ffffff;
   padding: 0;
@@ -128,5 +134,56 @@ body {
 
   .grouptags {
     display: none;
+  }
+}
+
+
+#editor-header.navbar, #header.navbar {
+  position: static;
+  top: 0;
+  left: 0;
+  width: 100%;
+  overflow: hidden;
+
+  .navbar-inner {
+    height: 57px;
+    background: #5f2f72 url("/assets/noise.png") repeat;
+    border-bottom: 3px solid #431555;
+  }
+
+  .brand {
+    padding: 8px 20px 2px 40px;
+  }
+
+  .nav {
+    .active {
+      a {
+        @include box-shadow(rgba(41, 23, 37, 0.75) 6px 6px 6px inset, rgba(41, 23, 37, 0.75) -6px -6px 6px inset);
+        background: none;
+        padding: 20px 25px;
+      }
+    }
+    
+    .upload {
+      padding-left: 45px;
+      background: transparent url("/assets/upload.png") no-repeat 10px 10px;
+    }
+  }
+
+  ul.nav {
+    float: right;
+    font-size: 16px;
+
+    li {
+      a {
+        padding: 20px 30px;
+        color: #dcdcdc;
+
+        text-shadow: none;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
   }
 }
