@@ -260,6 +260,7 @@ class Layer
 
     attributes[:"data-grid-id"]  = args[:"data-grid-id"] if not args[:"data-grid-id"].nil?
     attributes[:"data-layer-id"] = self.id.to_s
+    attributes[:"data-layer-name"] = self.name
 
     if tag == :img
       attributes[:src] = image_path
