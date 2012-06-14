@@ -192,7 +192,7 @@ class BoundingBox
   end
 
 
-  def self.get_objects_in_region(region, objects, bound_getter_name)
+  def self.get_objects_in_region(region, objects)
 
     Log.info "Checking if objects #{objects} are in region #{region}"
     objects_in_region = objects.select do |item|

@@ -339,7 +339,7 @@ class Grid
   def process_grouping_box(row_grid, grouping_box, available_nodes)
     Log.info "Trying grouping box: #{grouping_box}"
 
-    nodes_in_region = BoundingBox.get_objects_in_region grouping_box, available_nodes.values, :bounds
+    nodes_in_region = BoundingBox.get_objects_in_region grouping_box, available_nodes.values
     
     if nodes_in_region.empty?
       Log.info "Found padding region"
