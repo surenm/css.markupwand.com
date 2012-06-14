@@ -555,7 +555,7 @@ class Grid
     end
     
     # remove the processed css hack
-    raw_properties = self.css_hash
+    raw_properties = self.css_hash.clone
     raw_properties.delete "processed"
     return raw_properties
   end
