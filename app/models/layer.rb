@@ -182,11 +182,7 @@ class Layer
     elsif self.kind == LAYER_SOLIDFILL
       css.update CssParser::parse_box self, grid
       if is_root
-        css.delete :width
-        css.delete :height
-        css.delete :'min-height'
-        css[:margin] = "0 auto"
-        css[:width] = '960px'
+        #TODO Handle root properly
       end
     end
     

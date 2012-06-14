@@ -563,8 +563,6 @@ class Grid
   def tag
     if not self.override_tag.nil?
       self.override_tag
-    elsif self.root
-      :body
     elsif self.is_image_grid?
       :img
     else
