@@ -178,7 +178,9 @@ HTML
 
     Log.info "Grouping the grids..."
     Grid.group!
-    Log.info "Done grouping grids"
+    Log.info "Done grouping grids, printing now."
+    grid.print
+    Log.info "Done printing"
   end
   
   def generate_markup
