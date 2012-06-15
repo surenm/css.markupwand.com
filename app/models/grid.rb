@@ -205,7 +205,46 @@ class Grid
   end
   
   def process_grouping_box(row_grid, grouping_box, available_nodes)
-  
+    Log.info "Trying grouping box: #{grouping_box}"
+    
+    nodes_in_region = BoundingBox.get_nodes_in_region grouping_box, available_nodes.values, zindex_for_grid(row_grid)
+    
+    if nodes_in_region.empty?
+      Log.info "Found padding region"
+      @@pageglobals.add_offset_box grouping_box
+    
+    elsif nodes_in_region.size <= available_nodes.size
+      grid = Grid.new :design => row_grid.design, :grid_depth => row_grid.grid_depth + 1
+      
+      # Reduce the set of nodes, remove style layers.
+      available_nodes = extract_style_layers grid, available_nodes, grouping_box
+      
+      # Removes all intersecting layers also.
+      if nodes_in_region.size == available_nodes.size
+        nodes_in_region = resolve_intersecting_nodes grid, nodes_in_region
+        grid.positioned_layers.each do |layer_id|
+          layer = Layer.find layer_id
+          available_nodes.delete layer.uid
+        end
+      end
+      
+      Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
+      
+      grid.set nodes_in_region, row_grid
+      nodes_in_region.each {|node| available_nodes.delete node.uid}
+      
+      if not @@pageglobals.offset_box_buffer.nil?
+        grid.offset_bounding_box = @@pageglobals.offset_box_buffer.clone
+        @@pageglobals.reset_offset_buffer
+      end
+      
+      
+      # This grid needs to be called with sub_grids, push to grouping procesing queue
+      @@grouping_queue.push grid
+    end
+    return available_nodes
+  end  
+
   # Usually any layer that matches the grouping box's bounds is a style layer
   def extract_style_layers(grid, available_layers, parent_box = nil)
     return available_layers if (parent_box.nil? or available_layers.size == 1)
@@ -344,7 +383,8 @@ class Grid
   end
   
   # Finds out logically available style layers, not to be rendered
-  def zindex_for_grid;  end
+  def zindex_for_grid;
+  end
   
   ## Spacing and paddin related methods
    
