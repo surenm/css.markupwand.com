@@ -195,7 +195,7 @@ class BoundingBox
   def self.get_nodes_in_region(region, objects, zindex = nil)
 
     Log.info "Checking if objects #{objects} are in region #{region}"
-    objects_in_region = objects.select { |item| region.encloses? item.bounds and item.zindex >= zindex }
+    objects_in_region = objects.select { |item| region.encloses? item.bounds and item.zindex >= zindex.to_i }
 
     Log.info "#{objects_in_region} are within #{region}"
 
