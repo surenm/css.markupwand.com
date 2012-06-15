@@ -21,7 +21,6 @@ class Grid
   field :root, :type => Boolean, :default => false
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
-  field :fit_to_grid,  :type => Boolean, :default => true
   
   field :css_hash, :type => Hash, :default => {}
   field :override_css_hash, :type => Hash, :default => {}
@@ -31,7 +30,8 @@ class Grid
   
   field :width_class, :type => String, :default => ''
   field :override_width_class, :type => String, :default => nil
-  
+  field :is_positioned, :type => Boolean, :default => false
+  field :positioned_layers, :type => Array, :default => []
 
   field :offset_box, :type => String, :default => nil
   field :grid_depth, :type => Integer, :default => -1
@@ -39,7 +39,6 @@ class Grid
 
   @@pageglobals    = PageGlobals.instance
   @@grouping_queue = Queue.new
-  
   
   def set(layers, parent)
     self.parent = parent
@@ -122,6 +121,8 @@ class Grid
     self.grid_depth
   end
 
+
+  ## Queue and Initializers
   
   def self.reset_grouping_queue
     @@grouping_queue.clear
@@ -144,55 +145,8 @@ class Grid
     self.save!
   end
   
-
-  # Usually any layer that matches the grouping box's bounds is a style layer
-  def extract_style_layers(grid, available_layers, parent_box = nil)
-    return available_layers if (parent_box.nil? or available_layers.size == 1)
-    
-    # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
-    style_layers = []
-    if parent_box.class.to_s == "BoundingBox"
-      max_bounds = parent_box
-    else
-      max_bounds = parent_box.bounds
-    end
-    
-    layers = {}
-    available_layers.each { |key, layer| layers[key] = layer if max_bounds.encloses? layer.bounds }
-    grid_style_layers = layers.values.select do |layer| 
-      layer.bounds == max_bounds and layer.styleable_layer?
-    end
-
-    Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." if style_layers.size > 0
-    grid_style_layers.flatten!
-    grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
-
-    Log.info "Deleting #{style_layers} from grid" if style_layers.size > 0
-    grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
-
-    return available_layers
-  end
+  ## Grid construction methods
   
-  # Finds out intersecting nodes in lot of nodes
-  def get_intersecting_nodes(nodes_in_region)
-    intersecting_nodes = []
-    
-    intersect_found = false
-    intersect_node_left = intersect_node_right = nil
-    nodes_in_region.each do |node_left|
-      nodes_in_region.each do |node_right|
-        if node_left != node_right and node_left.intersect? node_right and !(node_left.encloses?(node_right) or node_right.encloses?(node_left))
-          intersecting_nodes.push node_right
-          intersecting_nodes.push node_left
-        end
-      end
-    end
-    
-    intersecting_nodes.uniq!
-    
-    return intersecting_nodes
-  end
-
   def get_subgrids
     Log.info "Getting subgrids (#{self.layers.length} layers in this grid)"
     
@@ -250,6 +204,58 @@ class Grid
     return available_nodes
   end
   
+  def process_grouping_box(row_grid, grouping_box, available_nodes)
+  
+  # Usually any layer that matches the grouping box's bounds is a style layer
+  def extract_style_layers(grid, available_layers, parent_box = nil)
+    return available_layers if (parent_box.nil? or available_layers.size == 1)
+    
+    # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
+    style_layers = []
+    if parent_box.class.to_s == "BoundingBox"
+      max_bounds = parent_box
+    else
+      max_bounds = parent_box.bounds
+    end
+    
+    layers = {}
+    available_layers.each { |key, layer| layers[key] = layer if max_bounds.encloses? layer.bounds }
+    grid_style_layers = layers.values.select do |layer| 
+      layer.bounds == max_bounds and layer.styleable_layer?
+    end
+
+    Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." if grid_style_layers.size > 0
+    grid_style_layers.flatten!
+    grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
+
+    Log.info "Deleting #{style_layers} from grid" if style_layers.size > 0
+    grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
+
+    return available_layers
+  end
+  
+  ## Intersection methods.
+  
+  # Finds out intersecting nodes in lot of nodes
+  def get_intersecting_nodes(nodes_in_region)
+    intersecting_nodes = []
+    
+    intersect_found = false
+    intersect_node_left = intersect_node_right = nil
+    nodes_in_region.each do |node_left|
+      nodes_in_region.each do |node_right|
+        if node_left != node_right and node_left.intersect? node_right and !(node_left.encloses?(node_right) or node_right.encloses?(node_left))
+          intersecting_nodes.push node_right
+          intersecting_nodes.push node_left
+        end
+      end
+    end
+    
+    intersecting_nodes.uniq!
+    
+    return intersecting_nodes
+  end
+
   def find_intersect_type(intersecting_nodes)
     if intersecting_nodes.length == 2 
       intersect_area = intersecting_nodes.first.intersect_area(intersecting_nodes.second)
@@ -323,7 +329,8 @@ class Grid
           Log.info "Relatively positioning #{node}"
           node.save!
         end
-            
+        
+        
         grid.positioned_layers = positioned_layers.map { |node| node.id.to_s }
         grid.save!
         normal_layout_nodes = (nodes_in_region - positioned_layers)
@@ -336,47 +343,11 @@ class Grid
     end
   end
   
-  def process_grouping_box(row_grid, grouping_box, available_nodes)
-    Log.info "Trying grouping box: #{grouping_box}"
-
-    nodes_in_region = BoundingBox.get_objects_in_region grouping_box, available_nodes.values
-    
-    if nodes_in_region.empty?
-      Log.info "Found padding region"
-      @@pageglobals.add_offset_box grouping_box
-      
-    elsif nodes_in_region.size <= available_nodes.size
-      grid = Grid.new :design => row_grid.design, :grid_depth => row_grid.grid_depth + 1
-      
-      # Reduce the set of nodes, remove style layers.
-      available_nodes = extract_style_layers grid, available_nodes, grouping_box
-      
-      # Removes all intersecting layers also.
-      if nodes_in_region.size == available_nodes.size
-        nodes_in_region = resolve_intersecting_nodes grid, nodes_in_region
-        grid.positioned_layers.each do |layer_id|
-          layer = Layer.find layer_id
-          available_nodes.delete layer.uid
-        end
-      end
-      
-      Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
-      
-      grid.set nodes_in_region, row_grid
-      nodes_in_region.each {|node| available_nodes.delete node.uid}
-                
-      if not @@pageglobals.offset_box_buffer.nil?
-        grid.offset_bounding_box = @@pageglobals.offset_box_buffer.clone
-        @@pageglobals.reset_offset_buffer
-      end
-      
-      # This grid needs to be called with sub_grids, push to grouping procesing queue
-      @@grouping_queue.push grid
-    end
-    return available_nodes
-  end
+  # Finds out logically available style layers, not to be rendered
+  def zindex_for_grid;  end
   
-  
+  ## Spacing and paddin related methods
+   
   # Find out bounding box difference from it and its child.
   # Assumption is that it has only one child
   def padding_from_child
@@ -413,9 +384,7 @@ class Grid
   #       bounding box. Relative margin is the distance from it's sibling   
   #       (considering width and margins of its siblings.)
   #
-  #    2(b) and 2(c) are exclusive.
-
-  
+  #    2(b) and 2(c) are exclusive
   def spacing_css
     #TODO. Margin and padding are not always from
     # left and top. It is from all sides.
@@ -578,6 +547,8 @@ class Grid
       (render_layer_obj.tag_name(self.is_leaf?) == :img)
     end
   end
+  
+  ## Markup generation methods
   
   def positioned_layers_html(subgrid_args)
     html = ''
