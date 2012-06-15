@@ -9,7 +9,6 @@ class Grid
 
   # self references for children and parent grids
   has_many :children, :class_name => 'Grid', :inverse_of => :parent
-  has_many :positioned_grids, :class_name => 'Grid', :inverse_of => :parent
   belongs_to :parent, :class_name => 'Grid', :inverse_of => :children
 
   has_and_belongs_to_many :layers, :class_name => 'Layer'
@@ -21,6 +20,7 @@ class Grid
   field :root, :type => Boolean, :default => false
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
+  field :positioned_layers, :type => Array, :default => []
   
   field :css_hash, :type => Hash, :default => {}
   field :override_css_hash, :type => Hash, :default => {}
@@ -31,7 +31,6 @@ class Grid
   field :width_class, :type => String, :default => ''
   field :override_width_class, :type => String, :default => nil
   field :is_positioned, :type => Boolean, :default => false
-  field :positioned_layers, :type => Array, :default => []
 
   field :offset_box, :type => String, :default => nil
   field :grid_depth, :type => Integer, :default => -1
@@ -221,9 +220,8 @@ class Grid
       
       # Removes all intersecting layers also.
       if nodes_in_region.size == available_nodes.size
-        nodes_in_region = resolve_intersecting_nodes grid, nodes_in_region
-        grid.positioned_layers.each do |layer_id|
-          layer = Layer.find layer_id
+        nodes_in_region, positioned_layers = resolve_intersecting_nodes grid, nodes_in_region
+        positioned_layers.each do |layer|
           available_nodes.delete layer.uid
         end
       end
@@ -338,13 +336,13 @@ class Grid
       if overlap_type == :inner
         # Less than 90%, crop them.
         
-        return crop_inner_intersect(intersecting_nodes)
+        return crop_inner_intersect(intersecting_nodes), []
       else
         # More than 90%, relatively position them
         
         # Sort Layers by their layer index.
         # Keep appending them
-        intersecting_nodes.sort! { |node1, node2|  node2.zindex <=>  node1.zindex }
+        intersecting_nodes.sort! { |node1, node2|  node2.zindex <=> node1.zindex }
         
         intersecting_nodes.each { |node| node.overlays = [] }
 
@@ -364,21 +362,30 @@ class Grid
         
         # Once information is set that they are overlaid, remember them.
         positioned_layers = intersecting_nodes.select { |node| node.is_overlay == true }
-        positioned_layers.each do |node|
-          Log.info "Relatively positioning #{node}"
-          node.save!
+        positioned_layers.sort! { |layer1, layer2| layer1.zindex <=> layer2.zindex }
+        positioned_layers_children = []
+        positioned_layers.each do |layer|
+          positioned_grid = Grid.new :design => self.design
+          nodes_in_grid = BoundingBox.get_nodes_in_region layer.bounds, nodes_in_region, layer.zindex
+          positioned_layers_children = positioned_layers_children | nodes_in_grid
+          nodes_in_region = nodes_in_region - nodes_in_grid
+          positioned_grid.grid_depth = self.grid_depth + 1
+          positioned_grid.set nodes_in_grid, self
+          positioned_grid.is_positioned = true
+          positioned_grid.save!
+          
+          @@grouping_queue.push positioned_grid
         end
         
+        self.save!
         
-        grid.positioned_layers = positioned_layers.map { |node| node.id.to_s }
-        grid.save!
-        normal_layout_nodes = (nodes_in_region - positioned_layers)
+        normal_layout_nodes = (nodes_in_region - positioned_layers - positioned_layers_children)
         
-        return normal_layout_nodes
+        return normal_layout_nodes, (positioned_layers + positioned_layers_children)
       end
     else
       Log.info "No intersecting node found, and no nodes reduced as well"
-      return nodes_in_region
+      return nodes_in_region, []
     end
   end
   
@@ -556,6 +563,7 @@ class Grid
         css[:float] = 'left'
       end
       
+      #POSITIONING
       if self.positioned_layers.length > 0
         css[:position] = 'relative'
       end
@@ -630,6 +638,7 @@ class Grid
     sub_grid_args = Hash.new
     if self.render_layer.nil?
 
+      child_nodes = self.children.select { |node| node.is_positioned == false }
       child_nodes = self.children.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
