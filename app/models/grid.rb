@@ -68,7 +68,8 @@ class Grid
     prefix = "|--"
     indent_level.times {|i| spaces+=" "}
 
-    Log.debug "#{spaces}#{prefix} (grid) #{self.bounds.to_s}"
+    style_layers = self.style_layers.map { |layer_id| Layer.find layer_id }
+    Log.debug "#{spaces}#{prefix} (grid) #{self.bounds.to_s} (#{style_layers})"
     self.children.each do |subgrid|
       subgrid.print(indent_level+1)
     end
@@ -381,7 +382,7 @@ class Grid
         
         normal_layout_nodes = (nodes_in_region - positioned_layers - positioned_layers_children)
         
-        return normal_layout_nodes, (positioned_layers + positioned_layers_children)
+        return normal_layout_nodes, (positioned_layers | positioned_layers_children)
       end
     else
       Log.info "No intersecting node found, and no nodes reduced as well"
