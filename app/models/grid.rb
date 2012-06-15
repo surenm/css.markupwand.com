@@ -564,9 +564,8 @@ class Grid
       end
       
       #POSITIONING
-      if self.positioned_layers.length > 0
-        css[:position] = 'relative'
-      end
+      positioned_grid_count = (self.children.select { |grid| grid.is_positioned }).length
+      css[:position] = 'relative' if positioned_grid_count > 0
 
       # Gives out the values for spacing the box model.
       # Margin and padding
