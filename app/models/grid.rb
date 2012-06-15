@@ -207,7 +207,7 @@ class Grid
   def process_grouping_box(row_grid, grouping_box, available_nodes)
     Log.info "Trying grouping box: #{grouping_box}"
     
-    nodes_in_region = BoundingBox.get_nodes_in_region grouping_box, available_nodes.values, zindex_for_grid(row_grid)
+    nodes_in_region = BoundingBox.get_nodes_in_region grouping_box, available_nodes.values, zindex
     
     if nodes_in_region.empty?
       Log.info "Found padding region"
@@ -382,8 +382,16 @@ class Grid
     end
   end
   
-  # Finds out logically available style layers, not to be rendered
-  def zindex_for_grid;
+  # Finds out zindex of style layer
+  def zindex
+    zindex = nil
+    if self.style_layers.length > 0
+      self.style_layers.each do |layer|
+        zindex = [zindex.to_i, (Layer.find layer).zindex].max
+      end
+    end
+    
+    zindex
   end
   
   ## Spacing and paddin related methods
