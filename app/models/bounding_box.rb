@@ -192,13 +192,10 @@ class BoundingBox
   end
 
 
-  def self.get_objects_in_region(region, objects)
+  def self.get_nodes_in_region(region, objects, zindex = nil)
 
     Log.info "Checking if objects #{objects} are in region #{region}"
-    objects_in_region = objects.select do |item|
-      bounds = item.send(bound_getter_name)
-      region.encloses? bounds
-    end
+    objects_in_region = objects.select { |item| region.encloses? item.bounds }
 
     Log.info "#{objects_in_region} are within #{region}"
 
