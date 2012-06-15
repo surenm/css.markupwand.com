@@ -245,6 +245,7 @@ class Layer
   end
 
   def to_html(args = {}, is_leaf, grid)
+    Log.info "[HTML] Layer #{self.to_s}"
     css       = args.fetch :css, {}
     css_class = class_name css, is_leaf, @is_root, grid
     

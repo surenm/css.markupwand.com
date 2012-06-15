@@ -615,6 +615,7 @@ class Grid
   end
   
   def to_html(args = {})
+    Log.info "[HTML] Grid #{self.to_s}"
     html = ''
     layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string self.css_properties
     
@@ -650,12 +651,12 @@ class Grid
         html = content_tag tag, inner_html, attributes, false
       end
       
+      html = inner_html + positioned_grids_html(sub_grid_args)
     else
       sub_grid_args.update attributes
       render_layer_obj = Layer.find self.render_layer
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
 
-      html = inner_html + positioned_layers_html(sub_grid_args)
     end
     
     return html
