@@ -180,7 +180,7 @@ HTML
     Grid.group!
     Log.info "Done grouping grids, printing now."
     grid.print
-    Log.info "Done printing"
+    Log.info "Done printing #{grid.id.to_s}"
   end
   
   def generate_markup
@@ -191,7 +191,8 @@ HTML
     # Set the root path for this design. That is where all the html and css is saved to.
     CssParser::set_assets_root self.store_generated_key
     
-    root_grid = self.grids.where(:root => true).first
+    root_grid = self.grids.where(:root => true).last
+    Log.error "Root grid = #{root_grid.id.to_s}, #{self.grids.where(:root => true).length}"
 
     body_html = root_grid.to_html
 
