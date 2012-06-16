@@ -19,6 +19,7 @@ gem 'aws-sdk'
 gem 'resque'
 gem 'redis'
 gem 'rest-client'
+gem 'tidy_ffi'
 
 # monitoring and profiling
 gem 'newrelic_rpm'
