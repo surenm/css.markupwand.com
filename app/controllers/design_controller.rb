@@ -57,7 +57,10 @@ class DesignController < ApplicationController
   def show
     @design = get_design params[:id]
     
-    render :json => @design.attribute_data
+    respond_to do |format|
+      format.html
+      format.json { render :json => design.attribute_data }
+    end
   end
   
   def update
