@@ -1,0 +1,22 @@
+<%= content_for :content do %>
+<div id="editor-header" class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="action right">
+      <a href="" id="update-markup" class="btn btn-warning"> Download Markup </a>
+    </div>
+    <div class="action row left">
+      <div class="name"><small> Design: </small><%= @design.name %> </div>
+    </div>
+  </div>
+  <div class = "clearfix"> </div>
+</div>
+
+<iframe id="preview-iframe" src='<%= "/generated/#{@design.safe_name}/index.html" %>'></iframe>
+<% end %>
+
+<%= content_for :javascript do %>
+<script type="text/javascript">
+var designs = <%= raw(@designs.to_json) %>;
+</script>
+<%= javascript_include_tag "app/editor" %>
+<% end %>
