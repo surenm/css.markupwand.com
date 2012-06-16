@@ -2,12 +2,15 @@ class UploaderJob
   @queue = :uploader
   
   def self.perform(design_id, design_data, callback_url)
+    Log.level = Log4r::DEBUG
     design_data.symbolize_keys!
     
     design = Design.find design_id
     Log.info "Uploading design file for #{design.id}..."
     
-    file_name = Store::get_safe_name design_data[:name]
+    safe_basename = Store::get_safe_name File.basename(design_data[:name], ".psd")
+  
+    file_name = "#{safe_basename}.psd" 
     file_url  = design_data[:file_url].to_s
     Log.info "Fetching #{file_name} at #{file_url} from Filepicker.io ... "
     
