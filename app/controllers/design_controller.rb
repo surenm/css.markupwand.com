@@ -9,8 +9,7 @@ class DesignController < ApplicationController
   
   public
   def new
-    @uploader = Design.new.file
-    @uploader.success_action_redirect = uploaded_callback_url
+    @design   = Design.new
   end
   
   def local_new
@@ -22,15 +21,18 @@ class DesignController < ApplicationController
   end
   
   def uploaded
-    source_file = params[:key]
-    file_name = File.basename source_file
+    design    = params[:design]
+    file_name = design[:name]
+    file_url  = design[:file_url].to_s
 
     design = Design.new :name => file_name, :store => Store::get_S3_bucket_name
     design.user = @user
     
-    
+    response      = RestClient.get file_url
+    psd_file_data = response.body    
+
     destination_file = File.join design.store_key_prefix, file_name
-    Store.copy_within_remote_store source_file, destination_file
+    Store.write_contents_to_store destination_file, psd_file_data
     
     design.psd_file_path = destination_file
     design.save!
