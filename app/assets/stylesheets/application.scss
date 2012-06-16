@@ -28,6 +28,8 @@
 
 body {
   background: url('bg-notepad.png') repeat transparent;
+  font-family: 'Ubuntu', serif;
+  line-height: 25px;
 }
 
 h1 {
@@ -38,7 +40,7 @@ h1 {
 
 h2 {
   color: #333;
-  font-family: 'Antic Slab', serif;
+  font-family: 'Ubuntu Condensed', serif;
   text-align: center;
 }
 

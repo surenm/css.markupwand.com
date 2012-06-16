@@ -22,19 +22,20 @@ body {
 
   #editor-header {
     .name {
+      margin: 10px;
       font-size: 18px;
       text-transform: capitalize;
       color: #ccc;
     }
     
     .action {
-      margin: 20px;
+      margin: 8px;
     }
   }
 
   #editor-controls {
     position: absolute;
-    top: 60px;
+    top: 53px;
     right: 0;
     bottom: 0;
     height: 100%;
@@ -104,7 +105,7 @@ body {
 
   #editor-iframe {
     position: absolute;
-    top: 60px;
+    top: 53px;
     left: 0;
     height: 100%;
     overflow: auto;
