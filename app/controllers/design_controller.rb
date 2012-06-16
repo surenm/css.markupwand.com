@@ -30,7 +30,7 @@ class DesignController < ApplicationController
     design.save!
     
     Resque.enqueue UploaderJob, design.id, design_data, processed_callback_url
-    redirect_to :action => "index"
+    redirect_to :action => "show"
   end
   
   def local_uploaded
@@ -51,7 +51,7 @@ class DesignController < ApplicationController
     design.set_status Design::STATUS_PROCESSING
     design.push_to_processing_queue processed_callback_url
     
-    redirect_to :action => "index"
+    redirect_to :action => "show"
   end
   
   def show
