@@ -1,4 +1,34 @@
 <%= content_for :content do %>
   <%= render 'shared/header' %>
-<%= @design.attribute_data.to_json %>
+  <div id="design-page" class="container">
+    <h2> Design: <%= @design.name %></h2>
+    
+    <div class="design">
+      <% if @design.status == Design::STATUS_COMPLETED.to_s %>
+      <div class="" style="font-size: 18px; margin: 20px;"> 
+        Uploaded on <%= @design.created_at.to_formatted_s(:short) %> <br>
+        Status: <%= @design.status %> 
+      </div>
+    
+      <div style="text-align: center; font-size: 18px; margin: 20px"> 
+        <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/edit"> Edit </a>
+        <a class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/preview"> Preview </a>
+      </div>
+      <% else %>
+      <div class="status-box">
+        <h3> <%=  @design.status %>...</h3>
+        <img class="loading" src="/assets/loading-ninja.gif">
+      </div>
+      <% end %>
+    </div>
+  </div>
+  
+  <script type="text/javascript">
+    var design = <%= raw @design.attribute_data.to_json %>;
+  </script>
 <% end %>
+
+<%= content_for :javascript do %>
+  <%= javascript_include_tag "app/design" %>
+<% end %>
+
