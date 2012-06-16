@@ -17,7 +17,9 @@ class DesignController < ApplicationController
   end
   
   def index
-    @designs = @user.designs.reverse    
+    @designs = @user.designs.sort do |a, b|
+      b.created_at <=> a.created_at
+    end   
   end
   
   def uploaded
@@ -38,7 +40,7 @@ class DesignController < ApplicationController
     design.file = params[:design]["file"]
     design.save!
 
-    safe_basename = Store::get_safe_name File.basename(design_data[:name], ".psd")
+    safe_basename = Store::get_safe_name File.basename(file_name, ".psd")
     safe_filename = "#{safe_basename}.psd"
     destination_file = File.join design.store_key_prefix, safe_filename
     Store.save_to_store design.file.current_path, destination_file

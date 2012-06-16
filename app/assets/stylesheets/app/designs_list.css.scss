@@ -28,9 +28,16 @@
     margin: 10px 0px;
 
     .name {
+      background: url("/assets/arrow.png") no-repeat top left;
+      padding-left: 20px;
       font-weight: bold;
       text-transform: uppercase;
       font-size: 1.1em;
+      
+      a {
+        color: #333;
+      }
+      
     }
   }
 
