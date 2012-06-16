@@ -139,6 +139,10 @@ class Layer
   def renderable_image?
     !self.layer_json.nil? and self.layer_json.has_key? :renderImage and self.layer_json[:renderImage]
   end
+  
+  def unmaskable_layer?
+    self.kind == Layer::LAYER_HUESATURATION
+  end
 
   def image_path
     CssParser::get_image_path(self) if self.kind == LAYER_SMARTOBJECT or self.kind == LAYER_NORMAL

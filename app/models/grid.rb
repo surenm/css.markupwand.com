@@ -374,7 +374,7 @@ class Grid
           positioned_grid.grid_depth = self.grid_depth + 1
           positioned_grid.set nodes_in_grid, self
           positioned_grid.is_positioned = true
-          Log.error "Setting is_positioned = true for #{positioned_grid.id.to_s}"
+          Log.info "Setting is_positioned = true for #{positioned_grid} (#{positioned_grid.id.to_s})"
           positioned_grid.save!
           @@grouping_queue.push positioned_grid
         end
@@ -395,8 +395,11 @@ class Grid
   def zindex
     zindex = nil
     if self.style_layers.length > 0
-      self.style_layers.each do |layer|
-        zindex = [zindex.to_i, (Layer.find layer).zindex].max
+      self.style_layers.each do |layer_id|
+        layer = Layer.find layer_id
+        if not layer.unmaskable_layer?
+          zindex = [zindex.to_i, layer.zindex].max
+        end
       end
     end
     
