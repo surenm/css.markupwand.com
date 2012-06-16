@@ -50,10 +50,11 @@
       vertical-align: middle;
       font-size: 30px;
       color: white;
-      background: #ff4500;
-      
+      background: #ff4500 url("/assets/noise.png") repeat;      
+      border-radius: 4px;
+
       &:disabled {
-        background: #dddddd;
+        background: #dddddd url("/assets/noise.png") repeat;
       }
     }
   }

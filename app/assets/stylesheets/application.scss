@@ -25,6 +25,7 @@
 @import "compass/css3/box-shadow";
 @import "compass/utilities";
 
+
 body {
   background: url('bg-notepad.png') repeat transparent;
 }
@@ -57,6 +58,7 @@ h2 {
 small {
   font-size: 0.75em;
 }
+
 
 #header.navbar, #editor-header.navbar {
   font-family: 'Ubuntu Condensed', serif;
@@ -110,9 +112,7 @@ small {
   }
 }
 
-
 .ui-progressbar-value {
   background-image: url(/assets/pbar-ani.gif);
 }
   
-
