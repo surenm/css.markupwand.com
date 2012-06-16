@@ -9,12 +9,12 @@
         <div class="design row"> 
           <div class="span7">
             <div class="name">
-              <%= design.name %>
+              <a href="/design/<%= design.safe_name %>">  <%= design.name %> </a>
             </div> 
-            <small><%= design.created_at.to_formatted_s(:short) %> </small>
+
           </div>
-          <div class="span1 right">
-            <a class="btn" href="/design/<%= design.safe_name %>/edit/#"> Edit </a>
+          <div class="span2 right">
+            <small><%= design.created_at.to_formatted_s(:short) %> </small>
           </div>
           <div class="clearfix"> </div>
         </div>
