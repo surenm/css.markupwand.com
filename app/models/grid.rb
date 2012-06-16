@@ -565,9 +565,12 @@ class Grid
         css[:float] = 'left'
       end
       
-      #POSITIONING
+      # Positioning
       positioned_grid_count = (self.children.select { |grid| grid.is_positioned }).length
       css[:position] = 'relative' if positioned_grid_count > 0
+      
+      css.update CssParser::position_absolutely(self) if is_positioned
+      
 
       # Gives out the values for spacing the box model.
       # Margin and padding

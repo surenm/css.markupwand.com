@@ -217,14 +217,13 @@ module CssParser
     
   end
   
-  def CssParser::position_absolutely(layer, grid)
+  def CssParser::position_absolutely(grid)
     css =  {}
     if grid.bounds
       css[:position]  = 'absolute'
-      css[:top]       = (layer.bounds.top - grid.bounds.top).to_s + 'px'
-      css[:left]      = (layer.bounds.left - grid.bounds.left).to_s + 'px'
-      css[:'z-index'] = layer.layer_json.extract_value(:itemIndex, :value)
-      css[:width]     = layer.bounds.width.to_s + 'px'
+      css[:top]       = (grid.bounds.top - grid.parent.bounds.top).to_s + 'px'
+      css[:left]      = (grid.bounds.left - grid.parent.bounds.left).to_s + 'px'
+      css[:'z-index'] = grid.zindex
     end
     
     css
