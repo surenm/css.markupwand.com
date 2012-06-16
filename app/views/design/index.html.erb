@@ -7,14 +7,17 @@
       <% @designs.each do |design| %>
       <li>
         <div class="design row"> 
-          <div class="span7">
+          <div class="left">
             <div class="name">
-              <a href="/design/<%= design.safe_name %>">  <%= design.name %> </a>
+              <a href="/design/<%= design.safe_name %>">  <%= design.name %> </a> <br>
             </div> 
-
           </div>
-          <div class="span2 right">
-            <small><%= design.created_at.to_formatted_s(:short) %> </small>
+          <div class="left">
+            <small> Uploaded <%= design.created_at.to_formatted_s(:short) %> </small>
+          </div>
+          <div class="right">
+            <a class="btn btn-success" href="/design/<%= design.safe_name %>"> Edit </a>
+            <a class="btn btn-primary" href="/design/<%= design.safe_name %>"> Preview </a>
           </div>
           <div class="clearfix"> </div>
         </div>

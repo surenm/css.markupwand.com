@@ -164,7 +164,7 @@ HTML
       layer = Layer.create_from_raw_data node_json, self.id
       layer.save!
       layers.push layer
-      Log.debug "Added Layer #{layer}."
+      Log.debug "Added Layer #{layer} (#{layer.zindex})"
     end
     
     Log.info "Layer bounds"
@@ -178,7 +178,9 @@ HTML
 
     Log.info "Grouping the grids..."
     Grid.group!
-    Log.info "Done grouping grids"
+    Log.info "Done grouping grids, printing now."
+    grid.print
+    Log.info "Done printing #{grid.id.to_s}"
   end
   
   def generate_markup
@@ -189,7 +191,8 @@ HTML
     # Set the root path for this design. That is where all the html and css is saved to.
     CssParser::set_assets_root self.store_generated_key
     
-    root_grid = self.grids.where(:root => true).first
+    root_grid = self.grids.where(:root => true).last
+    Log.error "Root grid = #{root_grid.id.to_s}, #{self.grids.where(:root => true).length}"
 
     body_html = root_grid.to_html
 

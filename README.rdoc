@@ -1,8 +1,8 @@
 Convert PSD to HTML5/CSS3
 
-Stack:
+= Stack:
 
-Servers: type of processes
+== Servers: type of processes
     Web server:
         web dynos in heroku prod and passenger in local
     Worker server
@@ -10,7 +10,7 @@ Servers: type of processes
     Photoshop server
         windows photoshop in prod and MAC osX photoshop in local
     
-Store: Data storage type
+== Store: Data storage type
     store_local
         Web server run in local mode. All files are stored in localhost in ~/store_local. TODO: make this configurable
         use for all local development
@@ -26,7 +26,7 @@ Store: Data storage type
         ~/tmp directory for photoshop servers
         could be deleted without any effect (ideally :))
         
-Tasks:
+= Tasks:
     Uploading: Upload a file from client to store
         web servers handle this. Uses carrierwave
 
@@ -56,7 +56,7 @@ Tasks:
         
         TODO: regenerate markup
 
-Queues: happens at interfaces
+= Queues: happens at interfaces
     Processing: 
         SQS queue in production
             on file upload in web server, a message is sent to SQS queue to process it
@@ -71,7 +71,7 @@ Queues: happens at interfaces
         store_development:
             TODO: poller that listens to S3 for completion
    
-Running in local:
+== Running in local:
     store_local mode
         webserver: passenger start
         resque: QUEUE=* rake environment resque:work
@@ -83,16 +83,15 @@ Running in local:
         webserver: export REMOTE=true; export AWS KEYS;  passenger start
         resque: QUEUE=* rake environment resque:work
         
-Individual task:
+== Individual task:
     Just generate:
         "MarkupGeneratorJob.perform design.id" in rails console where design is a mongo object
     
         
 
-Fetching font data
-------------------
+= Fetching font data
 
-Typekit:
+== Typekit:
 
  curl -s https://typekit.com/api/v1/json/libraries/trial?per_page=500 | jsonpp > typekit_trial.json
  curl -s https://typekit.com/api/v1/json/libraries/personal?per_page=500 | jsonpp > typekit_personal_1.json
@@ -100,5 +99,5 @@ Typekit:
  curl -s https://typekit.com/api/v1/json/libraries/full?per_page=500 | jsonpp > typekit_full_1.json
  curl -s https://typekit.com/api/v1/json/libraries/full?per_page=500&page_count=2 | jsonpp > typekit_full_2.json
  
-Google Webfont:
+== Google Webfont:
  curl -s https://www.googleapis.com/webfonts/v1/webfonts  > google_webfont.json

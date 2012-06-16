@@ -15,7 +15,7 @@
  *= require lib/bootstrap-responsive
  *= require lib/bootstrap_and_overrides
  *= require lib/jquery-ui-1.8.20
- *= require app/buttons
+ *= require_directory ./app
  *= require_self
 */
 
@@ -58,7 +58,7 @@ small {
   font-size: 0.75em;
 }
 
-#editor-header.navbar, #header.navbar {
+#header.navbar, #editor-header.navbar {
   font-family: 'Ubuntu Condensed', serif;
   font-size: 18px;
   position: static;
@@ -74,7 +74,7 @@ small {
   }
 
   .brand {
-    padding: 8px 20px 2px 40px;
+    padding: 15px 20px 2px 40px;
   }
 
   .nav {
@@ -82,14 +82,19 @@ small {
       a {
         @include box-shadow(rgba(41, 23, 37, 0.75) 6px 6px 6px inset, rgba(41, 23, 37, 0.75) -6px -6px 6px inset);
         background: none;
-        padding: 16px 20px;
+        padding: 16px 25px;
       }
     }
+    
+    .upload {
+      padding-left: 45px;
+      background: transparent url("/assets/upload.png") no-repeat 7px 12px;
+    }
+    
   }
 
   ul.nav {
-    float: right;
-
+    margin-left: 30px;
 
     li {
       a {
@@ -105,116 +110,6 @@ small {
   }
 }
 
-#landing-page {
-  img {
-    margin-top: 30px;
-  }
-
-  .drop {
-    background: #CEDEEB url("/assets/noise.png") repeat;
-    @include border-radius(8px);
-    border: 1px dotted #106AA3;
-    width: 80%;
-    min-height: 200px;
-  }
-
-  input[type="file"] {
-    background-color: #d9d9d9;
-    height: 40px;
-  }
-}
-
-#design-upload-page {
-
-  #file-upload-form {
-    width: 640px;
-    padding-top: 30px;
-    margin: 0px auto;
-
-    #file-select-zone {
-      position: relative;
-      cursor: pointer;
-
-      #file-selector {
-        height: 300px;
-        background: white;
-        color: #333;
-        font-size: 36px;
-        line-height: 300px;
-        vertical-align: middle;
-        text-align: center;
-        border: 3px dashed #888;
-        background: #eee;
-        
-        &:hover {
-          border: 3px dashed #000;
-        };
-      }
-
-      #design_file {
-        width: 100%;
-        height: 100%;
-        opacity: 0;
-      }
-
-      #file-input-enclosure {
-        height: 300px;
-        width: 640px;
-        position: absolute;
-        display: inline-block;
-        top: 0px;
-      }
-    }
-
-    input#file-upload-submit {
-      width: 640px;
-      text-align: center;
-      margin-top: 10px;
-      height: 50px;
-      line-height: 40px;
-      vertical-align: middle;
-      font-size: 30px;
-      color: white;
-      background: #ff4500;
-      
-      &:disabled {
-        background: #dddddd;
-      }
-    }
-  }
-}
-
-#designs-list-page, #designs {
-  margin-top: 80px;
-
-  ul {
-    list-style-type: none;
-    padding: 0 15px 0 0;
-  }
-
-  .design {
-    background: #CEDEEB url("/assets/noise.png") repeat;;
-    @include border-radius(8px);
-    border: 1px solid #106AA3;
-    box-shadow: inset 2px 2px 2px 2px #B2C7D5;
-    padding: 20px 10px;
-    margin: 10px 0px;
-
-    .name {
-      background: url("/assets/arrow.png") no-repeat top left;
-      padding-left: 20px;
-      font-weight: bold;
-      text-transform: uppercase;
-      font-size: 1.1em;
-      
-      a {
-        color: #333;
-      }
-      
-    }
-  }
-
-}
 
 .ui-progressbar-value {
   background-image: url(/assets/pbar-ani.gif);

@@ -161,6 +161,26 @@ module CssParser
     end
   end
   
+  def CssParser::parse_box_width(layer, grid)
+    if grid.nil? and not layer.is_overlay?
+      return {}
+    end
+    
+    if layer.is_overlay?
+      width = layer.bounds.width
+    else
+      width = grid.unpadded_width
+    end
+
+    if not width.nil?
+      {:width => width.to_s + 'px' }
+    else
+      {}
+    end
+  end
+  
+  
+  
   def CssParser::parse_box_background_color(layer)
     css = {}
     if layer.has_key? :adjustment
@@ -197,14 +217,13 @@ module CssParser
     
   end
   
-  def CssParser::position_absolutely(layer, grid)
+  def CssParser::position_absolutely(grid)
     css =  {}
     if grid.bounds
       css[:position]  = 'absolute'
-      css[:top]       = (layer.bounds.top - grid.bounds.top).to_s + 'px'
-      css[:left]      = (layer.bounds.left - grid.bounds.left).to_s + 'px'
-      css[:'z-index'] = layer.layer_json.extract_value(:itemIndex, :value)
-      css[:width]     = layer.bounds.width.to_s + 'px'
+      css[:top]       = (grid.bounds.top - grid.parent.bounds.top).to_s + 'px'
+      css[:left]      = (grid.bounds.left - grid.parent.bounds.left).to_s + 'px'
+      css[:'z-index'] = grid.zindex
     end
     
     css
@@ -215,6 +234,9 @@ module CssParser
     
     # Min-height, pick it up from grid
     css.update(parse_box_height(layer, grid))
+    
+    # Box width
+    css.update(parse_box_width(layer, grid))
     
     # Background-color
     css.update(parse_box_background_color(layer.layer_json))
@@ -230,6 +252,7 @@ module CssParser
     
     # Box shadow
     css.update(parse_box_shadow(layer.layer_json))
+    
     
     css
   end

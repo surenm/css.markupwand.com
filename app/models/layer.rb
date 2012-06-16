@@ -41,7 +41,8 @@ class Layer
     layer.set layer_json
     return layer
   end
-
+  
+  
   def set(layer)
     self.name       = layer[:name][:value]
     self.kind       = layer[:layerKind]
@@ -61,6 +62,11 @@ class Layer
     
     self.layer_bounds = BoundingBox.pickle layer_bounds
     self.save!
+  end
+  
+  # TODO Change object property and initialize when we are making properties inside.
+  def zindex
+    layer_json.extract_value(:itemIndex, :value)
   end
   
   def attribute_data
@@ -133,6 +139,10 @@ class Layer
   def renderable_image?
     !self.layer_json.nil? and self.layer_json.has_key? :renderImage and self.layer_json[:renderImage]
   end
+  
+  def unmaskable_layer?
+    self.kind == Layer::LAYER_HUESATURATION
+  end
 
   def image_path
     CssParser::get_image_path(self) if self.kind == LAYER_SMARTOBJECT or self.kind == LAYER_NORMAL
@@ -168,8 +178,6 @@ class Layer
       css.update CssParser::parse_box self, grid
     end
     
-    css.update CssParser::position_absolutely(self, grid) if self.is_overlay?
-
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
@@ -181,13 +189,6 @@ class Layer
       # don't do anything
     elsif self.kind == LAYER_SOLIDFILL
       css.update CssParser::parse_box self, grid
-      if is_root
-        css.delete :width
-        css.delete :height
-        css.delete :'min-height'
-        css[:margin] = "0 auto"
-        css[:width] = '960px'
-      end
     end
     
     css
@@ -246,11 +247,11 @@ class Layer
   end
 
   def to_html(args = {}, is_leaf, grid)
-    #puts "Generating html for #{self.inspect}"
+    Log.info "[HTML] Layer #{self.to_s}"
     css       = args.fetch :css, {}
     css_class = class_name css, is_leaf, @is_root, grid
     
-    tag = args.fetch :tag, self.tag_name(is_leaf)
+    tag = tag_name(is_leaf)
 
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.kind == LAYER_TEXT
@@ -264,6 +265,7 @@ class Layer
 
     attributes[:"data-grid-id"]  = args[:"data-grid-id"] if not args[:"data-grid-id"].nil?
     attributes[:"data-layer-id"] = self.id.to_s
+    attributes[:"data-layer-name"] = self.name
 
     if tag == :img
       attributes[:src] = image_path

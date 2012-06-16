@@ -5,15 +5,22 @@
 
       <div class="nav-collapse collapse">
         <ul class="nav">
+          
+
           <li>
-            <a href="/"> Home </a>
+            <a class="upload" href="/design/new"> +Upload design  </a>
           </li>
+          
           <li>
-            <a href="/design/new"> +New design</a>
+            <a href="/designs"> My designs </a>
           </li>
-          <li>
-            <a href="/designs"> My designs</a>
-          </li>
+        </ul>
+      </div>
+      <div class="nav-collapse collapse right">
+        <ul class="nav">
+          <li class="active">
+            <a href="#"> Hello <%= current_user.first_name %>! </a>
+          </li>  
         </ul>
       </div>
     </div>
