@@ -7,7 +7,7 @@ $(document).ready ->
   form_submit_button = $("#file-upload-submit")
 
   $("#file-select-zone").click -> 
-    filepicker.getFile 'image/vnd.adobe.photoshop', {'multiple': false, 'modal': true}, (url, data) ->
+    filepicker.getFile '*/*', {'multiple': false, 'modal': true}, (url, data) ->
       file_url_field.attr "value", url
       file_name_field.attr "value", data.filename
       form_submit_button.removeAttr "disabled"
