@@ -72,7 +72,8 @@ class Design
       :font_map      => self.font_map,
       :grids         => grids,
       :layers        => layers.values,
-      :id            => self.safe_name
+      :id            => self.safe_name,
+      :status        => self.status
     }
   end
   
