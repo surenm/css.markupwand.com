@@ -27,7 +27,7 @@ class DesignController < ApplicationController
     design.user = @user
     design.save!
     
-    Resque.enqueue UploaderJob, design.id, design_data
+    Resque.enqueue UploaderJob, design.id, design_data, processed_callback_url
     redirect_to :action => "index"
   end
   

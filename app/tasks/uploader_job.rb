@@ -1,7 +1,7 @@
 class UploaderJob
   @queue = :uploader
   
-  def self.perform(design_id, design_data)
+  def self.perform(design_id, design_data, callback_url)
     design_data.symbolize_keys!
     
     design = Design.find design_id
@@ -21,6 +21,6 @@ class UploaderJob
     design.save!
     Log.info "Done uploading successfully!"
     
-    design.push_to_processing_queue processed_callback_url
+    design.push_to_processing_queue callback_url
   end
 end
