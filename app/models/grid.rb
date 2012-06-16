@@ -69,7 +69,7 @@ class Grid
     indent_level.times {|i| spaces+=" "}
 
     style_layers = self.style_layers.map { |layer_id| Layer.find layer_id }
-    Log.debug "#{spaces}#{prefix} (grid) #{self.bounds.to_s} (#{style_layers})"
+    Log.debug "#{spaces}#{prefix} (grid #{self.id.to_s}) #{self.bounds.to_s} (#{style_layers}, positioned = #{is_positioned})"
     self.children.each do |subgrid|
       subgrid.print(indent_level+1)
     end
@@ -265,6 +265,7 @@ class Grid
     Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." if grid_style_layers.size > 0
     grid_style_layers.flatten!
     grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
+    grid.style_layers.uniq!
 
     Log.info "Deleting #{style_layers} from grid" if style_layers.size > 0
     grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
@@ -373,8 +374,8 @@ class Grid
           positioned_grid.grid_depth = self.grid_depth + 1
           positioned_grid.set nodes_in_grid, self
           positioned_grid.is_positioned = true
+          Log.error "Setting is_positioned = true for #{positioned_grid.id.to_s}"
           positioned_grid.save!
-          
           @@grouping_queue.push positioned_grid
         end
         
@@ -616,7 +617,7 @@ class Grid
   end
   
   def to_html(args = {})
-    Log.info "[HTML] Grid #{self.to_s}"
+    Log.info "[HTML] #{self.to_s}, #{self.id.to_s}"
     html = ''
     layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string self.css_properties
     
@@ -629,7 +630,7 @@ class Grid
     
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
-
+    
     attributes                  = Hash.new
     attributes[:class]          = css_class_string if not css_class_string.nil?
     attributes[:"data-grid-id"] = self.id.to_s
@@ -637,8 +638,8 @@ class Grid
     
     sub_grid_args = Hash.new
     if self.render_layer.nil?
-
-      child_nodes = self.children.select { |node| node.is_positioned == false }
+      
+      child_nodes = self.children.select { |node| not node.is_positioned }
       child_nodes = self.children.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
@@ -647,17 +648,16 @@ class Grid
       if not self.children.empty? and self.orientation == "left"
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
-
+      
       if child_nodes.length > 0
         html = content_tag tag, inner_html, attributes, false
       end
       
-      html = inner_html + positioned_grids_html(sub_grid_args)
     else
       sub_grid_args.update attributes
       render_layer_obj = Layer.find self.render_layer
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
-
+      html = inner_html
     end
     
     return html
