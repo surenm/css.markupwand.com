@@ -15,7 +15,12 @@
  *= require lib/bootstrap-responsive
  *= require lib/bootstrap_and_overrides
  *= require lib/jquery-ui-1.8.20
- *= require_directory ./app
+ *= require app/scaffolds
+ *= require app/buttons
+ *= require app/designs
+ *= require app/landing_page
+ *= require app/upload
+ *= require app/preview
  *= require_self
 */
 
@@ -30,6 +35,7 @@ body {
   background: url('bg-notepad.png') repeat transparent;
   font-family: 'Ubuntu', serif;
   line-height: 25px;
+  overflow: auto;
 }
 
 h1 {
@@ -70,6 +76,18 @@ small {
   left: 0;
   width: 100%;
   overflow: hidden;
+  
+  .name {
+    margin: 5px;
+    font-size: 18px;
+    text-transform: capitalize;
+    color: #ccc;
+  }
+  
+  .action {
+    margin: 8px;
+  }
+  
 
   .navbar-inner {
     height: 50px;
@@ -113,6 +131,7 @@ small {
     }
   }
 }
+
 
 .ui-progressbar-value {
   background-image: url(/assets/pbar-ani.gif);
