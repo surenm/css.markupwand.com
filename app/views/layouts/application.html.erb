@@ -12,7 +12,7 @@
 </head>
 <body>
 <%= yield :content %>
-
+<% if Rails.env.production? %>
 <script type='text/javascript'>
   var __wtw_lucky_ref_id = 48969;
   var __wtw_lucky_setup_key = {};
@@ -28,5 +28,6 @@
     s.parentNode.insertBefore(wa, s);
   })();
 </script>
+<% end %>
 </body>
 </html>

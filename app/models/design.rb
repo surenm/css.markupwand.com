@@ -34,7 +34,7 @@ class Design
   mount_uploader :file, DesignUploader
   
   def safe_name_prefix
-    self.name.gsub(/[^0-9a-zA-Z]/,'_')
+    Store::get_safe_name self.name
   end
   
   def safe_name

@@ -6,6 +6,10 @@ module Store
   
   Store::LOCAL_STORE = File.join Dir.home, "store_local"
   
+  def Store::get_safe_name(name)
+    name.gsub(/[^0-9a-zA-Z]/,'_')
+  end
+  
   def Store::get_S3_bucket_name
     "store_#{Rails.env}"
   end

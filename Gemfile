@@ -18,6 +18,7 @@ gem 'rmagick'
 gem 'aws-sdk'
 gem 'resque'
 gem 'redis'
+gem 'rest-client'
 
 # monitoring and profiling
 gem 'newrelic_rpm'

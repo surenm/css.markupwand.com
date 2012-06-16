@@ -9,8 +9,7 @@ class DesignController < ApplicationController
   
   public
   def new
-    @uploader = Design.new.file
-    @uploader.success_action_redirect = uploaded_callback_url
+    @design   = Design.new
   end
   
   def local_new
@@ -22,20 +21,13 @@ class DesignController < ApplicationController
   end
   
   def uploaded
-    source_file = params[:key]
-    file_name = File.basename source_file
+    design_data = params[:design]
 
-    design = Design.new :name => file_name, :store => Store::get_S3_bucket_name
+    design      = Design.new :name => design_data[:name], :store => Store::get_S3_bucket_name
     design.user = @user
-    
-    
-    destination_file = File.join design.store_key_prefix, file_name
-    Store.copy_within_remote_store source_file, destination_file
-    
-    design.psd_file_path = destination_file
     design.save!
-    design.push_to_processing_queue processed_callback_url
-
+    
+    Resque.enqueue UploaderJob, design.id, design_data, processed_callback_url
     redirect_to :action => "index"
   end
   
@@ -46,7 +38,7 @@ class DesignController < ApplicationController
     design.file = params[:design]["file"]
     design.save!
 
-    destination_file = File.join design.store_key_prefix, file_name
+    destination_file = File.join design.store_key_prefix, Store::get_safe_name(design[:name])
     Store.save_to_store design.file.current_path, destination_file
     
     design.psd_file_path = destination_file

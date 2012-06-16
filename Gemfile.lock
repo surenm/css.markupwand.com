@@ -222,6 +222,8 @@ GEM
       redis-namespace (~> 1.0.2)
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
+    rest-client (1.6.7)
+      mime-types (>= 1.16)
     rmagick (2.13.1)
     rspec (2.8.0)
       rspec-core (~> 2.8.0)
@@ -335,6 +337,7 @@ DEPENDENCIES
   rails (= 3.2.0)
   redis
   resque
+  rest-client
   rmagick
   rspec-rails
   ruby-prof
