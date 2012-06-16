@@ -22,6 +22,19 @@ class DesignController < ApplicationController
     end   
   end
   
+  def show
+    @design = get_design params[:id]
+    
+    respond_to do |format|
+      format.html
+      format.json { render :json => design.attribute_data }
+    end
+  end
+  
+  def preview
+    @design = get_design params[:id]
+  end
+  
   def uploaded
     design_data = params[:design]
 
@@ -30,7 +43,7 @@ class DesignController < ApplicationController
     design.save!
     
     Resque.enqueue UploaderJob, design.id, design_data, processed_callback_url
-    redirect_to :action => "show"
+    redirect_to :action => :show, :id => design.safe_name
   end
   
   def local_uploaded
@@ -51,17 +64,9 @@ class DesignController < ApplicationController
     design.set_status Design::STATUS_PROCESSING
     design.push_to_processing_queue processed_callback_url
     
-    redirect_to :action => "show"
+    redirect_to :action => :show, :id => design.safe_name
   end
   
-  def show
-    @design = get_design params[:id]
-    
-    respond_to do |format|
-      format.html
-      format.json { render :json => design.attribute_data }
-    end
-  end
   
   def update
     @design = get_design params[:id]
