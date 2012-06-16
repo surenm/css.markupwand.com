@@ -16,8 +16,8 @@
             <small> Uploaded <%= design.created_at.to_formatted_s(:short) %> </small>
           </div>
           <div class="right">
-            <a class="btn btn-success" href="/design/<%= design.safe_name %>"> Edit </a>
-            <a class="btn btn-primary" href="/design/<%= design.safe_name %>"> Preview </a>
+            <a class="btn btn-success" href="/design/<%= design.safe_name %>/edit"> Edit </a>
+            <a class="btn btn-primary" href="/design/<%= design.safe_name %>/preview"> Preview </a>
           </div>
           <div class="clearfix"> </div>
         </div>
