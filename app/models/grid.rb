@@ -640,7 +640,7 @@ class Grid
     if self.render_layer.nil?
       
       child_nodes = self.children.select { |node| not node.is_positioned }
-      child_nodes = self.children.sort { |a, b| a.id.to_s <=> b.id.to_s }
+      child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
       end
