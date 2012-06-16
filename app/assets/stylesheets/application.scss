@@ -29,6 +29,19 @@ body {
   background: url('bg-notepad.png') repeat transparent;
 }
 
+h1 {
+  color: #333;
+  margin: 30px;
+  font-family: 'Dancing Script', serif;
+}
+
+h2 {
+  color: #333;
+  font-family: 'Antic Slab', serif;
+  text-align: center;
+}
+
+
 .left {
   float: left;
 }
@@ -46,6 +59,8 @@ small {
 }
 
 #editor-header.navbar, #header.navbar {
+  font-family: 'Ubuntu Condensed', serif;
+  font-size: 18px;
   position: static;
   top: 0;
   left: 0;
@@ -67,18 +82,18 @@ small {
       a {
         @include box-shadow(rgba(41, 23, 37, 0.75) 6px 6px 6px inset, rgba(41, 23, 37, 0.75) -6px -6px 6px inset);
         background: none;
-        padding: 16px 25px;
+        padding: 16px 20px;
       }
     }
   }
 
   ul.nav {
     float: right;
-    font-size: 16px;
+
 
     li {
       a {
-        padding: 20px 30px;
+        padding: 16px 20px;
         color: #dcdcdc;
 
         text-shadow: none;
@@ -91,17 +106,6 @@ small {
 }
 
 #landing-page {
-
-  h1 {
-    color: #333;
-    margin: 30px;
-    font-family: 'Dancing Script', serif;
-  }
-
-  h2 {
-    color: #333;
-  }
-
   img {
     margin-top: 30px;
   }
@@ -180,15 +184,8 @@ small {
   }
 }
 
-#designs-list-page {
+#designs-list-page, #designs {
   margin-top: 80px;
-
-  h1 {
-    text-align: center;
-    margin: 20px 0px;
-    font-family: 'Dancing Script', serif;
-    color: #333;
-  }
 
   ul {
     list-style-type: none;
