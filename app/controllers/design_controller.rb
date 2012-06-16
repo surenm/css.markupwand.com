@@ -17,7 +17,9 @@ class DesignController < ApplicationController
   end
   
   def index
-    @designs = @user.designs.reverse    
+    @designs = @user.designs.sort do |a, b|
+      b.created_at <=> a.created_at
+    end   
   end
   
   def uploaded
