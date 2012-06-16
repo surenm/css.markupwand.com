@@ -610,7 +610,9 @@ class Grid
   def positioned_grids_html(subgrid_args)
     html = ''
     self.children.each do |grid|
-      html += grid.to_html(subgrid_args)
+      if grid.is_positioned
+        html += grid.to_html(subgrid_args)
+      end
     end
     
     html
@@ -648,6 +650,8 @@ class Grid
       if not self.children.empty? and self.orientation == "left"
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
+      
+      inner_html += positioned_grids_html(sub_grid_args)
       
       if child_nodes.length > 0
         html = content_tag tag, inner_html, attributes, false
