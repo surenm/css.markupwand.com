@@ -129,6 +129,7 @@ small {
 
     #file-select-zone {
       position: relative;
+      cursor: pointer;
 
       #file-selector {
         height: 300px;
@@ -138,8 +139,12 @@ small {
         line-height: 300px;
         vertical-align: middle;
         text-align: center;
-        border: 3px dashed;
+        border: 3px dashed #888;
         background: #eee;
+        
+        &:hover {
+          border: 3px dashed #000;
+        };
       }
 
       #design_file {
@@ -157,7 +162,7 @@ small {
       }
     }
 
-    #file-upload-submit {
+    input#file-upload-submit {
       width: 640px;
       text-align: center;
       margin-top: 10px;
@@ -167,6 +172,10 @@ small {
       font-size: 30px;
       color: white;
       background: #ff4500;
+      
+      &:disabled {
+        background: #dddddd;
+      }
     }
   }
 }
