@@ -174,8 +174,6 @@ class Layer
       css.update CssParser::parse_box self, grid
     end
     
-    css.update CssParser::position_absolutely(self, grid) if self.is_overlay?
-
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
