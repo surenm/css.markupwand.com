@@ -3,22 +3,20 @@ class MarkupGeneratorJob
   
   def self.perform(design_id)
     design = Design.find design_id
+
+    # Set design back to generating
     design.set_status Design::STATUS_GENERATING
     
+    # Fetch the processed files once again
     Store::fetch_from_store design.store_processed_key
 
-    design_processed_directory = Rails.root.join 'tmp', 'store', design.store_processed_key
-    Log.info "Design processed directory : #{design_processed_directory} "
+    # Generate markup once in publishable mode once
+    design.generate_markup false
     
-    Dir["#{design_processed_directory}/*.psd.json"].each do |processed_file|
-      Log.info "Found processed file - #{processed_file}"
-      design.processed_file_path = processed_file
-      design.save!
-      break
-    end
-    
-    design.parse
-    design.generate_markup
+    # Generate markup once in editable mode once
+    design.generate_markup true
+
+    # mark editing complete
     design.set_status Design::STATUS_COMPLETED
   end
 end
