@@ -217,12 +217,14 @@ HTML
     raw_file_name  = File.join self.store_generated_key, 'raw.html'
     html_file_name = File.join self.store_generated_key, 'index.html'
 
-    Log.info "Saving resultant HTML file #{html_file_name}"    
-    Store.write_contents_to_store html_file_name, html_content
 
     # Programatically do this so that it works on heroku
-    #Log.info "Tidying up the html..."
-    #system("tidy -q -o #{html_file_name} -f /dev/null -i #{raw_file_name}")
+    Log.info "Tidying up the html..."
+    nasty_html = TidyFFI::Tidy.with_options(:indent => "auto", :indent_attributes => false, :indent_spaces => 4, :wrap => 200).new(html_content)
+    clean_html = nasty_html.clean
+    
+    Log.info "Saving resultant HTML file #{html_file_name}"    
+    Store.write_contents_to_store html_file_name, clean_html
   end
   
   def write_css_files(css_content)
