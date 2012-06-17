@@ -32,8 +32,7 @@ TransformersWeb::Application.routes.draw do
   match 'design/:id/download' => 'design#download'
   
   # Proxy method to view generated files
-  match 'generated/:design/*uri.*ext' => 'design#generated'
-  
+  match ':type/:design/*uri.*ext' => 'design#generated'
   
   # TODO: add admin authentication for Admin URL's 
   mount Resque::Server.new, :at => "/resque"
