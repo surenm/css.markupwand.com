@@ -20,16 +20,17 @@ TransformersWeb::Application.routes.draw do
 
   match 'design/new'       => 'design#new'
   match 'design/uploaded'  => 'design#uploaded', :as => :uploaded_callback
-  
+
   # photoshop machines will ping back on this url
   match 'design/processed' => 'design#processed', :as => :processed_callback
 
   # get, put and edit designs
-  match 'design/:id'          => 'design#show', :via => :get
-  match 'design/:id'          => 'design#update', :via => :put
+  match 'design/:id'          => 'design#show'
+  match 'design/:id/update'   => 'design#update', :via => :post
   match 'design/:id/edit'     => 'design#edit'
   match 'design/:id/preview'  => 'design#preview'
   match 'design/:id/download' => 'design#download'
+
   
   # Proxy method to view generated files
   match ':type/:design/*uri.*ext' => 'design#generated'

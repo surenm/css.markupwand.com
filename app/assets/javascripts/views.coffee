@@ -25,10 +25,9 @@ class DesignView extends GenericView
   
   click_handler: (event) ->
     $router = app.router
-    $design = $router.design
+    $design = app.design
     $.post(
-      '/grids/update', 
-      design: $router.design
+      "/design/#{$design.id}/update"
       (data, status, jqXHR) ->
         if data.status == "success"
           $router.loadDesign $design
@@ -155,7 +154,7 @@ class EditorIframeView extends Backbone.View
     grid_id = $(obj).data('gridId')
     grid = editor.grids.get(grid_id)
     return grid
-
+    
   mouseEnterHandler = (event) ->
     event.stopPropagation()
     app.editor_iframe.clear_highlights()
@@ -175,6 +174,9 @@ class EditorIframeView extends Backbone.View
     $(this).addClass "selected"
     
     grid = get_grid_obj(this, editor)
+    layer_id = $(this).data('layerId')
+    grid.set "layer_id", layer_id if layer_id?
+      
     view = new GridView({model: grid})
 
   append: (element) ->  
