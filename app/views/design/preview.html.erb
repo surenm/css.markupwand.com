@@ -11,11 +11,11 @@
   <div class = "clearfix"> </div>
 </div>
 
-<iframe id="preview-iframe" src='<%= "/generated/#{@design.safe_name}/index.html" %>'></iframe>
+<iframe id="preview-iframe" src='<%= "/published/#{@design.safe_name}/index.html" %>'></iframe>
 <% end %>
 
 <%= content_for :javascript do %>
 <script type="text/javascript">
-  var designs = <%= raw @design.to_json %>;
+  var designs = <%= raw @design_data.to_json %>;
 </script>
 <% end %>
