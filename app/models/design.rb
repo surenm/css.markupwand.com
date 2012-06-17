@@ -53,6 +53,10 @@ class Design
     File.join self.store_key_prefix, "processed"
   end
   
+  def store_published_key
+    File.join self.store_key_prefix, "published"
+  end
+  
   def attribute_data
     grids = self.grids.collect do |grid|
       grid.attribute_data
@@ -188,9 +192,15 @@ HTML
     # This populates the PhotoshopItem::StylesHash css_classes simultaneously even though it returns only the html
     # TODO: make the interface better?
     Log.info "Generating body HTML..."
+
+    if enable_data_attributes
+      base_folder = self.store_generated_key
+    else 
+      base_folder = self.store_published_key
+    end
     
     # Set the root path for this design. That is where all the html and css is saved to.
-    CssParser::set_assets_root self.store_generated_key
+    CssParser::set_assets_root base_folder
     
     root_grid = self.grids.where(:root => true).last
     Log.error "Root grid = #{root_grid.id.to_s}, #{self.grids.where(:root => true).length}"
@@ -206,17 +216,16 @@ HTML
 
     css = PhotoshopItem::StylesHash.generate_css_data
 
-    self.write_html_files(html)
-    self.write_css_files(css)
+    self.write_html_files html, base_folder
+    self.write_css_files css, base_folder
   
     Log.info "Successfully completed processing #{self.processed_file_path}."
     return
   end
   
-  def write_html_files(html_content)
-    raw_file_name  = File.join self.store_generated_key, 'raw.html'
-    html_file_name = File.join self.store_generated_key, 'index.html'
-
+  def write_html_files(html_content, base_folder)
+    raw_file_name  = File.join base_folder, 'raw.html'
+    html_file_name = File.join base_folder, 'index.html'
 
     # Programatically do this so that it works on heroku
     Log.info "Tidying up the html..."
@@ -227,11 +236,11 @@ HTML
     Store.write_contents_to_store html_file_name, clean_html
   end
   
-  def write_css_files(css_content)
+  def write_css_files(css_content, base_folder)
     Log.info "Writing css file..."    
 
     # Write style.css file
-    css_path = File.join self.store_generated_key, "assets", "css"
+    css_path = File.join base_folder, "assets", "css"
     css_file_name = File.join css_path, "style.css"
     Store.write_contents_to_store css_file_name, css_content
 
@@ -239,11 +248,11 @@ HTML
     Log.info "Writing bootstrap files..."
     
     bootrap_css = Rails.root.join("app", "templates", "bootstrap.css").to_s
-    target_css  = File.join self.store_generated_key, "assets", "css", "bootstrap.css"
+    target_css  = File.join base_folder, "assets", "css", "bootstrap.css"
     Store.save_to_store bootrap_css, target_css
     
     override_css = Rails.root.join("app", "templates", "bootstrap_override.css").to_s
-    target_css   = File.join self.store_generated_key, "assets", "css", "bootstrap_override.css"
+    target_css   = File.join base_folder, "assets", "css", "bootstrap_override.css"
 
     Store.save_to_store override_css, target_css
   end
