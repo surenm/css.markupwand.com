@@ -25,10 +25,11 @@ TransformersWeb::Application.routes.draw do
   match 'design/processed' => 'design#processed', :as => :processed_callback
 
   # get, put and edit designs
-  match 'design/:id'       => 'design#show', :via => :get
-  match 'design/:id'       => 'design#update', :via => :put
-  match 'design/:id/edit'  => 'design#edit'
-  match 'design/:id/preview' => 'design#preview'
+  match 'design/:id'          => 'design#show', :via => :get
+  match 'design/:id'          => 'design#update', :via => :put
+  match 'design/:id/edit'     => 'design#edit'
+  match 'design/:id/preview'  => 'design#preview'
+  match 'design/:id/download' => 'design#download'
   
   # Proxy method to view generated files
   match 'generated/:design/*uri.*ext' => 'design#generated'

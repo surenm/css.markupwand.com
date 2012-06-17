@@ -125,6 +125,7 @@ module Store
       Log.info "Fetching #{file.key} from Remote store to #{destination_path}"
       Store::write_contents_to_local_file destination_path, contents
     end
+    return tmp_folder
   end
   
   def Store::fetch_from_local_store(remote_folder)
@@ -147,14 +148,15 @@ module Store
       
       Log.info "Fetching #{store_file_key} from local store to #{destination_path}"
       Store::write_contents_to_local_file destination_path, contents
-    end   
+    end
+    return tmp_folder  
   end
   
   def Store::fetch_from_store(remote_folder)
     if Constants::store_remote?
-      Store::fetch_from_remote_store remote_folder
+      return Store::fetch_from_remote_store remote_folder
     else 
-      Store::fetch_from_local_store remote_folder
+      return Store::fetch_from_local_store remote_folder
     end    
   end
   

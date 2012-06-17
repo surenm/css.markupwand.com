@@ -35,6 +35,18 @@ class DesignController < ApplicationController
     @design = get_design params[:id]
   end
   
+  def download
+    @design = get_design params[:id]
+
+    MarkupRegeneratorJob.perform @design.id, true
+
+    tmp_folder = Store::fetch_from_store @design.store_generated_key
+    tar_file   = Rails.root.join("tmp", "#{@design.safe_name}.tar.gz")
+
+    system "cd #{tmp_folder} && tar -czvf #{tar_file} ."
+    send_file tar_file, :disposition => 'inline'
+  end
+  
   def uploaded
     design_data = params[:design]
 
