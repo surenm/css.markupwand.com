@@ -114,8 +114,8 @@ class Design
     end
   end
   
-  def push_to_generation_queue
-    Resque.enqueue MarkupGeneratorJob, self.id
+  def push_to_parser_queue
+    Resque.enqueue MarkupParserJob, self.id
   end
   
   def parse_fonts(layers)

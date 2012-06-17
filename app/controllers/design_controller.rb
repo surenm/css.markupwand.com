@@ -97,7 +97,7 @@ class DesignController < ApplicationController
     design = get_design params[:design]
     design.set_status Design::STATUS_PROCESSED
     
-    design.push_to_generation_queue
+    design.push_to_parser_queue
     render :json => {:status => :success}
   end
   
