@@ -3,6 +3,13 @@ focus_bar_template = '''
   <button id='done' class='btn btn-success'> Done </button>
 </div>
 '''
+
+loading_template = '''
+<div class="content">
+  <div> <img src="/assets/loading-ninja.gif">  </div>
+</div>
+'''
+
 overlay_div = document.createElement 'div'
 overlay_div.id = 'overlay'
 $(overlay_div).hide()
@@ -15,3 +22,11 @@ content = focus_bar_template
 $(on_focus_div).html content
 $(on_focus_div).hide()
 app.editor_iframe.append on_focus_div
+
+
+loading_div = document.createElement 'div'
+loading_div.id = 'loading'
+content = loading_template
+$(loading_div).html content
+$(loading_div).hide()
+app.editor_iframe.append loading_div

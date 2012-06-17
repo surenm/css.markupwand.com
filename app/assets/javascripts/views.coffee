@@ -24,6 +24,9 @@ class DesignView extends GenericView
   }
   
   click_handler: (event) ->
+    $editor = app.editor_iframe
+    $editor.show_loading()
+    
     $router = app.router
     $design = app.design
     $.post(
@@ -71,6 +74,9 @@ class EditorIframeView extends Backbone.View
     
     @on_focus_bar = @iframe_dom.find("#on-focus-bar")
     
+    @loading_div = @iframe_dom.find("#loading")
+    console.log @loading_div
+    
     @debug_elements = [@overlay_div, @on_focus_bar, @on_focus_bar.find("*")]
     for element in @debug_elements
       @children = @children.not element
@@ -91,6 +97,12 @@ class EditorIframeView extends Backbone.View
     
   disable_listeners: () ->
     @children.unbind()
+    
+  show_loading: ()->
+    @loading_div.show()
+  
+  hide_loading: ()->
+    @loading_div.hide()
   
   add_debug_elements: () ->
     @iframe_dom = $(this.el).contents()
@@ -201,6 +213,9 @@ class GridView extends GenericView
     $(this.el).find(".show").hide()
     
   onSuccess: (event) ->
+    $editor = app.editor_iframe
+    $editor.show_loading()
+    
     tag = $(this.el).find("#taginput").attr("value")
     this.model.set "tag", tag
     this.model.save({},{
