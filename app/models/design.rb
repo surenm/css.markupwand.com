@@ -184,7 +184,7 @@ HTML
     Log.info "Done printing #{grid.id.to_s}"
   end
   
-  def generate_markup
+  def generate_markup(enable_data_attributes = true)
     # This populates the PhotoshopItem::StylesHash css_classes simultaneously even though it returns only the html
     # TODO: make the interface better?
     Log.info "Generating body HTML..."
@@ -195,7 +195,7 @@ HTML
     root_grid = self.grids.where(:root => true).last
     Log.error "Root grid = #{root_grid.id.to_s}, #{self.grids.where(:root => true).length}"
 
-    body_html = root_grid.to_html
+    body_html = root_grid.to_html :enable_data_attributes => enable_data_attributes
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
