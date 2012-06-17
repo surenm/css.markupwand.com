@@ -32,7 +32,7 @@ body {
     color: #333;
 
     width: 20%;
-    font-family: "Ubuntu Condensed";
+    font-family: "Ubuntu";
     font-size: 14px;
 
     h1 {
@@ -46,9 +46,7 @@ body {
     }
     
     .css-style, .property {
-      margin: 2px 0px;
-      color: #fff;      
-      background: #000;
+      margin: 2px;
       
       .key {
         float: left;
@@ -58,8 +56,8 @@ body {
       .value {
         float: left;
         padding: 2px 4px;
-
-
+        color: #fff;      
+        background: #000;
       }
       
       input[type=text] {

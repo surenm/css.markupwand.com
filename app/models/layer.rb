@@ -26,9 +26,10 @@ class Layer
   field :layer_type, :type => String, :default => nil
   field :is_overlay, :type => Boolean
   
+  field :override_tag, :type => String, :default => nil
   field :layer_bounds, :type => String, :default => nil
 
-  # Do not store layer_object, but have in memory
+  # TOD: Do not store layer_object, but have in memory
   
   attr_accessor :layer_object, :bounds, :intersect_count, :overlays
 
@@ -149,7 +150,9 @@ class Layer
   end
 
   def tag_name(is_leaf = false)
-    if self.kind == LAYER_SMARTOBJECT
+    if not self.override_tag.nil?
+      self.override_tag
+    elsif self.kind == LAYER_SMARTOBJECT
       if is_leaf
         :img
       else

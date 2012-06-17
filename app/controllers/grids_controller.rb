@@ -29,11 +29,18 @@ class GridsController < ApplicationController
   
   def update
     grid = Grid.find params[:id]
-    grid.override_tag = params[:tag]
-    grid.save!
 
-    MarkupRegeneratorJob.perform grid.design.id
+    if not params[:layer_id].nil?
+      layer = Layer.find params[:layer_id] 
+      layer.override_tag = params[:tag]
+      layer.save!
+    else
+      grid.override_tag = params[:tag]
+      grid.save!
+    end
 
+    MarkupGeneratorJob.perform grid.design.id
+    
     render :json => { :status => :success, :data => {}, :error => nil }
   end
 

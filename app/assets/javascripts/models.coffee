@@ -19,6 +19,7 @@ class GridModel extends Backbone.Model
     css: {}
     id: null
     html: ""
+    layer_id: null
   
   initialize: () ->
     css = this.get "css"
