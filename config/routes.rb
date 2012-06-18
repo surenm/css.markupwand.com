@@ -18,10 +18,7 @@ TransformersWeb::Application.routes.draw do
   # design controller routes
   match 'designs'         => 'design#index'
 
-  match 'design/new'       => 'design#new'
-  match 'design/uploaded'  => 'design#uploaded', :as => :uploaded_callback
-
-  if Rails.env.production?
+  if Constants::store_remote?
     match 'design/new'       => 'design#new'
     match 'design/uploaded'  => 'design#uploaded', :as => :uploaded_callback
   else
