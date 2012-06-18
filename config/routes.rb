@@ -8,6 +8,9 @@ TransformersWeb::Application.routes.draw do
   # Landing page controller views
   match '/getinvite'       => "landing_page#getinvite"
   
+  # Switch user
+  match 'su' => 'main#su'
+  
   # main controller views
   
   # Dangerous controller route.

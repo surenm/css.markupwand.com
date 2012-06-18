@@ -1,0 +1,27 @@
+<%= content_for :content do %>
+<%= render 'shared/header' %>
+<div id="designs-list-page" class="container">
+  <%= form_tag('/su', :class=> 'form-horizontal') do %>
+    <fieldset>
+      <legend>$ su <span class="cursor">|</span></legend>
+      <div class="control-group">
+        <label class="control-label" for="input01">Email address</label>
+        <div class="controls">
+          <input type="text" class="input-xlarge" name="email">
+          <p class="help-block">This will log you out</p>
+          <button class="btn btn-danger" > <i class="icon-user"></i> Do not press </button>
+        </div>
+        
+      </div>
+    </fieldset>
+  <% end %>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+  cursorAnimation = function() {
+    $(".cursor").animate({opacity: 0}, 200, "swing").animate({opacity: 1}, 400).animate({opacity: 1}, 400).animate({opacity:0}, 200);
+  }
+  setInterval ( "cursorAnimation()", 1000 );
+});
+</script>
+<% end %>
