@@ -552,8 +552,8 @@ class Grid
     return {}
   end
   
-  def css_properties
-    if self.css_hash.empty?
+  def css_properties(force=false)
+    if self.css_hash.empty? or force
       css = {}
       self.style_layers.each do |layer_id|
         layer = Layer.find layer_id
@@ -627,12 +627,15 @@ class Grid
   def fix_children
     Log.fatal self
     Log.fatal self.layers
+    Log.fatal self.children
+    Log.fatal self.override_tag
   end
   
   def to_html(args = {})
     Log.info "[HTML] #{self.to_s}, #{self.id.to_s}"
     html = ''
-    layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string self.css_properties
+    force = args.fetch :force, false
+    layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string self.css_properties(force)
     
     css_classes = []
     
@@ -656,6 +659,7 @@ class Grid
         
     sub_grid_args = Hash.new
     sub_grid_args[:enable_data_attributes] = enable_data_attributes
+    sub_grid_args[:force] = force
     if self.render_layer.nil?
       
       child_nodes = self.children.select { |node| not node.is_positioned }
