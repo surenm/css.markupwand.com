@@ -5,6 +5,9 @@ class GenericView extends Backbone.View
     html = _.template(template_string, template_context)
     
     $(this.el).html html
+  
+  close: () ->
+    $(this.el).unbind()
 
 class DesignView extends GenericView
   template: "#editor-header-template"
@@ -64,6 +67,7 @@ class EditorIframeView extends Backbone.View
       $editor_iframe.add_debug_elements()
     
   event_listeners: () ->
+    
     # TODO: Part of this has to move to events. But dunno how to bind events within the iframe using backbone
     $editor_iframe = this
     @children = @iframe_dom.find("*")
@@ -75,7 +79,6 @@ class EditorIframeView extends Backbone.View
     @on_focus_bar = @iframe_dom.find("#on-focus-bar")
     
     @loading_div = @iframe_dom.find("#loading")
-    console.log @loading_div
     
     @debug_elements = [@overlay_div, @on_focus_bar, @on_focus_bar.find("*")]
     for element in @debug_elements
@@ -188,8 +191,11 @@ class EditorIframeView extends Backbone.View
     grid = get_grid_obj(this, editor)
     layer_id = $(this).data('layerId')
     grid.set "layer_id", layer_id if layer_id?
+    
+    if editor.grid_view?
+      editor.grid_view.close()
       
-    view = new GridView({model: grid})
+    editor.grid_view = new GridView({model: grid})
 
   append: (element) ->  
     $(@iframe_dom).find('body').append element
