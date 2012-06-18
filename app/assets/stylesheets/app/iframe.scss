@@ -18,18 +18,6 @@
   clear: both;
 }
 
-#on-focus-bar {
-  position: fixed;
-  top: 0;
-  right: 0;
-  padding: 5px 10px;
-  z-index: 1001;
-  width: 100%;
-  height: 35px;
-  background: #202020;
-  @include opacity(0.9);
-}
-
 #loading {
   position: absolute;
   top: 0;

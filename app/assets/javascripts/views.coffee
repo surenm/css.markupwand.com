@@ -69,21 +69,16 @@ class EditorIframeView extends Backbone.View
     
     # TODO: Part of this has to move to events. But dunno how to bind events within the iframe using backbone
     $editor_iframe = this
-    @children = @iframe_dom.find("*")
-    
+        
     @overlay_div = @iframe_dom.find("#overlay")
     $(@overlay_div).height $(@iframe_dom).height()
     $(@overlay_div).width $(@iframe_dom).width()
     
-    @on_focus_bar = @iframe_dom.find("#on-focus-bar")
-    
     @loading_div = @iframe_dom.find("#loading")
     
-    @focus_overlay = @iframe_dom.find("#focus-overlay")
-    
-    @debug_elements = [@overlay_div, @on_focus_bar, @on_focus_bar.find("*")]
-    for element in @debug_elements
-      @children = @children.not element
+    @children = @iframe_dom.find("*")
+    @children = @children.not @overlay_div
+    @children = @children.not @loading_div
     
     # Binding to highlight a div when hovered
     this.enable_listeners()
@@ -145,7 +140,6 @@ class EditorIframeView extends Backbone.View
     
     # show overlay div and on focus bar
     @overlay_div.show()
-    @on_focus_bar.show()
     
     @selected_object = $(selected_object);
     @selected_object.addClass "selected"
@@ -165,7 +159,6 @@ class EditorIframeView extends Backbone.View
     @selected_object.unwrap()
 
     @overlay_div.hide()
-    @on_focus_bar.hide()
     @focus_overlay.hide()
     
   get_grid_obj = (obj, editor) ->
