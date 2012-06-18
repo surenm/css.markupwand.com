@@ -17,6 +17,7 @@ class DesignController < ApplicationController
   end
   
   def index
+    @status_class = Design::STATUS_CLASS
     @designs = @user.designs.sort do |a, b|
       b.created_at <=> a.created_at
     end   

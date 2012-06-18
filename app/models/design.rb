@@ -17,6 +17,15 @@ class Design
   Design::STATUS_GENERATING   = :generating
   Design::STATUS_REGENERATING = :regenerating
   Design::STATUS_COMPLETED    = :completed
+  
+  Design::STATUS_CLASS = {
+    Design::STATUS_QUEUED       => 'label ',
+    Design::STATUS_PROCESSING   => 'label label-inverse',
+    Design::STATUS_PROCESSED    => 'label label-info',
+    Design::STATUS_GENERATING   => 'label label-important',
+    Design::STATUS_REGENERATING => 'label label-warning',
+    Design::STATUS_COMPLETED    => 'label label-success'
+  }
 
   field :name, :type => String
   field :psd_file_path, :type => String

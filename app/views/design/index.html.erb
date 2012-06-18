@@ -1,6 +1,5 @@
 <%= content_for :content do %>
   <%= render 'shared/header' %>
-
   <div id="designs-list-page" class="container">
     <h2> Your photoshop designs </h2>
     <ul>
@@ -15,6 +14,10 @@
           <div class="left">
             <small> Uploaded <%= design.created_at.to_formatted_s(:short) %> </small>
           </div>
+          
+          <span class="left span1 <%= @status_class[design.status.to_sym] %>">            
+            <%= design.status %>
+          </span>
           <div class="right">
             <a class="btn btn-success" href="/design/<%= design.safe_name %>/edit"> Edit </a>
             <a class="btn btn-primary" href="/design/<%= design.safe_name %>/preview"> Preview </a>
