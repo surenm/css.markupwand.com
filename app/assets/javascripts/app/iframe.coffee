@@ -10,6 +10,11 @@ loading_template = '''
 </div>
 '''
 
+focus_overlay_div = document.createElement 'div'
+focus_overlay_div.id = 'focus-overlay'
+$(focus_overlay_div).hide()
+app.editor_iframe.append focus_overlay_div
+
 overlay_div = document.createElement 'div'
 overlay_div.id = 'overlay'
 $(overlay_div).hide()

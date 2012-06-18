@@ -80,6 +80,8 @@ class EditorIframeView extends Backbone.View
     
     @loading_div = @iframe_dom.find("#loading")
     
+    @focus_overlay = @iframe_dom.find("#focus-overlay")
+    
     @debug_elements = [@overlay_div, @on_focus_bar, @on_focus_bar.find("*")]
     for element in @debug_elements
       @children = @children.not element
@@ -151,8 +153,15 @@ class EditorIframeView extends Backbone.View
         @selected_object.css "z-index", @previous_zindex
     
     @selected_object = $(selected_object);
-    @previous_zindex = @selected_object.css "z-index"
+    @focus_overlay.css "height", @selected_object.outerHeight() + 10
+    @focus_overlay.css "width", @selected_object.outerWidth() + 10
     
+    position = @selected_object.offset()
+    @focus_overlay.css "top", position.top - 5
+    @focus_overlay.css "left", position.left - 5
+    @focus_overlay.show()
+    
+    @previous_zindex = @selected_object.css "z-index"
     
   release_focus: () ->
     this.enable_listeners()
@@ -160,8 +169,9 @@ class EditorIframeView extends Backbone.View
     this.clear_highlights()
     this.clear_selection()
 
-    $(@overlay_div).hide()
-    $(@on_focus_bar).hide()
+    @overlay_div.hide()
+    @on_focus_bar.hide()
+    @focus_overlay.hide()
     
     $("#editor").html("")
     
