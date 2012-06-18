@@ -21,6 +21,14 @@ TransformersWeb::Application.routes.draw do
   match 'design/new'       => 'design#new'
   match 'design/uploaded'  => 'design#uploaded', :as => :uploaded_callback
 
+  if Rails.env.production?
+    match 'design/new'       => 'design#new'
+    match 'design/uploaded'  => 'design#uploaded', :as => :uploaded_callback
+  else
+    match 'design/new'       => 'design#local_new'
+    match 'design/uploaded'  => 'design#local_uploaded', :as => :uploaded_callback
+  end
+  
   # photoshop machines will ping back on this url
   match 'design/processed' => 'design#processed', :as => :processed_callback
 
