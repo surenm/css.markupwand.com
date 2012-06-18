@@ -36,6 +36,7 @@ class GridsController < ApplicationController
       layer.save!
     else
       grid.override_tag = params[:tag]
+      grid.fix_children
       grid.save!
     end
 

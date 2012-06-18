@@ -20,7 +20,7 @@ class MarkupParserJob
     design.parse
     
     # Generate markup for editing and publishing
-    Resque.enqueue MarkupRegeneratorJob, design_id
+    Resque.enqueue MarkupGeneratorJob, design_id
       
     design.set_status Design::STATUS_COMPLETED
   end

@@ -624,6 +624,11 @@ class Grid
     html
   end
   
+  def fix_children
+    Log.fatal self
+    Log.fatal self.layers
+  end
+  
   def to_html(args = {})
     Log.info "[HTML] #{self.to_s}, #{self.id.to_s}"
     html = ''
