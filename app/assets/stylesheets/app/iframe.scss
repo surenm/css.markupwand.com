@@ -49,15 +49,22 @@
 }
 
 .mouseover {
-  @include single-box-shadow(#aaaaaa, 0, 0, 2px, 5px, false);
-  cursor: pointer;
-}
+  background: 
+     url(/assets/circle.png) left top no-repeat,
+     url(/assets/circle.png) left center no-repeat,   
+     url(/assets/circle.png) left bottom no-repeat,
 
-.selected {
-  cursor: normal;
-  position: relative;
-  display: block;
-  z-index: 1002; 
+     url(/assets/circle.png) right top no-repeat,
+     url(/assets/circle.png) right center no-repeat,   
+     url(/assets/circle.png) right bottom no-repeat,
+
+     url(/assets/circle.png) center top no-repeat,   
+     url(/assets/circle.png) center bottom no-repeat,
+     
+     url(/assets/line-x.png) left top repeat-x,
+     url(/assets/line-x.png) left bottom repeat-x,
+     url(/assets/line-y.png) left top repeat-y,
+     url(/assets/line-y.png) right top repeat-y;
 }
 
 #overlay {
@@ -68,9 +75,16 @@
   z-index: 1000;
 }
 
-#focus-overlay {
-  position: absolute;
-  z-index: 1003;
+
+.selected {
+  position: relative;
+  z-index: 1002; 
+}
+
+.focus-overlay {
+  padding: 1px;
+  position: relative;
+  z-index: 1005;
   background: 
      url(/assets/circle.png) left top no-repeat,
      url(/assets/circle.png) left center no-repeat,   

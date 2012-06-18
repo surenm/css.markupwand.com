@@ -61,7 +61,6 @@ class EditorIframeView extends Backbone.View
     @grids.fetch({data: {design: @design.get("id")}, processData: true})
     
     @selected_object = null
-    @previous_zindex = null
     
     $(this.el).load ->
       $editor_iframe.add_debug_elements()
@@ -88,12 +87,7 @@ class EditorIframeView extends Backbone.View
     
     # Binding to highlight a div when hovered
     this.enable_listeners()
-    
-    # done editing
-    @on_focus_bar.find("#done").click (event) ->
-      event.stopPropagation()
-      $editor_iframe.release_focus()
-      
+          
   enable_listeners: () ->
     @children.mouseenter mouseEnterHandler
     @children.mouseleave mouseLeaveHandler
@@ -135,45 +129,44 @@ class EditorIframeView extends Backbone.View
     url = "/generated/#{design_id}/index.html"    
     this.render url
     
-  clear_highlights: () ->
-    @children.removeClass "mouseover"
+  clear_mouseover: () ->
+    @iframe_dom.find(".mouseover").children().first().unwrap()
 
   clear_selection: () ->
     @children.removeClass "selected"
     
   focus_selected_object: (selected_object) ->
+    # Disable listening to events in the iframe 
     this.disable_listeners()
     
+    # Clear other selected elements from the iframe
+    this.clear_mouseover()
+    this.clear_selection()
+    
+    # show overlay div and on focus bar
     @overlay_div.show()
     @on_focus_bar.show()
-        
-    if @selected_object?
-      @selected_object.removeClass "selected"
-      if @previous_zindex?
-        @selected_object.css "z-index", @previous_zindex
     
     @selected_object = $(selected_object);
-    @focus_overlay.css "height", @selected_object.outerHeight() + 10
-    @focus_overlay.css "width", @selected_object.outerWidth() + 10
+    @selected_object.addClass "selected"
     
-    position = @selected_object.offset()
-    @focus_overlay.css "top", position.top - 5
-    @focus_overlay.css "left", position.left - 5
-    @focus_overlay.show()
-    
-    @previous_zindex = @selected_object.css "z-index"
+    @selected_object.wrap("<div class='focus-overlay' />")
+    $focus_overlay = @iframe_dom.find(".focus-overlay")
+
+    $focus_overlay.height $focus_overlay.outerHeight() + 10
+    $focus_overlay.width $focus_overlay.outerWidth() + 10
     
   release_focus: () ->
     this.enable_listeners()
     
-    this.clear_highlights()
+    this.clear_mouseover()
     this.clear_selection()
+    
+    @selected_object.unwrap()
 
     @overlay_div.hide()
     @on_focus_bar.hide()
     @focus_overlay.hide()
-    
-    $("#editor").html("")
     
   get_grid_obj = (obj, editor) ->
     grid_id = $(obj).data('gridId')
@@ -182,21 +175,19 @@ class EditorIframeView extends Backbone.View
     
   mouseEnterHandler = (event) ->
     event.stopPropagation()
-    app.editor_iframe.clear_highlights()
-
-    $(this).addClass "mouseover"  
-    
+    app.editor_iframe.clear_mouseover()
+    $(this).wrap("<div class='mouseover' />")
+      
   mouseLeaveHandler = (event) ->
     event.stopPropagation()
+    $(this).unwrap()
+    
     
   clickHandler = (event) ->
     event.stopPropagation()
     editor = app.editor_iframe
-    editor.clear_highlights()
-    editor.clear_selection()
-    
+        
     editor.focus_selected_object(this)
-    $(this).addClass "selected"
     
     grid = get_grid_obj(this, editor)
     layer_id = $(this).data('layerId')
@@ -218,6 +209,7 @@ class GridView extends GenericView
     "click .show": "edit"
     "click #success": "onSuccess"
     "click #cancel": "onCancel"
+    "click #done": "onClose"
   }
 
   initialize: () ->
@@ -244,6 +236,11 @@ class GridView extends GenericView
   onCancel: (event) -> 
     $(this.el).find(".form").hide()
     $(this.el).find(".show").show()
+  
+  onClose: (event) ->
+    event.stopPropagation()
+    app.editor_iframe.release_focus()
+    app.editor_iframe.grid_view.close()
 
 class StyleView extends GenericView
   template: "#css-property-template"
