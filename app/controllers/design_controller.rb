@@ -9,7 +9,7 @@ class DesignController < ApplicationController
   
   public
   def new
-    @design   = Design.new
+    @design = Design.new
   end
   
   def local_new
