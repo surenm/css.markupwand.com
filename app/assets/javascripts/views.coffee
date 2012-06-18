@@ -127,35 +127,28 @@ class EditorIframeView extends Backbone.View
   clear_mouseover: () ->
     @iframe_dom.find(".mouseover").children().first().unwrap()
 
-  clear_selection: () ->
-    @children.removeClass "selected"
-    
   focus_selected_object: (selected_object) ->
     # Disable listening to events in the iframe 
     this.disable_listeners()
     
     # Clear other selected elements from the iframe
     this.clear_mouseover()
-    this.clear_selection()
     
     # show overlay div and on focus bar
     @overlay_div.show()
     
     @selected_object = $(selected_object);
-    @selected_object.addClass "selected"
     
     @selected_object.wrap("<div class='focus-overlay' />")
     $focus_overlay = @iframe_dom.find(".focus-overlay")
 
-    $focus_overlay.height $focus_overlay.outerHeight() + 10
-    $focus_overlay.width $focus_overlay.outerWidth() + 10
+    $focus_overlay.height @selected_object.outerHeight(true) + 10
+    $focus_overlay.width @selected_object.outerWidth(true) + 10
     
   release_focus: () ->
     this.enable_listeners()
     
     this.clear_mouseover()
-    this.clear_selection()
-    
     @selected_object.unwrap()
 
     @overlay_div.hide()
@@ -168,8 +161,15 @@ class EditorIframeView extends Backbone.View
     
   mouseEnterHandler = (event) ->
     event.stopPropagation()
-    app.editor_iframe.clear_mouseover()
+    $editor_iframe = app.editor_iframe
+    $editor_iframe.clear_mouseover()
+    
     $(this).wrap("<div class='mouseover' />")
+    $mouseover = $editor_iframe.iframe_dom.find(".mouseover")
+      
+    $mouseover.height $(this).outerHeight(true) + 10
+    $mouseover.width $(this).outerWidth(true) + 10
+      
       
   mouseLeaveHandler = (event) ->
     event.stopPropagation()
