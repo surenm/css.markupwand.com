@@ -31,7 +31,7 @@ class Layer
 
   # TOD: Do not store layer_object, but have in memory
   
-  attr_accessor :layer_object, :bounds, :intersect_count, :overlays
+  attr_accessor :layer_object, :intersect_count, :overlays
 
   def self.create_from_raw_data(layer_json, design_id)
     layer = Layer.new
@@ -114,6 +114,10 @@ class Layer
 
   def bounds
     BoundingBox.depickle self.layer_bounds
+  end
+
+  def bounds=(new_bound)
+    self.layer_bounds = BoundingBox.pickle(new_bound)
   end
 
   def <=>(other_layer)
