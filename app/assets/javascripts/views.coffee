@@ -8,6 +8,7 @@ class GenericView extends Backbone.View
   
   close: () ->
     $(this.el).unbind()
+    $(this.el).empty()
 
 class DesignView extends GenericView
   template: "#editor-header-template"
@@ -76,19 +77,17 @@ class EditorIframeView extends Backbone.View
     
     @loading_div = @iframe_dom.find("#loading")
     
-    @children = @iframe_dom.find("*")
-    @children = @children.not @overlay_div
-    @children = @children.not @loading_div
+    @children = @iframe_dom.find("body").find("[data-grid-id]")
     
     # Binding to highlight a div when hovered
     this.enable_listeners()
           
   enable_listeners: () ->
-    @children.mouseenter mouseEnterHandler
-    @children.mouseleave mouseLeaveHandler
-    
     @children.click clickHandler
     
+    @children.mouseenter mouseEnterHandler
+    @children.mouseleave mouseLeaveHandler
+     
   disable_listeners: () ->
     @children.unbind()
     
@@ -115,7 +114,7 @@ class EditorIframeView extends Backbone.View
     @jsLink.type = "text/javascript"
     $(@iframe_dom).find('body').append @jsLink
 
-    $("#overlay, #on-focus-bar").ready ->
+    $("#overlay").ready ->
       $editor_iframe.event_listeners()
 
   load_design: (design) ->
@@ -125,7 +124,7 @@ class EditorIframeView extends Backbone.View
     this.render url
     
   clear_mouseover: () ->
-    @iframe_dom.find(".mouseover").children().first().unwrap()
+    @iframe_dom.find(".mouseoverlay").removeClass "mouseoverlay"
 
   focus_selected_object: (selected_object) ->
     # Disable listening to events in the iframe 
@@ -138,21 +137,24 @@ class EditorIframeView extends Backbone.View
     @overlay_div.show()
     
     @selected_object = $(selected_object);
+    @selected_object.addClass "selected"
     
-    @selected_object.wrap("<div class='focus-overlay' />")
-    $focus_overlay = @iframe_dom.find(".focus-overlay")
-
-    $focus_overlay.height @selected_object.outerHeight(true) + 10
-    $focus_overlay.width @selected_object.outerWidth(true) + 10
+    offset = $(@selected_object).offset()
+    
+    @focus_overlay = @iframe_dom.find(".focus-overlay")
+    @focus_overlay.css "top", offset.top 
+    @focus_overlay.css "left", offset.left
+    @focus_overlay.height $(@selected_object).outerHeight() + 10
+    @focus_overlay.width $(@selected_object).outerWidth() + 10
+    @focus_overlay.show()
     
   release_focus: () ->
     this.enable_listeners()
-    
     this.clear_mouseover()
-    @selected_object.unwrap()
-
+    @selected_object.removeClass "selected"
     @overlay_div.hide()
     @focus_overlay.hide()
+    @grid_view.close()
     
   get_grid_obj = (obj, editor) ->
     grid_id = $(obj).data('gridId')
@@ -161,20 +163,13 @@ class EditorIframeView extends Backbone.View
     
   mouseEnterHandler = (event) ->
     event.stopPropagation()
-    $editor_iframe = app.editor_iframe
-    $editor_iframe.clear_mouseover()
+    app.editor_iframe.clear_mouseover()
     
-    $(this).wrap("<div class='mouseover' />")
-    $mouseover = $editor_iframe.iframe_dom.find(".mouseover")
-      
-    $mouseover.height $(this).outerHeight(true) + 10
-    $mouseover.width $(this).outerWidth(true) + 10
-      
-      
+    $(this).addClass "mouseoverlay"
+
   mouseLeaveHandler = (event) ->
     event.stopPropagation()
-    $(this).unwrap()
-    
+    app.editor_iframe.clear_mouseover()
     
   clickHandler = (event) ->
     event.stopPropagation()
