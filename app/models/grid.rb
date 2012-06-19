@@ -46,7 +46,14 @@ class Grid
   def inspect; to_s; end
   
   def to_s
-    "Grid #{self.layers.to_a}, Style Layers: #{self.style_layers.to_a}"
+    style_layer_objs = self.style_layers.collect do |style_layer_id|
+      Layer.find(style_layer_id)
+    end
+    "Grid
+      Tag    = #{self.tag} 
+      Layers = #{self.layers.to_a}
+      Styles = #{style_layer_objs}
+    "
   end
   
   def print(indent_level=0)
@@ -643,7 +650,6 @@ class Grid
     sub_grid_args[:enable_data_attributes] = enable_data_attributes
     sub_grid_args[:force] = force
     if self.render_layer.nil?
-      
       child_nodes = self.children.select { |node| not node.is_positioned }
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
