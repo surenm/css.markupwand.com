@@ -227,7 +227,7 @@ HTML
     self.write_html_files html, generated_folder
     self.write_css_files css, generated_folder
     
-    Store.copy_within_store generated_folder, published_folder
+    Store.copy_within_store_recursively generated_folder, published_folder
     self.write_html_files publish_html, published_folder
   
     Log.info "Successfully completed processing #{self.processed_file_path}."
