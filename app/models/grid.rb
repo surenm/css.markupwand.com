@@ -157,7 +157,9 @@ class Grid
       layer.bounds == max_bounds and layer.styleable_layer?
     end
 
-    Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." if grid_style_layers.size > 0
+    if grid_style_layers.size > 0
+      Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." 
+    end
     grid_style_layers.flatten!
     grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
     grid.style_layers.uniq!
@@ -189,8 +191,8 @@ class Grid
       available_nodes = process_row_grouping_box row_grouping_box, available_nodes
     end
     
-    Log.warn "Ignored nodes (#{available_nodes}) = #{available_nodes} in region #{self.bounds}" if available_nodes.length > 0
     if available_nodes.length > 0
+      Log.warn "Ignored nodes (#{available_nodes}) = #{available_nodes} in region #{self.bounds}" 
       Log.error self.bounds
       available_nodes.each do |_, node|
         Log.info "#{node.bounds}"
@@ -274,7 +276,8 @@ class Grid
     intersect_node_left = intersect_node_right = nil
     nodes_in_region.each do |node_left|
       nodes_in_region.each do |node_right|
-        if node_left != node_right and node_left.intersect? node_right and !(node_left.encloses?(node_right) or node_right.encloses?(node_left))
+        if node_left != node_right and node_left.intersect? node_right and !(node_left.encloses?(node_right) or \
+          node_right.encloses?(node_left))
           intersecting_nodes.push node_right
           intersecting_nodes.push node_left
         end
@@ -543,8 +546,8 @@ class Grid
     return {}
   end
   
-  def css_properties(force=false)
-    if self.css_hash.empty? or force
+  def css_properties
+    if self.css_hash.empty?
       css = {}
       self.style_layers.each do |layer_id|
         layer = Layer.find layer_id
