@@ -35,7 +35,7 @@ class Grid
   field :offset_box, :type => String, :default => nil
   field :depth, :type => Integer, :default => -1
   
-
+  # Grouping queue is the order in which grids are processed
   @@grouping_queue = Queue.new
   
   def set(layers, parent)
@@ -54,6 +54,8 @@ class Grid
     self.save!
     
     @@grouping_queue.push self if self.root?
+  def self.reset_grouping_queue
+    @@grouping_queue.clear
   end
   
   def inspect; to_s; end
