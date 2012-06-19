@@ -38,22 +38,6 @@ class Grid
   # Grouping queue is the order in which grids are processed
   @@grouping_queue = Queue.new
   
-  def set(layers, parent)
-    self.parent = parent
-    
-    # Spent close to fucking one day trying to debug this.
-    # Just trying to access this self.layer once, helps avoiding redundant  
-    # inserts into the same group.
-    #
-    # Just remove the Log.info line below, and code will start breaking.
-    # Magic! 
-    # Pro-tip: http://ryanbigg.com/2010/04/has_and_belongs_to_many-double-insert/#comment-36741
-    
-    #Log.info self.layers.to_a # DO NOT REMOVE THIS LINE - Alagu
-    layers.each { |layer| self.layers.push layer }
-    self.save!
-    
-    @@grouping_queue.push self if self.root?
   def self.reset_grouping_queue
     @@grouping_queue.clear
   end
@@ -80,6 +64,16 @@ class Grid
         layer.print(indent_level+1)
       end
     end  
+  end
+  
+  # Set data to a grid. More like a constructor, but mongoid models can't have the original constructors
+  def set(layers, parent)
+    # Pro-tip: http://ryanbigg.com/2010/04/has_and_belongs_to_many-double-insert/#comment-36741
+    self.parent = parent
+    layers.each { |layer| self.layers.push layer }
+    self.save!
+    
+    @@grouping_queue.push self if self.root?
   end
     
   def attribute_data
