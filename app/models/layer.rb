@@ -176,7 +176,7 @@ class Layer
     end
   end
 
-  def get_css(css = {}, is_leaf = false, is_root = false, grid = nil)
+  def get_css(css = {}, is_leaf = false, grid = nil)
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
     elsif self.kind == LAYER_SMARTOBJECT
@@ -202,7 +202,7 @@ class Layer
   end
 
   def class_name(css = {}, is_leaf, is_root, grid)
-    css = get_css(css, is_leaf, is_root, grid)
+    css = get_css(css, is_leaf, grid)
     PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string(css)
   end
 
