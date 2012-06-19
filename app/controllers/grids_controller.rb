@@ -32,11 +32,11 @@ class GridsController < ApplicationController
 
     if not params[:layer_id].nil?
       layer = Layer.find params[:layer_id] 
-      layer.override_tag = params[:tag]
+      layer.override_tag = params[:tag].to_sym
       layer.save!
     else
       grid.override_tag = params[:tag]
-      grid.fix_children
+      grid.fix_dom
       grid.save!
     end
 
