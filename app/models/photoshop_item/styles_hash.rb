@@ -49,11 +49,16 @@ CLASS_BLOCK
     return css_data
   end
   
-  def generate_body_style(root_grid)
+  def self.generate_body_style(root_grid)
     css = {}
     root_grid.body_style_layers.each do |layer|
-      css.update 
+      Log.error "Generating body style for #{layer}"
+      css.update (Layer.find layer).get_css({}, false, root_grid)
     end
+
+    css = CssParser::cleanup_positioning_css(css)
+
+    self.add_and_get_class(CssParser::to_style_string(css))
   end
 
   def self.get_bootstrap_width_class(width)    
