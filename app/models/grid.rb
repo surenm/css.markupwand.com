@@ -337,8 +337,11 @@ class Grid
       
       if overlap_type == :inner
         # Less than 90%, crop them.
+
+        cropped_nodes  = crop_inner_intersect(intersecting_nodes)
+        modified_nodes = (nodes_in_region - intersecting_nodes + cropped_nodes)
         
-        return crop_inner_intersect(intersecting_nodes), []
+        return  modified_nodes, []
       else
         # More than 90%, relatively position them
         
