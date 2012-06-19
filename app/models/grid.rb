@@ -614,10 +614,8 @@ class Grid
   end
   
   def fix_children
-    Log.fatal self
-    Log.fatal self.layers
-    Log.fatal self.children
-    Log.fatal self.override_tag
+    tag_handler = TagHandler.new self.id
+    tag_handler.repair
   end
   
   def to_html(args = {})
