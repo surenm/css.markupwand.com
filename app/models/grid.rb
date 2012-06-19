@@ -33,10 +33,9 @@ class Grid
   field :is_positioned, :type => Boolean, :default => false
 
   field :offset_box, :type => String, :default => nil
-  field :grid_depth, :type => Integer, :default => -1
+  field :depth, :type => Integer, :default => -1
   
 
-  @@pageglobals    = PageGlobals.instance
   @@grouping_queue = Queue.new
   
   def set(layers, parent)
@@ -105,22 +104,6 @@ class Grid
   def is_leaf?
     self.children.count == 0 and not self.render_layer.nil?
   end
-  
-  def depth
-    if self.grid_depth == -1
-      depth = 0
-      parent = self.parent
-      while not parent.nil?
-        parent = parent.parent
-        depth = depth + 1
-      end
-      self.grid_depth = depth
-      self.save!
-    end
-    
-    self.grid_depth
-  end
-
 
   ## Queue and Initializers
   
@@ -182,7 +165,7 @@ class Grid
     Log.info "Trying row grouping box: #{row_grouping_box}"
     
     row_grid       = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT
-    row_grid.grid_depth = self.grid_depth + 1
+    row_grid.depth = self.depth + 1
     row_grid.set [], self
             
     available_nodes = extract_style_layers row_grid, available_nodes, row_grouping_box
@@ -197,7 +180,7 @@ class Grid
     if row_grid.children.size == 1 and row_grid.style_layers.length == 0
       subgrid        = row_grid.children.first
       subgrid.parent = self
-      subgrid.grid_depth  = self.grid_depth + 1
+      subgrid.depth  = self.depth + 1
       row_grid.delete
     end
     
@@ -214,7 +197,7 @@ class Grid
       @@pageglobals.add_offset_box grouping_box
     
     elsif nodes_in_region.size <= available_nodes.size
-      grid = Grid.new :design => row_grid.design, :grid_depth => row_grid.grid_depth + 1
+      grid = Grid.new :design => row_grid.design, :depth => row_grid.depth + 1
       
       # Reduce the set of nodes, remove style layers.
       available_nodes = extract_style_layers grid, available_nodes, grouping_box
@@ -371,7 +354,7 @@ class Grid
           nodes_in_grid = BoundingBox.get_nodes_in_region layer.bounds, nodes_in_region, layer.zindex
           positioned_layers_children = positioned_layers_children | nodes_in_grid
           nodes_in_region = nodes_in_region - nodes_in_grid
-          positioned_grid.grid_depth = self.grid_depth + 1
+          positioned_grid.depth = self.depth + 1
           positioned_grid.set nodes_in_grid, self
           positioned_grid.is_positioned = true
           Log.info "Setting is_positioned = true for #{positioned_grid} (#{positioned_grid.id.to_s})"
