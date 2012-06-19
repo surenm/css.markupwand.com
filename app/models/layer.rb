@@ -49,7 +49,6 @@ class Layer
     self.kind       = layer[:layerKind]
     self.layer_type = layer[:layerType]
     self.uid        = layer[:layerID][:value]
-    self.raw        = layer.to_json.to_s
     
     bounds_key = self.bounds_key
     value  = self.layer_json[bounds_key][:value]
@@ -99,9 +98,18 @@ class Layer
   end
 
   def layer_json
-    # Store layer object in memory.  
+    # Store layer object in memory.
+    # TODO: memcache this
     if not @layer_object
-      @layer_object = JSON.parse self.raw, :symbolize_names => true, :max_nesting => false
+      design = self.design
+      
+      processed_folder = Rails.root.join "tmp", "store", design.store_processed_key
+      Store::fetch_from_store design.store_processed_key if not Dir.exists? processed_folder.to_s
+
+      fptr     = File.read design.processed_file_path
+      psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
+      
+      @layer_object = psd_data[:art_layers].fetch :"#{self.uid}"
     end
     
     @layer_object
@@ -179,14 +187,6 @@ class Layer
   def get_css(css = {}, is_leaf = false, grid = nil)
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
-    elsif self.kind == LAYER_SMARTOBJECT
-      # don't do anything
-    elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_box self, grid
-    end
-    
-    if self.kind == LAYER_TEXT
-      css.update CssParser::parse_text self
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
       #TODO Replace into a css parser function
       css[:background] = "url('../../#{image_path}') no-repeat"
@@ -203,7 +203,7 @@ class Layer
 
   def class_name(css = {}, is_leaf, is_root, grid)
     css = get_css(css, is_leaf, grid)
-    PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string(css)
+    StylesHash.add_and_get_class CssParser::to_style_string(css)
   end
 
   def get_raw_font_name
@@ -259,7 +259,8 @@ class Layer
     css       = args.fetch :css, {}
     css_class = class_name css, is_leaf, @is_root, grid
     
-    tag = tag_name(is_leaf)
+    generated_tag = tag_name(is_leaf)
+    tag = args.fetch :tag, generated_tag
 
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.kind == LAYER_TEXT
@@ -295,7 +296,7 @@ class Layer
   end
 
   def to_s
-    "#{self.name} - #{self.bounds}"
+    "#{self.name} - #{self.bounds} - #{self.kind}"
   end
   
   def inspect

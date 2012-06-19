@@ -1,4 +1,4 @@
-class Group
+class GroupingBox
   attr_accessor :orientation, :children
 
   # orientation could be :normal, :left, :right
@@ -20,7 +20,7 @@ class Group
     @children.each do |child| 
       if child.class.to_s == "BoundingBox"
         bounding_boxes.push child
-      elsif child.class.to_s == "Group"
+      elsif child.class.to_s == "GroupingBox"
         bounding_boxes.push child.bounds
       end
     end

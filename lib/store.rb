@@ -79,18 +79,36 @@ module Store
       FileUtils.mkdir_p abs_destination_dir
     end
     
-    FileUtils.cp abs_src_file, abs_destination_file
+    FileUtils.cp_r abs_src_file, abs_destination_file
   end
   
   def Store::copy_within_remote_store(src_path, destination_path)
     s3_bucket = Store::get_remote_store
-
+    
+    Log.info "Copying #{src_path} from #{s3_bucket.name} to #{destination_path}..."
+    
     source_object      = s3_bucket.objects[src_path]
     destination_object = s3_bucket.objects[destination_path]
 
     if source_object.exists?
       source_object.copy_to destination_object
     end    
+  end
+  
+  def Store::copy_within_store_recursively(src_folder, destination_folder)
+    s3_bucket = Store::get_remote_store
+    if Constants::store_remote?
+      objects = s3_bucket.objects.with_prefix src_folder
+      objects.each do |file|
+        src_pathname = Pathname.new file.key
+        file_relative_key = src_pathname.relative_path_from(Pathname.new src_folder)
+
+        destination_path = File.join destination_folder, file_relative_key
+        Store::copy_within_remote_store file.key, destination_path
+      end
+    else 
+      Store::copy_within_local_store src_folder, destination_file_path
+    end
   end
   
   def Store::copy_within_store(src_file_path, destination_file_path)

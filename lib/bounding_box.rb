@@ -157,17 +157,19 @@ class BoundingBox
   end
 
   def self.pickle(bounding_box)
-    return "#{bounding_box.top} #{bounding_box.left} #{bounding_box.bottom} #{bounding_box.right}" if not self.nil?  
+    attribute_data = {
+      :top    => bounding_box.top,
+      :bottom => bounding_box.bottom,
+      :left   => bounding_box.left,
+      :right  => bounding_box.right
+    }
+    return attribute_data.to_json.to_s if not self.nil?  
   end
   
   def self.depickle(serialized_bounding_box)
     if not serialized_bounding_box.nil? and not serialized_bounding_box.empty? 
-      coordinates = serialized_bounding_box.split " "
-      top    = coordinates[0].to_i
-      left   = coordinates[1].to_i
-      bottom = coordinates[2].to_i
-      right  = coordinates[3].to_i
-      return BoundingBox.new top, left, bottom, right
+      data = JSON.parse serialized_bounding_box
+      return BoundingBox.new data["top"], data["left"], data["bottom"], data["right"]
     end
   end
     
@@ -270,9 +272,9 @@ class BoundingBox
     horizontal_bounds.pop
     vertical_bounds.pop
 
-    root_group = Group.new Constants::GRID_ORIENT_NORMAL
+    root_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
     horizontal_bounds.each do |horizontal_bound|
-      row_group = Group.new Constants::GRID_ORIENT_LEFT
+      row_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
       vertical_bounds.each do |vertical_bound|
         row_group.push BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
       end
