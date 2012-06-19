@@ -264,7 +264,7 @@ class Grid
       self.layers.delete layer
     end
 
-    self.body_style_layers = body_style_layers.map { |layer| layer.uid }
+    self.body_style_layers = body_style_layers.map { |layer| layer.id }
 
   end
 
