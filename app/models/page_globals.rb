@@ -4,7 +4,6 @@ class PageGlobals
 
   private
   def initialize
-    @offset_box_list = []
   end
   
   public
@@ -23,16 +22,5 @@ class PageGlobals
       @@instance = self.new()
     end
     return @@instance
-  end
-  
-  def reset_offset_buffer
-    self.offset_box_buffer = nil
-  end
-  
-  def add_offset_box(offset_box)
-    self.offset_box_buffer = offset_box
-    self.offset_box_list.push offset_box.clone
-    self.offset_box_list.uniq!
-  end
-  
+  end  
 end
