@@ -586,7 +586,7 @@ class Grid
       css = {}
       self.style_layers.each do |layer_id|
         layer = Layer.find layer_id
-        css.update layer.get_css({}, self.is_leaf?, self.root, self)
+        css.update layer.get_css({}, self.is_leaf?, self)
       end
       
       css.update width_css(css)
