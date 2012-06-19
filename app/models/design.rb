@@ -201,23 +201,18 @@ HTML
     # This populates the StylesHash css_classes simultaneously even though it returns only the html
     # TODO: make the interface better?
     Log.info "Generating body HTML..."
-    enable_data_attributes = args.fetch :enable_data_attributes, true
-    force = args.fetch :force, false
-
-    if enable_data_attributes
-      base_folder = self.store_generated_key
-    else 
-      base_folder = self.store_published_key
-    end
+    
+    # Set the base folder for writing html to
+    generated_folder = self.store_generated_key
+    published_folder = self.store_published_key
     
     # Set the root path for this design. That is where all the html and css is saved to.
-    CssParser::set_assets_root base_folder
+    CssParser::set_assets_root generated_folder
     
     root_grid = self.grids.where(:root => true).last
     Log.error "Root grid = #{root_grid.id.to_s}, #{self.grids.where(:root => true).length}"
 
-    body_html = root_grid.to_html :enable_data_attributes => enable_data_attributes, :force => force
-
+    body_html = root_grid.to_html
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
     wrapper.close
@@ -225,17 +220,21 @@ HTML
     html.gsub! "{yield}", body_html
     html.gsub! "{webfonts}", self.webfonts_snippet
 
+    publish_html = Utils::strip_unwanted_attrs_from_html html
+
     css = StylesHash.generate_css_data
 
-    self.write_html_files html, base_folder
-    self.write_css_files css, base_folder
+    self.write_html_files html, generated_folder
+    self.write_css_files css, generated_folder
+    
+    Store.copy_within_store generated_folder, published_folder
+    self.write_html_files publish_html, published_folder
   
     Log.info "Successfully completed processing #{self.processed_file_path}."
     return
   end
   
   def write_html_files(html_content, base_folder)
-    raw_file_name  = File.join base_folder, 'raw.html'
     html_file_name = File.join base_folder, 'index.html'
 
     # Programatically do this so that it works on heroku
