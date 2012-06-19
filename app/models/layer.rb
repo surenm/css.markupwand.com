@@ -295,7 +295,7 @@ class Layer
   end
 
   def to_s
-    "#{self.name} - #{self.bounds}"
+    "#{self.name} - #{self.bounds} - #{self.kind}"
   end
   
   def inspect
