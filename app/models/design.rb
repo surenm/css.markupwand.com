@@ -228,7 +228,7 @@ HTML
 
     html.gsub! "{yield}", body_html
     html.gsub! "{webfonts}", self.webfonts_snippet
-    html.gsub! "{body_class}", body_class
+    html.gsub! "{body_class}", body_class.to_s
 
     css = PhotoshopItem::StylesHash.generate_css_data
 
