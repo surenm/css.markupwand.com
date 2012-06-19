@@ -146,7 +146,9 @@ class Grid
     if parent_box.class.to_s == "BoundingBox"
       max_bounds = parent_box
     else
+      Log.info "This is a grouping box"
       max_bounds = parent_box.bounds
+      Log.info max_bounds
     end
     
     layers = {}

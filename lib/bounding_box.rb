@@ -272,9 +272,9 @@ class BoundingBox
     horizontal_bounds.pop
     vertical_bounds.pop
 
-    root_group = Group.new Constants::GRID_ORIENT_NORMAL
+    root_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
     horizontal_bounds.each do |horizontal_bound|
-      row_group = Group.new Constants::GRID_ORIENT_LEFT
+      row_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
       vertical_bounds.each do |vertical_bound|
         row_group.push BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
       end
