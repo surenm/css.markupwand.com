@@ -49,7 +49,6 @@ class Layer
     self.kind       = layer[:layerKind]
     self.layer_type = layer[:layerType]
     self.uid        = layer[:layerID][:value]
-    self.raw        = layer.to_json.to_s
     
     bounds_key = self.bounds_key
     value  = self.layer_json[bounds_key][:value]
@@ -99,9 +98,18 @@ class Layer
   end
 
   def layer_json
-    # Store layer object in memory.  
+    # Store layer object in memory.
+    # TODO: memcache this
     if not @layer_object
-      @layer_object = JSON.parse self.raw, :symbolize_names => true, :max_nesting => false
+      design = self.design
+      
+      processed_folder = Rails.root.join "tmp", "store", design.store_processed_key
+      Store::fetch_from_store design.store_processed_key if not Dir.exists? processed_folder.to_s
+
+      fptr     = File.read design.processed_file_path
+      psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
+      
+      @layer_object = psd_data[:art_layers].fetch :"#{self.uid}"
     end
     
     @layer_object
