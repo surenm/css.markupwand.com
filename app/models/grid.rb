@@ -49,11 +49,10 @@ class Grid
     style_layer_objs = self.style_layers.collect do |style_layer_id|
       Layer.find(style_layer_id)
     end
-    "Grid
-      Tag    = #{self.tag} 
-      Layers = #{self.layers.to_a}
-      Styles = #{style_layer_objs}
-    "
+    render_layer_obj = nil
+    render_layer_obj = Layer.find self.render_layer if not self.render_layer.nil? 
+    "Grid: Tag: #{self.tag}, Layers: #{self.layers.to_a}, Style layer: #{style_layer_objs}, \
+    Render layer: #{render_layer_obj}"
   end
   
   def print(indent_level=0)
@@ -62,7 +61,8 @@ class Grid
     indent_level.times {|i| spaces+=" "}
 
     style_layers = self.style_layers.map { |layer_id| Layer.find layer_id }
-    Log.debug "#{spaces}#{prefix} (grid #{self.id.to_s}) #{self.bounds.to_s} (#{style_layers}, positioned = #{is_positioned})"
+    Log.debug "#{spaces}#{prefix} (grid #{self.id.to_s}) #{self.bounds.to_s} (#{style_layers}, \
+    positioned = #{is_positioned})"
     self.children.each do |subgrid|
       subgrid.print(indent_level+1)
     end
