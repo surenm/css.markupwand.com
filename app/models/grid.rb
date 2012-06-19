@@ -21,6 +21,7 @@ class Grid
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
   field :positioned_layers, :type => Array, :default => []
+  field :body_style_layers, :type => Array, :default => []
   
   field :css_hash, :type => Hash, :default => {}
   field :override_css_hash, :type => Hash, :default => {}
@@ -243,6 +244,29 @@ class Grid
     end
     return available_nodes
   end  
+
+  # Extracts out style layers that should be applied for body.
+  # Different from normal style layers as it has to be applied to <body>
+  # tag, and needs to be compared with the psd file's properties.
+
+  def extract_body_style_layers
+    Log.info "Extracting body style layers"
+    body_style_layers = []
+    design_bounds = BoundingBox.new(0, 0, design.width, design.height)
+    self.layers.each do |layer|
+      if layer.bounds.encloses? design_bounds
+        Log.info "#{layer} is a body style layer"
+        body_style_layers.push layer
+      end
+    end
+
+    body_style_layers.each do |layer|
+      self.layers.delete layer
+    end
+
+    self.body_style_layers = body_style_layers.map { |layer| layer.uid }
+
+  end
 
   # Usually any layer that matches the grouping box's bounds is a style layer
   def extract_style_layers(grid, available_layers, parent_box = nil)
@@ -467,7 +491,6 @@ class Grid
   end
   
   # For css
-  # FIX Rename this function
   def offset_box_spacing
     offset_box_spacing = {:top => 0, :left => 0}
     
@@ -479,6 +502,12 @@ class Grid
       if self.bounds.left - self.offset_bounding_box.left > 0
         offset_box_spacing[:left] = (self.bounds.left - self.offset_bounding_box.left)
       end
+    end
+
+    if self.root == true
+      Log.info self.bounds
+      offset_box_spacing[:top]    += self.bounds.top
+      offset_box_spacing[:left]   += self.bounds.left
     end
     
     offset_box_spacing
@@ -623,6 +652,7 @@ class Grid
     
     html
   end
+
   
   def fix_children
     Log.fatal self
