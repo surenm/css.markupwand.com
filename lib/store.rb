@@ -79,7 +79,7 @@ module Store
       FileUtils.mkdir_p abs_destination_dir
     end
     
-    FileUtils.cp abs_src_file, abs_destination_file
+    FileUtils.cp_r abs_src_file, abs_destination_file
   end
   
   def Store::copy_within_remote_store(src_path, destination_path)
