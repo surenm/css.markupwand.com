@@ -42,6 +42,7 @@ class Grid
     @@grouping_queue.clear
   end
   
+  # Debug methods - inspect, to_s and print for a grid
   def inspect; to_s; end
   
   def to_s
@@ -76,6 +77,7 @@ class Grid
     @@grouping_queue.push self if self.root?
   end
     
+  # Grid representational data
   def attribute_data
     {
       :id          => self.id,
@@ -87,6 +89,8 @@ class Grid
     }
   end
   
+  # Bounds for a grid.
+  # TODO: cache this grids
   def bounds
     if self.layers.empty?
       bounds = nil
@@ -97,16 +101,12 @@ class Grid
     return bounds
   end 
   
+  # Its a Leaf grid if it has no children and has one render layer
   def is_leaf?
     self.children.count == 0 and not self.render_layer.nil?
   end
-
-  ## Queue and Initializers
   
-  def self.reset_grouping_queue
-    @@grouping_queue.clear
-  end
-
+  # Start off the grouping for a design
   def self.group!
     while not @@grouping_queue.empty?
       grid = @@grouping_queue.pop
@@ -114,6 +114,9 @@ class Grid
     end
   end
   
+  # Grouping a grid
+  # If it just one layer, then add it as render layer
+  # If it has more layers, than try to get the sub grids 
   def group!
     if self.layers.size > 1
       get_subgrids
@@ -126,6 +129,37 @@ class Grid
   
   ## Grid construction methods
   
+  # Helper method: Extract style layers out of a grid.
+  # Usually any layer that matches the grouping box's bounds is a style layer
+  def extract_style_layers(grid, available_layers, parent_box = nil)
+    return available_layers if (parent_box.nil? or available_layers.size == 1)
+    
+    # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
+    style_layers = []
+    if parent_box.class.to_s == "BoundingBox"
+      max_bounds = parent_box
+    else
+      max_bounds = parent_box.bounds
+    end
+    
+    layers = {}
+    available_layers.each { |key, layer| layers[key] = layer if max_bounds.encloses? layer.bounds }
+    grid_style_layers = layers.values.select do |layer| 
+      layer.bounds == max_bounds and layer.styleable_layer?
+    end
+
+    Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." if grid_style_layers.size > 0
+    grid_style_layers.flatten!
+    grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
+    grid.style_layers.uniq!
+
+    Log.info "Deleting #{style_layers} from grid" if style_layers.size > 0
+    grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
+
+    return available_layers
+  end
+  
+  # Get the row groups within this grid and try to process them one row at a time
   def get_subgrids
     Log.info "Getting subgrids (#{self.layers.length} layers in this grid)"
     
@@ -157,6 +191,7 @@ class Grid
     self.save!
   end
   
+  # Get an atomic group within a row grouping box and process them one group at a time
   def process_row_grouping_box(row_grouping_box, available_nodes)
     Log.info "Trying row grouping box: #{row_grouping_box}"
     
@@ -183,6 +218,7 @@ class Grid
     return available_nodes
   end
   
+  # Process a grouping box atomically
   def process_grouping_box(row_grid, grouping_box, available_nodes)
     Log.info "Trying grouping box: #{grouping_box}"
     
@@ -217,35 +253,6 @@ class Grid
       @@grouping_queue.push grid
     end
     return available_nodes
-  end  
-
-  # Usually any layer that matches the grouping box's bounds is a style layer
-  def extract_style_layers(grid, available_layers, parent_box = nil)
-    return available_layers if (parent_box.nil? or available_layers.size == 1)
-    
-    # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
-    style_layers = []
-    if parent_box.class.to_s == "BoundingBox"
-      max_bounds = parent_box
-    else
-      max_bounds = parent_box.bounds
-    end
-    
-    layers = {}
-    available_layers.each { |key, layer| layers[key] = layer if max_bounds.encloses? layer.bounds }
-    grid_style_layers = layers.values.select do |layer| 
-      layer.bounds == max_bounds and layer.styleable_layer?
-    end
-
-    Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." if grid_style_layers.size > 0
-    grid_style_layers.flatten!
-    grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
-    grid.style_layers.uniq!
-
-    Log.info "Deleting #{style_layers} from grid" if style_layers.size > 0
-    grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
-
-    return available_layers
   end
   
   ## Intersection methods.
