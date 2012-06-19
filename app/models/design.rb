@@ -132,7 +132,7 @@ class Design
   end
   
   def parse_fonts(layers)
-    design_fonts = PhotoshopItem::FontMap.new layers
+    design_fonts = FontMap.new layers
     
     self.font_map.update design_fonts.font_map
     self.typekit_snippet = design_fonts.typekit_snippet
@@ -198,7 +198,7 @@ HTML
   end
   
   def generate_markup(args={})
-    # This populates the PhotoshopItem::StylesHash css_classes simultaneously even though it returns only the html
+    # This populates the StylesHash css_classes simultaneously even though it returns only the html
     # TODO: make the interface better?
     Log.info "Generating body HTML..."
     enable_data_attributes = args.fetch :enable_data_attributes, true
@@ -225,7 +225,7 @@ HTML
     html.gsub! "{yield}", body_html
     html.gsub! "{webfonts}", self.webfonts_snippet
 
-    css = PhotoshopItem::StylesHash.generate_css_data
+    css = StylesHash.generate_css_data
 
     self.write_html_files html, base_folder
     self.write_css_files css, base_folder

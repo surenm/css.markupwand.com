@@ -516,7 +516,7 @@ class Grid
       # Add a buffer of (960 + 10), because setting width of 960 in photoshop
       # is giving 962 in extendscript json. Debug more.
       if unpadded_width != 0 and unpadded_width <= 970
-          self.width_class = PhotoshopItem::StylesHash.get_bootstrap_width_class(unpadded_width)
+          self.width_class = StylesHash.get_bootstrap_width_class(unpadded_width)
       end
     end
   end
@@ -617,7 +617,7 @@ class Grid
     Log.info "[HTML] #{self.to_s}, #{self.id.to_s}"
     html = ''
     force = args.fetch :force, false
-    layers_style_class = PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string self.css_properties(force)
+    layers_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.css_properties(force)
     
     css_classes = []
     

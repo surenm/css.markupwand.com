@@ -211,7 +211,7 @@ class Layer
 
   def class_name(css = {}, is_leaf, is_root, grid)
     css = get_css(css, is_leaf, is_root, grid)
-    PhotoshopItem::StylesHash.add_and_get_class CssParser::to_style_string(css)
+    StylesHash.add_and_get_class CssParser::to_style_string(css)
   end
 
   def get_raw_font_name

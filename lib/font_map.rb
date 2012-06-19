@@ -1,4 +1,4 @@
-class PhotoshopItem::FontMap
+class FontMap
   attr_accessor :layers, :font_map, :typekit_snippet, :google_webfonts_snippet
 
   FONT_MAP = { 'Helvetica World' => 'Helvetica' }

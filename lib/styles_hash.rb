@@ -1,4 +1,4 @@
-class PhotoshopItem::StylesHash
+class StylesHash
   attr_accessor :css_classes
   
   def initialize
@@ -21,7 +21,7 @@ class PhotoshopItem::StylesHash
     end
   end
   
-  @@instance = PhotoshopItem::StylesHash.new
+  @@instance = StylesHash.new
   
   def self.debug
     ENV.has_key? 'DEBUG' and ENV['DEBUG'].to_i > 0
