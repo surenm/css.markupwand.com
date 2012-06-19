@@ -194,7 +194,7 @@ class Grid
     
     if nodes_in_region.empty?
       Log.info "Found padding region"
-      grid.offset_bounding_box grouping_box.clone
+      padding_offset_box = grouping_box.clone
     
     elsif nodes_in_region.size <= available_nodes.size
       grid = Grid.new :design => row_grid.design, :depth => row_grid.depth + 1
@@ -214,7 +214,9 @@ class Grid
       
       grid.set nodes_in_region, row_grid
       nodes_in_region.each {|node| available_nodes.delete node.uid}
-            
+        
+      grid.offset_bounding_box = padding_offset_box if not padding_offset_box.nil?
+      
       # This grid needs to be called with sub_grids, push to grouping procesing queue
       @@grouping_queue.push grid
     end
