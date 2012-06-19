@@ -588,7 +588,7 @@ class Grid
   
   def tag
     if not self.override_tag.nil?
-      self.override_tag
+      self.override_tag.to_sym
     elsif self.is_image_grid?
       :img
     else
@@ -614,20 +614,18 @@ class Grid
         html += grid.to_html(subgrid_args)
       end
     end
-    
     html
   end
   
-  def fix_children
-    tag_handler = TagHandler.new self.id
-    tag_handler.repair
+  def fix_dom
+    dom_parser = DomParser.new self.id
+    dom_parser.reparse
   end
   
   def to_html(args = {})
     Log.info "[HTML] #{self.to_s}, #{self.id.to_s}"
     html = ''
-    force = args.fetch :force, false
-    layers_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.css_properties(force)
+    layers_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.css_properties
     
     css_classes = []
     
@@ -651,7 +649,6 @@ class Grid
         
     sub_grid_args = Hash.new
     sub_grid_args[:enable_data_attributes] = enable_data_attributes
-    sub_grid_args[:force] = force
     if self.render_layer.nil?
       child_nodes = self.children.select { |node| not node.is_positioned }
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
