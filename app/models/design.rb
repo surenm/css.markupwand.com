@@ -225,6 +225,8 @@ HTML
     html.gsub! "{yield}", body_html
     html.gsub! "{webfonts}", self.webfonts_snippet
 
+    PhotoshopItem::StylesHash.generate_body_style(root_grid)
+
     css = PhotoshopItem::StylesHash.generate_css_data
 
     self.write_html_files html, base_folder

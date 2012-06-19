@@ -23,10 +23,6 @@ class PhotoshopItem::StylesHash
   
   @@instance = PhotoshopItem::StylesHash.new
   
-  def self.debug
-    ENV.has_key? 'DEBUG' and ENV['DEBUG'].to_i > 0
-  end
-
   def self.instance
     return @@instance
   end
@@ -39,15 +35,6 @@ class PhotoshopItem::StylesHash
     css_classes = @@instance.css_classes
     css_data    = ''
     
-    # Debugging div positioning
-    if self.debug
-      css_data += <<DIV_BLOCK
-  div {
-    border: 1px #f00 dotted;
-  }
-DIV_BLOCK
-    end
-      
     css_classes.each do |style, class_name|
       style_formatted = style.gsub(";",";\n")
       class_block = <<CLASS_BLOCK
@@ -62,8 +49,14 @@ CLASS_BLOCK
     return css_data
   end
   
-  def self.get_bootstrap_width_class(width)
-    
+  def generate_body_style(root_grid)
+    css = {}
+    root_grid.body_style_layers.each do |layer|
+      css.update 
+    end
+  end
+
+  def self.get_bootstrap_width_class(width)    
     spanx = (width/40.0).round.to_i
     return "span#{spanx}"
   end
