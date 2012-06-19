@@ -222,10 +222,11 @@ HTML
     html    = wrapper.read
     wrapper.close
 
+    body_class = PhotoshopItem::StylesHash.generate_body_style(root_grid)
+
     html.gsub! "{yield}", body_html
     html.gsub! "{webfonts}", self.webfonts_snippet
-
-    PhotoshopItem::StylesHash.generate_body_style(root_grid)
+    html.gsub! "{body_class}", body_class
 
     css = PhotoshopItem::StylesHash.generate_css_data
 
