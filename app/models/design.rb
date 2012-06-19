@@ -219,7 +219,7 @@ HTML
     html    = wrapper.read
     wrapper.close
 
-    body_class = PhotoshopItem::StylesHash.generate_body_style(root_grid)
+    body_class = StylesHash.generate_body_style(root_grid)
 
     html.gsub! "{yield}", body_html
     html.gsub! "{webfonts}", self.webfonts_snippet

@@ -96,8 +96,8 @@ module Store
   end
   
   def Store::copy_within_store_recursively(src_folder, destination_folder)
-    s3_bucket = Store::get_remote_store
     if Constants::store_remote?
+      s3_bucket = Store::get_remote_store
       objects = s3_bucket.objects.with_prefix src_folder
       objects.each do |file|
         src_pathname = Pathname.new file.key
@@ -107,7 +107,7 @@ module Store
         Store::copy_within_remote_store file.key, destination_path
       end
     else 
-      Store::copy_within_local_store src_folder, destination_file_path
+      Store::copy_within_local_store src_folder, destination_folder
     end
   end
   
