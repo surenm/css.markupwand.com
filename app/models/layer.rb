@@ -187,14 +187,6 @@ class Layer
   def get_css(css = {}, is_leaf = false, is_root = false, grid = nil)
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
-    elsif self.kind == LAYER_SMARTOBJECT
-      # don't do anything
-    elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_box self, grid
-    end
-    
-    if self.kind == LAYER_TEXT
-      css.update CssParser::parse_text self
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
       #TODO Replace into a css parser function
       css[:background] = "url('../../#{image_path}') no-repeat"
