@@ -18,5 +18,7 @@ class MarkupGeneratorJob
 
     # mark editing complete
     design.set_status Design::STATUS_COMPLETED
+
+    ApplicationHelper.post_simple_message("#{design.user.name} <#{design.user.email}>", "#{design.name} generated", "Click -> http://www.markupwand.com/design/#{design.safe_name}/edit")
   end
 end
