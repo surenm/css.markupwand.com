@@ -11,4 +11,13 @@ module ApplicationHelper
     
     JSON.parse res.body
   end
+
+  def ApplicationHelper::post_simple_message(to, subject, text)
+    RestClient.post "https://api:key-3k01b6wme8-hzvhyowno9r0gccep7e17"\
+      "@api.mailgun.net/v2/markupwand.mailgun.org/messages",
+      :from => "Markupwand <hackers@markupwand.com>",
+      :to => to,
+      :subject => subject,
+      :text => text
+  end
 end

@@ -89,6 +89,7 @@ module TransformersWeb
 
       # Fail silently.  Useful for environments such as Heroku
       # config.fail_silently = true
+
     end
   end
 end
