@@ -15,3 +15,12 @@ content = loading_template
 $(loading_div).html content
 $(loading_div).hide()
 app.editor_iframe.append loading_div
+
+
+mouseover_div = document.createElement 'div'
+$(mouseover_div).addClass 'mouseoverlay'
+app.editor_iframe.append mouseover_div
+
+focus_overlay_div = document.createElement 'div'
+$(focus_overlay_div).addClass 'focus-overlay'
+app.editor_iframe.append focus_overlay_div

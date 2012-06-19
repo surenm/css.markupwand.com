@@ -11,10 +11,10 @@ class MarkupGeneratorJob
     Store::fetch_from_store design.store_processed_key
 
     # Generate markup once in publishable mode once
-    design.generate_markup false
+    design.generate_markup :enable_data_attributes => false, :force => true
     
     # Generate markup once in editable mode once
-    design.generate_markup true
+    design.generate_markup :enable_data_attributes => true, :force => true
 
     # mark editing complete
     design.set_status Design::STATUS_COMPLETED
