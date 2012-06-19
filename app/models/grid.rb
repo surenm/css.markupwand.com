@@ -252,7 +252,7 @@ class Grid
   def extract_body_style_layers
     Log.info "Extracting body style layers"
     body_style_layers = []
-    design_bounds = BoundingBox.new(0, 0, design.width, design.height)
+    design_bounds = BoundingBox.new(0, 0, design.height, design.width)
     self.layers.each do |layer|
       if layer.bounds.encloses? design_bounds
         Log.info "#{layer} is a body style layer"
