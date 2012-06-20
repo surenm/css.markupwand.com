@@ -5,7 +5,12 @@
       <%= form_for @design, :url => :uploaded_callback, :html => {:multipart => true} do |f| %>
         <div id="file-select-zone">
           <div id="file-selector">
-            [+] Click to select your photoshop file
+            <div class="chosen-file hide">
+              <%= image_tag "photoshop-file.png" %><span id="file-name">test.psd</span>
+            </div>
+            <div class="photo-upload-action">
+              [+] Click to select your photoshop file
+            </div>
             <%= f.hidden_field :file_url %>
             <%= f.hidden_field :name %>
           </div>
