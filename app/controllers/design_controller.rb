@@ -117,6 +117,11 @@ class DesignController < ApplicationController
     temp_file   = Store::fetch_object_from_store remote_file
     
     # Send the fetched file
-    send_file temp_file, :disposition => 'inline'
+    extension = File.extname(temp_file)[1..-1]
+    Log.fatal extension
+    mime_type = Mime::Type.lookup_by_extension extension
+    Log.fatal mime_type
+    
+    send_file temp_file, :type => mime_type.to_s, :disposition => "inline"
   end  
 end
