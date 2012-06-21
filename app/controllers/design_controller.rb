@@ -115,13 +115,12 @@ class DesignController < ApplicationController
 
     remote_file = File.join base_folder, "#{params[:uri]}.#{params[:ext]}"
     temp_file   = Store::fetch_object_from_store remote_file
-    
+    contents = File.read temp_file
+
     # Send the fetched file
     extension = File.extname(temp_file)[1..-1]
-    Log.fatal extension
     mime_type = Mime::Type.lookup_by_extension extension
-    Log.fatal mime_type
     
-    send_file temp_file, :type => mime_type.to_s, :disposition => "inline"
+    send_data contents, :type => mime_type.to_s, :disposition => "inline"
   end  
 end
