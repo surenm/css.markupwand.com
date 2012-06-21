@@ -1,7 +1,6 @@
 $(document).ready ->
-  console.log design.status
-  if design.status != "completed"
-    $.doTimeout 6000, () ->
+  if design? and design.status != "completed"
+    $.doTimeout 10000, () ->
       # TODO: make this just reload this dom instead of reloading the page
       window.location.reload()
     
