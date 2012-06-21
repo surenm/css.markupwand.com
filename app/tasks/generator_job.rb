@@ -1,4 +1,4 @@
-class MarkupGeneratorJob
+class GeneratorJob
   @queue = :generator
   
   def self.perform(design_id)

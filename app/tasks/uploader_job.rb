@@ -1,11 +1,13 @@
 class UploaderJob
   @queue = :uploader
   
-  def self.perform(design_id, design_data, callback_url)
+  def self.perform(design_id, design_data)
     Log.level = Log4r::DEBUG
+
     design_data.symbolize_keys!
     
     design = Design.find design_id
+    design.set_status Design::STATUS_UPLOADING
     Log.info "Uploading design file for #{design.id}..."
     
     safe_basename = Store::get_safe_name File.basename(design_data[:name], ".psd")
@@ -24,6 +26,7 @@ class UploaderJob
     design.save!
     Log.info "Done uploading successfully!"
     
-    design.push_to_processing_queue callback_url
+    design.set_status Design::STATUS_UPLOADED
+    design.push_to_processing_queue
   end
 end

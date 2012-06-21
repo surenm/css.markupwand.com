@@ -22,15 +22,12 @@ gem 'rest-client'
 gem 'tidy_ffi'
 
 # monitoring and profiling
-gem 'newrelic_rpm'
+group :production do
+  gem 'newrelic_rpm'
+end
 
 # Deployment related gems
 gem 'unicorn'
-
-#File upload related gems
-gem 'carrierwave'
-gem 'carrierwave_direct'
-gem 'carrierwave-mongoid'
 
 # Login and user management 
 gem 'devise'
@@ -60,6 +57,9 @@ group :assets do
 end
 
 group :development do
+  #File upload related gems
+  gem 'carrierwave'
+  gem 'carrierwave-mongoid'
   gem 'pry-rails'
   gem 'pry-stack_explorer'
   gem 'pry_debug'

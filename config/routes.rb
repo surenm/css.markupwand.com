@@ -29,9 +29,6 @@ TransformersWeb::Application.routes.draw do
     match 'design/uploaded'  => 'design#local_uploaded', :as => :uploaded_callback
   end
   
-  # photoshop machines will ping back on this url
-  match 'design/processed' => 'design#processed', :as => :processed_callback
-
   # get, put and edit designs
   match 'design/:id'          => 'design#show'
   match 'design/:id/update'   => 'design#update', :via => :post

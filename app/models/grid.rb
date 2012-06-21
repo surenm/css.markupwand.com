@@ -23,8 +23,8 @@ class Grid
   field :positioned_layers, :type => Array, :default => []
   field :body_style_layers, :type => Array, :default => []
   
-  field :css_hash, :type => Hash, :default => {}
-  field :override_css_hash, :type => Hash, :default => {}
+  field :css_properties, :type => String, :default => nil
+  field :override_css_properties, :type => String, :default => nil
   
   field :tag, :type => String, :default => :div
   field :override_tag, :type => String, :default => nil
@@ -577,9 +577,10 @@ class Grid
     return {}
   end
   
-  def css_properties
-    if self.css_hash.empty?
+  def get_css_properties
+    if self.css_properties.nil?
       css = {}
+
       self.style_layers.each do |layer_id|
         layer = Layer.find layer_id
         css.update layer.get_css({}, self.is_leaf?, self)
@@ -598,23 +599,17 @@ class Grid
       css[:position] = 'relative' if positioned_grid_count > 0
       
       css.update CssParser::position_absolutely(self) if is_positioned
-      
 
       # Gives out the values for spacing the box model.
       # Margin and padding
       css.update spacing_css
 
-      # hack to make css non empty. Couldn't initialize css_hash as nil and check for nil condition
-      css[:processed] = true
-      
-      self.css_hash.update css
+      self.css_properties = css.to_json.to_s
       self.save!
     end
-    
-    # remove the processed css hack
-    raw_properties = self.css_hash.clone
-    raw_properties.delete "processed"
-    return raw_properties
+
+    css = JSON.parse self.css_properties, :symbolize_keys => true
+    return css
   end
   
   def tag
@@ -657,7 +652,7 @@ class Grid
   def to_html(args = {})
     Log.info "[HTML] #{self.to_s}, #{self.id.to_s}"
     html = ''
-    layers_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.css_properties
+    layers_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties
     
     css_classes = []
     

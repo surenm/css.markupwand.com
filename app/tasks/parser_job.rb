@@ -1,12 +1,13 @@
-class MarkupParserJob
-  @queue = :markup_parser
+class ParserJob
+  @queue = :parser
   
-  def self.perform(design_id)
+  def self.perform(readable_design_id)
+    design_id = readable_design_id.split('-').last    
     design = Design.find design_id
-    design.set_status Design::STATUS_GENERATING
+
+    design.set_status Design::STATUS_PARSING
     
     Store::fetch_from_store design.store_processed_key
-
     design_processed_directory = Rails.root.join 'tmp', 'store', design.store_processed_key
     Log.info "Design processed directory : #{design_processed_directory} "
     
@@ -18,10 +19,9 @@ class MarkupParserJob
     end
     
     design.parse
-    
+    design.set_status Design::STATUS_PARSED
+        
     # Generate markup for editing and publishing
-    Resque.enqueue MarkupGeneratorJob, design_id
-      
-    design.set_status Design::STATUS_COMPLETED
+    Resque.enqueue GeneratorJob, design_id
   end
 end

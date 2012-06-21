@@ -54,7 +54,7 @@ class DesignController < ApplicationController
     design.user = @user
     design.save!
     
-    Resque.enqueue UploaderJob, design.id, design_data, processed_callback_url
+    Resque.enqueue UploaderJob, design.id, design_data
     redirect_to :action => :show, :id => design.safe_name
   end
   
@@ -73,8 +73,7 @@ class DesignController < ApplicationController
     design.psd_file_path = destination_file
     design.save!
     
-    design.set_status Design::STATUS_PROCESSING
-    design.push_to_processing_queue processed_callback_url
+    design.push_to_processing_queue
     
     redirect_to :action => :show, :id => design.safe_name
   end
@@ -83,7 +82,7 @@ class DesignController < ApplicationController
   def update
     @design = get_design params[:id]
 
-    MarkupGeneratorJob.perform @design.id
+    GeneratorJob.perform @design.id
     render :json => {:status => :success}
   end
   

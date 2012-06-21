@@ -24,7 +24,9 @@
   </div>
   
   <script type="text/javascript">
+    <% if @design.status == Design::STATUS_COMPLETED.to_s %>
     var design = <%= raw @design.attribute_data.to_json %>;
+    <% end %>
   </script>
 <% end %>
 
