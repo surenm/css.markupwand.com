@@ -17,7 +17,7 @@ module Log
     LOGGER.level = Log4r::DEBUG
   else
     LOGGER.add Log4r::StdoutOutputter.new 'console'
-    LOGGER.level = Log4r::WARN
+    LOGGER.level = Log4r::INFO
   end
   
   def Log.method_missing(method, *args, &block)
