@@ -604,7 +604,7 @@ class Grid
       # Margin and padding
       css.update spacing_css
 
-      self.css_properties.update css.to_json.to_s
+      self.css_properties = css.to_json.to_s
       self.save!
     end
 
@@ -652,7 +652,7 @@ class Grid
   def to_html(args = {})
     Log.info "[HTML] #{self.to_s}, #{self.id.to_s}"
     html = ''
-    layers_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.css_properties
+    layers_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties
     
     css_classes = []
     
