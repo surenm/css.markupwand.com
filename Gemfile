@@ -29,6 +29,10 @@ end
 # Deployment related gems
 gem 'unicorn'
 
+#File upload related gems
+gem 'carrierwave'
+gem 'carrierwave-mongoid'
+
 # Login and user management 
 gem 'devise'
 gem 'omniauth-openid'
@@ -57,9 +61,6 @@ group :assets do
 end
 
 group :development do
-  #File upload related gems
-  gem 'carrierwave'
-  gem 'carrierwave-mongoid'
   gem 'pry-rails'
   gem 'pry-stack_explorer'
   gem 'pry_debug'
