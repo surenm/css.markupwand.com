@@ -1,3 +1,3 @@
 web: bundle exec unicorn -p $PORT -c ./config/unicorn.rb
 uploader: bundle exec rake resque:work QUEUE=uploader
-worker: bundle exec rake resque:work QUEUE=json_parser,markup_generator
+worker: bundle exec rake resque:work QUEUE=parser,generator

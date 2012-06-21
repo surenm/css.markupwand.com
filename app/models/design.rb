@@ -12,18 +12,24 @@ class Design
   
   # Design status types
   Design::STATUS_QUEUED       = :queued
+  Design::STATUS_UPLOADING    = :uploading
+  Design::STATUS_UPLOADED     = :uploaded
   Design::STATUS_PROCESSING   = :processing
-  Design::STATUS_PROCESSED    = :processed
+  Design::STATUS_PARSING      = :parsing
+  Design::STATUS_PARSED       = :parsed
   Design::STATUS_GENERATING   = :generating
   Design::STATUS_REGENERATING = :regenerating
   Design::STATUS_COMPLETED    = :completed
   
   Design::STATUS_CLASS = {
-    Design::STATUS_QUEUED       => 'label ',
-    Design::STATUS_PROCESSING   => 'label label-inverse',
-    Design::STATUS_PROCESSED    => 'label label-info',
-    Design::STATUS_GENERATING   => 'label label-important',
-    Design::STATUS_REGENERATING => 'label label-warning',
+    Design::STATUS_QUEUED       => 'label labe-inverse',
+    Design::STATUS_UPLOADING    => 'label',
+    Design::STATUS_UPLOADED     => 'label',
+    Design::STATUS_PROCESSING   => 'label label-important',
+    Design::STATUS_PARSING      => 'label label-warning',
+    Design::STATUS_PARSED       => 'label label-warning',
+    Design::STATUS_GENERATING   => 'label label-info',
+    Design::STATUS_REGENERATING => 'label label-info',
     Design::STATUS_COMPLETED    => 'label label-success'
   }
 
@@ -95,13 +101,10 @@ class Design
     self.save!
   end
   
-  def push_to_processing_queue(callback_url)
-    self.status = Design::STATUS_PROCESSING
-    self.save!
+  def push_to_processing_queue
+    self.set_status Design::STATUS_PROCESSING
     
     message = Hash.new
-
-    message[:callback_uri] = callback_url
 
     if Constants::store_remote?
       message[:location] = "remote"
@@ -118,17 +121,7 @@ class Design
     message[:user]   = self.user.email
     message[:design] = self.safe_name
     
-    # message will be something like "remote store_production callback_url bot@goyaka.com test_psd_#{design_mongo_id}"
-    message = "#{message[:location]} #{message[:bucket]} #{message[:callback_uri]} #{message[:user]} #{message[:design]}"
-    ProcessingQueue.push message
-    
-    if Constants::store_remote? and Store::get_S3_bucket_name == "store_development" 
-      Resque.enqueue PollerJob, self.id, callback_url
-    end
-  end
-  
-  def push_to_parser_queue
-    Resque.enqueue MarkupParserJob, self.id
+    Resque.enqueue ProcessorJob, message
   end
   
   def parse_fonts(layers)

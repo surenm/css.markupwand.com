@@ -1,5 +1,5 @@
-class MarkupGeneratorJob
-  @queue = :markup_generator
+class GeneratorJob
+  @queue = :generator
   
   def self.perform(design_id)
     design = Design.find design_id

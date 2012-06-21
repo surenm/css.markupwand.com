@@ -40,8 +40,7 @@ class GridsController < ApplicationController
       grid.save!
     end
 
-    MarkupGeneratorJob.perform grid.design.id
-    
+    GeneratorJob.perform grid.design.id
     render :json => { :status => :success, :data => {}, :error => nil }
   end
 
