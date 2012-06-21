@@ -1,5 +1,5 @@
-class MarkupParserJob
-  @queue = :markup_parser
+class JsonParserJob
+  @queue = :json_parser
   
   def self.perform(design_id)
     design = Design.find design_id
