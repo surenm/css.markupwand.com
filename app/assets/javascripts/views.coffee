@@ -44,24 +44,18 @@ class DesignView extends GenericView
     return false
 
 class EditorIframeView extends Backbone.View
-  initialize: (args) ->
+  el: "#editor-iframe"
+  
+  initialize: () ->
     this.render()
-  
-  reload: (args) ->
-    this.el.src = this.el.src
-  
-  
-  render: (url = null) ->
-    if not url?
-      return
-
-    this.el.src = url
-    $editor_iframe = this
-
-    @selected_object = null
     
+  render: () ->
+    $editor_iframe = this
     $(this.el).load ->
       $editor_iframe.add_debug_elements()
+    
+  reload: (args) ->
+    this.el.src = this.el.src
 
   add_debug_elements: () ->
     @iframe_dom = $(this.el).contents()
@@ -149,7 +143,7 @@ class EditorIframeView extends Backbone.View
     
   get_grid_obj = (obj) ->
     grid_id = $(obj).data('gridId')
-    grid = app.design.grids.get(grid_id)
+    grid = this.model.grids.get(grid_id)
     return grid
     
   mouseEnterHandler = (event) ->
@@ -205,7 +199,6 @@ class SidebarView extends GenericView
   render_design_sidebar: () ->
     template_string = $(this.design_sidebar_template).html()
     template_context = this.model.toJSON()
-    console.log template_context
     html = _.template(template_string, template_context)
 
     $(this.el).html html
