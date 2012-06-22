@@ -33,7 +33,7 @@ class Grid
   field :override_width_class, :type => String, :default => nil
   field :is_positioned, :type => Boolean, :default => false
 
-  field :offset_box, :type => String, :default => nil
+  field :offset_box_buffer, :type => String, :default => nil
   field :depth, :type => Integer, :default => -1
   
   # Grouping queue is the order in which grids are processed
@@ -260,7 +260,9 @@ class Grid
     
     if nodes_in_region.empty?
       Log.info "Found padding region"
-      padding_offset_box = grouping_box.clone
+
+      # This is set so that the next box can pick it up as its offset box.
+      self.design.offset_box_buffer = grouping_box.clone
     
     elsif nodes_in_region.size <= available_nodes.size
       grid = Grid.new :design => row_grid.design, :depth => row_grid.depth + 1
@@ -279,10 +281,16 @@ class Grid
       Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
       
       grid.set nodes_in_region, row_grid
-      nodes_in_region.each {|node| available_nodes.delete node.uid}
-        
-      grid.offset_bounding_box = padding_offset_box if not padding_offset_box.nil?
-      
+      nodes_in_region.each { |node| available_nodes.delete node.uid }
+            
+      if self.design.offset_box_buffer
+        #Pickup spacing that the previous box allocated.
+        grid.offset_box_buffer = BoundingBox.pickle self.design.offset_box_buffer
+
+        #Reset the space
+        self.design.offset_box_buffer = nil
+      end
+
       # This grid needs to be called with sub_grids, push to grouping procesing queue
       @@grouping_queue.push grid
     end
@@ -490,13 +498,14 @@ class Grid
   def offset_box_spacing
     offset_box_spacing = {:top => 0, :left => 0}
     
-    if not self.offset_bounding_box.nil?
-      if self.bounds.top - self.offset_bounding_box.top > 0
-        offset_box_spacing[:top] = ( self.bounds.top - self.offset_bounding_box.top)
+    if not self.offset_box_buffer.nil? and not self.offset_box_buffer.empty?
+      offset_box_object = BoundingBox.depickle self.offset_box_buffer
+      if self.bounds.top - self.offset_box_object.top > 0
+        offset_box_spacing[:top] = ( self.bounds.top - self.offset_box_object.top)
       end
       
       if self.bounds.left - self.offset_bounding_box.left > 0
-        offset_box_spacing[:left] = (self.bounds.left - self.offset_bounding_box.left)
+        offset_box_spacing[:left] = (self.bounds.left - self.offset_box_object.left)
       end
     end
 
@@ -508,23 +517,7 @@ class Grid
     
     offset_box_spacing
   end
-  
-  # Accessor for offset bounding box
-  # De-serializes the offset box from mongo data.
-  def offset_bounding_box
-    BoundingBox.depickle self.offset_box
-  end
-  
-  # Offset box is a box, that is an empty grid that appears before
-  # this current grid. The previous sibling being a empty box, it adds itself
-  # to a buffer. And the next item picks it up from buffer and takes it as its 
-  # own offset bounding box.
-  #
-  # This function is for serializing bounding box and storing it.
-  def offset_bounding_box= padding_bound_box;
-    self.offset_box = BoundingBox.pickle padding_bound_box
-  end
-  
+
   def is_single_line_text
     if not self.render_layer.nil? and
       not (Layer.find self.render_layer).has_newline?
