@@ -4,13 +4,7 @@ class EditorApp
     @router = new EditorRouter
   
   load_design: () ->
-    designCollection = new Backbone.Collection;
-    designCollection.model = DesignModel;
-    designCollection.reset(designs);
-    
-    @design = designCollection.at 0
-
-    @design_view = new DesignView({el: "#editor-header", model: @design})    
+    @design = new DesignModel(design)
     @editor_iframe.load_design @design
         
 $(document).ready ->

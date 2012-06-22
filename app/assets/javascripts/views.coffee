@@ -12,6 +12,7 @@ class GenericView extends Backbone.View
 
 class DesignView extends GenericView
   template: "#editor-header-template"
+  el: "#editor-header"
     
   defaults:
     name: "",
