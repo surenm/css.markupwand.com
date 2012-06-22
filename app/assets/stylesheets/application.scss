@@ -59,6 +59,11 @@ h2 {
   float: right;
 }
 
+.center {
+  margin: 0 auto;
+  text-align: center;
+}
+
 .clearfix {
   clear: both;
 }
@@ -77,15 +82,25 @@ small {
   width: 100%;
   overflow: hidden;
   
-  .name {
-    margin: 5px;
-    font-size: 18px;
-    text-transform: capitalize;
-    color: #ccc;
-  }
-  
   .action {
-    margin: 8px;
+    margin: 0px 10px;
+    
+    .back, .forward {
+      margin: 10px;
+      a { 
+        color: #999;
+        &:hover {
+          color: #eee;
+        };
+      }
+    }
+    
+    .name {
+      margin: 10px;
+      font-size: 20px;
+      text-transform: uppercase;
+      color: #eee;
+    }
   }
   
 
@@ -93,6 +108,7 @@ small {
     height: 50px;
     background: #5f2f72 url("/assets/noise.png") repeat;
     border-bottom: 3px solid #431555;
+    @include border-radius(0px);
   }
 
   .brand {

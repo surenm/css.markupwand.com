@@ -36,11 +36,10 @@ _.each(css_properties, function(value, property){ %>
 <script id="editor-header-template" type="text/template">
 <div id="editor-header" class="navbar navbar-fixed-top">
   <div class="navbar-inner">
-    <div class="action right">
-      <a href="" id="update-markup" class="btn btn-warning"> Update Markup </a>
-    </div>
-    <div class="action row left">
-      <div class="name left"><small> Design: </small><%%= name %> </div>
+    <div class="action row center">
+      <div class="forward right"> <a href="./preview"> Preview ≫ </a> </div>
+      <div class="back left"> <a href="/designs"> ≪ Back to Designs </a></div>
+      <div class="name"><small> Design: </small><%%= name %> </div>
     </div>
   </div>
   <div class = "clearfix"> </div>

@@ -1,10 +1,15 @@
 <%= content_for :content do %>
-<div id="editor-header" class="navbar">
+<div id="editor-header" class="navbar navbar-fixed-top">
   <div class="navbar-inner">
-    <div class="action right">
-      <a href="/design/<%= @design.safe_name %>/download" id="update-markup" class="btn btn-warning"> Download Markup </a>
-    </div>
-    <div class="row left">
+    <div class="action row center">
+      <div class="right">
+        <a href="/design/<%= @design.safe_name %>/download" id="update-markup" class="btn btn-large btn-success forward"> 
+          Download Markup!
+        </a>
+      </div>
+      <div class="left back">
+        <a href="/design/<%= @design.safe_name %>/edit"> ≪ Edit some more! </a>
+      </div>
       <div class="name"><small> Design: </small><%= @design.name %> </div>
     </div>
   </div>
