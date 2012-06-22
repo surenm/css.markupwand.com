@@ -65,6 +65,5 @@ group :development do
   gem 'pry-stack_explorer'
   gem 'pry_debug'
   gem 'ruby-prof'
-  gem 'log4r-color'
   gem 'foreman'
 end
