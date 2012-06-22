@@ -51,11 +51,16 @@ class EditorIframeView extends Backbone.View
   reload: (args) ->
     this.el.src = this.el.src
   
+  load_design: (design) ->
+    @design = design
+    design_id = @design.get("id")
+    url = "/generated/#{design_id}/index.html"    
+    this.render url
+  
   render: (url = null) ->
     if not url?
       return
-      
-    console.log "Trying to load the iframe with #{url}"
+
     this.el.src = url
     $editor_iframe = this
 
@@ -63,7 +68,27 @@ class EditorIframeView extends Backbone.View
     
     $(this.el).load ->
       $editor_iframe.add_debug_elements()
-    
+
+  add_debug_elements: () ->
+    @iframe_dom = $(this.el).contents()
+    $editor_iframe = this
+
+    @cssLink = document.createElement("link")
+    @cssLink.id = "debug-css"
+    @cssLink.href = "/assets/app/iframe.css"
+    @cssLink.rel  = "stylesheet"
+    @cssLink.type = "text/css"
+    $(@iframe_dom).find('body').append @cssLink
+
+    @jsLink = document.createElement("script")
+    @jsLink.id = "debug-js"
+    @jsLink.src = "/assets/app/iframe.js"
+    @jsLink.type = "text/javascript"
+    $(@iframe_dom).find('body').append @jsLink
+
+    $("#overlay").ready ->
+      $editor_iframe.event_listeners()
+
   event_listeners: () ->
     
     # TODO: Part of this has to move to events. But dunno how to bind events within the iframe using backbone
@@ -95,32 +120,6 @@ class EditorIframeView extends Backbone.View
   hide_loading: ()->
     @loading_div.hide()
   
-  add_debug_elements: () ->
-    @iframe_dom = $(this.el).contents()
-    $editor_iframe = this
-    
-    @cssLink = document.createElement("link")
-    @cssLink.id = "debug-css"
-    @cssLink.href = "/assets/app/iframe.css"
-    @cssLink.rel  = "stylesheet"
-    @cssLink.type = "text/css"
-    $(@iframe_dom).find('body').append @cssLink
-    
-    @jsLink = document.createElement("script")
-    @jsLink.id = "debug-js"
-    @jsLink.src = "/assets/app/iframe.js"
-    @jsLink.type = "text/javascript"
-    $(@iframe_dom).find('body').append @jsLink
-
-    $("#overlay").ready ->
-      $editor_iframe.event_listeners()
-
-  load_design: (design) ->
-    @design = design
-    design_id = @design.get("id")
-    url = "/generated/#{design_id}/index.html"    
-    this.render url
-    
   clear_mouseover: () ->
     @iframe_dom.find(".mouseoverlay").removeClass "mouseoverlay"
 
