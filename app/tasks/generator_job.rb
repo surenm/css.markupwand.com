@@ -20,7 +20,7 @@ class GeneratorJob
     design.set_status Design::STATUS_COMPLETED
 
     if Rails.env.production?
-      ApplicationHelper.post_simple_message("#{design.user.name} <#{design.user.email}>", "#{design.name} generated", "Click -> http://www.markupwand.com/design/#{design.safe_name}/edit")
+      ApplicationHelper.post_simple_message("#{design.user.name} <#{design.user.email}>", "#{design.name} generated", "Your HTML & CSS has been generated, click http://www.markupwand.com/design/#{design.safe_name}/preview to download")
     end
   end
 end
