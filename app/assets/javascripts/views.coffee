@@ -141,9 +141,9 @@ class EditorIframeView extends Backbone.View
     @focus_overlay.hide()
     @sidebar_view.close()
     
-  get_grid_obj = (obj) ->
+  get_grid_obj: (obj) ->
     grid_id = $(obj).data('gridId')
-    grid = this.model.grids.get(grid_id)
+    grid = app.design.grids.get(grid_id)
     return grid
     
   mouseEnterHandler = (event) ->
@@ -158,11 +158,11 @@ class EditorIframeView extends Backbone.View
     
   clickHandler = (event) ->
     event.stopPropagation()
-    editor = app.editor_iframe
+    $editor = app.editor_iframe
         
-    editor.focus_selected_object(this)
+    $editor.focus_selected_object(this)
     
-    grid = get_grid_obj(this)
+    grid = $editor.get_grid_obj(this)
     layer_id = $(this).data('layerId')
     grid.set "layer_id", layer_id if layer_id?
     
