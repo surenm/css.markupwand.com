@@ -18,6 +18,7 @@ gem 'rmagick'
 gem 'aws-sdk'
 gem 'resque'
 gem 'redis'
+gem 'redis-store'
 gem 'rest-client'
 gem 'tidy_ffi'
 
