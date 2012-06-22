@@ -51,11 +51,6 @@ class EditorIframeView extends Backbone.View
   reload: (args) ->
     this.el.src = this.el.src
   
-  load_design: (design) ->
-    @design = design
-    design_id = @design.get("id")
-    url = "/generated/#{design_id}/index.html"    
-    this.render url
   
   render: (url = null) ->
     if not url?

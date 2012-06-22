@@ -7,8 +7,6 @@ class EditorApp
     @design = new DesignModel(design)
     @design_view = new DesignView({model: @design})
     @sidebar_view = new SidebarView({model: @design})
-    @editor_iframe.load_design @design
-        
 $(document).ready ->
   editor_app = new EditorApp("#editor-header", "#editor-iframe", "")
   window.app = editor_app
