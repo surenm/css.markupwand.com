@@ -108,21 +108,21 @@ class Design
   #
   # This function is for serializing bounding box and storing it.
   def offset_box_buffer=(bounding_box)
-    if bounding_box == nil
+    if bounding_box.nil?
       Rails.cache.delete "#{self.id}-offset_box" 
     else
-      Rails.cache.write "#{self.id}-offset_box", BoundingBox.pickle bounding_box
+      Rails.cache.write "#{self.id}-offset_box", BoundingBox.pickle(bounding_box)
     end
   end
   
   # Accessor for offset bounding box
   # De-serializes the offset box from mongo data.
   def offset_box_buffer
-    offset_box_string = Rails.cache.get "#{self.id}-offset_box"
+    offset_box_string = Rails.cache.read "#{self.id}-offset_box"
     if offset_box_string.nil?
       return nil
     else
-      return BoundingBox.depickle offset_box
+      return BoundingBox.depickle offset_box_string
     end
   end
   

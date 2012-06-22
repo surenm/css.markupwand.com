@@ -499,12 +499,12 @@ class Grid
     
     if not self.offset_box_buffer.nil? and not self.offset_box_buffer.empty?
       offset_box_object = BoundingBox.depickle self.offset_box_buffer
-      if self.bounds.top - self.offset_box_object.top > 0
-        offset_box_spacing[:top] = ( self.bounds.top - self.offset_box_object.top)
+      if self.bounds.top - offset_box_object.top > 0
+        offset_box_spacing[:top] = ( self.bounds.top - offset_box_object.top)
       end
       
-      if self.bounds.left - self.offset_bounding_box.left > 0
-        offset_box_spacing[:left] = (self.bounds.left - self.offset_box_object.left)
+      if self.bounds.left - offset_box_object.left > 0
+        offset_box_spacing[:left] = (self.bounds.left - offset_box_object.left)
       end
     end
 
