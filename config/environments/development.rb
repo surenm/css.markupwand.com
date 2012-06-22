@@ -29,4 +29,6 @@ TransformersWeb::Application.configure do
   config.assets.debug = true
   
   config.assets.compile = true
+
+  config.cache_store = :redis_store
 end
