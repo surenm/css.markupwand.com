@@ -90,7 +90,6 @@ class Grid
     {
       :id          => self.id,
       :name        => self.name,
-      :css         => self.get_css_properties,
       :tag         => self.tag,
       :width_class => self.width_class,
       :orientation => self.orientation
