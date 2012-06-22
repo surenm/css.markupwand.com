@@ -25,20 +25,19 @@ class DesignView extends GenericView
     this.render()
     
   events: {
-    "click #update-markup": "click_handler"
+    "click #update-markup": "update_markup_handler"
   }
   
-  click_handler: (event) ->
+  update_markup_handler: (event) ->
     $editor = app.editor_iframe
     $editor.show_loading()
     
-    $router = app.router
-    $design = app.design
+    $design_id = this.model.get("id")
     $.post(
-      "/design/#{$design.id}/update"
+      "/design/#{$design_id}/update"
       (data, status, jqXHR) ->
         if data.status == "success"
-          $router.loadDesign $design
+          $editor.reload()
     )
 
     # return false to the link so that it doesn't go anywhere
