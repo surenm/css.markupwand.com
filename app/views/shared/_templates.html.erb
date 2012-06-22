@@ -1,4 +1,4 @@
-<script id="edit-grid-properties-template" type="text/template">
+<script id="grid-sidebar-template" type="text/template">
 <div id="grid_id" class="property"> 
   <div class="value"> <%%= id %> </div>
   <div class="clearfix"> </div>
@@ -31,6 +31,12 @@ _.each(css_properties, function(value, property){ %>
 <div class='left'> 
   <button id='done' class='btn btn-success'> Done </button>
 </div>
+</script>
+
+<script id="design-sidebar-template" type="text/template">
+  <%% _.each(grids, function(grid, grid_id) { %>
+    <div> <%%= grid.id %> </div>
+  <%% }); %>
 </script>
 
 <script id="editor-header-template" type="text/template">

@@ -151,7 +151,7 @@ class EditorIframeView extends Backbone.View
     @selected_object.removeClass "selected"
     @overlay_div.hide()
     @focus_overlay.hide()
-    @grid_view.close()
+    @sidebar_view.close()
     
   get_grid_obj = (obj) ->
     grid_id = $(obj).data('gridId')
@@ -178,16 +178,18 @@ class EditorIframeView extends Backbone.View
     layer_id = $(this).data('layerId')
     grid.set "layer_id", layer_id if layer_id?
     
-    if editor.grid_view?
-      editor.grid_view.close()
+    if editor.sidebar_view?
+      editor.sidebar_view.close()
       
-    editor.grid_view = new GridView({model: grid})
+    editor.sidebar_view = new SidebarView({model: grid})
 
   append: (element) ->  
     $(@iframe_dom).find('body').append element
-    
-class GridView extends GenericView
-  template: "#edit-grid-properties-template"
+  
+
+class SidebarView extends GenericView
+  design_sidebar_template: "#design-sidebar-template"
+  grid_sidebar_template: "#grid-sidebar-template"
   el: "#editor"
 
   events: {
@@ -198,8 +200,28 @@ class GridView extends GenericView
   }
 
   initialize: () ->
-    css = this.model.get("css")
     this.render()
+    
+  render: () ->
+    if this.model instanceof GridModel
+      this.render_grid_sidebar()
+    else if this.model instanceof DesignModel
+      this.render_design_sidebar()
+      
+  render_design_sidebar: () ->
+    template_string = $(this.design_sidebar_template).html()
+    template_context = this.model.toJSON()
+    console.log template_context
+    html = _.template(template_string, template_context)
+
+    $(this.el).html html
+
+  render_grid_sidebar: () ->
+    template_string = $(this.grid_sidebar_template).html()
+    template_context = this.model.toJSON()
+    html = _.template(template_string, template_context)
+    
+    $(this.el).html html
     
   edit: (event) ->
     $(this.el).find(".form").show()
@@ -216,8 +238,7 @@ class GridView extends GenericView
         app.editor_iframe.reload()
     })
     this.render()
-    
-    
+
   onCancel: (event) -> 
     $(this.el).find(".form").hide()
     $(this.el).find(".show").show()
@@ -225,11 +246,8 @@ class GridView extends GenericView
   onClose: (event) ->
     event.stopPropagation()
     app.editor_iframe.release_focus()
-    app.editor_iframe.grid_view.close()
-
-class StyleView extends GenericView
-  template: "#css-property-template"
+    app.editor_iframe.sidebar_view.close()
 
 window.DesignView = DesignView
+window.SidebarView = SidebarView
 window.EditorIframeView = EditorIframeView
-window.GridView = GridView

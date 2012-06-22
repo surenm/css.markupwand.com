@@ -5,6 +5,8 @@ class EditorApp
   
   load_design: () ->
     @design = new DesignModel(design)
+    @design_view = new DesignView({model: @design})
+    @sidebar_view = new SidebarView({model: @design})
     @editor_iframe.load_design @design
         
 $(document).ready ->
