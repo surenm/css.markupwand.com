@@ -58,9 +58,6 @@ class EditorIframeView extends Backbone.View
     this.el.src = url
     $editor_iframe = this
 
-    @grids = new GridCollection()
-    @grids.fetch({data: {design: @design.get("id")}, processData: true})
-    
     @selected_object = null
     
     $(this.el).load ->
@@ -156,9 +153,9 @@ class EditorIframeView extends Backbone.View
     @focus_overlay.hide()
     @grid_view.close()
     
-  get_grid_obj = (obj, editor) ->
+  get_grid_obj = (obj) ->
     grid_id = $(obj).data('gridId')
-    grid = editor.grids.get(grid_id)
+    grid = app.design.grids.get(grid_id)
     return grid
     
   mouseEnterHandler = (event) ->
@@ -177,7 +174,7 @@ class EditorIframeView extends Backbone.View
         
     editor.focus_selected_object(this)
     
-    grid = get_grid_obj(this, editor)
+    grid = get_grid_obj(this)
     layer_id = $(this).data('layerId')
     grid.set "layer_id", layer_id if layer_id?
     
