@@ -100,6 +100,31 @@ class Design
     self.status = status
     self.save!
   end
+
+  # Offset box is a box, that is an empty grid that appears before
+  # this current grid. The previous sibling being a empty box, it adds itself
+  # to a buffer. And the next item picks it up from buffer and takes it as its 
+  # own offset bounding box.
+  #
+  # This function is for serializing bounding box and storing it.
+  def offset_box_buffer=(bounding_box)
+    if bounding_box == nil
+      Rails.cache.delete "#{self.id}-offset_box" 
+    else
+      Rails.cache.write "#{self.id}-offset_box", BoundingBox.pickle bounding_box
+    end
+  end
+  
+  # Accessor for offset bounding box
+  # De-serializes the offset box from mongo data.
+  def offset_box_buffer
+    offset_box_string = Rails.cache.get "#{self.id}-offset_box"
+    if offset_box_string.nil?
+      return nil
+    else
+      return BoundingBox.depickle offset_box
+    end
+  end
   
   def push_to_processing_queue
     self.set_status Design::STATUS_PROCESSING
