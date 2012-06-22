@@ -1,21 +1,14 @@
 class EditorApp
-  constructor: (design_target, iframe_target, grid_target) ->
-    @editor_iframe = new EditorIframeView({el: iframe_target})
+  constructor: () ->
     @router = new EditorRouter
-  
-  load_design: () ->
-    designCollection = new Backbone.Collection;
-    designCollection.model = DesignModel;
-    designCollection.reset(designs);
+    @design = new DesignModel(design) # design is defined in edit.html.erb
     
-    @design = designCollection.at 0
-
-    @design_view = new DesignView({el: "#editor-header", model: @design})    
-    @editor_iframe.load_design @design
-        
+    @editor_iframe = new EditorIframeView({model : @design})
+    @design_view = new DesignView({model: @design})
+    @sidebar_view = new SidebarView({model: @design})
+    
 $(document).ready ->
-  editor_app = new EditorApp("#editor-header", "#editor-iframe", "")
-  window.app = editor_app
+  window.app = new EditorApp()
   
   Backbone.history.start()
 
