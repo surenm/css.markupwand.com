@@ -139,8 +139,7 @@ class EditorIframeView extends Backbone.View
     @selected_object.removeClass "selected"
     @overlay_div.hide()
     @focus_overlay.hide()
-    @sidebar_view.close()
-    
+      
   get_grid_obj: (obj) ->
     grid_id = $(obj).data('gridId')
     grid = app.design.grids.get(grid_id)
@@ -166,10 +165,7 @@ class EditorIframeView extends Backbone.View
     layer_id = $(this).data('layerId')
     grid.set "layer_id", layer_id if layer_id?
     
-    if editor.sidebar_view?
-      editor.sidebar_view.close()
-      
-    editor.sidebar_view = new SidebarView({model: grid})
+    app.load_grid_sidebar grid
 
   append: (element) ->  
     $(@iframe_dom).find('body').append element
@@ -233,7 +229,10 @@ class SidebarView extends GenericView
   onClose: (event) ->
     event.stopPropagation()
     app.editor_iframe.release_focus()
-    app.editor_iframe.sidebar_view.close()
+
+    # if the current model is GridModel then we have to load back the design sidebar
+    if this.model instanceof GridModel
+      app.load_design_sidebar()
 
 window.DesignView = DesignView
 window.SidebarView = SidebarView
