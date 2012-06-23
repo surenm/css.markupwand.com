@@ -15,11 +15,8 @@
 </head>
 <body>
 
-<% if current_user.admin? %>
-  <div id="admin-content">
-    Admin Actions: <br>
+<% if current_user and current_user.admin? %>
     <%= yield :admin_content %>
-  </div>
 <% end %>
 
 <%= yield :content %>

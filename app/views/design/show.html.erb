@@ -38,7 +38,10 @@
 
 
 <%= content_for :admin_content do %>
+<div id="admin-content">
+  Admin Actions: 
   <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/reparse"> Reparse grids</a>
   <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/update"> Update markup </a>
   <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/viewlogs"> View Logs </a>
+</div>
 <% end %>
