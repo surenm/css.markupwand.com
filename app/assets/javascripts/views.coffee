@@ -176,14 +176,16 @@ class SidebarView extends GenericView
     html = _.template(template_string, template_context)
 
     $(this.el).html html
+    
     if this.options.context == "dom"
       $dom_tree = $(this.el).find("#dom-tree")
       tree_data = [app.design.get("dom_tree")]
       $(this.el).ready ->
-        $dom_tree.tree {
+        $dom_tree.tree 
           data: tree_data
           autoOpen: true
-        }
+          selectable: true
+        
 
       $dom_tree.bind 'tree.click', (event) ->
         grid_id = event.node.id
