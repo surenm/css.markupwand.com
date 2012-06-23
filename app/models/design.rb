@@ -81,9 +81,11 @@ class Design
   end
   
   def attribute_data
-    grids = {}
-    layers = {}
+    grids       = {}
+    layers      = {}
     css_classes = {}
+    grid_data   = {}
+
     if self.status == Design::STATUS_COMPLETED
       grids = self.grids.collect do |grid|
         grid.attribute_data
@@ -103,6 +105,9 @@ class Design
           css_classes[css_class].push grid.id
         end
       end
+      
+      root_grid = self.get_root_grid
+      dom_tree  = root_grid.get_tree
     end
     
     {
@@ -113,7 +118,8 @@ class Design
       :layers        => layers.values,
       :id            => self.safe_name,
       :status        => self.status,
-      :css_classes   => css_classes
+      :css_classes   => css_classes,
+      :dom_tree      => dom_tree
     }
   end
   
