@@ -143,7 +143,8 @@ class SidebarView extends GenericView
     default     : "#design-default-template"
     identifiers : "#design-edit-identifiers-template",
     classes     : "#design-edit-classes-template",
-    tags        : "#design-edit-tags-template"
+    tags        : "#design-edit-tags-template",
+    dom         : "#design-edit-dom-template"
   }
   grid_sidebar_template: "#grid-sidebar-template"
   el: "#editor"
@@ -175,6 +176,13 @@ class SidebarView extends GenericView
     html = _.template(template_string, template_context)
 
     $(this.el).html html
+    if this.options.context == "dom"
+      $dom_tree = $(this.el).find("#dom-tree")
+      tree_data = [app.design.get("dom_tree")]
+      $(this.el).ready ->
+        $dom_tree.tree({
+          data: tree_data
+        })
 
   render_grid_sidebar: () ->
     template_string = $(this.grid_sidebar_template).html()

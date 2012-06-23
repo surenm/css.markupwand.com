@@ -4,6 +4,7 @@ class EditorRouter extends Backbone.Router
     "classes"       : "editClasses" 
     "tags"          : "editTags"
     "identifiers"   : "editIdentifiers"
+    "dom"           : "editDom"
     "grid/:grid_id" : "editGrid"
     "*args"         : "defaultHandler"
     
@@ -15,6 +16,9 @@ class EditorRouter extends Backbone.Router
     
   editIdentifiers: () ->
     window.app.load_design_sidebar("identifiers")
+    
+  editDom: () ->
+    window.app.load_design_sidebar("dom")
   
   editGrid: (design_id, grid_id) ->
     @grid = grid_id
