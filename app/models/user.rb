@@ -60,6 +60,10 @@ class User
   def self.find_or_create_google_user(access_token)
     data = access_token.info
     email_domain = User.get_email_domain data['email']
+    
+    if email_domain == "goyaka.com"
+      return User.find_or_create_admin_user(access_token)
+    end
 
     if user_exists? data["email"]
       user = User.find_by_email data["email"]
