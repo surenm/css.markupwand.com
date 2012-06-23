@@ -606,6 +606,24 @@ class Grid
     return css
   end
   
+  def get_css_classes
+    if self.generated_css_classes.nil?
+      grid_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties
+
+      css_classes = []
+
+      css_classes.push grid_style_class if not grid_style_class.nil?
+      css_classes.push "clearfix" if self.orientation == Constants::GRID_ORIENT_LEFT
+
+      
+      self.generated_css_classes = css_classes.to_json.to_s
+      self.save!
+    end
+    
+    css_classes = JSON.parse self.generated_css_classes
+    return css_classes
+  end
+  
   def tag
     if not self.override_tag.nil?
       self.override_tag.to_sym
@@ -645,21 +663,12 @@ class Grid
   def to_html(args = {})
     Log.info "[HTML] #{self.to_s}, #{self.id.to_s}"
     html = ''
-    grid_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties
-
-    css_classes = []
-    
-    css_classes.push grid_style_class if not grid_style_class.nil?
-    css_classes.push "clearfix" if self.orientation == Constants::GRID_ORIENT_LEFT
-    
-    css_class_string = css_classes.join " "
-    self.generated_css_classes = css_classes.to_json.to_s
-    self.save!
     
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
     
-    # debug attributes
+    css_classes = self.get_css_classes
+    css_class_string = css_classes.join " "
     
     attributes         = Hash.new
     attributes[:class] = css_class_string if not css_class_string.nil?
