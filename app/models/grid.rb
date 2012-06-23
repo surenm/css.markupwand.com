@@ -54,7 +54,7 @@ class Grid
     end
     render_layer_obj = nil
     render_layer_obj = Layer.find self.render_layer if not self.render_layer.nil? 
-    "Grid: Tag: #{self.tag}, Layers: #{self.layers.to_a}, Style layer: #{style_layer_objs}, \
+    "Tag: #{self.tag}, Layers: #{self.layers.to_a}, Style layer: #{style_layer_objs}, \
     Render layer: #{render_layer_obj}"
   end
   
