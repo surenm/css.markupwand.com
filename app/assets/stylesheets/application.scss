@@ -85,17 +85,7 @@ small {
   .action {
     margin: 0px 10px;
     
-    .forward {
-      margin: 10px;
-      a { 
-        color: #999;
-        &:hover {
-          color: #eee;
-        };
-      }
-    }
-
-    .back {
+    .forward, .back {
       margin: 10px;
     }
     
