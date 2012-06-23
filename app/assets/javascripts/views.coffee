@@ -180,9 +180,10 @@ class SidebarView extends GenericView
       $dom_tree = $(this.el).find("#dom-tree")
       tree_data = [app.design.get("dom_tree")]
       $(this.el).ready ->
-        $dom_tree.tree({
+        $dom_tree.tree {
           data: tree_data
-        })
+          autoOpen: true
+        }
 
   render_grid_sidebar: () ->
     template_string = $(this.grid_sidebar_template).html()
