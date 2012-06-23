@@ -12,6 +12,7 @@ class GenericView extends Backbone.View
 
 class DesignView extends GenericView
   template: "#editor-header-template"
+  el: "#editor-header"
     
   defaults:
     name: "",
@@ -24,48 +25,58 @@ class DesignView extends GenericView
     this.render()
     
   events: {
-    "click #update-markup": "click_handler"
+    "click #update-markup": "update_markup_handler"
   }
   
-  click_handler: (event) ->
+  update_markup_handler: (event) ->
     $editor = app.editor_iframe
     $editor.show_loading()
     
-    $router = app.router
-    $design = app.design
+    $design_id = this.model.get("id")
     $.post(
-      "/design/#{$design.id}/update"
+      "/design/#{$design_id}/update"
       (data, status, jqXHR) ->
         if data.status == "success"
-          $router.loadDesign $design
+          $editor.reload()
     )
 
     # return false to the link so that it doesn't go anywhere
     return false
 
 class EditorIframeView extends Backbone.View
-  initialize: (args) ->
+  el: "#editor-iframe"
+  
+  initialize: () ->
     this.render()
-  
-  reload: (args) ->
-    this.el.src = this.el.src
-  
-  render: (url = null) ->
-    if not url?
-      return
-      
-    console.log "Trying to load the iframe with #{url}"
-    this.el.src = url
+    
+  render: () ->
     $editor_iframe = this
-
-    @grids = new GridCollection()
-    @grids.fetch({data: {design: @design.get("id")}, processData: true})
-    
-    @selected_object = null
-    
     $(this.el).load ->
       $editor_iframe.add_debug_elements()
     
+  reload: (args) ->
+    this.el.src = this.el.src
+
+  add_debug_elements: () ->
+    @iframe_dom = $(this.el).contents()
+    $editor_iframe = this
+
+    @cssLink = document.createElement("link")
+    @cssLink.id = "debug-css"
+    @cssLink.href = "/assets/app/iframe.css"
+    @cssLink.rel  = "stylesheet"
+    @cssLink.type = "text/css"
+    $(@iframe_dom).find('body').append @cssLink
+
+    @jsLink = document.createElement("script")
+    @jsLink.id = "debug-js"
+    @jsLink.src = "/assets/app/iframe.js"
+    @jsLink.type = "text/javascript"
+    $(@iframe_dom).find('body').append @jsLink
+
+    $("#overlay").ready ->
+      $editor_iframe.event_listeners()
+
   event_listeners: () ->
     
     # TODO: Part of this has to move to events. But dunno how to bind events within the iframe using backbone
@@ -97,32 +108,6 @@ class EditorIframeView extends Backbone.View
   hide_loading: ()->
     @loading_div.hide()
   
-  add_debug_elements: () ->
-    @iframe_dom = $(this.el).contents()
-    $editor_iframe = this
-    
-    @cssLink = document.createElement("link")
-    @cssLink.id = "debug-css"
-    @cssLink.href = "/assets/app/iframe.css"
-    @cssLink.rel  = "stylesheet"
-    @cssLink.type = "text/css"
-    $(@iframe_dom).find('body').append @cssLink
-    
-    @jsLink = document.createElement("script")
-    @jsLink.id = "debug-js"
-    @jsLink.src = "/assets/app/iframe.js"
-    @jsLink.type = "text/javascript"
-    $(@iframe_dom).find('body').append @jsLink
-
-    $("#overlay").ready ->
-      $editor_iframe.event_listeners()
-
-  load_design: (design) ->
-    @design = design
-    design_id = @design.get("id")
-    url = "/generated/#{design_id}/index.html"    
-    this.render url
-    
   clear_mouseover: () ->
     @iframe_dom.find(".mouseoverlay").removeClass "mouseoverlay"
 
@@ -154,11 +139,10 @@ class EditorIframeView extends Backbone.View
     @selected_object.removeClass "selected"
     @overlay_div.hide()
     @focus_overlay.hide()
-    @grid_view.close()
-    
-  get_grid_obj = (obj, editor) ->
+      
+  get_grid_obj: (obj) ->
     grid_id = $(obj).data('gridId')
-    grid = editor.grids.get(grid_id)
+    grid = app.design.grids.get(grid_id)
     return grid
     
   mouseEnterHandler = (event) ->
@@ -173,24 +157,23 @@ class EditorIframeView extends Backbone.View
     
   clickHandler = (event) ->
     event.stopPropagation()
-    editor = app.editor_iframe
+    $editor = app.editor_iframe
         
-    editor.focus_selected_object(this)
+    $editor.focus_selected_object(this)
     
-    grid = get_grid_obj(this, editor)
+    grid = $editor.get_grid_obj(this)
     layer_id = $(this).data('layerId')
     grid.set "layer_id", layer_id if layer_id?
     
-    if editor.grid_view?
-      editor.grid_view.close()
-      
-    editor.grid_view = new GridView({model: grid})
+    app.load_grid_sidebar grid
 
   append: (element) ->  
     $(@iframe_dom).find('body').append element
-    
-class GridView extends GenericView
-  template: "#edit-grid-properties-template"
+  
+
+class SidebarView extends GenericView
+  design_sidebar_template: "#design-sidebar-template"
+  grid_sidebar_template: "#grid-sidebar-template"
   el: "#editor"
 
   events: {
@@ -201,8 +184,27 @@ class GridView extends GenericView
   }
 
   initialize: () ->
-    css = this.model.get("css")
     this.render()
+    
+  render: () ->
+    if this.model instanceof GridModel
+      this.render_grid_sidebar()
+    else if this.model instanceof DesignModel
+      this.render_design_sidebar()
+      
+  render_design_sidebar: () ->
+    template_string = $(this.design_sidebar_template).html()
+    template_context = this.model.toJSON()
+    html = _.template(template_string, template_context)
+
+    $(this.el).html html
+
+  render_grid_sidebar: () ->
+    template_string = $(this.grid_sidebar_template).html()
+    template_context = this.model.toJSON()
+    html = _.template(template_string, template_context)
+    
+    $(this.el).html html
     
   edit: (event) ->
     $(this.el).find(".form").show()
@@ -219,8 +221,7 @@ class GridView extends GenericView
         app.editor_iframe.reload()
     })
     this.render()
-    
-    
+
   onCancel: (event) -> 
     $(this.el).find(".form").hide()
     $(this.el).find(".show").show()
@@ -228,11 +229,11 @@ class GridView extends GenericView
   onClose: (event) ->
     event.stopPropagation()
     app.editor_iframe.release_focus()
-    app.editor_iframe.grid_view.close()
 
-class StyleView extends GenericView
-  template: "#css-property-template"
+    # if the current model is GridModel then we have to load back the design sidebar
+    if this.model instanceof GridModel
+      app.load_design_sidebar()
 
 window.DesignView = DesignView
+window.SidebarView = SidebarView
 window.EditorIframeView = EditorIframeView
-window.GridView = GridView

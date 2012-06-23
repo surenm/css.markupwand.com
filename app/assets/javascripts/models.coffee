@@ -11,6 +11,11 @@ class DesignModel extends Backbone.Model
   defaults:
     name: ""
     id: null
+    
+  initialize: () ->
+    @grids = new GridCollection()
+    @grids.fetch({data: {design: this.get("id")}, processData: true})
+    
 
 class GridModel extends Backbone.Model
   urlRoot: "/grids"

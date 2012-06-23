@@ -11,13 +11,13 @@
   </div>
 </div>
 <div class='ide'>
-  <iframe id='editor-iframe' src='about:blank'></iframe>
+  <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html'></iframe>
 </div>
 <% end %>
 
 <%= content_for :javascript do %>
 <script type="text/javascript">
-var designs = <%= raw(@designs.to_json) %>;
+var design = <%= raw(@design.attribute_data.to_json) %>;
 </script>
 <%= javascript_include_tag "app/editor" %>
 <% end %>

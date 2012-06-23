@@ -88,9 +88,6 @@ class DesignController < ApplicationController
   
   def edit
     @design = get_design params[:id]
-    
-    # TODO: Backbone needs a collection to reset to. Find a correct way to do this
-    @designs = Array[@design.attribute_data]
   end
   
   def processed

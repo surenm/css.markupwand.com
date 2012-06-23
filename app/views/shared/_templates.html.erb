@@ -1,4 +1,4 @@
-<script id="edit-grid-properties-template" type="text/template">
+<script id="grid-sidebar-template" type="text/template">
 <div id="grid_id" class="property"> 
   <div class="value"> <%%= id %> </div>
   <div class="clearfix"> </div>
@@ -33,11 +33,22 @@ _.each(css_properties, function(value, property){ %>
 </div>
 </script>
 
+<script id="design-sidebar-template" type="text/template">
+  <%% _.each(grids, function(grid, grid_id) { %>
+    <div> <%%= grid.id %> </div>
+  <%% }); %>
+</script>
+
 <script id="editor-header-template" type="text/template">
 <div id="editor-header" class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="action row center">
-      <div class="forward right"> <a href="./preview"> Preview ≫ </a> </div>
+      <div class="forward right"> 
+        <a href="./preview"> Preview ≫ </a> 
+      </div>
+      <div class="right">
+        <a href="" id="update-markup" class="btn btn-warning"> Update </a>
+      </div>
       <div class="back left"> <a href="/designs"> ≪ Back to Designs </a></div>
       <div class="name"><small> Design: </small><%%= name %> </div>
     </div>
@@ -48,12 +59,5 @@ _.each(css_properties, function(value, property){ %>
 <script id="css-property-template" type="text/template">
 <div class="css-style">
   <span class="key"> <%%= key %> </span>:  <span class="value"> <%%= value %> </span>
-</div>
-</script>
-
-<script id="focus-bar-template" type="text/template">
-<div class='right'> 
-  <button id='done' class='btn btn-large btn-success'> Done </button>
-  <button id='cancel' class='btn btn-large btn-failure'> Cancel </button>
 </div>
 </script>
