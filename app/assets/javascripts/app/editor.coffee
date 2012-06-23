@@ -4,11 +4,10 @@ class EditorApp
     @design = new DesignModel(design) # design is defined in edit.html.erb
     
     @editor_iframe = new EditorIframeView({model : @design})
-    @design_view = new DesignView({model: @design})
   
-  load_design_sidebar: () ->
+  load_design_sidebar: (context) ->
     @sidebar_view.close() if @sidebar_view?
-    @sidebar_view = new SidebarView({model: @design})
+    @sidebar_view = new SidebarView({model: @design, context: context})
     
   load_grid_sidebar: (grid) ->
     @sidebar_view.close() if @sidebar_view?

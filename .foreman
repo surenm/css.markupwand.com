@@ -1,2 +1,2 @@
 port: 3000
-concurrency: web=1,worker=1,uploader=1
+concurrency: web=0,worker=1,uploader=1

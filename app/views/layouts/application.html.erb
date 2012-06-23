@@ -14,6 +14,11 @@
   <link rel="shortcut icon" href="/favicon.ico"/>
 </head>
 <body>
+
+<% if current_user and current_user.admin? %>
+    <%= yield :admin_content %>
+<% end %>
+
 <%= yield :content %>
 <% if Rails.env.production? %>
 <script type='text/javascript'>

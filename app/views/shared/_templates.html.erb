@@ -1,60 +1,69 @@
 <script id="grid-sidebar-template" type="text/template">
-<div id="grid_id" class="property"> 
-  <div class="value"> <%%= id %> </div>
-  <div class="clearfix"> </div>
-</div>
-<div id="tag" class="property">
-  <div class="key"> Tag: </div>
-  <div class="show">
-    <div class="value"> <%%= tag %> </div>
-  </div>
-  <div class="form" style="display: none">
-    <input id="taginput" type="text" value="<%%= tag %>">
-    <button id="success" class="btn btn-success">✔</button>
-    <button id="cancel" class="btn btn-danger">✖</button>
-  </div>
-  <div class="clearfix"> </div>
-</div>
-
-<br> <br>
-<%% 
-if(!_.isNull(css) && !_.isUndefined(css)) 
-var css_properties = css;
-_.each(css_properties, function(value, property){ %>
-  <div class="css-style"> 
-    <div class="key"> <%%= property %> </div>
-    <div class="value"> <%%= value %> </div>
+<div class="grid-sidebar">
+  <div id="grid_id" class="property"> 
+    <div class="value"> <%%= id %> </div>
     <div class="clearfix"> </div>
   </div>
-<%% }); %>
+  <div id="tag" class="property">
+    <div class="key"> Tag: </div>
+    <div class="show">
+      <div class="value"> <%%= tag %> </div>
+    </div>
+    <div class="form" style="display: none">
+      <input id="taginput" type="text" value="<%%= tag %>">
+      <button id="success" class="btn btn-success">✔</button>
+      <button id="cancel" class="btn btn-danger">✖</button>
+    </div>
+    <div class="clearfix"> </div>
+  </div>
 
-<div class='left'> 
-  <button id='done' class='btn btn-success'> Done </button>
+  <br> <br>
+  <%% 
+  if(!_.isNull(css) && !_.isUndefined(css)) 
+  var css_properties = css;
+  _.each(css_properties, function(value, property){ %>
+    <div class="css-style"> 
+      <div class="key"> <%%= property %> </div>
+      <div class="value"> <%%= value %> </div>
+      <div class="clearfix"> </div>
+    </div>
+  <%% }); %>
+
+  <div class='left'> 
+    <button id='done' class='btn btn-success'> Done </button>
+  </div>
 </div>
 </script>
 
-<script id="design-sidebar-template" type="text/template">
+<script id="design-edit-identifiers-template" type="text/template">
+<div class="design-identifiers">
   <%% _.each(grids, function(grid, grid_id) { %>
     <div> <%%= grid.id %> </div>
   <%% }); %>
+</div>
 </script>
 
-<script id="editor-header-template" type="text/template">
-<div id="editor-header" class="navbar navbar-fixed-top">
-  <div class="navbar-inner">
-    <div class="action row center">
-      <div class="forward right"> 
-        <a class="btn" class="preview" href="./preview"> Preview → </a> 
-      </div>
-      <div class="forward right">
-        <a href="" id="update-markup" class="btn btn-warning"> Update </a>
-      </div>
-      <div class="back left"> <a class="btn" href="/designs"> ← Back to Designs </a></div>
-      <div class="name"><small> Design: </small><%%= name %> </div>
+<script id="design-edit-classes-template" type="text/template">
+<div class="design-classes">
+  <%% _.each(css_classes, function(grids, css_class) { %>
+    <div class="property">
+      <div class="css-class value" data-style-class='<%%= css_class %>'> <%%= css_class %> </div>
+      <div class="clearfix"> </div>
     </div>
-  </div>
-  <div class = "clearfix"> </div>
+  <%% }); %>
+</div>
 </script>
+
+<script id="design-edit-tags-template" type="text/template">
+</script>
+
+<script id="design-default-template" type="text/template">
+  Design name: <%%= name %>
+</script>
+
+<script id="design-edit-dom-template" type="text/template">
+  <div id="dom-tree"></div>
+</script> 
 
 <script id="css-property-template" type="text/template">
 <div class="css-style">

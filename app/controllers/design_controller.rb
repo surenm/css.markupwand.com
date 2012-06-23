@@ -114,5 +114,27 @@ class DesignController < ApplicationController
     temp_file   = Store::fetch_object_from_store remote_file
 
     send_file temp_file, :disposition => "inline"
-  end  
+  end
+  
+  def reparse
+    @design = get_design params[:id]
+    @design.grids.delete_all
+    @design.layers.delete_all
+    @design.set_status Design::STATUS_PARSING
+    Resque.enqueue ParserJob, @design.id
+    redirect_to :action => :show, :id => @design.safe_name
+  end
+  
+  def view_logs
+    render :text => "Adingu! Ellaame udane venumaa! Logs will come soon in this page."
+  end
+  
+  def view_dom
+    @design = get_design params[:id]
+    root_grid = @design.get_root_grid
+    Log.fatal root_grid
+    
+    render :json => root_grid.get_tree
+  end
+  
 end

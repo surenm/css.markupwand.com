@@ -3,8 +3,17 @@
   <%= render "shared/templates" %>
 <% end %>
 <%= content_for :content do %>
-<div id="editor-header">
-</div>
+<div id="editor-header" class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="action row center">
+      <div class="forward right"> 
+        <a class="btn btn-large btn-warning" href="./preview"> Preview → </a> 
+      </div>
+      <div class="back left"> <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>">  ← Back to Design Page </a></div>
+      <div class="name"><small> Design: </small><%= @design.name %> </div>
+    </div>
+  </div>
+  <div class = "clearfix"> </div>
 </div>
 <div id='editor-controls'>
   <div id='editor'>

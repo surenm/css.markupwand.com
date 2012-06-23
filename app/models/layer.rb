@@ -71,13 +71,15 @@ class Layer
   
   def attribute_data
     {
-      :uid => self.uid,
-      :name => self.name,
-      :kind => self.kind,
-      :layer_type => self.layer_type
+      :uid        => self.uid,
+      :name       => self.name,
+      :kind       => self.kind,
+      :layer_type => self.layer_type,
+      :label      => self.name[0..9],
+      :tag        => self.tag_name
     }
   end
-  
+    
   def has_newline?
     if self.kind == Layer::LAYER_TEXT and 
       layer_json.has_key? :textKey and
@@ -256,7 +258,6 @@ class Layer
 
   def to_html(args = {}, is_leaf, grid)
     Log.info "[HTML] Layer #{self.to_s}"
-    enable_data_attributes = args.fetch :enable_data_attributes, true
     css       = args.fetch :css, {}
     css_class = class_name css, is_leaf, @is_root, grid
     
@@ -273,11 +274,9 @@ class Layer
     css_class_list.push css_class
     attributes[:class] = css_class_list.join ' '
 
-    if enable_data_attributes
-      attributes[:"data-grid-id"]  = args.fetch :"data-grid-id", ""
-      attributes[:"data-layer-id"] = self.id.to_s
-      attributes[:"data-layer-name"] = self.name
-    end
+    attributes[:"data-grid-id"]  = args.fetch :"data-grid-id", "" 
+    attributes[:"data-layer-id"] = self.id.to_s
+    attributes[:"data-layer-name"] = self.name
 
     if tag == :img
       attributes[:src] = image_path

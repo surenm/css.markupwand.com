@@ -10,39 +10,6 @@ class GenericView extends Backbone.View
     $(this.el).unbind()
     $(this.el).empty()
 
-class DesignView extends GenericView
-  template: "#editor-header-template"
-  el: "#editor-header"
-    
-  defaults:
-    name: "",
-    psd_file_path: ""
-    font_map: {}
-    
-  initialize: (args) ->
-    _.bindAll(this, 'render');
-    this.model.bind("change", this.render)
-    this.render()
-    
-  events: {
-    "click #update-markup": "update_markup_handler"
-  }
-  
-  update_markup_handler: (event) ->
-    $editor = app.editor_iframe
-    $editor.show_loading()
-    
-    $design_id = this.model.get("id")
-    $.post(
-      "/design/#{$design_id}/update"
-      (data, status, jqXHR) ->
-        if data.status == "success"
-          $editor.reload()
-    )
-
-    # return false to the link so that it doesn't go anywhere
-    return false
-
 class EditorIframeView extends Backbone.View
   el: "#editor-iframe"
   
@@ -119,7 +86,7 @@ class EditorIframeView extends Backbone.View
     this.clear_mouseover()
     
     # show overlay div and on focus bar
-    @overlay_div.show()
+    #@overlay_div.show()
     
     @selected_object = $(selected_object);
     @selected_object.addClass "selected"
@@ -137,7 +104,7 @@ class EditorIframeView extends Backbone.View
     this.enable_listeners()
     this.clear_mouseover()
     @selected_object.removeClass "selected"
-    @overlay_div.hide()
+    #@overlay_div.hide()
     @focus_overlay.hide()
       
   get_grid_obj: (obj) ->
@@ -172,18 +139,28 @@ class EditorIframeView extends Backbone.View
   
 
 class SidebarView extends GenericView
-  design_sidebar_template: "#design-sidebar-template"
+  design_sidebar_templates: {
+    default     : "#design-default-template"
+    identifiers : "#design-edit-identifiers-template",
+    classes     : "#design-edit-classes-template",
+    tags        : "#design-edit-tags-template",
+    dom         : "#design-edit-dom-template"
+  }
   grid_sidebar_template: "#grid-sidebar-template"
   el: "#editor"
 
   events: {
-    "click .show": "edit"
-    "click #success": "onSuccess"
-    "click #cancel": "onCancel"
-    "click #done": "onClose"
+    "click .grid-sidebar .show": "editGrid"
+    "click .grid-sidebar #success": "onSuccess"
+    "click .grid-sidebar #cancel": "onCancel"
+    "click .grid-sidebar #done": "onClose"
+    
+    "click .design-classes .css-class": "editDesignClass"
   }
 
   initialize: () ->
+    this.options.context = "default" if not this.options.context?
+
     this.render()
     
   render: () ->
@@ -193,11 +170,27 @@ class SidebarView extends GenericView
       this.render_design_sidebar()
       
   render_design_sidebar: () ->
-    template_string = $(this.design_sidebar_template).html()
+    template_id = this.design_sidebar_templates[this.options.context]
+    template_string = $(template_id).html()
     template_context = this.model.toJSON()
     html = _.template(template_string, template_context)
 
     $(this.el).html html
+    
+    if this.options.context == "dom"
+      $dom_tree = $(this.el).find("#dom-tree")
+      tree_data = [app.design.get("dom_tree")]
+      $(this.el).ready ->
+        $dom_tree.tree 
+          data: tree_data
+          autoOpen: true
+          selectable: true
+        
+
+      $dom_tree.bind 'tree.click', (event) ->
+        grid_id = event.node.id
+        grid = app.editor_iframe.iframe_dom.find("[data-grid-id=#{grid_id}]")
+        app.editor_iframe.focus_selected_object grid
 
   render_grid_sidebar: () ->
     template_string = $(this.grid_sidebar_template).html()
@@ -206,7 +199,7 @@ class SidebarView extends GenericView
     
     $(this.el).html html
     
-  edit: (event) ->
+  editGrid: (event) ->
     $(this.el).find(".form").show()
     $(this.el).find(".show").hide()
     
@@ -233,7 +226,16 @@ class SidebarView extends GenericView
     # if the current model is GridModel then we have to load back the design sidebar
     if this.model instanceof GridModel
       app.load_design_sidebar()
-
-window.DesignView = DesignView
+      
+  editDesignClass: (event) ->
+    selected_obj = event.target
+    classname = $(selected_obj).data('styleClass')
+    grids = app.design.get("css_classes")[classname]
+    $editor_iframe = app.editor_iframe
+    $.each grids, (index, value) ->
+      grid = $editor_iframe.iframe_dom.find("[data-grid-id=#{value}]")
+      $.each grid, () ->
+        $editor_iframe.focus_selected_object this
+    
 window.SidebarView = SidebarView
 window.EditorIframeView = EditorIframeView

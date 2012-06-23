@@ -4,7 +4,7 @@
     <h2> Design: <%= @design.name %></h2>
     
     <div class="design">
-      <% if @design.status == Design::STATUS_COMPLETED.to_s %>
+      <% if @design.status == Design::STATUS_COMPLETED %>
       <div class="" style="font-size: 18px; margin: 20px;"> 
         Uploaded on <%= @design.created_at.to_formatted_s(:short) %> <br>
         Status: <%= @design.status %> 
@@ -24,7 +24,7 @@
   </div>
   
   <script type="text/javascript">
-    <% if @design.status == Design::STATUS_COMPLETED.to_s %>
+    <% if @design.status == Design::STATUS_COMPLETED %>
     var design = <%= raw @design.attribute_data.to_json %>;
     <% else %>
     var design = null;
@@ -36,3 +36,12 @@
   <%= javascript_include_tag "app/design" %>
 <% end %>
 
+
+<%= content_for :admin_content do %>
+<div id="admin-content">
+  Admin Actions: 
+  <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/reparse"> Reparse grids</a>
+  <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/update"> Update markup </a>
+  <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/view-logs"> View Logs </a>
+</div>
+<% end %>

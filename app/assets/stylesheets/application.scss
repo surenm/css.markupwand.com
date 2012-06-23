@@ -8,13 +8,12 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
- *= require lib/screen
  *= require lib/ie
- *= require lib/print
  *= require lib/bootstrap
  *= require lib/bootstrap-responsive
  *= require lib/bootstrap_and_overrides
  *= require lib/jquery-ui-1.8.20
+ *= require lib/jqtree.css
  *= require app/scaffolds
  *= require app/buttons
  *= require app/designs
@@ -67,11 +66,6 @@ h2 {
 .clearfix {
   clear: both;
 }
-
-small {
-  font-size: 0.75em;
-}
-
 
 #header.navbar, #editor-header.navbar {
   font-family: 'Ubuntu Condensed', serif;
@@ -147,6 +141,20 @@ small {
   border-top: 3px solid #231D1A;
   height: 50px;
   color: #C9B994;
+}
+
+#admin-content {
+  position: absolute;
+  top: 30%;
+  left: 0;
+  background: #fff;
+  padding: 10px;
+  width: 200px;
+  text-align: center;
+  a {
+    margin: 10px;
+    display: block;
+  }
 }
 
 .ui-progressbar-value {

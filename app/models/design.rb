@@ -40,7 +40,7 @@ class Design
   field :font_map, :type => Hash, :default => {}
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
-  field :status, :type => String, :default => Design::STATUS_QUEUED
+  field :status, :type => Symbol, :default => Design::STATUS_QUEUED
   field :storage, :type => String, :default => "local"
   
   field :height, :type => Integer
@@ -72,17 +72,42 @@ class Design
     File.join self.store_key_prefix, "published"
   end
   
+  def get_root_grid
+    root_grids = self.grids.where(:root => true)
+    #Log.error "Root grid = #{root_grids.last.id.to_s}, #{root_grids.length}"
+    Log.fatal "More than one root node in design???" if root_grids.size > 1
+
+    return root_grids.last
+  end
+  
   def attribute_data
-    grids = self.grids.collect do |grid|
-      grid.attribute_data
-    end
-    
-    layers = {}
-    self.grids.each do |grid|
-      grid.layer_ids.each do |layer_id|
-        layer = Layer.find layer_id
-        layers[layer.uid] = layer.attribute_data
-      end        
+    grids       = {}
+    layers      = {}
+    css_classes = {}
+    grid_data   = {}
+
+    if self.status == Design::STATUS_COMPLETED
+      grids = self.grids.collect do |grid|
+        grid.attribute_data
+      end
+      
+      self.grids.each do |grid|
+        grid.layer_ids.each do |layer_id|
+          layer = Layer.find layer_id
+          layers[layer.uid] = layer.attribute_data
+        end        
+      end
+      
+      self.grids.each do |grid|
+        grid_css_classes = grid.get_css_classes
+        grid_css_classes.each do |css_class|
+          css_classes[css_class] = Array.new if css_classes[css_class].nil?
+          css_classes[css_class].push grid.id
+        end
+      end
+      
+      root_grid = self.get_root_grid
+      dom_tree  = root_grid.get_tree
     end
     
     {
@@ -92,7 +117,9 @@ class Design
       :grids         => grids,
       :layers        => layers.values,
       :id            => self.safe_name,
-      :status        => self.status
+      :status        => self.status,
+      :css_classes   => css_classes,
+      :dom_tree      => dom_tree
     }
   end
   
@@ -229,8 +256,7 @@ HTML
     # Set the root path for this design. That is where all the html and css is saved to.
     CssParser::set_assets_root generated_folder
     
-    root_grid = self.grids.where(:root => true).last
-    Log.error "Root grid = #{root_grid.id.to_s}, #{self.grids.where(:root => true).length}"
+    root_grid = self.get_root_grid
 
     body_html = root_grid.to_html
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'

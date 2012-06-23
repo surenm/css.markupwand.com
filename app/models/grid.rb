@@ -24,7 +24,9 @@ class Grid
   field :body_style_layers, :type => Array, :default => []
   
   field :css_properties, :type => String, :default => nil
-  field :override_css_properties, :type => String, :default => nil
+
+  field :generated_css_classes, :type => String, :default => nil
+  field :user_css_class_map, :type => String, :default => nil
   
   field :tag, :type => String, :default => :div
   field :override_tag, :type => String, :default => nil
@@ -52,7 +54,7 @@ class Grid
     end
     render_layer_obj = nil
     render_layer_obj = Layer.find self.render_layer if not self.render_layer.nil? 
-    "Grid: Tag: #{self.tag}, Layers: #{self.layers.to_a}, Style layer: #{style_layer_objs}, \
+    "Tag: #{self.tag}, Layers: #{self.layers.to_a}, Style layer: #{style_layer_objs}, \
     Render layer: #{render_layer_obj}"
   end
   
@@ -94,6 +96,30 @@ class Grid
       :width_class => self.width_class,
       :orientation => self.orientation
     }
+  end
+  
+  def get_tree
+    tree = {
+      :id    => self.id,
+      :tag   => self.tag,
+      :label => self.tag
+    }
+    
+    tree[:children] = []
+
+    if self.render_layer.nil?
+      child_nodes = self.children.select { |node| not node.is_positioned }
+      child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
+      child_nodes.each do |child_node|
+        tree[:children].push child_node.get_tree
+      end
+    else 
+      render_layer_obj = Layer.find self.render_layer
+      render_layer_attr_data = render_layer_obj.attribute_data
+      render_layer_attr_data[:id] = self.id
+      tree[:children].push render_layer_attr_data
+    end
+    return tree
   end
   
   # Bounds for a grid.
@@ -600,6 +626,25 @@ class Grid
     return css
   end
   
+  def get_css_classes
+    if self.generated_css_classes.nil?
+      grid_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties
+
+      css_classes = []
+
+      # Set pull-left.
+      css_classes.push 'pull-left' if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
+      css_classes.push grid_style_class if not grid_style_class.nil?
+      css_classes.push "clearfix" if self.orientation == Constants::GRID_ORIENT_LEFT
+
+      self.generated_css_classes = css_classes.to_json.to_s
+      self.save!
+    end
+    
+    css_classes = JSON.parse self.generated_css_classes
+    return css_classes
+  end
+  
   def tag
     if not self.override_tag.nil?
       self.override_tag.to_sym
@@ -630,7 +675,6 @@ class Grid
     end
     html
   end
-
   
   def fix_dom
     dom_parser = DomParser.new self.id
@@ -640,35 +684,20 @@ class Grid
   def to_html(args = {})
     Log.info "[HTML] #{self.to_s}, #{self.id.to_s}"
     html = ''
-    layers_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties
-    
-    css_classes = []
-    
-    # Set pull-left.
-    if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
-        css_classes.push 'pull-left'
-    end
-    
-    css_classes.push layers_style_class if not layers_style_class.nil?
-    css_classes.push "clearfix" if self.orientation == Constants::GRID_ORIENT_LEFT
-    
-    css_class_string = css_classes.join " "
     
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
     
-    # debug attributes
-    enable_data_attributes = args.fetch :enable_data_attributes, true
+    css_classes = self.get_css_classes
+    css_class_string = css_classes.join " "
     
     attributes         = Hash.new
     attributes[:class] = css_class_string if not css_class_string.nil?
     attributes[:tag]   = self.tag
 
-    attributes[:enable_data_attributes] = enable_data_attributes
-    attributes[:"data-grid-id"]         = self.id.to_s if enable_data_attributes
+    attributes[:"data-grid-id"] = self.id.to_s
         
     sub_grid_args = Hash.new
-    sub_grid_args[:enable_data_attributes] = enable_data_attributes
     if self.render_layer.nil?
       child_nodes = self.children.select { |node| not node.is_positioned }
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
