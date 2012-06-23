@@ -75,7 +75,7 @@ class Design
   def attribute_data
     grids = {}
     layers = {}
-    
+    css_classes = {}
     if self.status == Design::STATUS_COMPLETED
       grids = self.grids.collect do |grid|
         grid.attribute_data
@@ -87,6 +87,14 @@ class Design
           layers[layer.uid] = layer.attribute_data
         end        
       end
+      
+      self.grids.each do |grid|
+        grid_css_classes = grid.get_css_classes
+        grid_css_classes.each do |css_class|
+          css_classes[css_class] = Array.new if css_classes[css_class].nil?
+          css_classes[css_class].push grid.id
+        end
+      end
     end
     
     {
@@ -96,7 +104,8 @@ class Design
       :grids         => grids,
       :layers        => layers.values,
       :id            => self.safe_name,
-      :status        => self.status
+      :status        => self.status,
+      :css_classes   => css_classes
     }
   end
   
