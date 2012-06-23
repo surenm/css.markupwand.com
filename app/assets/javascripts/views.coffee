@@ -10,39 +10,6 @@ class GenericView extends Backbone.View
     $(this.el).unbind()
     $(this.el).empty()
 
-class DesignView extends GenericView
-  template: "#editor-header-template"
-  el: "#editor-header"
-    
-  defaults:
-    name: "",
-    psd_file_path: ""
-    font_map: {}
-    
-  initialize: (args) ->
-    _.bindAll(this, 'render');
-    this.model.bind("change", this.render)
-    this.render()
-    
-  events: {
-    "click #update-markup": "update_markup_handler"
-  }
-  
-  update_markup_handler: (event) ->
-    $editor = app.editor_iframe
-    $editor.show_loading()
-    
-    $design_id = this.model.get("id")
-    $.post(
-      "/design/#{$design_id}/update"
-      (data, status, jqXHR) ->
-        if data.status == "success"
-          $editor.reload()
-    )
-
-    # return false to the link so that it doesn't go anywhere
-    return false
-
 class EditorIframeView extends Backbone.View
   el: "#editor-iframe"
   
@@ -254,6 +221,5 @@ class SidebarView extends GenericView
       $.each grid, () ->
         $editor_iframe.focus_selected_object this
     
-window.DesignView = DesignView
 window.SidebarView = SidebarView
 window.EditorIframeView = EditorIframeView
