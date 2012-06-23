@@ -24,7 +24,9 @@ class Grid
   field :body_style_layers, :type => Array, :default => []
   
   field :css_properties, :type => String, :default => nil
-  field :override_css_properties, :type => String, :default => nil
+
+  field :css_classes, :type => String, :default => nil
+  field :override_css_map, :type => String, :default => nil
   
   field :tag, :type => String, :default => :div
   field :override_tag, :type => String, :default => nil
@@ -634,7 +636,6 @@ class Grid
     end
     html
   end
-
   
   def fix_dom
     dom_parser = DomParser.new self.id
@@ -644,11 +645,11 @@ class Grid
   def to_html(args = {})
     Log.info "[HTML] #{self.to_s}, #{self.id.to_s}"
     html = ''
-    layers_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties
+    grid_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties
     
     css_classes = []
     
-    css_classes.push layers_style_class if not layers_style_class.nil?
+    css_classes.push grid_style_class if not grid_style_class.nil?
     css_classes.push "clearfix" if self.orientation == Constants::GRID_ORIENT_LEFT
     
     css_class_string = css_classes.join " "
