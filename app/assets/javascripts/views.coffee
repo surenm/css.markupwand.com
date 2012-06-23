@@ -183,7 +183,7 @@ class SidebarView extends GenericView
       $(this.el).ready ->
         $dom_tree.tree 
           data: tree_data
-          autoOpen: true
+          autoOpen: 3
           selectable: true
         
 
