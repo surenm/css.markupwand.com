@@ -98,6 +98,28 @@ class Grid
     }
   end
   
+  def get_tree
+    tree = {
+      :id    => self.id,
+      :tag   => self.tag,
+      :label => self.tag
+    }
+    
+    tree[:children] = []
+
+    if self.render_layer.nil?
+      child_nodes = self.children.select { |node| not node.is_positioned }
+      child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
+      child_nodes.each do |child_node|
+        tree[:children].push child_node.get_tree
+      end
+    else 
+      render_layer_obj = Layer.find self.render_layer
+      tree[:children].push render_layer_obj.attribute_data
+    end
+    return tree
+  end
+  
   # Bounds for a grid.
   # TODO: cache this grids
   def bounds

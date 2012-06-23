@@ -71,13 +71,15 @@ class Layer
   
   def attribute_data
     {
-      :uid => self.uid,
-      :name => self.name,
-      :kind => self.kind,
-      :layer_type => self.layer_type
+      :uid        => self.uid,
+      :name       => self.name,
+      :kind       => self.kind,
+      :layer_type => self.layer_type,
+      :label      => self.name[0..9],
+      :tag        => self.tag_name
     }
   end
-  
+    
   def has_newline?
     if self.kind == Layer::LAYER_TEXT and 
       layer_json.has_key? :textKey and
