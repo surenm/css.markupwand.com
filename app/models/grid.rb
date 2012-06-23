@@ -660,17 +660,14 @@ class Grid
     inner_html = args.fetch :inner_html, ''
     
     # debug attributes
-    enable_data_attributes = args.fetch :enable_data_attributes, true
     
     attributes         = Hash.new
     attributes[:class] = css_class_string if not css_class_string.nil?
     attributes[:tag]   = self.tag
 
-    attributes[:enable_data_attributes] = enable_data_attributes
-    attributes[:"data-grid-id"]         = self.id.to_s if enable_data_attributes
+    attributes[:"data-grid-id"] = self.id.to_s
         
     sub_grid_args = Hash.new
-    sub_grid_args[:enable_data_attributes] = enable_data_attributes
     if self.render_layer.nil?
       child_nodes = self.children.select { |node| not node.is_positioned }
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
