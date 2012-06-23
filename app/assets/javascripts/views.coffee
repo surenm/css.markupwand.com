@@ -119,7 +119,7 @@ class EditorIframeView extends Backbone.View
     this.clear_mouseover()
     
     # show overlay div and on focus bar
-    @overlay_div.show()
+    #@overlay_div.show()
     
     @selected_object = $(selected_object);
     @selected_object.addClass "selected"
@@ -137,7 +137,7 @@ class EditorIframeView extends Backbone.View
     this.enable_listeners()
     this.clear_mouseover()
     @selected_object.removeClass "selected"
-    @overlay_div.hide()
+    #@overlay_div.hide()
     @focus_overlay.hide()
       
   get_grid_obj: (obj) ->
