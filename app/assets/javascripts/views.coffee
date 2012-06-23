@@ -185,6 +185,11 @@ class SidebarView extends GenericView
           autoOpen: true
         }
 
+      $dom_tree.bind 'tree.click', (event) ->
+        grid_id = event.node.id
+        grid = app.editor_iframe.iframe_dom.find("[data-grid-id=#{grid_id}]")
+        app.editor_iframe.focus_selected_object grid
+
   render_grid_sidebar: () ->
     template_string = $(this.grid_sidebar_template).html()
     template_context = this.model.toJSON()

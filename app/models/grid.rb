@@ -115,7 +115,9 @@ class Grid
       end
     else 
       render_layer_obj = Layer.find self.render_layer
-      tree[:children].push render_layer_obj.attribute_data
+      render_layer_attr_data = render_layer_obj.attribute_data
+      render_layer_attr_data[:id] = self.id
+      tree[:children].push render_layer_attr_data
     end
     return tree
   end
