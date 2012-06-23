@@ -85,7 +85,7 @@ small {
   .action {
     margin: 0px 10px;
     
-    .back, .forward {
+    .forward {
       margin: 10px;
       a { 
         color: #999;
@@ -93,6 +93,10 @@ small {
           color: #eee;
         };
       }
+    }
+
+    .back {
+      margin: 10px;
     }
     
     .name {
