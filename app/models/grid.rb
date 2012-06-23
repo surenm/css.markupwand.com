@@ -562,6 +562,7 @@ class Grid
   def width_css(css)
     if not css.has_key? :width and
       not is_single_line_text and
+      not unpadded_width.nil? and
       unpadded_width != 0
         return {:width => unpadded_width.to_s + 'px'}
     end
