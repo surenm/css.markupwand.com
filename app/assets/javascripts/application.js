@@ -21,6 +21,7 @@
 //= require lib/backbone
 //= require lib/utils
 //= require lib/tree.jquery
+//= require lib/jquery.jeditable
 
 //= require twitter/bootstrap
 //= require models

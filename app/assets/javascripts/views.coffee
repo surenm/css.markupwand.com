@@ -185,12 +185,28 @@ class SidebarView extends GenericView
           data: tree_data
           autoOpen: 3
           selectable: true
-        
 
       $dom_tree.bind 'tree.click', (event) ->
         grid_id = event.node.id
         grid = app.editor_iframe.iframe_dom.find("[data-grid-id=#{grid_id}]")
         app.editor_iframe.focus_selected_object grid
+
+        $tag = $(event.node.element).find('.editable-tag').first()
+        $tag.editable "/",
+          data: "{ span: 'span', div: 'div' }"
+          type: 'select'
+          indicator: 'Saving'
+          submit: 'Ok'
+          cancel: 'Cancel'
+          
+        $classes = $(event.node.element).find('.editable-class').first()
+        $classes.editable "/",
+          type: 'text'
+          indicator: 'Saving'
+          submit: 'Ok'
+          cancel: 'Cancel'
+      
+      return
 
   render_grid_sidebar: () ->
     template_string = $(this.grid_sidebar_template).html()
