@@ -172,18 +172,27 @@ class EditorIframeView extends Backbone.View
   
 
 class SidebarView extends GenericView
-  design_sidebar_template: "#design-sidebar-template"
+  design_sidebar_templates: {
+    default     : "#design-default-template"
+    identifiers : "#design-edit-identifiers-template",
+    classes     : "#design-edit-classes-template",
+    tags        : "#design-edit-tags-template"
+  }
   grid_sidebar_template: "#grid-sidebar-template"
   el: "#editor"
 
   events: {
-    "click .show": "edit"
-    "click #success": "onSuccess"
-    "click #cancel": "onCancel"
-    "click #done": "onClose"
+    "click .grid-sidebar .show": "editGrid"
+    "click .grid-sidebar #success": "onSuccess"
+    "click .grid-sidebar #cancel": "onCancel"
+    "click .grid-sidebar #done": "onClose"
+    
+    "click .design-classes .css-class": "editDesignClass"
   }
 
   initialize: () ->
+    this.options.context = "default" if not this.options.context?
+
     this.render()
     
   render: () ->
@@ -193,7 +202,8 @@ class SidebarView extends GenericView
       this.render_design_sidebar()
       
   render_design_sidebar: () ->
-    template_string = $(this.design_sidebar_template).html()
+    template_id = this.design_sidebar_templates[this.options.context]
+    template_string = $(template_id).html()
     template_context = this.model.toJSON()
     html = _.template(template_string, template_context)
 
@@ -206,7 +216,7 @@ class SidebarView extends GenericView
     
     $(this.el).html html
     
-  edit: (event) ->
+  editGrid: (event) ->
     $(this.el).find(".form").show()
     $(this.el).find(".show").hide()
     
@@ -233,7 +243,17 @@ class SidebarView extends GenericView
     # if the current model is GridModel then we have to load back the design sidebar
     if this.model instanceof GridModel
       app.load_design_sidebar()
-
+      
+  editDesignClass: (event) ->
+    selected_obj = event.target
+    classname = $(selected_obj).data('styleClass')
+    grids = app.design.get("css_classes")[classname]
+    $editor_iframe = app.editor_iframe
+    $.each grids, (index, value) ->
+      grid = $editor_iframe.iframe_dom.find("[data-grid-id=#{value}]")
+      $.each grid, () ->
+        $editor_iframe.focus_selected_object this
+    
 window.DesignView = DesignView
 window.SidebarView = SidebarView
 window.EditorIframeView = EditorIframeView
