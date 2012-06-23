@@ -73,16 +73,20 @@ class Design
   end
   
   def attribute_data
-    grids = self.grids.collect do |grid|
-      grid.attribute_data
-    end
-    
+    grids = {}
     layers = {}
-    self.grids.each do |grid|
-      grid.layer_ids.each do |layer_id|
-        layer = Layer.find layer_id
-        layers[layer.uid] = layer.attribute_data
-      end        
+    
+    if self.status == Design::STATUS_COMPLETED
+      grids = self.grids.collect do |grid|
+        grid.attribute_data
+      end
+      
+      self.grids.each do |grid|
+        grid.layer_ids.each do |layer_id|
+          layer = Layer.find layer_id
+          layers[layer.uid] = layer.attribute_data
+        end        
+      end
     end
     
     {
