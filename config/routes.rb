@@ -35,7 +35,9 @@ TransformersWeb::Application.routes.draw do
   match 'design/:id/edit'     => 'design#edit'
   match 'design/:id/preview'  => 'design#preview'
   match 'design/:id/download' => 'design#download'
-
+  match 'design/:id/reparse'  => 'design#reparse'
+  match 'design/:id/viewlogs' => 'design#viewlogs'
+ 
   
   # Proxy method to view generated files
   match ':type/:design/*uri.*ext' => 'design#generated'
