@@ -20,6 +20,7 @@
 //= require lib/underscore
 //= require lib/backbone
 //= require lib/utils
+//= require lib/tree.jquery
 
 //= require twitter/bootstrap
 //= require models
