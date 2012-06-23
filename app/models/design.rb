@@ -40,7 +40,7 @@ class Design
   field :font_map, :type => Hash, :default => {}
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
-  field :status, :type => String, :default => Design::STATUS_QUEUED
+  field :status, :type => Symbol, :default => Design::STATUS_QUEUED
   field :storage, :type => String, :default => "local"
   
   field :height, :type => Integer
