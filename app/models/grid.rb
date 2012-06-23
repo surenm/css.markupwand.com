@@ -25,8 +25,8 @@ class Grid
   
   field :css_properties, :type => String, :default => nil
 
-  field :css_classes, :type => String, :default => nil
-  field :override_css_map, :type => String, :default => nil
+  field :generated_css_classes, :type => String, :default => nil
+  field :user_css_class_map, :type => String, :default => nil
   
   field :tag, :type => String, :default => :div
   field :override_tag, :type => String, :default => nil
@@ -646,13 +646,15 @@ class Grid
     Log.info "[HTML] #{self.to_s}, #{self.id.to_s}"
     html = ''
     grid_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties
-    
+
     css_classes = []
     
     css_classes.push grid_style_class if not grid_style_class.nil?
     css_classes.push "clearfix" if self.orientation == Constants::GRID_ORIENT_LEFT
     
     css_class_string = css_classes.join " "
+    self.generated_css_classes = css_classes.to_json.to_s
+    self.save!
     
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
