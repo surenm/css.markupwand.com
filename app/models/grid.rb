@@ -581,11 +581,6 @@ class Grid
       
       css.update width_css(css)
       css.delete :width if is_single_line_text
-
-      # Set float.
-      if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
-        css[:float] = 'left'
-      end
       
       # Positioning
       positioned_grid_count = (self.children.select { |grid| grid.is_positioned }).length
@@ -648,6 +643,11 @@ class Grid
     layers_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties
     
     css_classes = []
+    
+    # Set pull-left.
+    if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
+        css_classes.push 'pull-left'
+    end
     
     css_classes.push layers_style_class if not layers_style_class.nil?
     css_classes.push "clearfix" if self.orientation == Constants::GRID_ORIENT_LEFT
