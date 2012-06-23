@@ -72,6 +72,14 @@ class Design
     File.join self.store_key_prefix, "published"
   end
   
+  def get_root_grid
+    root_grids = self.grids.where(:root => true)
+    #Log.error "Root grid = #{root_grids.last.id.to_s}, #{root_grids.length}"
+    Log.fatal "More than one root node in design???" if root_grids.size > 1
+
+    return root_grids.last
+  end
+  
   def attribute_data
     grids = {}
     layers = {}
@@ -242,8 +250,7 @@ HTML
     # Set the root path for this design. That is where all the html and css is saved to.
     CssParser::set_assets_root generated_folder
     
-    root_grid = self.grids.where(:root => true).last
-    Log.error "Root grid = #{root_grid.id.to_s}, #{self.grids.where(:root => true).length}"
+    root_grid = self.get_root_grid
 
     body_html = root_grid.to_html
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
