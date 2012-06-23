@@ -125,7 +125,16 @@ class DesignController < ApplicationController
     redirect_to :action => :show, :id => @design.safe_name
   end
   
-  def viewlogs
+  def view_logs
     render :text => "Adingu! Ellaame udane venumaa! Logs will come soon in this page."
   end
+  
+  def view_dom
+    @design = get_design params[:id]
+    root_grid = @design.get_root_grid
+    Log.fatal root_grid
+    
+    render :json => root_grid.get_tree
+  end
+  
 end
