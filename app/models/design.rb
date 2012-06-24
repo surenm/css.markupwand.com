@@ -45,7 +45,7 @@ class Design
   
   field :height, :type => Integer
   field :width, :type => Integer
-  field :resolution, :type => Integer:
+  field :resolution, :type => Integer
 
   mount_uploader :file, DesignUploader
   
