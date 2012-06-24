@@ -45,6 +45,7 @@ class Design
   
   field :height, :type => Integer
   field :width, :type => Integer
+  field :resolution, :type => Integer:
 
   mount_uploader :file, DesignUploader
   
@@ -211,6 +212,8 @@ HTML
 
     self.height = psd_data[:properties][:height]
     self.width  = psd_data[:properties][:width]
+    self.resolution = psd_data[:properties][:resolution]
+    
     self.save!
     
     # Reset the global static classes to work for this PSD's data

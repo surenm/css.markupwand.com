@@ -89,6 +89,8 @@ module CssParser
     layer_json = layer.layer_json
     text_style = layer_json[:textKey][:value][:textStyleRange][:value].first
     font_info  = text_style[:value][:textStyle][:value]
+    resolution = layer.design.resolution
+
     
     css = {}
     
@@ -99,7 +101,7 @@ module CssParser
     css.update(CssTextParser::parse_font_style(font_info))
     
     # Font size
-    css.update(CssTextParser::parse_font_size(font_info))
+    css.update(CssTextParser::parse_font_size(font_info, resolution))
     
     # Line-height
     css.update(CssTextParser::parse_text_line_height(layer))
