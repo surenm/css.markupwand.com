@@ -231,26 +231,36 @@ module CssParser
     css
   end
   
-  def CssParser::parse_shape(layer)
+  def CssParser::parse_shape(layer, grid)
+    layer_json = layer.layer_json
     shape_css = nil
-    if layer.has_key? :path_items 
-      if layer[:path_items].length == 4 
-        if (layer[:path_items][0][1] == layer[:path_items][1][1]) and (layer[:path_items][0][0] == layer[:path_items][3][0])
-           shape_css = {}
+    if layer_json.has_key? :path_items 
+      if layer_json[:path_items].length == 4 
+        if (layer_json[:path_items][0][1] == layer_json[:path_items][1][1]) and (layer_json[:path_items][0][0] == layer_json[:path_items][3][0])
+           shape_css = CssParser::parse_box layer, grid
         end
-      elsif layer[:path_items].length == 8
-        # could be a rounded corner. 
-        # TODO: verify this by calculating for other three edges as well
-        radius = layer[:path_items][2][0] - layer[:path_items][1][0]
-        shape_css = {:'border-radius' => "#{radius}px"}        
-      end
+      elsif layer_json[:path_items].length == 8
+        shape_css = CssParser::parse_box layer, grid
+      end      
+    end
+  
+    if shape_css.nil?
+      shape_css = {}
+
+      image_file_basename = Store::get_safe_name(layer.name)
+      image_file_name = "#{image_file_basename}_#{layer.uid}.png"
       
-      if shape_css.nil?
-        # something else. save as image
-        Log.fatal layer[:path_items]
-        
-        shape_css = {}
-      end
+      design = layer.design
+      src_image_file   = Rails.root.join("tmp", "store", design.store_processed_key, image_file_name).to_s
+      destination_file = File.join CssParser::get_assets_root, "img", image_file_name
+      Store::save_to_store src_image_file, destination_file
+      
+      
+      shape_css[:'background-image'] = "url(#{File.join "..", "img", image_file_name})"
+      shape_css[:'background-repeat'] = "no-repeat"
+      shape_css[:'min-height'] = "#{layer.bounds.height}px"
+      shape_css[:'min-width'] = "#{layer.bounds.width}px"
+      
     end
     return shape_css
   end

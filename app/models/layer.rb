@@ -198,7 +198,7 @@ class Layer
         css[:height] = "#{grid.unpadded_height}px"
       end
     elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_box self, grid
+      css.update CssParser::parse_shape self, grid
     end
     
     css
