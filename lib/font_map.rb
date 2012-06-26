@@ -55,8 +55,9 @@ class FontMap
       font_data = JSON.parse(File.open(file_path).read)
       
       fonts_list.each do |font_name|
+
         matches = font_data['library']['families'].find_all do |typekit_font|
-          typekit_font['name'] =~ /#{font_name}/i
+          typekit_font['name'] =~ /#{reduced_font_name(font_name)}/i
         end 
                         
         font_matches[font_name] += matches
@@ -105,7 +106,7 @@ class FontMap
       
       fonts_list.each do |font_name|
         matches = font_data['items'].find_all do |google_font|
-          google_font['family'] =~ /#{font_name}/i
+          google_font['family'] =~ /#{reduced_font_name(font_name)}/i
         end
         
         if matches.length > 0
@@ -134,4 +135,15 @@ HTML
 
     {:snippet => webfont_code, :map => font_map }
   end
+
+  def reduced_font_name(font)
+    removable_patterns = ['-Bold', '-Regular']
+    modified_font = font
+    removable_patterns.each do |pattern|
+      modified_font = modified_font.gsub(pattern,'')
+    end
+
+    modified_font
+  end
+  
 end
