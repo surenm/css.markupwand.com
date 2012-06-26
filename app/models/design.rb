@@ -256,6 +256,8 @@ HTML
     generated_folder = self.store_generated_key
     published_folder = self.store_published_key
     
+    self.parse_fonts(self.layers)
+
     # Set the root path for this design. That is where all the html and css is saved to.
     CssParser::set_assets_root generated_folder
     

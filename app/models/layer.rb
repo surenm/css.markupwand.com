@@ -233,7 +233,7 @@ class Layer
     design = self.grids.first.design
     font_map = design.font_map
     if font_map.has_key? raw_font_name
-      font_name = font_name[raw_font_name]
+      font_name = font_map[raw_font_name]
     else
       font_name = raw_font_name
     end
