@@ -277,7 +277,7 @@ module CssParser
     css.update(parse_box_shadow(layer.layer_json))
     
     # parse shape
-    css.update(parse_shape(layer.layer_json))
+    css.update(parse_box_rounded_corners(layer.layer_json))
     
     css
   end
