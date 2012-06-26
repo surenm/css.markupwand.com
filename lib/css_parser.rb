@@ -230,9 +230,33 @@ module CssParser
     
     css
   end
+  
+  def CssParser::parse_shape(layer)
+    shape_css = nil
+    if layer.has_key? :path_items 
+      if layer[:path_items].length == 4 
+        if (layer[:path_items][0][1] == layer[:path_items][1][1]) and (layer[:path_items][0][0] == layer[:path_items][3][0])
+           shape_css = {}
+        end
+      elsif layer[:path_items].length == 8
+        # could be a rounded corner. 
+        # TODO: verify this by calculating for other three edges as well
+        radius = layer[:path_items][2][0] - layer[:path_items][1][0]
+        shape_css = {:'border-radius' => "#{radius}px"}        
+      end
+      
+      if shape_css.nil?
+        # something else. save as image
+        Log.fatal layer[:path_items]
+        
+        shape_css = {}
+      end
+    end
+    return shape_css
+  end
 
   def CssParser::parse_box(layer, grid)
-    css                = {}
+    css = {}
     
     # Min-height, pick it up from grid
     css.update(parse_box_height(layer, grid))
@@ -246,15 +270,14 @@ module CssParser
     # Box border
     css.update parse_box_border(layer.layer_json)
     
-    # Box rounded corners
-    css.update(parse_box_rounded_corners(layer.layer_json))
-    
     # Box gradient 
     css.update(parse_box_gradient(layer.layer_json))
     
     # Box shadow
     css.update(parse_box_shadow(layer.layer_json))
     
+    # parse shape
+    css.update(parse_shape(layer.layer_json))
     
     css
   end
