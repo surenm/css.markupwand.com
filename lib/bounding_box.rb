@@ -282,9 +282,8 @@ class BoundingBox
     if vertical_gutters.empty? or horizontal_gutters.empty?
       return []
     end
-
-    # get all possible grouping boxes with the available gutters
-    grouping_boxes = []
+    
+    root_group = nil
 
     trailing_horizontal_gutters = horizontal_gutters
     leading_horizontal_gutters  = horizontal_gutters.rotate
@@ -298,9 +297,6 @@ class BoundingBox
     horizontal_bounds.pop
     vertical_bounds.pop
 
-    root_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
-    horizontal_bounds.each do |horizontal_bound|
-      row_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
     # should i go normal orientation or left orientation
     # there are 3 cases:
     # 1. there are only 2 vertical gutters - which means all divs are in GRID_ORIENT_NORMAL. only row grids
@@ -309,12 +305,51 @@ class BoundingBox
     # => 3a. the grids are to be grouped first by horizontal gutters
     # => 3b. the grids are to be grouped first by vertical gutters
     # 3a and 3b are decided by the largest gutter size.
-      vertical_bounds.each do |vertical_bound|
-        row_group.push BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
-      end
-      root_group.push row_group
-    end
     
+    if vertical_bounds.size == 1 
+      # case 1
+      root_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
+      vertical_bound = vertical_bounds.first
+      horizontal_bounds.each do |horizontal_bound|
+        root_group.push BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+      end
+    elsif horizontal_bounds.size == 1 
+      # case 2
+      root_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
+      horizontal_bound = horizontal_bounds.first
+      vertical_bounds.each do |vertical_bound|
+        root_group.push BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+      end
+    else
+      # case 3
+      h_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, horizontal_bounds, :horizontal
+      v_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, vertical_bounds, :vertical
+      
+      max_h_gutter = h_gutter_widths.max
+      max_v_gutter = v_gutter_widths.max
+      
+      if max_h_gutter >= max_v_gutter
+        #case 3a
+        root_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
+        horizontal_bounds.each do |horizontal_bound|
+          row_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
+          vertical_bounds.each do |vertical_bound|
+            row_group.push BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+          end
+          root_group.push row_group
+        end
+      else
+        #case 3b
+        root_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
+        vertical_bounds.each do |vertical_bound|
+          column_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
+          horizontal_bounds.each do |horizontal_bound|
+            column_group.push BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+          end
+          root_group.push column_group
+        end
+      end
+    end
     return root_group
   end
   
