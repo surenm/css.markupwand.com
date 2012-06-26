@@ -197,7 +197,7 @@ class Grid
     
     # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
     style_layers = []
-    if parent_box.class.to_s == "BoundingBox"
+    if parent_box.kind_of? BoundingBox
       max_bounds = parent_box
     else
       Log.info "This is a grouping box"
@@ -242,7 +242,11 @@ class Grid
     available_nodes = extract_style_layers self, available_nodes, root_grouping_box
 
     root_grouping_box.children.each do |row_grouping_box|
-      available_nodes = process_row_grouping_box row_grouping_box, available_nodes
+      if row_grouping_box.kind_of? BoundingBox
+        available_nodes = process_grouping_box self, row_grouping_box, available_nodes
+      else
+        available_nodes = process_row_grouping_box row_grouping_box, available_nodes
+      end
     end
     
     if available_nodes.length > 0
