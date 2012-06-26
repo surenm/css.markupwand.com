@@ -137,7 +137,7 @@ module CssParser
   def CssParser::parse_box_border(layer)
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :frameFX
       border = layer[:layerEffects][:value][:frameFX]
-      size   = border[:value][:size][:value].to_s + 'px'
+      size   = CssParser::box_border_width(layer).to_s + 'px'
       color  = parse_color(border[:value][:color])
       {:border => "#{size} solid #{color}"}
     else
@@ -165,6 +165,9 @@ module CssParser
       height = grid.unpadded_height
     end
 
+    border_width = CssParser::box_border_width(layer.layer_json)
+    height = (height - (2 * border_width)) if (border_width > 0 and not height.nil?) 
+
     if not height.nil?
       {:'min-height' => height.to_s + 'px' }
     else
@@ -182,6 +185,9 @@ module CssParser
     else
       width = grid.unpadded_width
     end
+
+    border_width = CssParser::box_border_width(layer.layer_json)
+    width = (width - (2 * border_width)) if (border_width > 0  and not width.nil?)
 
     if not width.nil?
       {:width => width.to_s + 'px' }
