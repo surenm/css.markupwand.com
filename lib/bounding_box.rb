@@ -281,6 +281,14 @@ class BoundingBox
     root_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
     horizontal_bounds.each do |horizontal_bound|
       row_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
+    # should i go normal orientation or left orientation
+    # there are 3 cases:
+    # 1. there are only 2 vertical gutters - which means all divs are in GRID_ORIENT_NORMAL. only row grids
+    # 2. there are only 2 horizontal gutters - which means all divs are in GRID_ORIENT_LEFT. only colum grids
+    # 3. there are multiple vertical and horizontal gutters. This has two scenarios
+    # => 3a. the grids are to be grouped first by horizontal gutters
+    # => 3b. the grids are to be grouped first by vertical gutters
+    # 3a and 3b are decided by the largest gutter size.
       vertical_bounds.each do |vertical_bound|
         row_group.push BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
       end
