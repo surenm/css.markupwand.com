@@ -16,7 +16,7 @@ class Grid
   # fields relevant for a grid
   field :name, :type => String
   field :hash, :type => String
-  field :orientation, :type => String, :default => Constants::GRID_ORIENT_NORMAL
+  field :orientation, :type => Symbol, :default => Constants::GRID_ORIENT_NORMAL
   field :root, :type => Boolean, :default => false
   field :render_layer, :type => String, :default => nil
   field :style_layers, :type => Array, :default => []
@@ -241,6 +241,9 @@ class Grid
     # extract out style layers and parse with remaining        
     available_nodes = extract_style_layers self, available_nodes, root_grouping_box
 
+    self.orientation = root_grouping_box.orientation
+    self.save!
+    
     root_grouping_box.children.each do |row_grouping_box|
       if row_grouping_box.kind_of? BoundingBox
         available_nodes = process_grouping_box self, row_grouping_box, available_nodes
@@ -645,7 +648,6 @@ class Grid
       # Set pull-left.
       css_classes.push 'pull-left' if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
       css_classes.push grid_style_class if not grid_style_class.nil?
-      css_classes.push "clearfix" if self.orientation == Constants::GRID_ORIENT_LEFT
 
       self.generated_css_classes = css_classes.to_json.to_s
       self.save!
@@ -698,24 +700,23 @@ class Grid
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
     
-    css_classes = self.get_css_classes
+    css_classes      = self.get_css_classes
     css_class_string = css_classes.join " "
     
     attributes         = Hash.new
     attributes[:class] = css_class_string if not css_class_string.nil?
-    attributes[:tag]   = self.tag
-
     attributes[:"data-grid-id"] = self.id.to_s
         
-    sub_grid_args = Hash.new
+
     if self.render_layer.nil?
+      sub_grid_args = Hash.new
+        
       child_nodes = self.children.select { |node| not node.is_positioned }
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
       end
-      
-      if not self.children.empty? and self.orientation == "left"
+      if not self.children.empty? and self.orientation == Constants::GRID_ORIENT_LEFT
         inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
       
@@ -726,7 +727,8 @@ class Grid
       end
       
     else
-      sub_grid_args.update attributes
+      sub_grid_args = attributes
+      sub_grid_args[tag] = self.tag
       render_layer_obj = Layer.find self.render_layer
       inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
       html = inner_html
