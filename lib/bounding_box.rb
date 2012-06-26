@@ -6,6 +6,10 @@ class BoundingBox
     set(top, left, bottom, right)
   end
 
+  def self.create_from_bounds(horizontal_bound, vertical_bound)
+    BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
+  end
+
   def reset
     set(nil, nil, nil, nil)
   end
