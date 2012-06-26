@@ -12,6 +12,7 @@ class Layer
   
   BOUND_MODES = {
     :NORMAL_BOUNDS => :bounds,
+    :SMART_BOUNDS => :smart_bounds,
     :EDGE_BOUNDS => :edge_detected_bounds, 
     :SNAPPED_BOUNDS => :snapped_bounds
     }
@@ -49,6 +50,10 @@ class Layer
     self.kind       = layer[:layerKind]
     self.layer_type = layer[:layerType]
     self.uid        = layer[:layerID][:value]
+
+    if self.layer_json[BOUND_MODES[:SMART_BOUNDS]] and not self.layer_json[BOUND_MODES[:SMART_BOUNDS]].empty?
+      self.set_bounds_mode(:SMART_BOUNDS)
+    end
     
     bounds_key = self.bounds_key
     value  = self.layer_json[bounds_key][:value]
@@ -120,6 +125,8 @@ class Layer
   def bounds_key
     key = BOUND_MODES[@bound_mode]
     key = BOUND_MODES[:NORMAL_BOUNDS] if key.nil?
+
+    key
   end
 
   def bounds
