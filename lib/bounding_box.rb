@@ -246,6 +246,26 @@ class BoundingBox
     horizontal_gutters.sort!
   end
   
+  def self.get_gutter_widths(bounding_boxes, gutter_bounds, gutter_type)
+    gutter_widths = []
+    bounds.each do |bound|
+      is_gutter_bound = true
+      bounding_boxes.each do |bounding_box|
+        if gutter_type == :horizontal
+          current_bound = [bounding_box.top, bounding_box.bottom]
+        elsif gutter_type == :vertical
+          current_bound = [bounding_box.left, bounding_box.right]
+        end
+        if not (current_bound.first < bound.first and current_bound.last <= bound.first) or 
+           not (current_bound.first >= bound.last and current_bound.last > bound.last)
+          is_gutter_bound = false
+          break
+        end
+      end
+      gutter_widths.push (bound[1] - bound[0]) if is_gutter_bound
+    end
+  end
+  
   def self.get_grouping_boxes(layers)
 
     # All layer boundaries to get the gutters
