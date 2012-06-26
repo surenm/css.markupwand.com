@@ -248,7 +248,7 @@ class BoundingBox
   
   def self.get_gutter_widths(bounding_boxes, gutter_bounds, gutter_type)
     gutter_widths = []
-    bounds.each do |bound|
+    gutter_bounds.each do |bound|
       is_gutter_bound = true
       bounding_boxes.each do |bounding_box|
         if gutter_type == :horizontal
@@ -256,7 +256,7 @@ class BoundingBox
         elsif gutter_type == :vertical
           current_bound = [bounding_box.left, bounding_box.right]
         end
-        if not (current_bound.first < bound.first and current_bound.last <= bound.first) or 
+        if not (current_bound.first < bound.first and current_bound.last <= bound.first) and
            not (current_bound.first >= bound.last and current_bound.last > bound.last)
           is_gutter_bound = false
           break
@@ -264,6 +264,7 @@ class BoundingBox
       end
       gutter_widths.push (bound[1] - bound[0]) if is_gutter_bound
     end
+    gutter_widths
   end
   
   def self.get_grouping_boxes(layers)
@@ -324,31 +325,17 @@ class BoundingBox
       # case 3
       h_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, horizontal_bounds, :horizontal
       v_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, vertical_bounds, :vertical
-      
-      max_h_gutter = h_gutter_widths.max
-      max_v_gutter = v_gutter_widths.max
-      
-      if max_h_gutter >= max_v_gutter
-        #case 3a
-        root_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
-        horizontal_bounds.each do |horizontal_bound|
-          row_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
-          vertical_bounds.each do |vertical_bound|
-            row_group.push BoundingBox.create_from_bounds horizontal_bound, vertical_bound
-          end
-          root_group.push row_group
-        end
-      else
-        #case 3b
-        root_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
+  
+      #case 3a
+      root_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
+      horizontal_bounds.each do |horizontal_bound|
+        row_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
         vertical_bounds.each do |vertical_bound|
-          column_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
-          horizontal_bounds.each do |horizontal_bound|
-            column_group.push BoundingBox.create_from_bounds horizontal_bound, vertical_bound
-          end
-          root_group.push column_group
+          row_group.push BoundingBox.create_from_bounds horizontal_bound, vertical_bound
         end
+        root_group.push row_group
       end
+
     end
     return root_group
   end
