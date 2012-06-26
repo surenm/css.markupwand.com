@@ -22,7 +22,7 @@ module CssTextParser
   end
   
   def CssTextParser::parse_font_size(font_item, resolution)
-    font_in_px = (font_item[:size][:value] * (100 / 72.0)).to_i 
+    font_in_px = (font_item[:size][:value]).to_i 
     { :'font-size' => "#{font_in_px}px" }
   end
   
