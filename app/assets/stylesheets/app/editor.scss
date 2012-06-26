@@ -63,30 +63,9 @@ body {
       input[type=text] {
         width: 60px;
       }
-    }
-
-    .edit-tags {
-      form {
-        text-align: center;
-
-        .tag-switch-block, 
-        .xpath-block
-        {
-          display: inline-block;
-          width: 250px;
-          margin: 0 auto;
-        }
-
-        #item-xpath {
-          border: 1px solid #aaa;
-          width: 200px;
-          padding: 2px;
-          display: inline-block;
-        }
-      }
-    }
+    }    
   }
-
+  
   #editor-iframe {
     position: absolute;
     top: 53px;

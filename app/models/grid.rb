@@ -77,6 +77,12 @@ class Grid
     end  
   end
   
+  def get_label
+    css_classes = [""] + self.get_css_classes
+    css_classes_string = css_classes.join " ."
+    "<div class='editable-grid'><span class='editable-tag'> #{self.tag} </span> <span class='editable-class'> #{css_classes_string} </span></div>"
+  end
+  
   # Set data to a grid. More like a constructor, but mongoid models can't have the original constructors
   def set(layers, parent)
     # Pro-tip: http://ryanbigg.com/2010/04/has_and_belongs_to_many-double-insert/#comment-36741
@@ -102,7 +108,7 @@ class Grid
     tree = {
       :id    => self.id,
       :tag   => self.tag,
-      :label => self.tag
+      :label => self.get_label
     }
     
     tree[:children] = []
