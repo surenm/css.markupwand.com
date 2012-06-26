@@ -219,6 +219,7 @@ class BoundingBox
       bounding_boxes.each do |bb|
         if bb.left < vertical_line and vertical_line < bb.right
           is_gutter = false
+          break
         end
       end
       vertical_gutters.push vertical_line if is_gutter
@@ -237,6 +238,7 @@ class BoundingBox
       bounding_boxes.each do |bb|
         if bb.top < horizontal_line and horizontal_line < bb.bottom
           is_gutter = false
+          break
         end
       end
       horizontal_gutters.push horizontal_line if is_gutter
