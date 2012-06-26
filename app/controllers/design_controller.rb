@@ -99,7 +99,7 @@ class DesignController < ApplicationController
     design.push_to_parser_queue
     render :json => {:status => :success}
   end
-  
+
   def generated
     design = get_design params[:design]
     
@@ -138,4 +138,17 @@ class DesignController < ApplicationController
     
     render :json => root_grid.get_tree
   end 
+
+  def view_json
+    remote_file  = (get_design params[:id]).processed_file_path
+
+    if Rails.env.production?
+      remote_file_name  = Store::fetch_from_local_store remote_file
+    else
+      remote_file_name  = Store::fetch_from_store remote_file
+     
+    end
+
+    send_file remote_file_name, :disposition => 'inline'
+  end
 end
