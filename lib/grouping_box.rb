@@ -18,9 +18,9 @@ class GroupingBox
   def bounds
     bounding_boxes = []
     @children.each do |child| 
-      if child.class.to_s == "BoundingBox"
+      if child.kind_of? BoundingBox
         bounding_boxes.push child
-      elsif child.class.to_s == "GroupingBox"
+      elsif child.kind_of? GroupingBox
         bounding_boxes.push child.bounds
       end
     end
