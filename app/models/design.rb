@@ -291,7 +291,9 @@ HTML
 
     # Programatically do this so that it works on heroku
     Log.info "Tidying up the html..."
-    nasty_html = TidyFFI::Tidy.with_options(:indent => "auto", :indent_attributes => false, :indent_spaces => 4, :wrap => 200).new(html_content)
+    nasty_html = TidyFFI::Tidy.with_options(:indent => "auto",
+      :indent_attributes => false, :char_encoding => 'utf8',
+      :indent_spaces => 4, :wrap => 200).new(html_content)
     clean_html = nasty_html.clean
     
     Log.info "Saving resultant HTML file #{html_file_name}"    
