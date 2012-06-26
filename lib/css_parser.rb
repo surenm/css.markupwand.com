@@ -124,6 +124,15 @@ module CssParser
     css
   end
   
+  def CssParser::box_border_width(layer)
+    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :frameFX
+      border = layer[:layerEffects][:value][:frameFX]
+      return border[:value][:size][:value]
+     else
+      return 0
+    end
+
+  end
   
   def CssParser::parse_box_border(layer)
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :frameFX
