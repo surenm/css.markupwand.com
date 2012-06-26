@@ -189,23 +189,27 @@ class SidebarView extends GenericView
       $dom_tree.bind 'tree.click', (event) ->
         grid_id = event.node.id
         grid = app.editor_iframe.iframe_dom.find("[data-grid-id=#{grid_id}]")
+        return if grid.length == 0
+        
+        # disable other editable classes
+        $(".editable-class").editable "disable"        
+        
+        # select the appropriate grid in the iframe 
         app.editor_iframe.focus_selected_object grid
+        
 
-        $tag = $(event.node.element).find('.editable-tag').first()
-        $tag.editable "/",
-          data: "{ span: 'span', div: 'div' }"
-          type: 'select'
-          indicator: 'Saving'
-          submit: 'Ok'
-          cancel: 'Cancel'
-          
+        
+        # Now enable editable box for this particular div          
         $classes = $(event.node.element).find('.editable-class').first()
-        $classes.editable "/",
+        previous_value = $classes.html()
+          
+        $classes.editable "/design/#{app.design.get('id')}/update",
           type: 'text'
           indicator: 'Saving'
           submit: 'Ok'
           cancel: 'Cancel'
-      
+          submitdata: { grid: grid_id, previous_value: previous_value }
+        $classes.editable 'enable'
       return
 
   render_grid_sidebar: () ->

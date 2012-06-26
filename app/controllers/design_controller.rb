@@ -81,8 +81,10 @@ class DesignController < ApplicationController
   
   def update
     @design = get_design params[:id]
+    
+    Log.fatal params
 
-    GeneratorJob.perform @design.id
+    #GeneratorJob.perform @design.id
     render :json => {:status => :success}
   end
   
@@ -135,6 +137,5 @@ class DesignController < ApplicationController
     Log.fatal root_grid
     
     render :json => root_grid.get_tree
-  end
-  
+  end 
 end
