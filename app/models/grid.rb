@@ -480,19 +480,22 @@ class Grid
   # Find out bounding box difference from it and its child.
   # Assumption is that it has only one child
   def padding_from_child
-    child = children.first
-    spacing = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
-    
-    if bounds and child and child.bounds and children.length == 1
-      spacing[:top]     = (child.bounds.top  - bounds.top)
-      spacing[:bottom]  = (bounds.bottom - child.bounds.bottom)
-      
-      # Root elements are aligned using 960px, auto. Do not modify anything around
-      # them.
-      spacing[:left]  = (child.bounds.left - bounds.left) if not self.root
-      spacing[:right] = (bounds.right - child.bounds.right ) if not self.root
+    non_style_layers = self.layers.to_a.select do |layer|
+      not self.style_layers.to_a.include? layer.id.to_s
     end
     
+    children_bounds = non_style_layers.collect { |layer| layer.bounds }
+    children_superbound = BoundingBox.get_super_bounds children_bounds
+    spacing = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
+    
+    if bounds and not non_style_layers.empty? and not children_superbound.nil?
+      spacing[:top]     = (children_superbound.top  - bounds.top)
+      spacing[:bottom]  = (bounds.bottom - children_superbound.bottom)
+      
+      # Root elements are aligned using 960px, auto. Do not modify anything around them.
+      spacing[:left]  = (children_superbound.left - bounds.left) if not self.root
+      spacing[:right] = (bounds.right - children_superbound.right ) if not self.root
+    end
     spacing
   end
   
