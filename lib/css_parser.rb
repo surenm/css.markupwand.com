@@ -310,7 +310,6 @@ module CssParser
     src_image_file   = Rails.root.join("tmp", "store", design.store_processed_key, image_file_name).to_s
     destination_file = File.join CssParser::get_assets_root, "img", image_file_name
 
-    # TODO: as processed image file directory changes to Store, this changes to Store:copy
     Store::save_to_store src_image_file, destination_file
 
     return File.join "./assets", "img", image_file_name
