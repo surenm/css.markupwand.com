@@ -227,10 +227,6 @@ class Grid
   # Get the row groups within this grid and try to process them one row at a time
   def get_subgrids
     Log.info "Getting subgrids (#{self.layers.length} layers in this grid)"
-    
-    # Some root grouping of nodes to recursive add as children
-    root_grouping_box = BoundingBox.get_grouping_boxes self.layers
-    Log.info "Trying Root grouping box: #{root_grouping_box}"
 
     # list of layers in this grid
     available_nodes = Hash[self.layers.collect { |item| [item.uid, item] }]
@@ -238,12 +234,19 @@ class Grid
       not node.empty?
     end
     
+    layers_bounds = []
+    available_nodes.values.each { |layer| layers_bounds.push layer.bounds }
+    parent_box = BoundingBox.get_super_bounds layers_bounds
+    
     # extract out style layers and parse with remaining        
-    available_nodes = extract_style_layers self, available_nodes, root_grouping_box
-
+    available_nodes = extract_style_layers self, available_nodes, parent_box
+    
+    # Some root grouping of nodes to recursive add as children
+    root_grouping_box = BoundingBox.get_grouping_boxes available_nodes.values
     self.orientation = root_grouping_box.orientation
     self.save!
-    
+
+    Log.info "Trying Root grouping box: #{root_grouping_box}"    
     root_grouping_box.children.each do |row_grouping_box|
       if row_grouping_box.kind_of? BoundingBox
         available_nodes = process_grouping_box self, row_grouping_box, available_nodes
