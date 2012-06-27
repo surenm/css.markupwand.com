@@ -42,8 +42,7 @@ class FontMap
   
   def find_in_typekit(fonts_list)
     typekit_folder = Rails.root.join('db','json','typekit_fonts')
-    files = Dir.new(typekit_folder).entries
-    files.slice! 0, 2 # Remove '.' and '..'
+    files = Dir["#{typekit_folder}/**"]
     font_matches = {}
     
     # Create empty hash
