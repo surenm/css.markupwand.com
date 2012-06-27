@@ -161,11 +161,7 @@ class Design
 
     if Constants::store_remote?
       message[:location] = "remote"
-      if Rails.env.production? 
-        message[:bucket] = "store_production"
-      else 
-        message[:bucket] = "store_development"
-      end
+      message[:bucket] = Store::get_S3_bucket_name
     else 
       message[:location] = "local"
       message[:bucket]   = "store"
