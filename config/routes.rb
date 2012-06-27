@@ -48,7 +48,13 @@ TransformersWeb::Application.routes.draw do
   
   # Proxy method to view generated files
   match ':type/:id/*uri.*ext' => 'design#generated'
+
+  # admin actions for setting up testing
+  match 'user/reprocess'  => 'user#reprocess'
+  match 'user/reparse'    => 'user#reparse'
+  match 'user/regenerate' => 'user#regenerate'
   
+    
   # TODO: add admin authentication for Admin URL's 
   mount Resque::Server.new, :at => "/resque"
   
