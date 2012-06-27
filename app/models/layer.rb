@@ -279,7 +279,7 @@ class Layer
         positions = multifont_positions
         chunks = []
         positions.each_with_index do |position, index|
-          next_position = (index == positions.length - 1) ? (original_text.length - 1) : index + 1
+          next_position = (index == positions.length - 1) ? (original_text.length - 1) : (positions[index + 1] - 1)
           chunks.push original_text[position..next_position]
         end
 
