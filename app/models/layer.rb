@@ -84,7 +84,16 @@ class Layer
       :tag        => self.tag_name
     }
   end
-    
+
+  def has_multifont?
+    multifont = false
+    if self.kind == Layer::LAYER_TEXT
+      multifont = (layer_json.extract_value(:textKey, :value, :textStyleRange, :value).length > 1)
+    end
+
+    multifont
+  end
+
   def has_newline?
     if self.kind == Layer::LAYER_TEXT and 
       layer_json.has_key? :textKey and
