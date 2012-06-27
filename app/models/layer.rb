@@ -285,14 +285,16 @@ class Layer
         positions = multifont_positions
         chunks = []
         positions.each_with_index do |position, index|
+          next if index > 0 and position = 0
           next_position = (index == positions.length - 1) ? (original_text.length - 1) : (positions[index + 1] - 1)
           chunks.push original_text[position..next_position]
         end
 
         multifont_text = ''
 
-        chunks.each do |chunk|
-          multifont_text +=  content_tag :span, chunk
+        chunks.each_with_index do |chunk, index|
+          attributes = {:class => text_chunk_class(index)}
+          multifont_text +=  content_tag :span, chunk, attributes
         end
 
         multifont_text
