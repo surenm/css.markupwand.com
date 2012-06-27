@@ -140,15 +140,12 @@ class DesignController < ApplicationController
   end 
 
   def view_json
-    remote_file  = (get_design params[:id]).processed_file_path
+    @design = get_design params[:id]
 
-    if Rails.env.production?
-      remote_file_name  = Store::fetch_from_local_store remote_file
-    else
-      remote_file_name  = Store::fetch_from_store remote_file
-     
-    end
+    processed_filebasename = File.basename @design.processed_file_path
+    remote_file_path = File.join @design.store_processed_key, processed_filebasename    
+    processed_file = Store::fetch_object_from_store remote_file_path
 
-    send_file remote_file_name, :disposition => 'inline'
+    send_file processed_file, :disposition => 'inline'
   end
 end
