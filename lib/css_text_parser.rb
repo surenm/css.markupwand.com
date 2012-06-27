@@ -23,8 +23,8 @@ module CssTextParser
     end
   end
   
-  def CssTextParser::parse_font_size(layer)
-    text_style = layer.layer_json.extract_value(:textKey, :value, :textStyleRange, :value).first
+  def CssTextParser::parse_font_size(layer, position = 0)
+    text_style = layer.layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[position]
     font_item  = text_style.extract_value(:value,:textStyle,:value)
 
     font_in_px = (font_item[:size][:value]).to_i 
@@ -32,7 +32,7 @@ module CssTextParser
   end
   
   def CssTextParser::parse_font_style(layer, position = 0)
-    text_style = layer.layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[0]
+    text_style = layer.layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[position]
     font_info  = text_style.extract_value(:value,:textStyle,:value)
 
     font_modifier = font_info.extract_value(:fontStyleName, :value)
