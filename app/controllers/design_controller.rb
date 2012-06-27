@@ -1,5 +1,5 @@
 class DesignController < ApplicationController
-  before_filter :require_login, :except => [:processed]
+  before_filter :require_login
   
   private
   def get_design(readable_design_id)
@@ -92,9 +92,6 @@ class DesignController < ApplicationController
     @design = get_design params[:id]
   end
   
-  def processed
-    design = get_design params[:design]
-    design.set_status Design::STATUS_PROCESSED
     
     design.push_to_parser_queue
     render :json => {:status => :success}
