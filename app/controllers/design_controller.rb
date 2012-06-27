@@ -1,11 +1,16 @@
 class DesignController < ApplicationController
   before_filter :require_login
+  before_filter :is_user_design, :except => [:new, :uploaded, :local_new, :local_uploaded, :index]
   
   private
-  def get_design(readable_design_id)
-    design_id = readable_design_id.split('-').last
-    Design.find design_id
-  end 
+  def is_user_design
+    design_id = params[:id].split('-').last
+    @design = Design.find design_id
+      
+    if @design.nil? or @user != @design.user
+      redirect_to :action => index 
+    end
+  end
   
   public
   def new
