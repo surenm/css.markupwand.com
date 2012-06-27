@@ -271,6 +271,12 @@ class Layer
     is_empty
   end
 
+  def text_chunk_class(index)
+    css = CssParser::get_text_chunk_style(self, index)
+
+    StylesHash.add_and_get_class CssParser::to_style_string(css)
+  end
+
   def text
     if self.kind == LAYER_TEXT
       original_text = layer_json[:textKey][:value][:textKey][:value]
