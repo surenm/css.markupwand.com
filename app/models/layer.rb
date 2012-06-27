@@ -94,6 +94,17 @@ class Layer
     multifont
   end
 
+  def multifont_positions
+    positions = []
+    if self.kind == Layer::LAYER_TEXT
+      positions = layer_json.extract_value(:textKey, :value, :textStyleRange, :value).map do |font|
+        font.extract_value(:value, :from, :value)
+      end
+    end
+
+    positions
+  end
+
   def has_newline?
     if self.kind == Layer::LAYER_TEXT and 
       layer_json.has_key? :textKey and
@@ -259,10 +270,30 @@ class Layer
     
     is_empty
   end
-  
+
   def text
     if self.kind == LAYER_TEXT
-      layer_json[:textKey][:value][:textKey][:value]
+      original_text = layer_json[:textKey][:value][:textKey][:value]
+
+      if has_multifont?
+        positions = multifont_positions
+        chunks = []
+        positions.each_with_index do |position, index|
+          next_position = (index == positions.length - 1) ? (original_text.length - 1) : index + 1
+          chunks.push original_text[position..next_position]
+        end
+
+        multifont_text = ''
+
+        chunks.each do |chunk|
+          multifont_text +=  content_tag :span, chunk
+        end
+
+        multifont_text
+
+      else
+        original_text        
+      end
     else
       ''
     end
