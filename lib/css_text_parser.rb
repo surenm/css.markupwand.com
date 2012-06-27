@@ -1,11 +1,13 @@
 module CssTextParser
   FONT_WEIGHT = {
     'Regular' => nil,
-    'Bold'    => 'bold'
+    'Bold'    => 'bold',
+    'Bold Italic'    => 'bold'
   }
   
   FONT_STYLE = {
-    'Italic' => 'italic'
+    'Italic' => 'italic',
+    'Bold Italic'    => 'italic'
   }
   
   TEXT_ALIGN = {
