@@ -112,7 +112,7 @@ module CssParser
   def CssParser::parse_text(layer)
     layer_json = layer.layer_json
     text_style = layer_json.extract_value(:textKey, :value, :textStyleRange, :value).first
-    font_info  = text_style.extract_value(:value,:textStyle,:value)
+    font_info  = text_style.extract_value(:value, :textStyle, :value)
     
     css = {}
 
