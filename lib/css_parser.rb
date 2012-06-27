@@ -87,21 +87,24 @@ module CssParser
   # Returns a hash for CSS styles
   def CssParser::parse_text(layer)
     layer_json = layer.layer_json
-    text_style = layer_json[:textKey][:value][:textStyleRange][:value].first
-    font_info  = text_style[:value][:textStyle][:value]
+    text_style = layer_json.extract_value(:textKey, :value, :textStyleRange, :value).first
+    font_info  = text_style.extract_value(:value,:textStyle,:value)
     resolution = layer.design.resolution
 
     
     css = {}
-    
-    # Font name
-    css.update(CssTextParser::parse_font_name(layer))
-        
-    # Font-weight/style
-    css.update(CssTextParser::parse_font_style(font_info))
-    
-    # Font size
-    css.update(CssTextParser::parse_font_size(font_info, resolution))
+
+    if not layer.has_multifont?
+      
+      # Font name
+      css.update(CssTextParser::parse_font_name(layer))
+          
+      # Font-weight/style
+      css.update(CssTextParser::parse_font_style(layer))
+      
+      # Font size
+      css.update(CssTextParser::parse_font_size(layer))
+    end
     
     # Line-height
     css.update(CssTextParser::parse_text_line_height(layer))
