@@ -17,50 +17,18 @@ class DesignController < ApplicationController
     @design = Design.new
   end
   
-  def local_new
-    @design = Design.new
-  end
-  
-  def index
-    @status_class = Design::STATUS_CLASS
-    @designs = @user.designs.sort do |a, b|
-      b.created_at <=> a.created_at
-    end   
-  end
-  
-  def show
-    @design = get_design params[:id]
-    
-    respond_to do |format|
-      format.html
-      format.json { render :json => design.attribute_data }
-    end
-  end
-  
-  def preview
-    @design = get_design params[:id]
-    @design_data = @design.attribute_data
-  end
-  
-  def download
-    @design = get_design params[:id]
-
-    tmp_folder = Store::fetch_from_store @design.store_published_key
-    tar_file   = Rails.root.join("tmp", "#{@design.safe_name}.tar.gz")
-
-    system "cd #{tmp_folder} && tar -czvf #{tar_file} ."
-    send_file tar_file, :disposition => 'inline'
-  end
-  
   def uploaded
     design_data = params[:design]
-
     design      = Design.new :name => design_data[:name], :store => Store::get_S3_bucket_name
     design.user = @user
     design.save!
     
     Resque.enqueue UploaderJob, design.id, design_data
     redirect_to :action => :show, :id => design.safe_name
+  end
+  
+  def local_new
+    @design = Design.new
   end
   
   def local_uploaded
@@ -83,35 +51,45 @@ class DesignController < ApplicationController
     redirect_to :action => :show, :id => design.safe_name
   end
   
+  def index
+    @status_class = Design::STATUS_CLASS
+    @designs = @user.designs.sort do |a, b|
+      b.created_at <=> a.created_at
+    end   
+  end
   
-  def update
-    @design = get_design params[:id]
-    
-    Log.fatal params
-
-    #GeneratorJob.perform @design.id
-    render :json => {:status => :success}
+  def show
+    respond_to do |format|
+      format.html
+      format.json { render :json => @design.attribute_data }
+    end
   end
   
   def edit
-    @design = get_design params[:id]
   end
   
+  def preview
+    @design_data = @design.attribute_data
+  end
+  
+  def download
+    tmp_folder = Store::fetch_from_store @design.store_published_key
+    tar_file   = Rails.root.join("tmp", "#{@design.safe_name}.tar.gz")
+
+    system "cd #{tmp_folder} && tar -czvf #{tar_file} ."
+    send_file tar_file, :disposition => 'inline'
+  end
     
-    design.push_to_parser_queue
+  def update
+    GeneratorJob.perform @design.id
     render :json => {:status => :success}
   end
-
+  
   def generated
-    design = get_design params[:design]
-    
-    # ACL logic - if the current user is not owner of this design, redirect
-    redirect_to :action => index if @user != design.user
-
     if params[:type] == "published"
-      base_folder = design.store_published_key
+      base_folder = @design.store_published_key
     elsif params[:type] == "generated"
-      base_folder = design.store_generated_key
+      base_folder = @design.store_generated_key
     end
 
     remote_file = File.join base_folder, "#{params[:uri]}.#{params[:ext]}"
@@ -120,13 +98,18 @@ class DesignController < ApplicationController
     send_file temp_file, :disposition => "inline"
   end
   
+  def reprocess
+  end
+  
   def reparse
-    @design = get_design params[:id]
     @design.grids.delete_all
     @design.layers.delete_all
     @design.set_status Design::STATUS_PARSING
     Resque.enqueue ParserJob, @design.id
     redirect_to :action => :show, :id => @design.safe_name
+  end
+
+  def regenerate 
   end
   
   def view_logs
@@ -134,20 +117,17 @@ class DesignController < ApplicationController
   end
   
   def view_dom
-    @design = get_design params[:id]
     root_grid = @design.get_root_grid
-    Log.fatal root_grid
-    
     render :json => root_grid.get_tree
   end 
 
   def view_json
-    @design = get_design params[:id]
-
     processed_filebasename = File.basename @design.processed_file_path
+
     remote_file_path = File.join @design.store_processed_key, processed_filebasename    
-    processed_file = Store::fetch_object_from_store remote_file_path
+    processed_file   = Store::fetch_object_from_store remote_file_path
 
     send_file processed_file, :disposition => 'inline'
   end
+  
 end
