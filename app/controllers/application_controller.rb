@@ -13,9 +13,18 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  def require_admin_login
+    @user = get_user
+    
+    # Ask for login if user is nil
+    require_login if @user.nil?
+    
+    # if not admin user, redirect to dashboard
+    redirect_to dashboard_path if not @user.admin
+  end
+  
   def backdoor
     user = User.where(:email => "bot@goyaka.com").first
     sign_in_and_redirect user, :event => :authentication
   end
-  
 end
