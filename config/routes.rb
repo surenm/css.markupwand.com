@@ -31,18 +31,23 @@ TransformersWeb::Application.routes.draw do
   
   # get, put and edit designs
   match 'design/:id'          => 'design#show'
-  match 'design/:id/update'   => 'design#update', :via => :post
   match 'design/:id/edit'     => 'design#edit'
   match 'design/:id/preview'  => 'design#preview'
   match 'design/:id/download' => 'design#download'
-  match 'design/:id/reparse'  => 'design#reparse'
-  match 'design/:id/view-logs' => 'design#view_logs'
-  match 'design/:id/view-dom'  => 'design#view_dom'
-  match 'design/:id/view-json'  => 'design#view_json'
+  match 'design/:id/update'   => 'design#update'
+  
+  # admin actions to regenerate stuff
+  match 'design/:id/reprocess'  => 'design#reprocess'
+  match 'design/:id/reparse'    => 'design#reparse'
+  match 'design/:id/regenerate' => 'design#regenerate'
 
+  # convinience methods to view logs, dom
+  match 'design/:id/view-logs'  => 'design#view_logs'
+  match 'design/:id/view-dom'   => 'design#view_dom'
+  match 'design/:id/view-json'  => 'design#view_json'
   
   # Proxy method to view generated files
-  match ':type/:design/*uri.*ext' => 'design#generated'
+  match ':type/:id/*uri.*ext' => 'design#generated'
   
   # TODO: add admin authentication for Admin URL's 
   mount Resque::Server.new, :at => "/resque"
