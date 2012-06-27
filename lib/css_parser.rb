@@ -83,6 +83,30 @@ module CssParser
     
   end
   
+  def CssParser::get_text_chunk_style(layer, chunk_index = 0)
+    layer_json = layer.layer_json
+    text_style = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[chunk_index]
+    font_info  = text_style.extract_value(:value,:textStyle,:value)
+
+    css = {}
+
+    # Font name
+    css.update(CssTextParser::parse_font_name(layer, chunk_index))
+        
+    # Font-weight/style
+    css.update(CssTextParser::parse_font_style(layer, chunk_index))
+    
+    # Font size
+    css.update(CssTextParser::parse_font_size(layer, chunk_index))
+
+    # Color
+    css.update(CssTextParser::parse_text_color(text_style))
+
+    # Shadows 
+    css.update(CssTextParser::parse_font_shadow(layer_json))
+
+    css
+  end
   
   # Returns a hash for CSS styles
   def CssParser::parse_text(layer)
