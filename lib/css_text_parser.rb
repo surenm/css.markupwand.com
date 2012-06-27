@@ -14,8 +14,8 @@ module CssTextParser
     1131312242 => 'center'
   } 
   
-  def CssTextParser::parse_font_name(layer)
-    mapped_font = layer.get_font_name
+  def CssTextParser::parse_font_name(layer, position = 0)
+    mapped_font = layer.get_font_name(position)
     if not mapped_font.nil?
       {:'font-family' => mapped_font}
     else
@@ -23,13 +23,19 @@ module CssTextParser
     end
   end
   
-  def CssTextParser::parse_font_size(font_item, resolution)
+  def CssTextParser::parse_font_size(layer)
+    text_style = layer.layer_json.extract_value(:textKey, :value, :textStyleRange, :value).first
+    font_item  = text_style.extract_value(:value,:textStyle,:value)
+
     font_in_px = (font_item[:size][:value]).to_i 
     { :'font-size' => "#{font_in_px}px" }
   end
   
-  def CssTextParser::parse_font_style(font_item)
-    font_modifier = font_item.extract_value(:fontStyleName, :value)
+  def CssTextParser::parse_font_style(layer, position = 0)
+    text_style = layer.layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[0]
+    font_info  = text_style.extract_value(:value,:textStyle,:value)
+
+    font_modifier = font_info.extract_value(:fontStyleName, :value)
     font_modifier_css = {}
     
     if not FONT_WEIGHT[font_modifier].nil?

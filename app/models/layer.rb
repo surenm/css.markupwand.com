@@ -236,17 +236,17 @@ class Layer
     StylesHash.add_and_get_class CssParser::to_style_string(css)
   end
 
-  def get_raw_font_name
+  def get_raw_font_name(position = 0)
     font_name = nil
 
     if layer_json[:layerKind] == Layer::LAYER_TEXT
-      font_name  = layer_json.extract_value(:textKey, :value, :textStyleRange, :value).first.extract_value(:value, :textStyle, :value, :fontName, :value)
+      font_name  = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[0].extract_value(:value, :textStyle, :value, :fontName, :value)
     end    
     
     font_name
   end
   
-  def get_font_name
+  def get_font_name(position)
     raw_font_name = self.get_raw_font_name
     return nil if raw_font_name.nil?
     
