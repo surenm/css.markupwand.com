@@ -40,10 +40,13 @@
 <%= content_for :admin_content do %>
 <div id="admin-content">
   Admin Actions: 
-  <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/reparse"> Reparse grids</a>
-  <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/update"> Update markup </a>
+  <a class="btn btn-large btn-danger" href="/design/<%= @design.safe_name %>/reprocess"> Reprocess PSD </a>
+  <a class="btn btn-large btn-danger" href="/design/<%= @design.safe_name %>/reparse"> Reparse grids </a>
+  <a class="btn btn-large btn-danger" href="/design/<%= @design.safe_name %>/regenerate"> Regenerate HTML </a>
+  
+  <br>  
   <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/view-logs"> View Logs </a>
+  <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/view-dom"> View DOM </a>
   <a class="btn btn-large btn-success" target="_new" href="/design/<%= @design.safe_name %>/view-json"> View Json</a>
-
 </div>
 <% end %>
