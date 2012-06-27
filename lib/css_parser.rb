@@ -113,21 +113,11 @@ module CssParser
     layer_json = layer.layer_json
     text_style = layer_json.extract_value(:textKey, :value, :textStyleRange, :value).first
     font_info  = text_style.extract_value(:value,:textStyle,:value)
-    resolution = layer.design.resolution
-
     
     css = {}
 
     if not layer.has_multifont?
-      
-      # Font name
-      css.update(CssTextParser::parse_font_name(layer))
-          
-      # Font-weight/style
-      css.update(CssTextParser::parse_font_style(layer))
-      
-      # Font size
-      css.update(CssTextParser::parse_font_size(layer))
+      css.update  CssParser::get_text_chunk_style(layer)
     end
     
     # Line-height
@@ -136,17 +126,11 @@ module CssParser
     # Letter-spacing
     css.update(CssTextParser::parse_text_letter_spacing(font_info))
     
-    # Shadows 
-    css.update(CssTextParser::parse_font_shadow(layer_json))
-    
     # Opacity
     css.update(parse_opacity(layer_json))
     
     # Alignment
     css.update(CssTextParser::parse_text_align(layer))
-
-    # Color
-    css.update(CssTextParser::parse_text_color(text_style))
     
     css
   end
