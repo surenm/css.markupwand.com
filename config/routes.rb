@@ -19,7 +19,7 @@ TransformersWeb::Application.routes.draw do
   end
 
   # design controller routes
-  match 'designs'         => 'design#index'
+  match 'designs'         => 'design#index', :as => :dashboard
 
   if Constants::store_remote?
     match 'design/new'       => 'design#new'
