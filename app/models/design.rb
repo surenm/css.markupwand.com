@@ -154,11 +154,29 @@ class Design
     end
   end
   
+  def reprocess
+    self.grids.delete_all
+    self.layers.delete_all
+
+    self.push_to_processing_queue
+  end
+  
+  def reparse
+    self.grids.delete_all
+    self.layers.delete_all
+    self.set_status Design::STATUS_PARSING
+    Resque.enqueue ParserJob, self.safe_name
+  end
+  
+  def regenerate
+    self.set_status Design::STATUS_REGENERATING
+    Resque.enqueue GeneratorJob, self.id
+  end
+  
   def push_to_processing_queue
     self.set_status Design::STATUS_PROCESSING
     
     message = Hash.new
-
     if Constants::store_remote?
       message[:location] = "remote"
       message[:bucket] = Store::get_S3_bucket_name

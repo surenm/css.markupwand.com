@@ -99,17 +99,18 @@ class DesignController < ApplicationController
   end
   
   def reprocess
+    @design.reprocess
+    redirect_to :action => :show, :id => @design.safe_name
   end
   
   def reparse
-    @design.grids.delete_all
-    @design.layers.delete_all
-    @design.set_status Design::STATUS_PARSING
-    Resque.enqueue ParserJob, @design.id
+    @design.reparse
     redirect_to :action => :show, :id => @design.safe_name
   end
 
-  def regenerate 
+  def regenerate
+    @design.regenerate
+    redirect_to :action => :show, :id => @design.safe_name
   end
   
   def view_logs
