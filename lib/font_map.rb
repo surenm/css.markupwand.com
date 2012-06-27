@@ -90,8 +90,7 @@ class FontMap
   # Returns a hash, embed_url and font_map
   def find_in_google(fonts_list)
     google_folder =  Rails.root.join('db','json','google_webfonts')
-    files = Dir.new(google_folder).entries
-    files.slice! 0, 2 # Remove '.' and '..'
+    files = Dir["#{google_folder}/**"]
   
     font_name_array = []
     
