@@ -28,6 +28,7 @@
 @import "compass/css3/opacity";
 @import "compass/css3/box-shadow";
 @import "compass/utilities";
+@import "compass/css3/transform";
 
 
 body {
@@ -159,4 +160,16 @@ h2 {
 
 .ui-progressbar-value {
   background-image: url(/assets/pbar-ani.gif);
+}
+
+#stack-environment {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: darkRed;
+  color: white;
+  padding: 10px;
+  @include border-radius(4px);
+  font-size: 1.5em;
+  text-transform: capitalize;
 }

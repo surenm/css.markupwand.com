@@ -15,6 +15,10 @@
 </head>
 <body>
 
+<% if not Rails.env.production? %>
+  <%= render 'shared/env' %>
+<% end %>
+
 <% if current_user and current_user.admin? %>
     <%= yield :admin_content %>
 <% end %>
