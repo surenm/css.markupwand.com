@@ -161,7 +161,7 @@ module CssParser
       radius = layer[:path_items][2][0] - layer[:path_items][1][0]
       return {:'border-radius' => "#{radius}px"}
     elsif layer.has_key? :path_items and layer[:path_items].length == 6
-      radius = 2*(layer[:path_items][2][0] - layer[:path_items][1][0])
+      radius = layer[:path_items][2][0] - layer[:path_items][1][0]
       return {:'border-radius' => "#{radius}px"}
     else
       return {}
