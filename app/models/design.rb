@@ -217,7 +217,8 @@ HTML
       Log.fatal "Processed file not specified"
       exit
     end
-    
+
+    Profiler.start    
     Log.info "Beginning to process #{self.processed_file_path}..."
 
     # Parse the JSON
@@ -259,12 +260,15 @@ HTML
     Log.info "Done grouping grids, printing now."
     grid.print
     Log.info "Done printing #{grid.id.to_s}"
+    Profiler.stop
   end
   
   def generate_markup(args={})
     # This populates the StylesHash css_classes simultaneously even though it returns only the html
     # TODO: make the interface better?
     Log.info "Generating body HTML..."
+    
+    Profiler::start
     
     # Set the base folder for writing html to
     generated_folder = self.store_generated_key
@@ -297,6 +301,8 @@ HTML
     
     Store.copy_within_store_recursively generated_folder, published_folder
     self.write_html_files publish_html, published_folder
+    
+    Profiler::stop
   
     Log.info "Successfully completed processing #{self.processed_file_path}."
     return
