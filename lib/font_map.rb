@@ -37,7 +37,7 @@ class FontMap
     @font_map.update google_fonts[:map]
     
     @google_webfonts_snippet = google_fonts[:snippet]
-    @typekit_snippet = typekit_fonts[:snippet] if not typekit_fonts[:snippet].empty? else ''
+    @typekit_snippet = typekit_fonts[:snippet] if not typekit_fonts[:snippet].empty? else '' end
   end
   
   def find_in_typekit(fonts_list)
@@ -115,13 +115,19 @@ class FontMap
     end
     
     font_map = {}
+    font_variants = {}
     font_matches.each do |font_name, font_data|
       if font_data
         font_map[font_name] = font_data['family']
+        font_variants[font_name] = font_data['variants']
       end
     end
     
-    font_map.each { |name, family| font_name_array.push family.gsub(' ', '+') }
+    font_map.each do |name, family|
+      font_name = family.gsub(' ', '+')  + ':' + font_variants[name].join(',')
+      font_name_array.push font_name
+    end
+    
     font_url_suffix = font_name_array.join '|'
     if font_name_array.length > 0
       webfont_code = <<HTML
