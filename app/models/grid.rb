@@ -475,10 +475,9 @@ class Grid
     zindex
   end
   
-  ## Spacing and paddin related methods
+  ## Spacing and padding related methods
    
-  # Find out bounding box difference from it and its child.
-  # Assumption is that it has only one child
+  # Find out bounding box difference from it and its children.
   def padding_from_child
     non_style_layers = self.layers.to_a.select do |layer|
       not self.style_layers.to_a.include? layer.id.to_s
@@ -488,7 +487,7 @@ class Grid
     children_superbound = BoundingBox.get_super_bounds children_bounds
     spacing = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
     
-    if bounds and not non_style_layers.empty? and not children_superbound.nil?
+    if not bounds.nil? and not children_superbound.nil?
       spacing[:top]     = (children_superbound.top  - bounds.top)
       spacing[:bottom]  = (bounds.bottom - children_superbound.bottom)
       
@@ -605,10 +604,7 @@ class Grid
   # TODO Find out if there is any case when width is set.
   
   def width_css(css)
-    if not css.has_key? :width and
-      not is_single_line_text and
-      not unpadded_width.nil? and
-      unpadded_width != 0
+    if not css.has_key? :width and not is_single_line_text and not unpadded_width.nil? and unpadded_width != 0
         return {:width => unpadded_width.to_s + 'px'}
     end
     
