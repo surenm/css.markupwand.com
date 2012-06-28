@@ -157,11 +157,14 @@ module CssParser
   end
   
   def CssParser::parse_box_rounded_corners(layer)
-    if layer.has_key? :path_items and layer[:path_items].length > 4
+    if layer.has_key? :path_items and layer[:path_items].length == 8
       radius = layer[:path_items][2][0] - layer[:path_items][1][0]
-      {:'border-radius' => "#{radius}px"}
+      return {:'border-radius' => "#{radius}px"}
+    elsif layer.has_key? :path_items and layer[:path_items].length == 6
+      radius = 2*(layer[:path_items][2][0] - layer[:path_items][1][0])
+      return {:'border-radius' => "#{radius}px"}
     else
-      {}
+      return {}
     end
   end
   
@@ -268,7 +271,10 @@ module CssParser
         end
       elsif layer_json[:path_items].length == 8
         shape_css = CssParser::parse_box layer, grid
-      end      
+      elsif layer_json[:path_items].length == 6
+        shape_css = CssParser::parse_box layer, grid
+      end
+      
 
       if shape_css.nil?
         shape_css = {}
