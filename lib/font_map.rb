@@ -37,7 +37,7 @@ class FontMap
     @font_map.update google_fonts[:map]
     
     @google_webfonts_snippet = google_fonts[:snippet]
-    @typekit_snippet = typekit_fonts[:snippet] if not typekit_fonts[:snippet].empty? else '' end
+    @typekit_snippet = if not typekit_fonts[:snippet].empty? then typekit_fonts[:snippet]  else '' end
   end
   
   def find_in_typekit(fonts_list)
