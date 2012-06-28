@@ -7,9 +7,9 @@
   <div class="navbar-inner">
     <div class="action row center">
       <div class="forward right"> 
-        <a class="btn btn-large btn-warning" href="./preview"> Preview → </a> 
+        <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/edit/"> Preview → </a> 
       </div>
-      <div class="back left"> <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>">  ← Back to Design Page </a></div>
+      <div class="back left"> <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/">  ← Back to Design Page </a></div>
       <div class="name"><small> Design: </small><%= @design.name %> </div>
     </div>
   </div>
