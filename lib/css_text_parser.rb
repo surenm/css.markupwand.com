@@ -2,16 +2,20 @@ module CssTextParser
   FONT_WEIGHT = {
     'Regular' => nil,
     'Bold'    => 'bold',
-    'Bold Italic'    => 'bold'
+    'Bold Italic'    => 'bold',
+    'BoldItalic'  => 'bold'
   }
   
   FONT_STYLE = {
     'Italic' => 'italic',
-    'Bold Italic'    => 'italic'
+    'Bold Italic'    => 'italic',
+    'BoldItalic' => 'italic'
   }
   
   TEXT_ALIGN = {
-    1131312242 => 'center'
+    1131312242 => 'center',
+    1281713780 => 'left',
+    1382508660 => 'right'
   } 
   
   def CssTextParser::parse_font_name(layer, position = 0)
