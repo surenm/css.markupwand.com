@@ -27,8 +27,6 @@ class Grid
   field :tag, :type => String, :default => :div
   field :override_tag, :type => String, :default => nil
   
-  field :width_class, :type => String, :default => ''
-  field :override_width_class, :type => String, :default => nil
   field :is_positioned, :type => Boolean, :default => false
 
   field :offset_box_buffer, :type => String, :default => nil
@@ -96,7 +94,6 @@ class Grid
       :id          => self.id,
       :name        => self.name,
       :tag         => self.tag,
-      :width_class => self.width_class,
       :orientation => self.orientation
     }
   end
