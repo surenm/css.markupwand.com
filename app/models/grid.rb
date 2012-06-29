@@ -339,26 +339,26 @@ class Grid
   end
   
   ## Intersection methods.
-  
   # Finds out intersecting nodes in lot of nodes
-  def get_intersecting_nodes(nodes_in_region)
-    intersecting_nodes = []
+  def self.get_intersecting_nodes(nodes_in_region)
+    intersecting_node_pairs = []
     
-    intersect_found = false
-    intersect_node_left = intersect_node_right = nil
     nodes_in_region.each do |node_left|
       nodes_in_region.each do |node_right|
-        if node_left != node_right and node_left.intersect? node_right and !(node_left.encloses?(node_right) or \
-          node_right.encloses?(node_left))
-          intersecting_nodes.push node_right
-          intersecting_nodes.push node_left
+        if node_left != node_right 
+          if node_left.intersect? node_right and !(node_left.encloses? node_right or node_right.encloses? node_left)
+            if node_left.bounds.area < node_right.bounds.area
+              intersecting_node_pairs.push [node_left, node_right]
+            else
+              intersecting_node_pairs.push [node_right, node_left]
+            end
+          end
         end
       end
     end
     
-    intersecting_nodes.uniq!
-    
-    return intersecting_nodes
+    intersecting_node_pairs.uniq!
+    return intersecting_node_pairs
   end
 
   def find_intersect_type(intersecting_nodes)
