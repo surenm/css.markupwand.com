@@ -360,18 +360,8 @@ class Grid
     intersecting_node_pairs.uniq!
     return intersecting_node_pairs
   end
-
-  def find_intersect_type(intersecting_nodes)
-    if intersecting_nodes.length == 2 
-      intersect_area = intersecting_nodes.first.intersect_area(intersecting_nodes.second)
-      intersect_percent_left = (intersect_area * 100.0) / Float(intersecting_nodes.first.bounds.area)
-      intersect_percent_right = (intersect_area * 100.0) / Float(intersecting_nodes.second.bounds.area)
-      if (intersect_percent_left > 90 or intersect_percent_right > 90)
-        return :inner
       end
     end
-    
-    return :outer
   end
   
   # :left and :right are just conventions here. They don't necessarily 
