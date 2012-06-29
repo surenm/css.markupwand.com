@@ -74,8 +74,8 @@ class GridStyleSelector
   def offset_box_spacing
     offset_box_spacing = {:top => 0, :left => 0}
     
-    if not self.offset_box_buffer.nil? and not self.offset_box_buffer.empty?
-      offset_box_object = BoundingBox.depickle self.offset_box_buffer
+    if not self.grid.offset_box_buffer.nil? and not self.grid.offset_box_buffer.empty?
+      offset_box_object = BoundingBox.depickle self.grid.offset_box_buffer
       if self.grid.bounds.top - offset_box_object.top > 0
         offset_box_spacing[:top] = ( self.grid.bounds.top - offset_box_object.top)
       end
@@ -86,7 +86,6 @@ class GridStyleSelector
     end
 
     if self.grid.root == true
-      Log.info self.grid.bounds
       offset_box_spacing[:top]    += self.grid.bounds.top
       offset_box_spacing[:left]   += self.grid.bounds.left
     end
@@ -109,7 +108,7 @@ class GridStyleSelector
       nil 
     else
       padding = padding_from_child
-      self.bounds.width - (padding[:left] + padding[:right])
+      self.grid.bounds.width - (padding[:left] + padding[:right])
     end
   end
   
@@ -123,56 +122,43 @@ class GridStyleSelector
     end
   end
   
-  def set_width_class
-    if not self.unpadded_width.nil?
-      # Add a buffer of (960 + 10), because setting width of 960 in photoshop
-      # is giving 962 in extendscript json. Debug more.
-      if unpadded_width != 0 and unpadded_width <= 970
-          self.width_class = StylesHash.get_bootstrap_width_class(unpadded_width)
-      end
-    end
-  end
-  
   # If the width has already not been set, set the width.
   # TODO Find out if there is any case when width is set.
   
   def width_css(css)
-    if not css.has_key? :width and not is_single_line_text and not unpadded_width.nil? and unpadded_width != 0
-        return {:width => unpadded_width.to_s + 'px'}
+    if not css.has_key? :width and not is_single_line_text and
+      not unpadded_width.nil? and unpadded_width != 0
+     
+      return {:width => unpadded_width.to_s + 'px'}
     end
     
     return {}
   end
   
   def set_style_rules
-    if self.css_rules.empty?
-      css = {}
+    css = {}
 
-      self.grid.style_layers.each do |layer_id|
-        layer = Layer.find layer_id
-        css.update layer.get_css({}, self.is_leaf?, self)
-      end
-      
-      css.update width_css(css)
-      css.delete :width if is_single_line_text
-      
-      # Positioning
-      positioned_grid_count = (self.grid.children.select { |grid| grid.is_positioned }).length
-      css[:position] = 'relative' if positioned_grid_count > 0
-      
-      css.update CssParser::position_absolutely(self) if is_positioned
-
-      # Gives out the values for spacing the box model.
-      # Margin and padding
-      css.update spacing_css
-
-      self.css_rules = css
-      self.save!
+    self.grid.style_layers.each do |layer_id|
+      layer = Layer.find layer_id
+      css.update layer.get_css({}, self.grid.is_leaf?, self.grid)
     end
+    
+    css.update width_css(css)
+    css.delete :width if is_single_line_text
+    
+    # Positioning
+    positioned_grid_count = (self.grid.children.select { |grid| grid.is_positioned }).length
+    css[:position] = 'relative' if positioned_grid_count > 0
+    
+    css.update CssParser::position_absolutely(self) if grid.is_positioned
 
-	# FIXME CSSTREE Add set pull-left.
+    # Gives out the values for spacing the box model.
+    # Margin and padding
+    css.update spacing_css
 
-    JSON.parse self.css_rules, :symbolize_keys => true
+    self.css_rules = css
+    self.save!
+  # FIXME CSSTREE Add set pull-left.
   end
   
   '''
@@ -188,8 +174,8 @@ class GridStyleSelector
   '''
 
   def generate_css_tree
-  	set_style_rules
-  	self.children.each { |child| child.generate_css_tree }
+    set_style_rules
+    self.grid.children.each { |child| child.style_selector.generate_css_tree }
   end
   
 end
