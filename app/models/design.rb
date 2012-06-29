@@ -100,7 +100,7 @@ class Design
       end
       
       self.grids.each do |grid|
-        grid_css_classes = grid.get_css_classes
+        grid_css_classes = [] #FIXME CSS TREE grid.get_css_classes
         grid_css_classes.each do |css_class|
           css_classes[css_class] = Array.new if css_classes[css_class].nil?
           css_classes[css_class].push grid.id
@@ -278,6 +278,10 @@ HTML
     CssParser::set_assets_root generated_folder
     
     root_grid = self.get_root_grid
+
+    # Once grids are generated, run through the tree and find out style sheets.
+    # FIXME
+    # root_grid.generate_css_tree
 
     body_html = root_grid.to_html
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
