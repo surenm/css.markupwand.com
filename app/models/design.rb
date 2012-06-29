@@ -282,18 +282,15 @@ HTML
     html    = wrapper.read
     wrapper.close
 
-    body_class = StylesHash.generate_body_style(root_grid)
 
     html.gsub! "{yield}", body_html
     html.gsub! "{webfonts}", self.webfonts_snippet
-    html.gsub! "{body_class}", body_class.to_s
 
     publish_html = Utils::strip_unwanted_attrs_from_html html
 
     css = StylesHash.generate_css_data
 
     self.write_html_files html, generated_folder
-    self.write_css_files css, generated_folder
     
     Store.copy_within_store_recursively generated_folder, published_folder
     self.write_html_files publish_html, published_folder
@@ -316,6 +313,7 @@ HTML
     Store.write_contents_to_store html_file_name, clean_html
   end
   
+  # FIXME 
   def write_css_files(css_content, base_folder)
     Log.info "Writing css file..."    
 
