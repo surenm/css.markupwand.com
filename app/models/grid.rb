@@ -418,66 +418,55 @@ class Grid
   end
   
   def resolve_intersecting_nodes(grid, nodes_in_region)
-    intersecting_nodes = get_intersecting_nodes nodes_in_region
-    Log.info "Intersecting layers found - #{intersecting_nodes}"
+    intersecting_node_pairs = Grid.get_intersecting_nodes nodes_in_region
+    Log.info "Intersecting layers found - #{intersecting_node_pairs}"
     
-    if intersecting_nodes.length > 1
-      overlap_type = find_intersect_type intersecting_nodes
+    if not intersecting_node_pairs.empty?
+      intersecting_nodes = intersecting_node_pairs.flatten!
+    
+      # These are positioned layers
+      # Sort Layers by their layer index.
+      # Keep appending them
+      intersecting_nodes.sort! { |node1, node2|  node2.zindex <=> node1.zindex }
       
-      
-      if overlap_type == :inner
-        # Less than 90%, crop them.
+      intersecting_nodes.each { |node| node.overlays = [] }
 
-        cropped_nodes  = crop_inner_intersect(intersecting_nodes)
-        modified_nodes = (nodes_in_region - intersecting_nodes + cropped_nodes)
-        
-        return  modified_nodes, []
-      else
-        # More than 90%, relatively position them
-        
-        # Sort Layers by their layer index.
-        # Keep appending them
-        intersecting_nodes.sort! { |node1, node2|  node2.zindex <=> node1.zindex }
-        
-        intersecting_nodes.each { |node| node.overlays = [] }
-
-        # If some layerx is intersecting other layery, then layery needs to be just there,
-        # layerx needs to be relatively positioned.
-        # So, add layerx to layery's list of intersecting nodes.
-        intersecting_nodes.each do |intersector|
-          intersecting_nodes.each do |target|
-            if intersector.intersect? target and
-              intersector[:uid] != target[:uid] and
-              not intersector.overlays.include? target[:uid]
-              intersector.is_overlay = true
-              target.overlays.push intersector[:uid]
-            end
+      # If some layerx is intersecting other layery, then layery needs to be just there,
+      # layerx needs to be relatively positioned.
+      # So, add layerx to layery's list of intersecting nodes.
+      intersecting_nodes.each do |intersector|
+        intersecting_nodes.each do |target|
+          if intersector.intersect? target and
+            intersector[:uid] != target[:uid] and
+            not intersector.overlays.include? target[:uid]
+            intersector.is_overlay = true
+            target.overlays.push intersector[:uid]
           end
         end
-        
-        # Once information is set that they are overlaid, remember them.
-        positioned_layers = intersecting_nodes.select { |node| node.is_overlay == true }
-        positioned_layers.sort! { |layer1, layer2| layer2.zindex <=> layer1.zindex }
-        positioned_layers_children = []
-        positioned_layers.each do |layer|
-          positioned_grid = Grid.new :design => self.design
-          nodes_in_grid = BoundingBox.get_nodes_in_region layer.bounds, nodes_in_region, layer.zindex
-          positioned_layers_children = positioned_layers_children | nodes_in_grid
-          nodes_in_region = nodes_in_region - nodes_in_grid
-          positioned_grid.depth = self.depth + 1
-          positioned_grid.set nodes_in_grid, self
-          positioned_grid.is_positioned = true
-          Log.info "Setting is_positioned = true for #{positioned_grid} (#{positioned_grid.id.to_s})"
-          positioned_grid.save!
-          @@grouping_queue.push positioned_grid
-        end
-        
-        self.save!
-        
-        normal_layout_nodes = (nodes_in_region - positioned_layers - positioned_layers_children)
-        
-        return normal_layout_nodes, (positioned_layers | positioned_layers_children)
       end
+      
+      # Once information is set that they are overlaid, remember them.
+      positioned_layers = intersecting_nodes.select { |node| node.is_overlay == true }
+      positioned_layers.sort! { |layer1, layer2| layer2.zindex <=> layer1.zindex }
+      positioned_layers_children = []
+      positioned_layers.each do |layer|
+        positioned_grid = Grid.new :design => self.design
+        nodes_in_grid = BoundingBox.get_nodes_in_region layer.bounds, nodes_in_region, layer.zindex
+        positioned_layers_children = positioned_layers_children | nodes_in_grid
+        nodes_in_region = nodes_in_region - nodes_in_grid
+        positioned_grid.depth = self.depth + 1
+        positioned_grid.set nodes_in_grid, self
+        positioned_grid.is_positioned = true
+        Log.info "Setting is_positioned = true for #{positioned_grid} (#{positioned_grid.id.to_s})"
+        positioned_grid.save!
+        @@grouping_queue.push positioned_grid
+      end
+      
+      self.save!
+      
+      normal_layout_nodes = (nodes_in_region - positioned_layers - positioned_layers_children)
+      
+      return normal_layout_nodes, (positioned_layers | positioned_layers_children)
     else
       Log.info "No intersecting node found, and no nodes reduced as well"
       return nodes_in_region, []
