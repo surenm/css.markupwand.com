@@ -645,6 +645,7 @@ class Grid
     return css
   end
   
+  # FIXME CSS
   def get_css_classes
     if self.generated_css_classes.nil?
       grid_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties
@@ -706,11 +707,7 @@ class Grid
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
     
-    css_classes      = self.get_css_classes
-    css_class_string = css_classes.join " "
-    
     attributes         = Hash.new
-    attributes[:class] = css_class_string if not css_class_string.nil?
     attributes[:"data-grid-id"] = self.id.to_s
         
 
@@ -721,9 +718,6 @@ class Grid
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
-      end
-      if not self.children.empty? and self.orientation == Constants::GRID_ORIENT_LEFT
-        inner_html += content_tag :div, " ", { :style => "clear: both" }, false
       end
       
       inner_html += positioned_grids_html(sub_grid_args)

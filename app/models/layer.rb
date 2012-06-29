@@ -231,6 +231,7 @@ class Layer
     css
   end
 
+  # FIXME CSS HIERARCHY
   def class_name(css = {}, is_leaf, is_root, grid)
     css = get_css(css, is_leaf, grid)
     StylesHash.add_and_get_class CssParser::to_style_string(css)
@@ -297,8 +298,7 @@ class Layer
 
         chunks.each_with_index do |chunk, index|
           next if chunk.length == 0
-          attributes = {:class => text_chunk_class(index)}
-          multifont_text +=  content_tag :span, chunk, attributes
+          multifont_text +=  content_tag :span, chunk
         end
 
         multifont_text
@@ -313,8 +313,6 @@ class Layer
 
   def to_html(args = {}, is_leaf, grid)
     Log.info "[HTML] Layer #{self.to_s}"
-    css       = args.fetch :css, {}
-    css_class = class_name css, is_leaf, @is_root, grid
     
     generated_tag = tag_name(is_leaf)
     tag = args.fetch :tag, generated_tag
@@ -325,9 +323,6 @@ class Layer
     end
 
     attributes         = Hash.new
-    css_class_list     = (args.has_key? :class ) ? [args[:class]] : []
-    css_class_list.push css_class
-    attributes[:class] = css_class_list.join ' '
 
     attributes[:"data-grid-id"]  = args.fetch :"data-grid-id", "" 
     attributes[:"data-layer-id"] = self.id.to_s
