@@ -77,8 +77,9 @@ class Grid
     end  
   end
   
+  # FIXME CSSTREE
   def get_label
-    css_classes = [""] + self.get_css_classes
+    css_classes = [""] #+ self.get_css_classes
     css_classes_string = css_classes.join " ."
     "<div class='editable-grid'><span class='editable-tag'> #{self.tag} </span> <span class='editable-class'> #{css_classes_string} </span></div>"
   end
