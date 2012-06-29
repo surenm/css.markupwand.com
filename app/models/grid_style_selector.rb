@@ -1,8 +1,10 @@
-class StyleSelector
+class GridStyleSelector
   include Mongoid::Document
   include Mongoid::Timestamps::Created
   include Mongoid::Timestamps::Updated  
   include ActionView::Helpers::TagHelper
+
+  embedded_in :grid
 
   ## Spacing and padding related methods
    
