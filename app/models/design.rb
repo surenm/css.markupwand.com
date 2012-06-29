@@ -264,8 +264,6 @@ HTML
   end
   
   def generate_markup(args={})
-    # This populates the StylesHash css_classes simultaneously even though it returns only the html
-    # TODO: make the interface better?
     Log.info "Generating body HTML..."
     
     Profiler::start
@@ -286,14 +284,10 @@ HTML
     html    = wrapper.read
     wrapper.close
 
-
     html.gsub! "{yield}", body_html
     html.gsub! "{webfonts}", self.webfonts_snippet
 
     publish_html = Utils::strip_unwanted_attrs_from_html html
-
-    css = StylesHash.generate_css_data
-
     self.write_html_files html, generated_folder
     
     Store.copy_within_store_recursively generated_folder, published_folder
@@ -319,7 +313,7 @@ HTML
     Store.write_contents_to_store html_file_name, clean_html
   end
   
-  # FIXME 
+  # FIXME CSSTREE
   def write_css_files(css_content, base_folder)
     Log.info "Writing css file..."    
 
