@@ -433,7 +433,7 @@ class Grid
         
         # Once information is set that they are overlaid, remember them.
         positioned_layers = intersecting_nodes.select { |node| node.is_overlay == true }
-        positioned_layers.sort! { |layer1, layer2| layer1.zindex <=> layer2.zindex }
+        positioned_layers.sort! { |layer1, layer2| layer2.zindex <=> layer1.zindex }
         positioned_layers_children = []
         positioned_layers.each do |layer|
           positioned_grid = Grid.new :design => self.design
