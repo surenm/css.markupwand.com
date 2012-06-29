@@ -12,7 +12,7 @@ class GridStyleSelector
    
   # Find out bounding box difference from it and its children.
   def padding_from_child
-    non_style_layers = self.layers.to_a.select do |layer|
+    non_style_layers = self.grid.layers.to_a.select do |layer|
       not self.style_layers.to_a.include? layer.id.to_s
     end
     
@@ -25,8 +25,8 @@ class GridStyleSelector
       spacing[:bottom]  = (bounds.bottom - children_superbound.bottom)
       
       # Root elements are aligned using 960px, auto. Do not modify anything around them.
-      spacing[:left]  = (children_superbound.left - bounds.left) if not self.root
-      spacing[:right] = (bounds.right - children_superbound.right ) if not self.root
+      spacing[:left]  = (children_superbound.left - bounds.left) if not self.grid.root
+      spacing[:right] = (bounds.right - children_superbound.right ) if not self.grid.root
     end
     spacing
   end
@@ -76,27 +76,27 @@ class GridStyleSelector
     
     if not self.offset_box_buffer.nil? and not self.offset_box_buffer.empty?
       offset_box_object = BoundingBox.depickle self.offset_box_buffer
-      if self.bounds.top - offset_box_object.top > 0
-        offset_box_spacing[:top] = ( self.bounds.top - offset_box_object.top)
+      if self.grid.bounds.top - offset_box_object.top > 0
+        offset_box_spacing[:top] = ( self.grid.bounds.top - offset_box_object.top)
       end
       
-      if self.bounds.left - offset_box_object.left > 0
-        offset_box_spacing[:left] = (self.bounds.left - offset_box_object.left)
+      if self.grid.bounds.left - offset_box_object.left > 0
+        offset_box_spacing[:left] = (self.grid.bounds.left - offset_box_object.left)
       end
     end
 
-    if self.root == true
-      Log.info self.bounds
-      offset_box_spacing[:top]    += self.bounds.top
-      offset_box_spacing[:left]   += self.bounds.left
+    if self.grid.root == true
+      Log.info self.grid.bounds
+      offset_box_spacing[:top]    += self.grid.bounds.top
+      offset_box_spacing[:left]   += self.grid.bounds.left
     end
     
     offset_box_spacing
   end
 
   def is_single_line_text
-    if not self.render_layer.nil? and
-      not (Layer.find self.render_layer).has_newline?
+    if not self.grid.render_layer.nil? and
+      not (Layer.find self.grid.render_layer).has_newline?
         return true
     else
       return false
@@ -105,7 +105,7 @@ class GridStyleSelector
   
   # Width subtracted by padding
   def unpadded_width
-    if self.bounds.nil? or self.bounds.width.nil?
+    if self.grid.bounds.nil? or self.grid.bounds.width.nil?
       nil 
     else
       padding = padding_from_child
@@ -115,11 +115,11 @@ class GridStyleSelector
   
   # Height subtracted by padding
   def unpadded_height
-    if self.bounds.nil? or self.bounds.height.nil?
+    if self.grid.bounds.nil? or self.grid.bounds.height.nil?
       nil 
     else
       padding = padding_from_child
-      self.bounds.height - (padding[:top] + padding[:bottom])
+      self.grid.bounds.height - (padding[:top] + padding[:bottom])
     end
   end
   
@@ -145,10 +145,10 @@ class GridStyleSelector
   end
   
   def get_css_properties
-    if self.css_properties.nil?
+    if self.css_rules.empty?
       css = {}
 
-      self.style_layers.each do |layer_id|
+      self.grid.style_layers.each do |layer_id|
         layer = Layer.find layer_id
         css.update layer.get_css({}, self.is_leaf?, self)
       end
@@ -157,7 +157,7 @@ class GridStyleSelector
       css.delete :width if is_single_line_text
       
       # Positioning
-      positioned_grid_count = (self.children.select { |grid| grid.is_positioned }).length
+      positioned_grid_count = (self.grid.children.select { |grid| grid.is_positioned }).length
       css[:position] = 'relative' if positioned_grid_count > 0
       
       css.update CssParser::position_absolutely(self) if is_positioned
@@ -166,11 +166,11 @@ class GridStyleSelector
       # Margin and padding
       css.update spacing_css
 
-      self.css_properties = css.to_json.to_s
+      self.css_rules = css.to_json.to_s
       self.save!
     end
 
-    css = JSON.parse self.css_properties, :symbolize_keys => true
+    css = JSON.parse self.css_rules, :symbolize_keys => true
     return css
   end
   
