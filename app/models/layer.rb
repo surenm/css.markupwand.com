@@ -221,8 +221,8 @@ class Layer
       css[:background] = "url('../../#{image_path}') no-repeat"
       css[:'background-size'] = "contain"
       if grid
-        css[:width] = "#{grid.unpadded_width}px"
-        css[:height] = "#{grid.unpadded_height}px"
+        css[:width] = "#{grid.style_selector.unpadded_width}px"
+        css[:height] = "#{grid.style_selector.unpadded_height}px"
       end
     elsif self.kind == LAYER_SOLIDFILL
       css.update CssParser::parse_shape self, grid

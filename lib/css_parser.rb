@@ -181,7 +181,7 @@ module CssParser
     if layer.is_overlay?
       height = layer.bounds.height
     else
-      height = grid.unpadded_height
+      height = grid.style_selector.unpadded_height
     end
 
     border_width = CssParser::box_border_width(layer.layer_json)
@@ -202,7 +202,7 @@ module CssParser
     if layer.is_overlay?
       width = layer.bounds.width
     else
-      width = grid.unpadded_width
+      width = grid.style_selector.unpadded_width
     end
 
     border_width = CssParser::box_border_width(layer.layer_json)
