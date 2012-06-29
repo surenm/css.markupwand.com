@@ -2,31 +2,31 @@ class GridStyleSelector
   include Mongoid::Document
   include Mongoid::Timestamps::Created
   include Mongoid::Timestamps::Updated  
-  include ActionView::Helpers::TagHelper
 
   embedded_in :grid
 
   field :css_rules, :type => Hash, :default => {}
+  field :selector_names, :type => Array, :default => []
 
   ## Spacing and padding related methods
    
   # Find out bounding box difference from it and its children.
   def padding_from_child
     non_style_layers = self.grid.layers.to_a.select do |layer|
-      not self.style_layers.to_a.include? layer.id.to_s
+      not self.grid.style_layers.to_a.include? layer.id.to_s
     end
     
     children_bounds = non_style_layers.collect { |layer| layer.bounds }
     children_superbound = BoundingBox.get_super_bounds children_bounds
     spacing = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
     
-    if not bounds.nil? and not children_superbound.nil?
-      spacing[:top]     = (children_superbound.top  - bounds.top)
-      spacing[:bottom]  = (bounds.bottom - children_superbound.bottom)
+    if not self.grid.bounds.nil? and not children_superbound.nil?
+      spacing[:top]     = (children_superbound.top  - self.grid.bounds.top)
+      spacing[:bottom]  = (self.grid.bounds.bottom - children_superbound.bottom)
       
       # Root elements are aligned using 960px, auto. Do not modify anything around them.
-      spacing[:left]  = (children_superbound.left - bounds.left) if not self.grid.root
-      spacing[:right] = (bounds.right - children_superbound.right ) if not self.grid.root
+      spacing[:left]  = (children_superbound.left - self.grid.bounds.left) if not self.grid.root
+      spacing[:right] = (self.grid.bounds.right - children_superbound.right ) if not self.grid.root
     end
     spacing
   end
@@ -144,7 +144,7 @@ class GridStyleSelector
     return {}
   end
   
-  def get_css_properties
+  def set_style_rules
     if self.css_rules.empty?
       css = {}
 
@@ -166,31 +166,30 @@ class GridStyleSelector
       # Margin and padding
       css.update spacing_css
 
-      self.css_rules = css.to_json.to_s
+      self.css_rules = css
       self.save!
     end
 
-    css = JSON.parse self.css_rules, :symbolize_keys => true
-    return css
+	# FIXME CSSTREE Add set pull-left.
+
+    JSON.parse self.css_rules, :symbolize_keys => true
   end
   
-  # FIXME CSSTREE
-  def get_css_classes
-    if self.generated_css_classes.nil?
-      grid_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties
+  '''
+  def create_class_names
+    grid_style_class =  self.get_css_properties
+ 
+    self.selector_names.push pull-left if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
+    self.selector_names.push grid_style_class if not grid_style_class.nil?
 
-      css_classes = []
+     self.generated_selector_names = self.selector_names.to_json.to_s
+     self.save!
+  end
+  '''
 
-      # Set pull-left.
-      css_classes.push 'pull-left' if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
-      css_classes.push grid_style_class if not grid_style_class.nil?
-
-      self.generated_css_classes = css_classes.to_json.to_s
-      self.save!
-    end
-    
-    css_classes = JSON.parse self.generated_css_classes
-    return css_classes
+  def generate_css_tree
+  	set_style_rules
+  	self.children.each { |child| child.generate_css_tree }
   end
   
 end
