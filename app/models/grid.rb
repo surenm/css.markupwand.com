@@ -512,8 +512,8 @@ class Grid
     
     # Is this required for grids?
     inner_html = args.fetch :inner_html, ''
-    
-    attributes         = Hash.new
+  
+    attributes = Hash.new
     attributes[:"data-grid-id"] = self.id.to_s
         
 
