@@ -10,6 +10,7 @@ class Grid
   # self references for children and parent grids
   has_many :children, :class_name => 'Grid', :inverse_of => :parent
   belongs_to :parent, :class_name => 'Grid', :inverse_of => :children
+  embeds_one :style_selector, :class_name => 'GridStyleSelector'
 
   has_and_belongs_to_many :layers, :class_name => 'Layer'
   
@@ -23,8 +24,6 @@ class Grid
   field :positioned_layers, :type => Array, :default => []
   field :body_style_layers, :type => Array, :default => []
   
-  field :css_properties, :type => String, :default => nil
-
   field :generated_css_classes, :type => String, :default => nil
   field :user_css_class_map, :type => String, :default => nil
   
