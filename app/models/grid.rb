@@ -297,32 +297,30 @@ class Grid
   def process_grouping_box(row_grid, grouping_box, available_nodes)
     Log.info "Trying grouping box: #{grouping_box}"
     
-    nodes_in_region = BoundingBox.get_nodes_in_region grouping_box, available_nodes.values, zindex
+    raw_grouping_box_layers = BoundingBox.get_nodes_in_region grouping_box, available_nodes.values, zindex
+    grouping_box_layers     = Grid.fix_error_intersections raw_grouping_box_layers
     
-    if nodes_in_region.empty?
-      Log.info "Found padding region"
-
+    if grouping_box_layers.empty?
       # This is set so that the next box can pick it up as its offset box.
       self.design.offset_box_buffer = grouping_box.clone
-    
-    elsif nodes_in_region.size <= available_nodes.size
+    elsif grouping_box_layers.size <= available_nodes.size
       grid = Grid.new :design => row_grid.design, :depth => row_grid.depth + 1
       
       # Reduce the set of nodes, remove style layers.
       available_nodes = extract_style_layers grid, available_nodes, grouping_box
-      
-      # Removes all intersecting layers also.
-      if nodes_in_region.size == available_nodes.size
-        nodes_in_region, positioned_layers = resolve_intersecting_nodes grid, nodes_in_region
+        
+      # If where are still intersecting layers, make them positioned layers and remove them
+      if grouping_box_layers.size == available_nodes.size
+        grouping_box_layers, positioned_layers = resolve_intersecting_nodes grid, grouping_box_layers
         positioned_layers.each do |layer|
           available_nodes.delete layer.uid
         end
       end
       
-      Log.info "Recursing inside, found #{nodes_in_region.size} nodes in region"
+      Log.info "Recursing inside, found #{grouping_box_layers.size} nodes in region"
       
-      grid.set nodes_in_region, row_grid
-      nodes_in_region.each { |node| available_nodes.delete node.uid }
+      grid.set grouping_box_layers, row_grid
+      grouping_box_layers.each { |node| available_nodes.delete node.uid }
             
       if self.design.offset_box_buffer
         #Pickup spacing that the previous box allocated.
