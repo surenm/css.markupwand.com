@@ -3,6 +3,11 @@ require 'rubygems'
 require 'json'
 require 'pp'
 
+'''
+This file holds all the css parser classes
+It tries to understand the photoshop json file and spits out css
+Kind of a collection of helper functions
+'''
 # Modify float to cut off to few significant digits
 class Float
   def sigfig(digits)
