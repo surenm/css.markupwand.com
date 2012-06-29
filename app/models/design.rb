@@ -281,8 +281,7 @@ HTML
     root_grid = self.get_root_grid
 
     # Once grids are generated, run through the tree and find out style sheets.
-    # FIXME
-    # root_grid.generate_css_tree
+    root_grid.style_selector.generate_css_tree
 
     body_html = root_grid.to_html
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
