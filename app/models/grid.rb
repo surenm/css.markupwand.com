@@ -23,10 +23,7 @@ class Grid
   field :style_layers, :type => Array, :default => []
   field :positioned_layers, :type => Array, :default => []
   field :body_style_layers, :type => Array, :default => []
-  
-  field :generated_css_classes, :type => String, :default => nil
-  field :user_css_class_map, :type => String, :default => nil
-  
+    
   field :tag, :type => String, :default => :div
   field :override_tag, :type => String, :default => nil
   
@@ -85,9 +82,9 @@ class Grid
   
   # Set data to a grid. More like a constructor, but mongoid models can't have the original constructors
   def set(layers, parent)
-    # Pro-tip: http://ryanbigg.com/2010/04/has_and_belongs_to_many-double-insert/#comment-36741
     self.parent = parent
     layers.each { |layer| self.layers.push layer }
+    self.style_selector = GridStyleSelector.new
     self.save!
     
     @@grouping_queue.push self if self.root?
