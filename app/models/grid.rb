@@ -376,18 +376,19 @@ class Grid
   
   # :left and :right are just conventions here. They don't necessarily 
   # depict their positions.
-  def crop_inner_intersect(intersecting_nodes)
+  def self.crop_inner_intersect(intersecting_nodes)
     smaller_node = intersecting_nodes[0]
     bigger_node  = intersecting_nodes[1]
     if intersecting_nodes[0].bounds.area > intersecting_nodes[1].bounds.area
       smaller_node = intersecting_nodes[1]
       bigger_node  = intersecting_nodes[0]
     end
+
+    new_bound = smaller_node.bounds.clone.inner_crop(bigger_node.bounds)  
+    smaller_node.bounds = new_bound
     
-    new_bound = BoundingBox.new(smaller_node.bounds.top, 
-      smaller_node.bounds.left, smaller_node.bounds.bottom,
-      smaller_node.bounds.right).inner_crop(bigger_node.bounds)
-    
+    [smaller_node, bigger_node]
+  end
     smaller_node.bounds = new_bound
     
     [smaller_node, bigger_node]
