@@ -360,8 +360,33 @@ class Grid
     intersecting_node_pairs.uniq!
     return intersecting_node_pairs
   end
+  
+  def self.fix_error_intersections(layers_in_region)
+    intersecting_pairs = Grid.get_intersecting_nodes layers_in_region
+    
+    intersecting_pairs.each do |intersecting_layers|
+      intersect_area = intersecting_layers.first.intersect_area(intersecting_layers.second)
+      intersect_percent_left = (intersect_area * 100.0) / Float(intersecting_layers.first.bounds.area)
+      intersect_percent_right = (intersect_area * 100.0) / Float(intersecting_layers.second.bounds.area)
+      
+      corrected_layers = nil
+      if intersect_percent_left > 90 or intersect_percent_right > 90
+        is_error_intersection = true
+        corrected_layers = Grid.crop_inner_intersect intersecting_layers
+      elsif intersect_percent_left < 10 and intersect_percent_right < 10
+        is_error_intersection = true
+        corrected_layers = Grid.crop_outer_intersect intersecting_layers
+      end
+      
+      if not corrected_layers.nil?
+        layers_in_region.delete intersecting_layers.first
+        layers_in_region.delete intersecting_layers.second
+        
+        layers_in_region.push corrected_layers.first
+        layers_in_region.push corrected_layers.second
       end
     end
+    return layers_in_region
   end
   
   # :left and :right are just conventions here. They don't necessarily 
