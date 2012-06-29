@@ -641,7 +641,7 @@ class Grid
     return css
   end
   
-  # FIXME CSS
+  # FIXME CSSTREE
   def get_css_classes
     if self.generated_css_classes.nil?
       grid_style_class = StylesHash.add_and_get_class CssParser::to_style_string self.get_css_properties

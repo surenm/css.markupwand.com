@@ -231,7 +231,7 @@ class Layer
     css
   end
 
-  # FIXME CSS HIERARCHY
+  # FIXME CSSTREE
   def class_name(css = {}, is_leaf, is_root, grid)
     css = get_css(css, is_leaf, grid)
     StylesHash.add_and_get_class CssParser::to_style_string(css)
@@ -272,6 +272,7 @@ class Layer
     is_empty
   end
 
+  # FIXME CSSTREE
   def text_chunk_class(index)
     css = CssParser::get_text_chunk_style(self, index)
 
