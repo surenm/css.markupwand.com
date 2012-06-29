@@ -6,6 +6,8 @@ class GridStyleSelector
 
   embedded_in :grid
 
+  field :css_rules, :type => Hash, :default => {}
+
   ## Spacing and padding related methods
    
   # Find out bounding box difference from it and its children.
