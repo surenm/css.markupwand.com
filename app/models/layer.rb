@@ -370,10 +370,13 @@ class Layer
 
     top_offset = (self.bounds.top - self.initial_bounds.top).abs
     left_offset = (self.bounds.left - self.initial_bounds.left).abs
+
+    Log.info "Cropping #{current_image_path}"
     current_image.crop!(left_offset, top_offset, self.bounds.width, self.bounds.height)
     current_image.write(current_image_path)
 
-    Log.info "Cropped and saved #{current_image_path}"
+    Log.info "Saving to the store"
+    Store::save_to_store current_image_path, File.join(design.store_processed_key, image_name)
 
   end
 
