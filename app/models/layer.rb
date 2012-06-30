@@ -246,6 +246,8 @@ class Layer
     self.save!
   end
 
+
+  # Not sure if this required
   def get_css(grid_style_selector)
     set_css(grid_style_selector) if self.css_rules.empty?
     
