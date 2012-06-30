@@ -1,3 +1,6 @@
+require'RMagick'
+include Magick
+
 class Layer
   include Mongoid::Document
   include Mongoid::Timestamps::Created
@@ -30,6 +33,10 @@ class Layer
   field :override_tag, :type => String, :default => nil
   field :layer_bounds, :type => String, :default => nil
 
+  # The bounds of the layer before any changes are made to it.
+  # 
+  field :initial_layer_bounds, :type => String, :default => nil
+
   # TOD: Do not store layer_object, but have in memory
   
   attr_accessor :layer_object, :intersect_count, :overlays
@@ -39,7 +46,7 @@ class Layer
     design = Design.find design_id
     layer.design = design
     layer.save!
-    
+
     layer.set layer_json
     return layer
   end
@@ -61,6 +68,11 @@ class Layer
     bottom = value[:bottom][:value]
     left   = value[:left][:value]
     right  = value[:right][:value]
+
+    if self.initial_bounds.nil?
+      initial_bounds = BoundingBox.new(top, left, bottom, right)
+      self.initial_bounds = initial_bounds
+    end
 
     design_bounds = BoundingBox.new 0, 0, self.design.height, self.design.width
     layer_bounds  = BoundingBox.new(top, left, bottom, right).inner_crop(design_bounds)
@@ -124,14 +136,17 @@ class Layer
     @bound_mode = bound_mode
   end
 
+  def ensure_processed_folder_exists!
+    processed_folder = Rails.root.join "tmp", "store", design.store_processed_key
+    Store::fetch_from_store design.store_processed_key if not Dir.exists? processed_folder.to_s
+  end
+
   def layer_json
     # Store layer object in memory.
     # TODO: memcache this
     if not @layer_object
       design = self.design
-      
-      processed_folder = Rails.root.join "tmp", "store", design.store_processed_key
-      Store::fetch_from_store design.store_processed_key if not Dir.exists? processed_folder.to_s
+      ensure_processed_folder_exists!
 
       fptr     = File.read design.processed_file_path
       psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
@@ -151,6 +166,16 @@ class Layer
 
   def bounds
     BoundingBox.depickle self.layer_bounds
+  end
+
+  def initial_bounds
+    BoundingBox.depickle self.initial_layer_bounds
+  end
+
+  def initial_bounds=(new_bound)
+    if self.initial_layer_bounds.nil?
+      self.initial_layer_bounds = BoundingBox.pickle(new_bound)
+    end
   end
 
   def bounds=(new_bound)
@@ -218,6 +243,7 @@ class Layer
       css.update CssParser::parse_text self
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
       #TODO Replace into a css parser function
+      crop_image image_path
       css[:background] = "url('../../#{image_path}') no-repeat"
       css[:'background-size'] = "contain"
       if grid
@@ -311,6 +337,46 @@ class Layer
     end
   end
 
+  def crop_image(image_file)
+    Log.info "Checking whether to crop #{image_file}"
+    if self.bounds == self.initial_bounds
+      Log.info "Decided not to crop"
+      return
+    end
+
+    Log.info "Decided that it should be cropped"
+
+    image_name = File.basename image_file
+
+    ensure_processed_folder_exists!
+
+    processed_folder = File.dirname design.processed_file_path
+    current_image_path = File.join processed_folder, image_name
+    Log.info "Reading the image #{current_image_path}"
+    current_image = Image.read(current_image_path).first
+
+    image_width = current_image.columns
+    image_height = current_image.rows
+
+    Log.info "Checking if the image in disk is bigger than the desired size"
+    Log.info "Image size #{image_width} #{image_height}"
+
+    if(image_width > self.bounds.width and image_height > self.bounds.height)
+      Log.info "Looks like someone beat me to cropping it. Not cropping again."
+      return
+    end
+
+    Log.info "Yes it is! Cropping..."
+
+    top_offset = (self.bounds.top - self.initial_bounds.top).abs
+    left_offset = (self.bounds.left - self.initial_bounds.left).abs
+    current_image.crop!(left_offset, top_offset, self.bounds.width, self.bounds.height)
+    current_image.write(current_image_path)
+
+    Log.info "Cropped and saved #{current_image_path}"
+
+  end
+
   def to_html(args = {}, is_leaf, grid)
     Log.info "[HTML] Layer #{self.to_s}"
     css       = args.fetch :css, {}
@@ -332,6 +398,10 @@ class Layer
     attributes[:"data-grid-id"]  = args.fetch :"data-grid-id", "" 
     attributes[:"data-layer-id"] = self.id.to_s
     attributes[:"data-layer-name"] = self.name
+
+    if self.renderable_image?
+      crop_image(image_path)
+    end
 
     if tag == :img
       attributes[:src] = image_path
