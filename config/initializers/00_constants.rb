@@ -30,4 +30,14 @@ module Constants
       return File.join ENV['HOME'], "Library", "Application Support", "Transformers"
     end
   end
+
+  def Constants::css_properties
+    if TransformersWeb::Application.config.css_properties.nil?
+      properties_str = File.open(Rails.root.join('db', 'json', 'css', 'css_properties.json')).read
+      TransformersWeb::Application.config.css_properties = JSON.parse properties_str, :symbolize_names => true
+    end
+
+    TransformersWeb::Application.config.css_properties
+  end
+
 end
