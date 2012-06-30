@@ -361,7 +361,7 @@ class Layer
     Log.info "Checking if the image in disk is bigger than the desired size"
     Log.info "Image size #{image_width} #{image_height}"
 
-    if(image_width > self.bounds.width and image_height > self.bounds.height)
+    if image_width > self.bounds.width and image_height > self.bounds.height
       Log.info "Looks like someone beat me to cropping it. Not cropping again."
       return
     end
