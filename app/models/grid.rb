@@ -515,7 +515,7 @@ class Grid
   
     attributes = Hash.new
     attributes[:"data-grid-id"] = self.id.to_s
-        
+    attributes[:style]          = CssParser::to_style_string(self.style_selector.css_rules)
 
     if self.render_layer.nil?
       sub_grid_args = Hash.new
