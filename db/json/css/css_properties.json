@@ -1,0 +1,290 @@
+{
+  "background-attachment": {
+    "inherit": false
+  },
+  "background-color": {
+    "inherit": false
+  },
+  "background-image": {
+    "inherit": false
+  },
+  "background-position": {
+    "inherit": false
+  },
+  "background-repeat": {
+    "inherit": false
+  },
+  "background": {
+    "inherit": false
+  },
+  "border-collapse": {
+    "inherit": true
+  },
+  "border-color": {
+    "inherit": false
+  },
+  "border-spacing": {
+    "inherit": true
+  },
+  "border-style": {
+    "inherit": false
+  },
+  "border-top": {
+    "inherit": false
+  },
+  "border-right": {
+    "inherit": false
+  },
+  "border-bottom": {
+    "inherit": false
+  },
+  "border-left": {
+    "inherit": false
+  },
+  "border-top-color": {
+    "inherit": false
+  },
+  "border-right-color": {
+    "inherit": false
+  },
+  "border-bottom-color": {
+    "inherit": false
+  },
+  "border-left-color": {
+    "inherit": false
+  },
+  "border-top-style": {
+    "inherit": false
+  },
+  "border-right-style": {
+    "inherit": false
+  },
+  "border-bottom-style": {
+    "inherit": false
+  },
+  "border-left-style": {
+    "inherit": false
+  },
+  "border-top-width": {
+    "inherit": false
+  },
+  "border-right-width": {
+    "inherit": false
+  },
+  "border-bottom-width": {
+    "inherit": false
+  },
+  "border-left-width": {
+    "inherit": false
+  },
+  "border-width": {
+    "inherit": false
+  },
+  "border": {
+    "inherit": false
+  },
+  "bottom": {
+    "inherit": false
+  },
+  "caption-side": {
+    "inherit": true
+  },
+  "clear": {
+    "inherit": false
+  },
+  "clip": {
+    "inherit": false
+  },
+  "color": {
+    "inherit": true
+  },
+  "content": {
+    "inherit": false
+  },
+  "counter-increment": {
+    "inherit": false
+  },
+  "counter-reset": {
+    "inherit": false
+  },
+  "cursor": {
+    "inherit": true
+  },
+  "direction": {
+    "inherit": true
+  },
+  "display": {
+    "inherit": false
+  },
+  "empty-cells": {
+    "inherit": true
+  },
+  "float": {
+    "inherit": false
+  },
+  "font-family": {
+    "inherit": true
+  },
+  "font-size": {
+    "inherit": true
+  },
+  "font-style": {
+    "inherit": true
+  },
+  "font-variant": {
+    "inherit": true
+  },
+  "font-weight": {
+    "inherit": true
+  },
+  "font": {
+    "inherit": true
+  },
+  "height": {
+    "inherit": false
+  },
+  "left": {
+    "inherit": false
+  },
+  "letter-spacing": {
+    "inherit": true
+  },
+  "line-height": {
+    "inherit": true
+  },
+  "list-style-image": {
+    "inherit": true
+  },
+  "list-style-position": {
+    "inherit": true
+  },
+  "list-style-type": {
+    "inherit": true
+  },
+  "list-style": {
+    "inherit": true
+  },
+  "margin-right": {
+    "inherit": false
+  },
+  "margin-left": {
+    "inherit": false
+  },
+  "margin-top": {
+    "inherit": false
+  },
+  "margin-bottom": {
+    "inherit": false
+  },
+  "margin": {
+    "inherit": false
+  },
+  "max-height": {
+    "inherit": false
+  },
+  "max-width": {
+    "inherit": false
+  },
+  "min-height": {
+    "inherit": false
+  },
+  "min-width": {
+    "inherit": false
+  },
+  "opacity": {
+    "inherit": false
+  },
+  "orphans": {
+    "inherit": true
+  },
+  "outline-color": {
+    "inherit": false
+  },
+  "outline-style": {
+    "inherit": false
+  },
+  "outline-width": {
+    "inherit": false
+  },
+  "outline": {
+    "inherit": false
+  },
+  "overflow": {
+    "inherit": false
+  },
+  "padding-top": {
+    "inherit": false
+  },
+  "padding-right": {
+    "inherit": false
+  },
+  "padding-bottom": {
+    "inherit": false
+  },
+  "padding-left": {
+    "inherit": false
+  },
+  "padding": {
+    "inherit": false
+  },
+  "page-break-after": {
+    "inherit": false
+  },
+  "page-break-before": {
+    "inherit": false
+  },
+  "page-break-inside": {
+    "inherit": false
+  },
+  "position": {
+    "inherit": false
+  },
+  "quotes": {
+    "inherit": true
+  },
+  "right": {
+    "inherit": false
+  },
+  "table-layout": {
+    "inherit": false
+  },
+  "text-align": {
+    "inherit": true
+  },
+  "text-decoration": {
+    "inherit": false
+  },
+  "text-indent": {
+    "inherit": true
+  },
+  "text-transform": {
+    "inherit": true
+  },
+  "top": {
+    "inherit": false
+  },
+  "unicode-bidi": {
+    "inherit": false
+  },
+  "vertical-align": {
+    "inherit": false
+  },
+  "visibility": {
+    "inherit": true
+  },
+  "white-space": {
+    "inherit": true
+  },
+  "widows": {
+    "inherit": true
+  },
+  "width": {
+    "inherit": false
+  },
+  "word-spacing": {
+    "inherit": true
+  },
+  "z-index": {
+    "inherit": false
+  }
+}
