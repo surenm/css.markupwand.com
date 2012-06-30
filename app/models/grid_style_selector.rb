@@ -140,7 +140,7 @@ class GridStyleSelector
 
     self.grid.style_layers.each do |layer_id|
       layer = Layer.find layer_id
-      css.update layer.get_css({}, self.grid.is_leaf?, self.grid)
+      css.update layer.get_css(self)
     end
     
     css.update width_css(css)
@@ -149,10 +149,12 @@ class GridStyleSelector
     # Positioning
     positioned_grid_count = (self.grid.children.select { |grid| grid.is_positioned }).length
     css[:position] = 'relative' if positioned_grid_count > 0
-    css[:float] = 'left' if not self.grid.parent.nil? and self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT
+    self.selector_names.push('pull-left') if not (self.grid.parent.nil?) and (self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT)
     
     css.update CssParser::position_absolutely(self) if grid.is_positioned
 
+    self.selector_names.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
+    
     # Gives out the values for spacing the box model.
     # Margin and padding
     css.update spacing_css
@@ -181,7 +183,7 @@ class GridStyleSelector
       self.grid.children.each { |child| child.style_selector.generate_css_tree }
     else
       render_layer_obj = Layer.find(self.grid.render_layer)
-      render_layer_obj.set_css(self.css_rules, self.grid.is_leaf?, self.grid)
+      render_layer_obj.set_css(self)
     end
   end
   
