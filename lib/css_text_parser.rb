@@ -99,7 +99,13 @@ module CssTextParser
   def CssTextParser::parse_text_letter_spacing(font_info)
     #Same reference as above
     if not font_info[:tracking].nil? and font_info[:tracking] != 0
-      {:'letter-spacing' => (font_info[:tracking][:value]/20.0).round.to_s + 'px'}
+      letter_spacing = (font_info[:tracking][:value]/20.0).round
+
+      if letter_spacing == 0
+        {:'letter-spacing' => (font_info[:tracking][:value]/20.0).round.to_s + 'px'}
+      else
+        {}
+      end
     else
       {}
     end
