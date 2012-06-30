@@ -177,13 +177,18 @@ class GridStyleSelector
     end
   end
 
-  def group_common_styles
+
+  # Bubble up repeating css properties. Simple level of approximation now.
+  def bubble_up_repeating_styles
     rule_repeat_hash = {}
 
+    # Consider render layers also.
     grid.children.each do |child|
-      child.css_rules.each do | css_value, css_property|
-        rule_repeat_hash[css_property] ||= 0
-        rule_repeat_hash[css_property]++
+      child.style_selector.css_rules.each do |css_property, css_value|
+        css_rule_hash_key = ({ css_property.to_sym => css_value }).to_json
+
+        rule_repeat_hash[css_rule_hash_key] ||= 0
+        rule_repeat_hash[css_rule_hash_key] = rule_repeat_hash[css_rule_hash_key] + 1
       end
     end
 
