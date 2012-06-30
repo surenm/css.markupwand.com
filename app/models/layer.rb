@@ -33,6 +33,7 @@ class Layer
   # CSS Rules
   field :css_rules, :type => Hash, :default => {}
   field :chunk_text_css_rule, :type => Array, :default => []
+  field :selector_names, :type => Array, :default => []
 
   # TOD: Do not store layer_object, but have in memory
   
@@ -217,19 +218,24 @@ class Layer
     end
   end
 
-  def set_css(css = {}, is_leaf, grid)
+  def set_css(grid_style_selector)
+    css      = grid_style_selector.css_rules
+    is_leaf  = grid_style_selector.grid.is_leaf?
+    self.selector_names = grid_style_selector.selector_names
+
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
+    
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
       #TODO Replace into a css parser function
       css[:background] = "url('../../#{image_path}') no-repeat"
       css[:'background-size'] = "contain"
-      if grid
+      if grid_style_selector.grid
         css[:width] = "#{grid.style_selector.unpadded_width}px"
         css[:height] = "#{grid.style_selector.unpadded_height}px"
       end
     elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_shape self, grid
+      css.update CssParser::parse_shape self, grid_style_selector.grid
     end
 
     if has_multifont?
@@ -246,10 +252,8 @@ class Layer
     self.save!
   end
 
-  def get_css(css = {}, is_leaf, grid)
-    if self.css_rules.empty?
-      set_css(css, is_leaf, grid)
-    end
+  def get_css(grid_style_selector)
+    set_css(grid_style_selector) if self.css_rules.empty?
     
     self.css_rules
   end
@@ -352,7 +356,8 @@ class Layer
     attributes[:"data-grid-id"]  = args.fetch :"data-grid-id", "" 
     attributes[:"data-layer-id"] = self.id.to_s
     attributes[:"data-layer-name"] = self.name
-    attributes[:style] = CssParser::to_style_string(self.css_rules)
+    attributes[:style] = CssParser::to_style_string(self.css_rules) if not self.css_rules.empty?
+    attributes[:class] = self.selector_names.join(" ") if not self.selector_names.empty?
 
     if tag == :img
       attributes[:src] = image_path

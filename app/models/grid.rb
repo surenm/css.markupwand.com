@@ -515,9 +515,12 @@ class Grid
   
     attributes = Hash.new
     attributes[:"data-grid-id"] = self.id.to_s
-    attributes[:style]          = CssParser::to_style_string(self.style_selector.css_rules)
 
     if self.render_layer.nil?
+
+      attributes[:style] = CssParser::to_style_string(self.style_selector.css_rules) if not self.style_selector.css_rules.empty?
+      attributes[:class] = self.style_selector.selector_names.join(" ") if not self.style_selector.selector_names.empty?
+ 
       sub_grid_args = Hash.new
         
       child_nodes = self.children.select { |node| not node.is_positioned }
@@ -525,7 +528,7 @@ class Grid
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
       end
-      
+
       inner_html += positioned_grids_html(sub_grid_args)
       
       if child_nodes.length > 0
