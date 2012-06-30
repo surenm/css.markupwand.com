@@ -234,9 +234,9 @@ class Layer
 
     if has_multifont?
       positions = multifont_positions
-      positions.each do |position|
-        self.chunk_text_css_rule[position] = CssParser::get_text_chunk_style(self, position) 
-        Log.info "Chunk text style = #{self.chunk_text_css_rule[position]}"
+      positions.each_with_index do |position, index|
+        self.chunk_text_css_rule[index] = CssParser::get_text_chunk_style(self, index)
+        Log.info "Chunk text style = #{self.chunk_text_css_rule[index]}"
       end
       self.save!
     end
@@ -322,7 +322,7 @@ class Layer
 
         chunks.each_with_index do |chunk, index|
           next if chunk.length == 0
-          attributes = { :style => self.chunk_text_css_rule[index] }
+          attributes = { :style => CssParser::to_style_string(self.chunk_text_css_rule[index]) }
           multifont_text +=  content_tag :span, chunk, attributes
         end
 
