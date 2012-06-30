@@ -192,7 +192,26 @@ class GridStyleSelector
       end
     end
 
-    Log.fatal rule_repeat_hash
+    # Trim out the non-repeating properties.
+    rule_repeat_hash.each { |rule, repeats| rule_repeat_hash.delete rule if repeats != grid.children.length }
+   
+    # Remove all the repeating properties from the children 
+    rule_repeat_hash.each do |rule, repeat_count|
+      rule_object = (JSON.parse rule, :symbolize_names => true)
+      rule_key    = rule_object.keys.first
+      grid.children.each do |child|
+        child.style_selector.css_rules.delete rule_key
+        if not child.render_layer.nil?
+          layer_obj = Layer.find child.render_layer
+          layer_obj.css_rules.delete rule_key.to_s
+          layer_obj.save!
+        end
+      end
+      Log.info "Deleted #{rule_key} from #{grid.to_short_s}"
+      self.css_rules.update rule_object
+    end
+
+    grid.save!
   end
 
   # Group up font-family, etc from bottom most nodes and group them up
@@ -200,9 +219,7 @@ class GridStyleSelector
   def group_css_properties
     grid.children.each { |kid| kid.style_selector.group_css_properties }
 
-    group_common_styles
-
-    Log.fatal "#{self.grid.to_short_s} CSS"
+    bubble_up_repeating_styles
   end
   
 end
