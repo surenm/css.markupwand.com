@@ -164,18 +164,8 @@ class GridStyleSelector
     self.save!
   end
   
-  '''
-  def create_class_names
-    grid_style_class =  self.get_css_properties
- 
-    self.selector_names.push pull-left if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
-    self.selector_names.push grid_style_class if not grid_style_class.nil?
 
-     self.generated_selector_names = self.selector_names.to_json.to_s
-     self.save!
-  end
-  '''
-
+  # Walks recursively through the grids and creates
   def generate_css_tree
     set_style_rules
 
@@ -185,6 +175,29 @@ class GridStyleSelector
       render_layer_obj = Layer.find(self.grid.render_layer)
       render_layer_obj.set_css(self)
     end
+  end
+
+  def group_common_styles
+    rule_repeat_hash = {}
+
+    grid.children.each do |child|
+      child.css_rules.each do | css_value, css_property|
+        rule_repeat_hash[css_property] ||= 0
+        rule_repeat_hash[css_property]++
+      end
+    end
+
+    Log.fatal rule_repeat_hash
+  end
+
+  # Group up font-family, etc from bottom most nodes and group them up
+  # Go through all the grids post order, with root node as the last node. 
+  def group_css_properties
+    grid.children.each { |kid| kid.style_selector.group_css_properties }
+
+    group_common_styles
+
+    Log.fatal "#{self.grid.to_short_s} CSS"
   end
   
 end
