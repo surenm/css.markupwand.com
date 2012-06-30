@@ -51,6 +51,18 @@ class Grid
     "Tag: #{self.tag}, Layers: #{self.layers.to_a}, Style layer: #{style_layer_objs}, \
     Render layer: #{render_layer_obj}"
   end
+
+  def to_short_s
+    if self.render_layer
+      render_layer_obj = Layer.find self.render_layer
+      "Grid (render) #{render_layer_obj.name}"
+    else
+      names = self.layers.map do |layer|
+        layer.name
+      end
+      "Grid (parent) #{names.to_s}"
+    end
+  end
   
   def print(indent_level=0)
     spaces = ""
