@@ -227,13 +227,7 @@ class Layer
       css.update CssParser::parse_text self
     
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
-      #TODO Replace into a css parser function
-      css[:background] = "url('../../#{image_path}') no-repeat"
-      css[:'background-size'] = "contain"
-      if grid_style_selector.grid
-        css[:width] = "#{grid.style_selector.unpadded_width}px"
-        css[:height] = "#{grid.style_selector.unpadded_height}px"
-      end
+      css.update CssParser::parse_background_image(self)
     elsif self.kind == LAYER_SOLIDFILL
       css.update CssParser::parse_shape self, grid_style_selector.grid
     end

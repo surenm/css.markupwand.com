@@ -364,4 +364,16 @@ module CssParser
     return File.join "./assets", "img", image_file_name
   end
 
+  def CssParser::parse_background_image(layer)
+    css = {}
+    css[:background] = "url('../../#{layer.image_path}') no-repeat"
+    css[:'background-size'] = "contain"
+    if grid_style_selector.grid
+      css[:width] = "#{layer.grid.style_selector.unpadded_width}px"
+      css[:height] = "#{layer.grid.style_selector.unpadded_height}px"
+    end
+
+    css
+  end
+
 end
