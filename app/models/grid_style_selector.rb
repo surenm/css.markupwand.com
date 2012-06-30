@@ -157,6 +157,7 @@ class GridStyleSelector
     css.update spacing_css
 
     self.css_rules = css
+    Log.info "Generated CSS #{CssParser::to_style_string(css)}"
     self.save!
   # FIXME CSSTREE Add set pull-left.
   end
@@ -175,7 +176,14 @@ class GridStyleSelector
 
   def generate_css_tree
     set_style_rules
-    self.grid.children.each { |child| child.style_selector.generate_css_tree }
+
+    if self.grid.render_layer.nil?
+      self.grid.children.each { |child| child.style_selector.generate_css_tree }
+    else
+      render_layer_obj = Layer.find(self.grid.render_layer)
+      render_layer_obj.set_css({}, self.grid.is_leaf?, self.grid)
+    end
+
   end
   
 end
