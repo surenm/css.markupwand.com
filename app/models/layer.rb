@@ -30,6 +30,10 @@ class Layer
   field :override_tag, :type => String, :default => nil
   field :layer_bounds, :type => String, :default => nil
 
+  # CSS Rules
+  field :css_rules, :type => Hash, :default => {}
+  field :chunk_text_css_rule, :type => Array, :default => []
+
   # TOD: Do not store layer_object, but have in memory
   
   attr_accessor :layer_object, :intersect_count, :overlays
@@ -213,7 +217,7 @@ class Layer
     end
   end
 
-  def get_css(css = {}, is_leaf, grid)
+  def set_css(css = {}, is_leaf, grid)
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
@@ -227,8 +231,27 @@ class Layer
     elsif self.kind == LAYER_SOLIDFILL
       css.update CssParser::parse_shape self, grid
     end
+
+    if has_multifont?
+      positions = multifont_positions
+      positions.each do |position|
+        self.chunk_text_css_rule[position] = CssParser::get_text_chunk_style(self, position) 
+        Log.info "Chunk text style = #{self.chunk_text_css_rule[position]}"
+      end
+      self.save!
+    end
     
-    css
+    self.css_rules = css
+    Log.info "Layer CSS" + self.css_rules.to_s
+    self.save!
+  end
+
+  def get_css(css = {}, is_leaf, grid)
+    if self.css_rules.empty?
+      set_css(css, is_leaf, grid)
+    end
+    
+    self.css_rules
   end
 
   # FIXME CSSTREE
@@ -299,7 +322,8 @@ class Layer
 
         chunks.each_with_index do |chunk, index|
           next if chunk.length == 0
-          multifont_text +=  content_tag :span, chunk
+          attributes = { :style => self.chunk_text_css_rule[index] }
+          multifont_text +=  content_tag :span, chunk, attributes
         end
 
         multifont_text
@@ -328,6 +352,7 @@ class Layer
     attributes[:"data-grid-id"]  = args.fetch :"data-grid-id", "" 
     attributes[:"data-layer-id"] = self.id.to_s
     attributes[:"data-layer-name"] = self.name
+    attributes[:style] = CssParser::to_style_string(self.css_rules)
 
     if tag == :img
       attributes[:src] = image_path
@@ -357,7 +382,7 @@ class Layer
   def print(indent_level = 0)
     spaces = ""
     prefix = "|--"
-    indent_level.times {|i| spaces+=" "}
+    indent_level.times { |i| spaces += " " }
     Log.debug "#{spaces}#{prefix} (layer) #{self.name} #{@bounds.to_s}"
   end
 
