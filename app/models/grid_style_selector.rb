@@ -149,6 +149,7 @@ class GridStyleSelector
     # Positioning
     positioned_grid_count = (self.grid.children.select { |grid| grid.is_positioned }).length
     css[:position] = 'relative' if positioned_grid_count > 0
+    css[:float] = 'left' if not self.grid.parent.nil? and self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT
     
     css.update CssParser::position_absolutely(self) if grid.is_positioned
 
@@ -159,7 +160,6 @@ class GridStyleSelector
     self.css_rules = css
     Log.info "Generated CSS #{CssParser::to_style_string(css)}"
     self.save!
-  # FIXME CSSTREE Add set pull-left.
   end
   
   '''
@@ -181,9 +181,8 @@ class GridStyleSelector
       self.grid.children.each { |child| child.style_selector.generate_css_tree }
     else
       render_layer_obj = Layer.find(self.grid.render_layer)
-      render_layer_obj.set_css({}, self.grid.is_leaf?, self.grid)
+      render_layer_obj.set_css(self.css_rules, self.grid.is_leaf?, self.grid)
     end
-
   end
   
 end

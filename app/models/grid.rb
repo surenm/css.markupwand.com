@@ -533,11 +533,12 @@ class Grid
       end
       
     else
-      sub_grid_args = attributes
+      sub_grid_args      = attributes
       sub_grid_args[tag] = self.tag
-      render_layer_obj = Layer.find self.render_layer
-      inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
-      html = inner_html
+      css_rules          = self.style_selector.css_rules
+      render_layer_obj   = Layer.find self.render_layer
+      inner_html        += render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
+      html               = inner_html
     end
     
     return html
