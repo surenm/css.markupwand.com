@@ -49,6 +49,14 @@ class Design
   field :resolution, :type => Integer
 
   mount_uploader :file, DesignUploader
+
+  after_initialize :init_defaults
+
+  attr_accessor :incremental_class_counter
+
+  def init_defaults
+    @incremental_class_counter = 0
+  end
   
   def safe_name_prefix
     Store::get_safe_name self.name
