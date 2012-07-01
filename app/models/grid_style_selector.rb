@@ -161,7 +161,6 @@ class GridStyleSelector
     css.update spacing_css
 
     self.css_rules = css
-    Log.info "Generated CSS #{CssParser::to_style_string(css)}"
     self.save!
   end
   
@@ -181,7 +180,14 @@ class GridStyleSelector
   # Selector names (includes default selector and extra selectors)
   def selector_names
     all_selectors = extra_selectors
-    if @generated_selector.nil?
+
+    layer_has_css = false
+    if self.grid.render_layer
+      render_layer_obj = Layer.find(self.grid.render_layer)
+      layer_has_css = true if not render_layer_obj.css_rules.empty?
+    end
+
+    if @generated_selector.nil? and (not self.css_rules.empty? or layer_has_css)
       @generated_selector = CssParser::create_incremental_selector(self)
       all_selectors.push @generated_selector if not self.css_rules.empty?
     end
@@ -251,6 +257,7 @@ class GridStyleSelector
 #{spaces} #{child_sass_trees}
 #{spaces} }
 sass
+
     end
 
     sass
