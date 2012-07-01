@@ -25,9 +25,8 @@ class GridStyleSelector
       spacing[:top]     = (children_superbound.top  - self.grid.bounds.top)
       spacing[:bottom]  = (self.grid.bounds.bottom - children_superbound.bottom)
       
-      # Root elements are aligned using 960px, auto. Do not modify anything around them.
-      spacing[:left]  = (children_superbound.left - self.grid.bounds.left) if not self.grid.root
-      spacing[:right] = (self.grid.bounds.right - children_superbound.right ) if not self.grid.root
+      spacing[:left]  = (children_superbound.left - self.grid.bounds.left) 
+      spacing[:right] = (self.grid.bounds.right - children_superbound.right)
     end
     spacing
   end
