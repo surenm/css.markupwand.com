@@ -6,7 +6,8 @@ class GridStyleSelector
   embedded_in :grid
 
   field :css_rules, :type => Hash, :default => {}
-  field :selector_names, :type => Array, :default => []
+  field :extra_selectors, :type => Array, :default => []
+  field :generated_selector, :type => String
 
   ## Spacing and padding related methods
    
@@ -149,11 +150,11 @@ class GridStyleSelector
     # Positioning
     positioned_grid_count = (self.grid.children.select { |grid| grid.is_positioned }).length
     css[:position] = 'relative' if positioned_grid_count > 0
-    self.selector_names.push('pull-left') if not (self.grid.parent.nil?) and (self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT)
+    self.extra_selectors.push('pull-left') if not (self.grid.parent.nil?) and (self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT)
     
     css.update CssParser::position_absolutely(grid) if grid.is_positioned
 
-    self.selector_names.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
+    self.extra_selectors.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
     
     # Gives out the values for spacing the box model.
     # Margin and padding
@@ -177,8 +178,18 @@ class GridStyleSelector
     end
   end
 
+  # Selector names (includes default selector and extra selectors)
+  def selector_names
+    all_selectors = extra_selectors
+    if @generated_selector.nil?
+      @generated_selector = CssParser::create_incremental_selector(self)
+      all_selectors.push @generated_selector if not self.css_rules.empty?
+    end
 
-  # Bubble up repeating css properties. Simple level of approximation now.
+    all_selectors
+  end
+
+  # Bubble up repeating css properties. No approximation now.
   def bubble_up_repeating_styles
     rule_repeat_hash = {}
 
