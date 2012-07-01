@@ -302,9 +302,12 @@ HTML
 
     publish_html = Utils::strip_unwanted_attrs_from_html html
     self.write_html_files html, generated_folder
+    self.write_css_files generated_folder
     
     Store.copy_within_store_recursively generated_folder, published_folder
     self.write_html_files publish_html, published_folder
+    self.write_css_files published_folder
+
     
     Profiler::stop
   
@@ -327,13 +330,13 @@ HTML
   end
   
   # FIXME CSSTREE
-  def write_css_files(css_content, base_folder)
+  def write_css_files(base_folder)
     Log.info "Writing css file..."    
 
     # Write style.css file
-    css_path = File.join base_folder, "assets", "css"
-    css_file_name = File.join css_path, "style.css"
-    Store.write_contents_to_store css_file_name, css_content
+    # css_path = File.join base_folder, "assets", "css"
+    # css_file_name = File.join css_path, "style.css"
+    # Store.write_contents_to_store css_file_name, css_content
 
     # Copy bootstrap to assets folder
     Log.info "Writing bootstrap files..."
