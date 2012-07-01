@@ -360,13 +360,17 @@ config
   end
 
   
-  def write_css_files(css_content, base_folder)
+  def write_css_files(scss_content, base_folder)
     Log.info "Writing css (compass) file..."    
 
-    # Write style.scss file
+    # Write style.scss file and style.css file
+    scss_path = File.join base_folder, "assets", "css"
+    scss_file_name = File.join scss_path, "style.scss"
+    Store.write_contents_to_store scss_file_name, scss_content
+
     css_path = File.join base_folder, "assets", "css"
-    css_file_name = File.join css_path, "style.scss"
-    Store.write_contents_to_store css_file_name, css_content
+    css_file_name = File.join css_path, "style.css"
+    Store.write_contents_to_store css_file_name, generate_css_from_sass(scss_content)
 
     # Copy bootstrap to assets folder
     Log.info "Writing bootstrap files..."
