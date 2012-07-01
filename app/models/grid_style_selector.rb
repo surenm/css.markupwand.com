@@ -151,7 +151,7 @@ class GridStyleSelector
     css[:position] = 'relative' if positioned_grid_count > 0
     self.selector_names.push('pull-left') if not (self.grid.parent.nil?) and (self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT)
     
-    css.update CssParser::position_absolutely(self) if grid.is_positioned
+    css.update CssParser::position_absolutely(grid) if grid.is_positioned
 
     self.selector_names.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
     
