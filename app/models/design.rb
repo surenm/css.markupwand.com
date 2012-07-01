@@ -47,17 +47,11 @@ class Design
   field :height, :type => Integer
   field :width, :type => Integer
   field :resolution, :type => Integer
+  field :incremental_class_counter, :type => Integer, :default => 0
 
   mount_uploader :file, DesignUploader
 
-  after_initialize :init_defaults
 
-  attr_accessor :incremental_class_counter
-
-  def init_defaults
-    @incremental_class_counter = 0
-  end
-  
   def safe_name_prefix
     Store::get_safe_name self.name
   end
