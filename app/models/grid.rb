@@ -503,10 +503,9 @@ class Grid
     if not bounds.nil? and not children_superbound.nil?
       spacing[:top]     = (children_superbound.top  - bounds.top)
       spacing[:bottom]  = (bounds.bottom - children_superbound.bottom)
-      
-      # Root elements are aligned using 960px, auto. Do not modify anything around them.
-      spacing[:left]  = (children_superbound.left - bounds.left) if not self.root
-      spacing[:right] = (bounds.right - children_superbound.right ) if not self.root
+
+      spacing[:left]  = (children_superbound.left - bounds.left)
+      spacing[:right] = (bounds.right - children_superbound.right )
     end
     spacing
   end
