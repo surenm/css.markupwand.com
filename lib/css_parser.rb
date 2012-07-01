@@ -91,7 +91,7 @@ module CssParser
   def CssParser::get_text_chunk_style(layer, chunk_index = 0)
     layer_json = layer.layer_json
     text_style = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[chunk_index]
-    font_info  = text_style.extract_value(:value,:textStyle,:value)
+    font_info  = text_style.extract_value(:value, :textstyle, :value)
 
     css = {}
 
@@ -374,6 +374,14 @@ module CssParser
     end
 
     css
+  end
+
+  def CssParser::create_incremental_selector(object)
+    # Here, object could be grid_style_selector or layer
+    design = object.grid.design
+    
+    design.incremental_class_counter = design.incremental_class_counter + 1
+    "class#{design.incremental_class_counter}"
   end
 
 end
