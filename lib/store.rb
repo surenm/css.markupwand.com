@@ -222,7 +222,7 @@ module Store
     Log.info "Deleting #{file_path} from local store..."
     local_store = Store::get_local_store
     abs_file_path = File.join local_store, file_path
-    FileUtils.rm_r abs_file_path
+    FileUtils.rm_r abs_file_path if File.exists abs_file_path
   end
   
   def Store::delete_from_store(remote_file_path)
