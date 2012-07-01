@@ -227,7 +227,7 @@ class Layer
       css.update CssParser::parse_text self
     
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
-      css.update CssParser::parse_background_image(self)
+      css.update CssParser::parse_background_image(self, grid_style_selector.grid)
     elsif self.kind == LAYER_SOLIDFILL
       css.update CssParser::parse_shape self, grid_style_selector.grid
     end
