@@ -242,15 +242,18 @@ class GridStyleSelector
     spaces = ""
     [0..tabs].each { |tab| spaces = spaces + " " }
 
-    sass = <<sass
+    if self.css_rules.empty?
+      sass = "#{spaces} #{child_sass_trees}"
+    else 
+      sass = <<sass
 #{spaces} .#{@generated_selector} {
 #{spaces} #{spaces} #{CssParser::to_style_string(self.css_rules)}
 #{spaces} #{child_sass_trees}
 #{spaces} }
 sass
+    end
 
     sass
-
   end
   
 end
