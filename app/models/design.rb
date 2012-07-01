@@ -165,6 +165,7 @@ class Design
   end
   
   def reparse
+    self.incremental_class_counter = 0
     self.grids.delete_all
     self.layers.delete_all
     self.set_status Design::STATUS_PARSING

@@ -344,7 +344,7 @@ class Layer
 
   def to_html(args = {}, is_leaf, grid)
     Log.info "[HTML] Layer #{self.to_s}"
-    
+
     generated_tag = tag_name(is_leaf)
     tag = args.fetch :tag, generated_tag
 
