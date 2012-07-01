@@ -33,7 +33,8 @@ class Layer
   # CSS Rules
   field :css_rules, :type => Hash, :default => {}
   field :chunk_text_css_rule, :type => Array, :default => []
-  field :selector_names, :type => Array, :default => []
+  field :extra_selectors, :type => Array, :default => []
+  field :generated_selector, :type => String
 
   # TOD: Do not store layer_object, but have in memory
   
@@ -221,7 +222,7 @@ class Layer
   def set_css(grid_style_selector)
     css      = grid_style_selector.css_rules
     is_leaf  = grid_style_selector.grid.is_leaf?
-    self.selector_names = grid_style_selector.selector_names
+    self.extra_selectors = grid_style_selector.selector_names
 
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
@@ -242,7 +243,6 @@ class Layer
     end
     
     self.css_rules = css
-    Log.info "Layer CSS" + self.css_rules.to_s
     self.save!
   end
 
@@ -254,10 +254,16 @@ class Layer
     self.css_rules
   end
 
-  # FIXME CSSTREE
-  def class_name(css = {}, is_leaf, is_root, grid)
-    css = get_css(css, is_leaf, grid)
-    StylesHash.add_and_get_class CssParser::to_style_string(css)
+
+  # Selector names (includes default selector and extra selectors)
+  def selector_names
+    all_selectors = extra_selectors
+    if @generated_selector.nil?
+      @generated_selector = CssParser::create_incremental_selector(self)
+      all_selectors.push @generated_selector if not self.css_rules.empty?
+    end
+
+    all_selectors
   end
 
   def get_raw_font_name(position = 0)
