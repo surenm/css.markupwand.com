@@ -378,9 +378,14 @@ module CssParser
 
   def CssParser::create_incremental_selector(object)
     # Here, object could be grid_style_selector or layer
-    design = object.grid.design
-    
+    if object.is_a? Layer 
+      design = object.design
+    else
+      design = object.grid.design
+    end
+
     design.incremental_class_counter = design.incremental_class_counter + 1
+    design.save! # Horrible, but there is no other way to have a global reference
     "class#{design.incremental_class_counter}"
   end
 
