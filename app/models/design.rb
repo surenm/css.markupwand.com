@@ -325,6 +325,40 @@ HTML
     Log.info "Saving resultant HTML file #{html_file_name}"    
     Store.write_contents_to_store html_file_name, clean_html
   end
+
+  # Right now convert using the system command
+  # Figure out how to do this via function call, later.
+  def generate_css_from_sass(sass_content)
+    compile_dir = Rails.root.join("tmp", self.safe_name)
+    FileUtils.mkdir_p compile_dir
+    config_rb = <<config
+css_dir = "."
+sass_dir = "."
+output_style = :expanded 
+line_comments = false
+preferred_syntax = :sass    
+config
+    
+    sass_file = Rails.root.join("tmp", self.safe_name, 'style.scss')
+    File.open(sass_file, 'w+') { |f| f.write(sass_content) }
+
+    config_rb_file = Rails.root.join("tmp", self.safe_name, 'config.rb')
+    File.open(config_rb_file, 'w+') { |f| f.write(config_rb) }
+
+    Log.info "Compile sass to css"
+    system "cd #{compile_dir} && compass compile ."
+    css_content = ''
+
+    css_file     = Rails.root.join("tmp", self.safe_name, 'style.css')
+    css_contents = ''
+
+    if File.exists? css_file
+      css_contents = File.open(css_file, 'r').read
+    end
+
+    css_contents
+  end
+
   
   def write_css_files(css_content, base_folder)
     Log.info "Writing css (compass) file..."    
