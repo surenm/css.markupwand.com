@@ -10,9 +10,10 @@ class GeneratorJob
     # Fetch the processed files once again
     Store::fetch_from_store design.store_processed_key
 
-    # Generate markup once in publishable mode once
-    #design.generate_markup :enable_data_attributes => false
-    
+    # delete the generated and published folder
+    Store::delete_from_store design.store_generated_key
+    Store::delete_from_store design.store_published_key
+
     # Generate markup once in editable mode once
     design.generate_markup :enable_data_attributes => true
 
