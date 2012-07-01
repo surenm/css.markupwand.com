@@ -210,4 +210,26 @@ module Store
       return Store::fetch_object_from_local_store remote_file
     end    
   end
+  
+  def Store::delete_from_remote_store(file_path)
+    Log.info "Deleting #{f  ile_path} from remote store..."
+    bucket = Store::get_remote_store
+    files = bucket.objects.with_prefix remote_folder
+    files.each { |file_obj| file_obj.delete }  
+  end
+  
+  def Store::delete_from_local_store(file_path)
+    Log.info "Deleting #{file_path} from local store..."
+    local_store = Store::get_local_store
+    abs_file_path = File.join local_store, file_path
+    FileUtils.rm_r abs_file_path
+  end
+  
+  def Store::delete_from_store(remote_file_path)
+    if Constants::store_remote?
+      Store::delete_from_remote_store remote_file_path
+    else 
+      Store::delete_from_local_store remote_file_path
+    end
+  end
 end
