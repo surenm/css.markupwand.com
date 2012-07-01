@@ -288,7 +288,7 @@ HTML
     root_grid.style_selector.group_css_properties
 
     body_html   = root_grid.to_html
-    css_content = root_grid.style_selector.sass_tree 
+    scss_content = root_grid.style_selector.sass_tree 
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
@@ -299,11 +299,11 @@ HTML
 
     publish_html = Utils::strip_unwanted_attrs_from_html html
     self.write_html_files html, generated_folder
-    self.write_css_files css_content, generated_folder
+    self.write_css_files scss_content, generated_folder
     
     Store.copy_within_store_recursively generated_folder, published_folder
     self.write_html_files publish_html, published_folder
-    self.write_css_files css_content, published_folder
+    self.write_css_files scss_content, published_folder
 
     
     Profiler::stop
