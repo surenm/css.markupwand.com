@@ -150,16 +150,20 @@ class Design
     BoundingBox.depickle Rails.cache.read "#{self.id}-offset_box"
   end
   
-  def row_offset_box_buffer=(bounding_box)
-    if bounding_box.nil?
-      Rails.cache.delete "#{self.id}-row_offset_box"
-    else 
-      Rails.cache.write "#{self.id}-row_offset_box", BoundingBox.pickle(bounding_box)
-    end
+  def reset_offset_box
+    Rails.cache.delete "#{self.id}-offset_box"
   end
   
-  def row_offset_box_buffer
+  def row_offset_box=(bounding_box)
+    Rails.cache.write "#{self.id}-row_offset_box", BoundingBox.pickle(bounding_box)
+  end
+  
+  def row_offset_box
     BoundingBox.depickle Rails.cache.read "#{self.id}-row_offset_box"
+  end
+  
+  def reset_row_offset_box
+    Rails.cache.delete "#{self.id}-row_offset_box"
   end
   
   def reprocess
