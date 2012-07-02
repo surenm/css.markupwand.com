@@ -562,15 +562,11 @@ class Grid
     offset_box_spacing = {:top => 0, :left => 0}
     if not self.offset_box_buffer.nil? and not self.offset_box_buffer.empty?
       offset_box_object = BoundingBox.depickle self.offset_box_buffer
-      if self.bounds.nil?  #TODO: this is a fix for row grids. Needs to be elsewhere
-        offset_box_spacing[:top] = offset_box_object.height
-      else 
-        if self.bounds.top - offset_box_object.top > 0
-          offset_box_spacing[:top] = self.bounds.top - offset_box_object.top
-        end
-        if self.bounds.left - offset_box_object.left > 0
-          offset_box_spacing[:left] = self.bounds.left - offset_box_object.left
-        end
+      if self.bounds.top - offset_box_object.top > 0
+        offset_box_spacing[:top] = self.bounds.top - offset_box_object.top
+      end
+      if self.bounds.left - offset_box_object.left > 0
+        offset_box_spacing[:left] = self.bounds.left - offset_box_object.left
       end
     end
 
