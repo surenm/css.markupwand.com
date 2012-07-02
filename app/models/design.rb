@@ -135,17 +135,18 @@ class Design
   # own offset bounding box.
   #
   # This function is for serializing bounding box and storing it.
-  def offset_box_buffer=(bounding_box)
-    if bounding_box.nil?
-      Rails.cache.delete "#{self.id}-offset_box" 
-    else
-      Rails.cache.write "#{self.id}-offset_box", BoundingBox.pickle(bounding_box)
+  def add_offset_box(bounding_box)
+    if self.offset_box.nil?
+      new_offset_box = bounding_box
+    else 
+      new_offset_box = BoundingBox.get_super_bounds [bounding_box, self.offset_box]
     end
+    Rails.cache.write "#{self.id}-offset_box", BoundingBox.pickle(new_offset_box)
   end
   
   # Accessor for offset bounding box
   # De-serializes the offset box from mongo data.
-  def offset_box_buffer
+  def offset_box
     BoundingBox.depickle Rails.cache.read "#{self.id}-offset_box"
   end
   
