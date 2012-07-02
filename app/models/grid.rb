@@ -269,12 +269,12 @@ class Grid
   # Get an atomic group within a row grouping box and process them one group at a time
   def process_row_grouping_box(row_grouping_box, available_nodes)
     Log.info "Trying row grouping box: #{row_grouping_box}"
-    
+        
+    nodes_in_row_region = BoundingBox.get_nodes_in_region row_grouping_box.bounds, available_nodes.values
+
     row_grid       = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT
     row_grid.depth = self.depth + 1
-    row_grid.set [], self
-    
-    nodes_in_row_region = BoundingBox.get_nodes_in_region row_grouping_box.bounds, available_nodes.values
+    row_grid.set nodes_in_row_region, self
 
     if nodes_in_row_region.empty?
       self.design.row_offset_box_buffer = row_grouping_box.bounds
