@@ -188,10 +188,11 @@ class GridStyleSelector
       layer_has_css = true if not render_layer_obj.css_rules.empty?
     end
 
-    if @generated_selector.nil? and (not self.css_rules.empty? or layer_has_css)
-      @generated_selector = CssParser::create_incremental_selector(self)
-      all_selectors.push @generated_selector if not self.css_rules.empty?
+    if not self.generated_selector.nil?
+      all_selectors.push self.generated_selector if not self.css_rules.empty?
     end
+
+    all_selectors.uniq!
 
     all_selectors
   end
@@ -251,16 +252,26 @@ class GridStyleSelector
       spaces = spaces + " "
     end
 
-    if self.css_rules.empty?
+    if self.css_rules.empty? or self.generated_selector.nil?
       sass = "#{spaces} #{child_sass_trees}"
     else 
       sass = <<sass
-#{spaces} .#{@generated_selector} {
+#{spaces} .#{self.generated_selector} {
 #{spaces} #{spaces} #{CssParser::to_style_string(self.css_rules)}
 #{spaces} #{spaces} #{child_sass_trees}
 #{spaces} }
 sass
+    end
 
+    if not self.grid.render_layer.nil?
+      layer = (Layer.find self.grid.render_layer)
+      if (not layer.css_rules.empty?) and (not layer.generated_selector.nil?)
+        sass += <<sass
+#{spaces} .#{layer.generated_selector} {
+#{spaces} #{CssParser::to_style_string(layer.css_rules)}
+#{spaces} }
+sass
+      end
     end
 
     sass
