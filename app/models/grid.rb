@@ -308,7 +308,7 @@ class Grid
     
     if grouping_box_layers.empty?
       # This is set so that the next box can pick it up as its offset box.
-      self.design.offset_box_buffer = grouping_box.clone
+      self.design.add_offset_box grouping_box.clone
     elsif grouping_box_layers.size <= available_nodes.size
       grid = Grid.new :design => row_grid.design, :depth => row_grid.depth + 1
       
