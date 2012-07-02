@@ -273,21 +273,23 @@ class Grid
     row_grid       = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT
     row_grid.depth = self.depth + 1
     row_grid.set [], self
-            
-    available_nodes = extract_style_layers row_grid, available_nodes, row_grouping_box
     
-    row_grouping_box.children.each do |grouping_box|
-      available_nodes = process_grouping_box row_grid, grouping_box, available_nodes
-    end
+    nodes_in_row_region = BoundingBox.get_nodes_in_region row_grouping_box.bounds, available_nodes.values
+
+    if nodes_in_row_region.empty?
+      self.design.row_offset_box_buffer = row_grouping_box.bounds
+    else
+      available_nodes = extract_style_layers row_grid, available_nodes, row_grouping_box
     
-    row_grid.save!
-    
-    # Bug here. 
-    if row_grid.children.size == 1 and row_grid.style_layers.length == 0
-      subgrid        = row_grid.children.first
-      subgrid.parent = self
-      subgrid.depth  = self.depth + 1
-      row_grid.delete
+      row_grouping_box.children.each do |grouping_box|
+        available_nodes = process_grouping_box row_grid, grouping_box, available_nodes
+      end
+      
+      if not self.design.row_offset_box_buffer.nil?
+        row_grid.offset_box_buffer = BoundingBox.pickle self.design.row_offset_box_buffer
+        self.design.row_offset_box_buffer = nil
+      end
+      row_grid.save!
     end
     
     return available_nodes
@@ -552,20 +554,21 @@ class Grid
   # For css
   def offset_box_spacing
     offset_box_spacing = {:top => 0, :left => 0}
-    
     if not self.offset_box_buffer.nil? and not self.offset_box_buffer.empty?
       offset_box_object = BoundingBox.depickle self.offset_box_buffer
-      if self.bounds.top - offset_box_object.top > 0
-        offset_box_spacing[:top] = ( self.bounds.top - offset_box_object.top)
-      end
-      
-      if self.bounds.left - offset_box_object.left > 0
-        offset_box_spacing[:left] = (self.bounds.left - offset_box_object.left)
+      if self.bounds.nil?
+        offset_box_spacing[:top] = offset_box_object.height
+      else 
+        if self.bounds.top - offset_box_object.top > 0
+          offset_box_spacing[:top] = self.bounds.top - offset_box_object.top
+        end
+        if self.bounds.left - offset_box_object.left > 0
+          offset_box_spacing[:left] = self.bounds.left - offset_box_object.left
+        end
       end
     end
 
     if self.root == true
-      Log.info self.bounds
       offset_box_spacing[:top]    += self.bounds.top
       offset_box_spacing[:left]   += self.bounds.left
     end
