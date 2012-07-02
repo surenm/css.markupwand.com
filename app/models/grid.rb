@@ -277,7 +277,7 @@ class Grid
     row_grid.set nodes_in_row_region, self
 
     if nodes_in_row_region.empty?
-      self.design.row_offset_box_buffer = row_grouping_box.bounds
+      self.design.row_offset_box = row_grouping_box.bounds
     else
       available_nodes = extract_style_layers row_grid, available_nodes, row_grouping_box
     
@@ -286,14 +286,12 @@ class Grid
       end
       
       # reset previous row group's offset box buffer. Don't carry over to the new row
-      if not self.design.offset_box_buffer.nil?
-        self.design.offset_box_buffer = nil
-      end
+      self.design.reset_offset_box
       
       # if row grid offset is not nil, then set that as top margin for this row grid
-      if not self.design.row_offset_box_buffer.nil?
-        row_grid.offset_box_buffer = BoundingBox.pickle self.design.row_offset_box_buffer
-        self.design.row_offset_box_buffer = nil
+      if not self.design.row_offset_box.nil?
+        row_grid.offset_box_buffer = BoundingBox.pickle self.design.row_offset_box
+        self.design.reset_row_offset_box
       end
       row_grid.save!
     end
@@ -330,12 +328,12 @@ class Grid
       grid.set grouping_box_layers, row_grid
       grouping_box_layers.each { |node| available_nodes.delete node.uid }
             
-      if not self.design.offset_box_buffer.nil?
+      if not self.design.offset_box.nil?
         #Pickup spacing that the previous box allocated.
-        grid.offset_box_buffer = BoundingBox.pickle self.design.offset_box_buffer
+        grid.offset_box_buffer = BoundingBox.pickle self.design.offset_box
 
         #Reset the space
-        self.design.offset_box_buffer = nil
+        self.design.reset_offset_box
       end
 
       # This grid needs to be called with sub_grids, push to grouping procesing queue
