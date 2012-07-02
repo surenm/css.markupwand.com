@@ -36,6 +36,7 @@ class Grid
   field :is_positioned, :type => Boolean, :default => false
 
   field :offset_box_buffer, :type => String, :default => nil
+  field :offset_box_type, :type => Symbol, :default => :offset_box
   field :depth, :type => Integer, :default => -1
   
   # Grouping queue is the order in which grids are processed
@@ -291,6 +292,7 @@ class Grid
       # if row grid offset is not nil, then set that as top margin for this row grid
       if not self.design.row_offset_box.nil?
         row_grid.offset_box_buffer = BoundingBox.pickle self.design.row_offset_box
+        row_grid.offset_box_type   = :row_offset_box
         self.design.reset_row_offset_box
       end
       row_grid.save!
@@ -560,11 +562,20 @@ class Grid
     offset_box_spacing = {:top => 0, :left => 0}
     if not self.offset_box_buffer.nil? and not self.offset_box_buffer.empty?
       offset_box_object = BoundingBox.depickle self.offset_box_buffer
-      if self.bounds.top - offset_box_object.top > 0
-        offset_box_spacing[:top] = self.bounds.top - offset_box_object.top
-      end
-      if self.bounds.left - offset_box_object.left > 0
-        offset_box_spacing[:left] = self.bounds.left - offset_box_object.left
+
+      if self.offset_box_type == :offset_box
+        if self.bounds.top - offset_box_object.top > 0
+          offset_box_spacing[:top] = self.bounds.top - offset_box_object.top
+        end
+
+        if self.bounds.left - offset_box_object.left > 0 and 
+          offset_box_spacing[:left] = self.bounds.left - offset_box_object.left
+        end
+      elsif self.offset_box_type == :row_offset_box
+        # just the top margin for row offset box
+        if self.bounds.top - offset_box_object.top > 0
+          offset_box_spacing[:top] = self.bounds.top - offset_box_object.top
+        end
       end
     end
 
