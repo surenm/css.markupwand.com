@@ -10,6 +10,9 @@ TransformersWeb::Application.routes.draw do
   
   # Switch user
   match 'su' => 'main#su'
+  devise_scope :user do
+    get "logout", :to => "devise/sessions#destroy"
+  end
   
   # main controller views
   
