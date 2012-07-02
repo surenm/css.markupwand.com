@@ -285,6 +285,12 @@ class Grid
         available_nodes = process_grouping_box row_grid, grouping_box, available_nodes
       end
       
+      # reset previous row group's offset box buffer. Don't carry over to the new row
+      if not self.design.offset_box_buffer.nil?
+        self.design.offset_box_buffer = nil
+      end
+      
+      # if row grid offset is not nil, then set that as top margin for this row grid
       if not self.design.row_offset_box_buffer.nil?
         row_grid.offset_box_buffer = BoundingBox.pickle self.design.row_offset_box_buffer
         self.design.row_offset_box_buffer = nil
