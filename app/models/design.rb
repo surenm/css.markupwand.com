@@ -146,12 +146,19 @@ class Design
   # Accessor for offset bounding box
   # De-serializes the offset box from mongo data.
   def offset_box_buffer
-    offset_box_string = Rails.cache.read "#{self.id}-offset_box"
-    if offset_box_string.nil?
-      return nil
-    else
-      return BoundingBox.depickle offset_box_string
+    BoundingBox.depickle Rails.cache.read "#{self.id}-offset_box"
+  end
+  
+  def row_offset_box_buffer=(bounding_box)
+    if bounding_box.nil?
+      Rails.cache.delete "#{self.id}-row_offset_box"
+    else 
+      Rails.cache.write "#{self.id}-row_offset_box", BoundingBox.pickle(bounding_box)
     end
+  end
+  
+  def row_offset_box_buffer
+    BoundingBox.depickle Rails.cache.read "#{self.id}-row_offset_box"
   end
   
   def reprocess
