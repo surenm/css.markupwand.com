@@ -269,6 +269,8 @@ class Layer
       self.save!
     end
 
+    self.generated_selector = CssParser::create_incremental_selector(self) if not css.empty?
+
     self.css_rules = css
     self.save!
   end
@@ -277,7 +279,6 @@ class Layer
   # Not sure if this required
   def get_css(grid_style_selector)
     set_css(grid_style_selector) if self.css_rules.empty?
-    
     self.css_rules
   end
 
@@ -285,11 +286,11 @@ class Layer
   # Selector names (includes default selector and extra selectors)
   def selector_names
     all_selectors = extra_selectors
-    if @generated_selector.nil?
-      @generated_selector = CssParser::create_incremental_selector(self)
-      all_selectors.push @generated_selector if not self.css_rules.empty?
+    if not self.css_rules.empty?
+      all_selectors.push self.generated_selector if not self.css_rules.empty?
     end
 
+    all_selectors.uniq!
     all_selectors
   end
 
