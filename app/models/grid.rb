@@ -330,7 +330,7 @@ class Grid
       grid.set grouping_box_layers, row_grid
       grouping_box_layers.each { |node| available_nodes.delete node.uid }
             
-      if self.design.offset_box_buffer
+      if not self.design.offset_box_buffer.nil?
         #Pickup spacing that the previous box allocated.
         grid.offset_box_buffer = BoundingBox.pickle self.design.offset_box_buffer
 
@@ -562,7 +562,7 @@ class Grid
     offset_box_spacing = {:top => 0, :left => 0}
     if not self.offset_box_buffer.nil? and not self.offset_box_buffer.empty?
       offset_box_object = BoundingBox.depickle self.offset_box_buffer
-      if self.bounds.nil?
+      if self.bounds.nil?  #TODO: this is a fix for row grids. Needs to be elsewhere
         offset_box_spacing[:top] = offset_box_object.height
       else 
         if self.bounds.top - offset_box_object.top > 0
