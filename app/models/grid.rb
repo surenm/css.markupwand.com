@@ -542,7 +542,6 @@ class Grid
 
     if self.render_layer.nil?
 
-      attributes[:style] = CssParser::to_style_string(self.style_selector.css_rules) if not self.style_selector.css_rules.empty?
       attributes[:class] = self.style_selector.selector_names.join(" ") if not self.style_selector.selector_names.empty?
  
       sub_grid_args = Hash.new

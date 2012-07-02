@@ -438,7 +438,6 @@ class Layer
     attributes[:"data-grid-id"] = args.fetch :"data-grid-id", ""
     attributes[:"data-layer-id"] = self.id.to_s
     attributes[:"data-layer-name"] = self.name
-    attributes[:style] = CssParser::to_style_string(self.css_rules) if not self.css_rules.empty?
     attributes[:class] = self.selector_names.join(" ") if not self.selector_names.empty?
 
     if tag == :img
