@@ -161,7 +161,7 @@ class Grid
     if self.layers.size > 1
       get_subgrids
     elsif self.layers.size == 1
-      Log.info "Just one layer #{self.layers.first} is available. Adding to the grid"
+      Log.info "Just one layer #{self.layers.first} is available. Adding to the grid..."
       self.render_layer = self.layers.first.id.to_s
     end
     self.save!
@@ -201,9 +201,7 @@ class Grid
     if parent_box.kind_of? BoundingBox
       max_bounds = parent_box
     else
-      Log.info "This is a grouping box"
       max_bounds = parent_box.bounds
-      Log.info max_bounds
     end
     
     layers = {}
@@ -214,14 +212,13 @@ class Grid
 
     if grid_style_layers.size > 0
       Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." 
+      grid_style_layers.flatten!
+      grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
+      grid.style_layers.uniq!
+
+      Log.info "Deleting #{style_layers} from grid..."
+      grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
     end
-    grid_style_layers.flatten!
-    grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
-    grid.style_layers.uniq!
-
-    Log.info "Deleting #{style_layers} from grid" if style_layers.size > 0
-    grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
-
     return available_layers
   end
   
@@ -240,6 +237,7 @@ class Grid
     parent_box = BoundingBox.get_super_bounds layers_bounds
     
     # extract out style layers and parse with remaining        
+    Log.info "Extracting style layers from root grid #{self}..."
     available_nodes = extract_style_layers self, available_nodes, parent_box
     
     # Some root grouping of nodes to recursive add as children
@@ -247,9 +245,10 @@ class Grid
     self.orientation = root_grouping_box.orientation
     self.save!
 
-    Log.info "Trying Root grouping box: #{root_grouping_box}"    
+    Log.info "Trying Root grouping box: #{root_grouping_box}..."  
     root_grouping_box.children.each do |row_grouping_box|
       if row_grouping_box.kind_of? BoundingBox
+        Log.info "No row grouping required. Just handling as a grouping box..."
         available_nodes = process_grouping_box self, row_grouping_box, available_nodes
       else
         available_nodes = process_row_grouping_box row_grouping_box, available_nodes
@@ -257,11 +256,7 @@ class Grid
     end
     
     if available_nodes.length > 0
-      Log.warn "Ignored nodes (#{available_nodes}) = #{available_nodes} in region #{self.bounds}" 
-      Log.error self.bounds
-      available_nodes.each do |_, node|
-        Log.info "#{node.bounds}"
-      end
+      Log.warn "Ignored nodes (#{available_nodes}) in region #{self.bounds}" 
     end
     
     self.save!
@@ -269,17 +264,21 @@ class Grid
   
   # Get an atomic group within a row grouping box and process them one group at a time
   def process_row_grouping_box(row_grouping_box, available_nodes)
-    Log.info "Trying row grouping box: #{row_grouping_box}"
-        
+    Log.info "Trying row grouping box #{row_grouping_box}..."
+    
     nodes_in_row_region = BoundingBox.get_nodes_in_region row_grouping_box.bounds, available_nodes.values
 
     row_grid       = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT
     row_grid.depth = self.depth + 1
     row_grid.set nodes_in_row_region, self
+    
+    Log.info "Layers in this row group are #{nodes_in_row_region}."
 
     if nodes_in_row_region.empty?
+      Log.info "Marking this grouping box as margin..."
       self.design.row_offset_box = row_grouping_box.bounds
     else
+      Log.info "Extracting style layers out of the row grid #{row_grid}"
       available_nodes = extract_style_layers row_grid, available_nodes, row_grouping_box
     
       row_grouping_box.children.each do |grouping_box|
@@ -287,10 +286,12 @@ class Grid
       end
       
       # reset previous row group's offset box buffer. Don't carry over to the new row
+      Log.info "Resetting previous row's offset box buffers..."
       self.design.reset_offset_box
       
       # if row grid offset is not nil, then set that as top margin for this row grid
       if not self.design.row_offset_box.nil?
+        Log.info "Setting top margin for this row grid..."
         row_grid.offset_box_buffer = BoundingBox.pickle self.design.row_offset_box
         row_grid.offset_box_type   = :row_offset_box
         self.design.reset_row_offset_box
@@ -303,21 +304,25 @@ class Grid
   
   # Process a grouping box atomically
   def process_grouping_box(row_grid, grouping_box, available_nodes)
-    Log.info "Trying grouping box: #{grouping_box}"
-    
+    Log.info "Trying grouping box #{grouping_box}..."
     raw_grouping_box_layers = BoundingBox.get_nodes_in_region grouping_box, available_nodes.values, zindex
-    grouping_box_layers     = Grid.fix_error_intersections raw_grouping_box_layers
+    
+    Log.info "Fixing error intersections in layers #{raw_grouping_box_layers}"
+    grouping_box_layers = Grid.fix_error_intersections raw_grouping_box_layers
+
     
     if grouping_box_layers.empty?
-      # This is set so that the next box can pick it up as its offset box.
+      Log.info "Empty grouping box. Adding to margin for next grid to pick it up..."
       self.design.add_offset_box grouping_box.clone
     elsif grouping_box_layers.size <= available_nodes.size
       grid = Grid.new :design => row_grid.design, :depth => row_grid.depth + 1
       
       # Reduce the set of nodes, remove style layers.
+      Log.info "Extract style layers for this grid #{grid}..."
       available_nodes = extract_style_layers grid, available_nodes, grouping_box
         
       # If where are still intersecting layers, make them positioned layers and remove them
+      Log.info "Handle intersections gracefully..."
       if grouping_box_layers.size == available_nodes.size
         grouping_box_layers, positioned_layers = resolve_intersecting_nodes grid, grouping_box_layers
         positioned_layers.each do |layer|
@@ -465,7 +470,6 @@ class Grid
         positioned_grid.depth = self.depth + 1
         positioned_grid.set nodes_in_grid, self
         positioned_grid.is_positioned = true
-        Log.info "Setting is_positioned = true for #{positioned_grid} (#{positioned_grid.id.to_s})"
         positioned_grid.save!
         @@grouping_queue.push positioned_grid
       end
