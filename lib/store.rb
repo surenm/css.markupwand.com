@@ -212,7 +212,7 @@ module Store
   end
   
   def Store::delete_from_remote_store(file_path)
-    Log.info "Deleting #{f  ile_path} from remote store..."
+    Log.info "Deleting #{file_path} from remote store..."
     bucket = Store::get_remote_store
     files = bucket.objects.with_prefix remote_folder
     files.each { |file_obj| file_obj.delete }  
