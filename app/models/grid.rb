@@ -335,6 +335,7 @@ class Grid
       if not self.design.offset_box.nil?
         #Pickup spacing that the previous box allocated.
         grid.offset_box_buffer = BoundingBox.pickle self.design.offset_box
+        grid.save!
 
         #Reset the space
         self.design.reset_offset_box
