@@ -246,6 +246,12 @@ class BoundingBox
     horizontal_gutters.sort!
   end
   
+  def self.grouping_boxes_possible?(bounding_boxes)
+    v_gutters = BoundingBox.get_vertical_gutters bounding_boxes
+    h_gutters = BoundingBox.get_horizontal_gutters bounding_boxes
+    return (v_gutters.size > 2 or h_gutters.size > 2)
+  end
+  
   def self.get_gutter_widths(bounding_boxes, gutter_bounds, gutter_type)
     gutter_widths = []
     gutter_bounds.each do |bound|
