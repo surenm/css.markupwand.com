@@ -737,9 +737,10 @@ class Grid
     else
       sub_grid_args = attributes
       sub_grid_args[tag] = self.tag
+      sub_grid_args[:inner_html] = self.positioned_grids_html
+
       render_layer_obj = Layer.find self.render_layer
-      inner_html += render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
-      html = inner_html
+      html = render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
     end
     
     return html
