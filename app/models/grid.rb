@@ -448,6 +448,11 @@ class Grid
          flow_layers_in_region.push layer
        end
     end
+    
+    inner_grid = Grid.new :design => grid.design, :depth => grid.depth + 1
+    inner_grid.set flow_layers_in_region, grid
+    @@grouping_queue.push inner_grid
+    
     positioned_layers_in_region = layers_in_region - flow_layers_in_region
     
     positioned_layers_in_region.sort! { |layer1, layer2| layer2.zindex <=> layer1.zindex }
