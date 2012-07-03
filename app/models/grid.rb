@@ -329,10 +329,13 @@ class Grid
         positioned_layers.each do |postioned_layer| 
           available_nodes.delete postioned_layer.uid
           grouping_box_layers.delete postioned_layer
+          grid.positioned_layers.push postioned_layer.id
+          grid.save!
+        end
       end
 
       grid.set grouping_box_layers, row_grid
-      grouping_box_layers.each { |node| available_nodes.delete node.uid }
+      grouping_box_layers.each { |layer| available_nodes.delete layer.uid }
             
       if not self.design.offset_box.nil?
         #Pickup spacing that the previous box allocated.
