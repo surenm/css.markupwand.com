@@ -325,13 +325,7 @@ class Grid
       bounding_boxes = available_nodes.values.collect { |node| node.bounds }
       gutters_available = BoundingBox.grouping_boxes_possible? bounding_boxes
       if not gutters_available and available_nodes.size > 1
-        positioned_layers = Grid.extract_positioned_layers grid, grouping_box_layers
-        positioned_layers.each do |postioned_layer| 
-          available_nodes.delete postioned_layer.uid
-          grouping_box_layers.delete postioned_layer
-          grid.positioned_layers.push postioned_layer.id
-          grid.save!
-        end
+        Grid.extract_positioned_layers grid, grouping_box_layers
       end
 
       grid.set grouping_box_layers, row_grid
@@ -347,7 +341,9 @@ class Grid
       end
 
       # This grid needs to be called with sub_grids, push to grouping procesing queue
-      @@grouping_queue.push grid
+      if gutters_available
+        @@grouping_queue.push grid
+      end
     end
     return available_nodes
   end
@@ -461,12 +457,10 @@ class Grid
       layers_in_region = layers_in_region - layers_in_grid
       
       positioned_grid  = Grid.new :design => grid.design, :depth => grid.depth + 1, :is_positioned => true
-      positioned_grid.save!
       positioned_grid.set layers_in_grid, grid
       
       @@grouping_queue.push positioned_grid
     end
-    return positioned_layers_in_region
   end
   
   # Finds out zindex of style layer
