@@ -325,10 +325,10 @@ class Grid
       bounding_boxes = available_nodes.values.collect { |node| node.bounds }
       gutters_available = BoundingBox.grouping_boxes_possible? bounding_boxes
       if not gutters_available and available_nodes.size > 1
-        grouping_box_layers, positioned_layers = resolve_intersecting_nodes grid, grouping_box_layers
-        positioned_layers.each do |layer|
-          available_nodes.delete layer.uid
-        end
+        positioned_layers = Grid.extract_positioned_layers grid, grouping_box_layers
+        positioned_layers.each do |postioned_layer| 
+          available_nodes.delete postioned_layer.uid
+          grouping_box_layers.delete postioned_layer
       end
 
       grid.set grouping_box_layers, row_grid
@@ -369,6 +369,7 @@ class Grid
     end
     
     intersecting_node_pairs.uniq!
+    Log.info "Intersecting layers found - #{intersecting_node_pairs}"
     return intersecting_node_pairs
   end
   
@@ -431,10 +432,33 @@ class Grid
     [smaller_node, bigger_node]
   end
   
-    
-      
-      
+  def self.extract_positioned_layers(grid, layers_in_region)
+    intersecting_layer_pairs = Grid.get_intersecting_nodes layers_in_region
+    return layers_in_region if intersecting_layer_pairs.empty?
+
+    intersecting_layers = intersecting_layer_pairs.flatten.uniq
+    intersecting_layers.sort! { |layer1, layer2| layer2.bounds.area <=> layer1.bounds.area }
+
+    flow_layers_in_region = [intersecting_layers.first]
+    layers_in_region.each do |layer|
+       if not intersecting_layers.include? layer
+         flow_layers_in_region.push layer
+       end
     end
+    positioned_layers_in_region = layers_in_region - flow_layers_in_region
+    
+    positioned_layers_in_region.sort! { |layer1, layer2| layer2.zindex <=> layer1.zindex }
+    positioned_layers_in_region.each do |layer|
+      layers_in_grid   = BoundingBox.get_nodes_in_region layer.bounds, layers_in_region, layer.zindex
+      layers_in_region = layers_in_region - layers_in_grid
+      
+      positioned_grid  = Grid.new :design => grid.design, :depth => grid.depth + 1, :is_positioned => true
+      positioned_grid.save!
+      positioned_grid.set layers_in_grid, grid
+      
+      @@grouping_queue.push positioned_grid
+    end
+    return positioned_layers_in_region
   end
   
   # Finds out zindex of style layer
