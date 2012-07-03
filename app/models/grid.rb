@@ -307,10 +307,9 @@ class Grid
     Log.info "Trying grouping box #{grouping_box}..."
     raw_grouping_box_layers = BoundingBox.get_nodes_in_region grouping_box, available_nodes.values, zindex
     
-    Log.info "Fixing error intersections in layers #{raw_grouping_box_layers}"
+    Log.info "Checking for error intersections in layers #{raw_grouping_box_layers}"
     grouping_box_layers = Grid.fix_error_intersections raw_grouping_box_layers
 
-    
     if grouping_box_layers.empty?
       Log.info "Empty grouping box. Adding to margin for next grid to pick it up..."
       self.design.add_offset_box grouping_box.clone
@@ -329,9 +328,7 @@ class Grid
           available_nodes.delete layer.uid
         end
       end
-      
-      Log.info "Recursing inside, found #{grouping_box_layers.size} nodes in region"
-      
+
       grid.set grouping_box_layers, row_grid
       grouping_box_layers.each { |node| available_nodes.delete node.uid }
             
@@ -390,6 +387,7 @@ class Grid
       end
       
       if not corrected_layers.nil?
+        Log.info "Correcting #{intersecting_layers}..."
         layers_in_region.delete intersecting_layers.first
         layers_in_region.delete intersecting_layers.second
         
