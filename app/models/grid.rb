@@ -193,7 +193,7 @@ class Grid
   
   # Helper method: Extract style layers out of a grid.
   # Usually any layer that matches the grouping box's bounds is a style layer
-  def extract_style_layers(grid, available_layers, parent_box = nil)
+  def self.extract_style_layers(grid, available_layers, parent_box = nil)
     return available_layers if (parent_box.nil? or available_layers.size == 1)
     
     # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
@@ -238,7 +238,7 @@ class Grid
     
     # extract out style layers and parse with remaining        
     Log.info "Extracting style layers from root grid #{self}..."
-    available_nodes = extract_style_layers self, available_nodes, parent_box
+    available_nodes = Grid.extract_style_layers self, available_nodes, parent_box
     
     # Some root grouping of nodes to recursive add as children
     root_grouping_box = BoundingBox.get_grouping_boxes available_nodes.values
@@ -279,7 +279,7 @@ class Grid
       self.design.row_offset_box = row_grouping_box.bounds
     else
       Log.info "Extracting style layers out of the row grid #{row_grid}"
-      available_nodes = extract_style_layers row_grid, available_nodes, row_grouping_box
+      available_nodes = Grid.extract_style_layers row_grid, available_nodes, row_grouping_box
     
       row_grouping_box.children.each do |grouping_box|
         available_nodes = process_grouping_box row_grid, grouping_box, available_nodes
@@ -318,7 +318,7 @@ class Grid
       
       # Reduce the set of nodes, remove style layers.
       Log.info "Extract style layers for this grid #{grid}..."
-      available_nodes = extract_style_layers grid, available_nodes, grouping_box
+      available_nodes = Grid.extract_style_layers grid, available_nodes, grouping_box
         
       # If where are still intersecting layers, make them positioned layers and remove them
       Log.info "Handle intersections gracefully..."
