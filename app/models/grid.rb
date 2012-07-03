@@ -384,7 +384,7 @@ class Grid
       if intersect_percent_left > 90 or intersect_percent_right > 90
         is_error_intersection = true
         corrected_layers = Grid.crop_inner_intersect intersecting_layers
-      elsif intersect_percent_left < 10 and intersect_percent_right < 10
+      elsif intersect_percent_left < 5 and intersect_percent_right < 5
         is_error_intersection = true
         corrected_layers = Grid.crop_outer_intersect intersecting_layers
       end
