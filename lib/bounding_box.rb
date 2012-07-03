@@ -329,8 +329,9 @@ class BoundingBox
       end
     else
       # case 3
-      h_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, horizontal_bounds, :horizontal
-      v_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, vertical_bounds, :vertical
+      # TODO: figure out if normal first of left first orientation
+      #h_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, horizontal_bounds, :horizontal
+      #v_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, vertical_bounds, :vertical
   
       #case 3a
       root_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
