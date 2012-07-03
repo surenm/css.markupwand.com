@@ -1,5 +1,4 @@
 require 'find'
-require 'ruby-prof'
 
 class Design
   include Mongoid::Document
