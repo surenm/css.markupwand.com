@@ -136,6 +136,7 @@ class Design
   #
   # This function is for serializing bounding box and storing it.
   def add_offset_box(bounding_box)
+    new_offset_box = nil
     if self.offset_box.nil?
       new_offset_box = bounding_box
     else 
