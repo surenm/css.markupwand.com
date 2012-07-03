@@ -85,6 +85,11 @@ class DesignController < ApplicationController
     render :json => {:status => :success}
   end
   
+  def delete
+    @design.delete
+    redirect_to dashboard_path
+  end
+  
   def generated
     if params[:type] == "published"
       base_folder = @design.store_published_key
