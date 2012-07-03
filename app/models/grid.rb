@@ -322,7 +322,9 @@ class Grid
         
       # If where are still intersecting layers, make them positioned layers and remove them
       Log.info "Handle intersections gracefully..."
-      if grouping_box_layers.size == available_nodes.size
+      bounding_boxes = available_nodes.values.collect { |node| node.bounds }
+      gutters_available = BoundingBox.grouping_boxes_possible? bounding_boxes
+      if not gutters_available and available_nodes.size > 1
         grouping_box_layers, positioned_layers = resolve_intersecting_nodes grid, grouping_box_layers
         positioned_layers.each do |layer|
           available_nodes.delete layer.uid
