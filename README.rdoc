@@ -73,8 +73,7 @@ Convert PSD to HTML5/CSS3
 == Running in development:  store_local mode
     transformer-web
       start redis-server and mongod server
-      webserver: foreman start web
-      resque: foreman start slogger (or) foreman start worker
+      foreman start - starts a web server and slogger worker
 
     transformer
       keep photoshop open

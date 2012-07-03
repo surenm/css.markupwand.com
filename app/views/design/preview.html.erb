@@ -3,7 +3,6 @@
   <div class="navbar-inner">
     <div class="action row center">
       <div class="forward right">
-
         <% if current_user.admin? %>
           <a href="#" id="design-preview-button" class="btn btn-large btn-secondary forward">
             View Design
@@ -21,7 +20,6 @@
         <a href='<%= "/published/#{@design.safe_name}/index.html" %>' class="btn btn-large btn-primary forward">
           ➚ Popout 
         </a>
-
       </div>
       <div class="left back">
         <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/edit">  ← Edit some more! </a>
