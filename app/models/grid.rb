@@ -686,7 +686,7 @@ class Grid
   
   ## Markup generation methods
   
-  def positioned_grids_html(subgrid_args)
+  def positioned_grids_html(subgrid_args = {})
     html = ''
     self.children.each do |grid|
       if grid.is_positioned
