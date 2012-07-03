@@ -324,8 +324,9 @@ class Grid
       Log.info "Handle intersections gracefully..."
       bounding_boxes = available_nodes.values.collect { |node| node.bounds }
       gutters_available = BoundingBox.grouping_boxes_possible? bounding_boxes
+      is_positioning_done = false
       if not gutters_available and available_nodes.size > 1
-        Grid.extract_positioned_layers grid, grouping_box_layers
+        is_positioning_done = Grid.extract_positioned_layers grid, grouping_box_layers
       end
 
       grid.set grouping_box_layers, row_grid
@@ -341,7 +342,7 @@ class Grid
       end
 
       # This grid needs to be called with sub_grids, push to grouping procesing queue
-      if gutters_available
+      if not is_positioning_done
         @@grouping_queue.push grid
       end
     end
@@ -433,8 +434,7 @@ class Grid
   
   def self.extract_positioned_layers(grid, layers_in_region)
     intersecting_layer_pairs = Grid.get_intersecting_nodes layers_in_region
-    return layers_in_region if intersecting_layer_pairs.empty?
-
+    
     layers_bounds = layers_in_region.collect { |layer| layer.bounds }
     offset_bounds = BoundingBox.get_super_bounds layers_bounds
 
@@ -466,6 +466,8 @@ class Grid
       
       @@grouping_queue.push positioned_grid
     end
+    
+    return (not intersecting_layer_pairs.empty?)
   end
   
   # Finds out zindex of style layer
