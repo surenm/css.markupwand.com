@@ -435,6 +435,9 @@ class Grid
     intersecting_layer_pairs = Grid.get_intersecting_nodes layers_in_region
     return layers_in_region if intersecting_layer_pairs.empty?
 
+    layers_bounds = layers_in_region.collect { |layer| layer.bounds }
+    offset_bounds = BoundingBox.get_super_bounds layers_bounds
+
     intersecting_layers = intersecting_layer_pairs.flatten.uniq
     intersecting_layers.sort! { |layer1, layer2| layer2.bounds.area <=> layer1.bounds.area }
 
@@ -447,6 +450,8 @@ class Grid
     
     inner_grid = Grid.new :design => grid.design, :depth => grid.depth + 1
     inner_grid.set flow_layers_in_region, grid
+    inner_grid.offset_box_buffer = BoundingBox.pickle offset_bounds
+    inner_grid.save!
     @@grouping_queue.push inner_grid
     
     positioned_layers_in_region = layers_in_region - flow_layers_in_region
