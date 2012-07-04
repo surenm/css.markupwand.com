@@ -32,7 +32,7 @@ module Constants
   end
 
   def Constants::css_properties
-    if TransformersWeb::Application.config.css_properties.nil?
+    if not TransformersWeb::Application.config.respond_to? 'css_properties'
       properties_str = File.open(Rails.root.join('db', 'json', 'css', 'css_properties.json')).read
       TransformersWeb::Application.config.css_properties = JSON.parse properties_str, :symbolize_names => true
     end
