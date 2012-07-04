@@ -9,6 +9,8 @@ class GridStyleSelector
   field :extra_selectors, :type => Array, :default => []
   field :generated_selector, :type => String
 
+  field :offset_box_buffer, :type => String, :default => nil
+  field :offset_box_type, :type => Symbol, :default => :offset_box
   ## Spacing and padding related methods
    
   # Find out bounding box difference from it and its children.
@@ -92,9 +94,9 @@ class GridStyleSelector
       end
     end
 
-    if self.root == true
-      offset_box_spacing[:top]    += self.bounds.top
-      offset_box_spacing[:left]   += self.bounds.left
+    if self.grid.root == true
+      offset_box_spacing[:top]    += self.grid.bounds.top
+      offset_box_spacing[:left]   += self.grid.bounds.left
     end
     
     offset_box_spacing
