@@ -254,22 +254,24 @@ class GridStyleSelector
 
     if self.css_rules.empty? or self.generated_selector.nil?
       sass = "#{spaces} #{child_sass_trees}"
-    else 
+    else
+      css_rules_string = CssParser::to_style_string(self.css_rules).gsub(";",";\n#{spaces}")
       sass = <<sass
-#{spaces} .#{self.generated_selector} {
-#{spaces} #{spaces} #{CssParser::to_style_string(self.css_rules)}
-#{spaces} #{spaces} #{child_sass_trees}
-#{spaces} }
+#{spaces}.#{self.generated_selector} {
+#{spaces}  #{CssParser::to_style_string(self.css_rules)}
+#{spaces}  #{child_sass_trees}
+#{spaces}}
 sass
     end
 
     if not self.grid.render_layer.nil?
       layer = (Layer.find self.grid.render_layer)
       if (not layer.css_rules.empty?) and (not layer.generated_selector.nil?)
+        css_rules_string = CssParser::to_style_string(layer.css_rules).gsub(";",";\n#{spaces}")
         sass += <<sass
-#{spaces} .#{layer.generated_selector} {
-#{spaces} #{CssParser::to_style_string(layer.css_rules)}
-#{spaces} }
+#{spaces}.#{layer.generated_selector} {
+#{spaces}  #{css_rules_string}
+#{spaces}}
 sass
       end
     end
