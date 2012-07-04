@@ -212,7 +212,12 @@ class GridStyleSelector
     end
 
     # Trim out the non-repeating properties.
-    rule_repeat_hash.each { |rule, repeats| rule_repeat_hash.delete rule if repeats != grid.children.length }
+    rule_repeat_hash.each do |rule, repeats|
+      if repeats != grid.children.length and 
+        not (Constants::css_properties.has_key? rule.to_sym and Constants::css_properties[rule.to_sym][:inherit])
+        rule_repeat_hash.delete rule
+      end 
+    end
    
     # Remove all the repeating properties from the children 
     rule_repeat_hash.each do |rule, repeat_count|
