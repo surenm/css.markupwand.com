@@ -76,7 +76,7 @@ class GridStyleSelector
     if not self.grid.offset_box_buffer.nil? and not self.grid.offset_box_buffer.empty?
       offset_box_object = BoundingBox.depickle self.grid.offset_box_buffer
 
-      if self.grid.offset_box_buffer == :offset_box
+      if self.grid.offset_box_type == :offset_box
         if self.grid.bounds.top - offset_box_object.top > 0
           offset_box_spacing[:top] = self.grid.bounds.top - offset_box_object.top
         end
@@ -84,7 +84,7 @@ class GridStyleSelector
         if self.grid.bounds.left - offset_box_object.left > 0 and 
           offset_box_spacing[:left] = self.grid.bounds.left - offset_box_object.left
         end
-      elsif self.grid.offset_box_buffer == :row_offset_box
+      elsif self.grid.offset_box_type == :row_offset_box
         # just the top margin for row offset box
         if self.grid.bounds.top - offset_box_object.top > 0
           offset_box_spacing[:top] = self.grid.bounds.top - offset_box_object.top
