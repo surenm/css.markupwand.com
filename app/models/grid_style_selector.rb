@@ -70,24 +70,31 @@ class GridStyleSelector
     css
   end
   
-  # For css
+ # For css
   def offset_box_spacing
     offset_box_spacing = {:top => 0, :left => 0}
-    
-    if not self.grid.offset_box_buffer.nil? and not self.grid.offset_box_buffer.empty?
-      offset_box_object = BoundingBox.depickle self.grid.offset_box_buffer
-      if self.grid.bounds.top - offset_box_object.top > 0
-        offset_box_spacing[:top] = ( self.grid.bounds.top - offset_box_object.top)
-      end
-      
-      if self.grid.bounds.left - offset_box_object.left > 0
-        offset_box_spacing[:left] = (self.grid.bounds.left - offset_box_object.left)
+    if not self.offset_box_buffer.nil? and not self.offset_box_buffer.empty?
+      offset_box_object = BoundingBox.depickle self.offset_box_buffer
+
+      if self.offset_box_type == :offset_box
+        if self.bounds.top - offset_box_object.top > 0
+          offset_box_spacing[:top] = self.bounds.top - offset_box_object.top
+        end
+
+        if self.bounds.left - offset_box_object.left > 0 and 
+          offset_box_spacing[:left] = self.bounds.left - offset_box_object.left
+        end
+      elsif self.offset_box_type == :row_offset_box
+        # just the top margin for row offset box
+        if self.bounds.top - offset_box_object.top > 0
+          offset_box_spacing[:top] = self.bounds.top - offset_box_object.top
+        end
       end
     end
 
-    if self.grid.root == true
-      offset_box_spacing[:top]    += self.grid.bounds.top
-      offset_box_spacing[:left]   += self.grid.bounds.left
+    if self.root == true
+      offset_box_spacing[:top]    += self.bounds.top
+      offset_box_spacing[:left]   += self.bounds.left
     end
     
     offset_box_spacing
