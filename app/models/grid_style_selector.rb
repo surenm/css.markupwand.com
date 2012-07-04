@@ -9,8 +9,6 @@ class GridStyleSelector
   field :extra_selectors, :type => Array, :default => []
   field :generated_selector, :type => String
 
-  field :offset_box_buffer, :type => String, :default => nil
-  field :offset_box_type, :type => Symbol, :default => :offset_box
   ## Spacing and padding related methods
    
   # Find out bounding box difference from it and its children.
@@ -75,21 +73,21 @@ class GridStyleSelector
  # For css
   def offset_box_spacing
     offset_box_spacing = {:top => 0, :left => 0}
-    if not self.offset_box_buffer.nil? and not self.offset_box_buffer.empty?
-      offset_box_object = BoundingBox.depickle self.offset_box_buffer
+    if not self.grid.offset_box_buffer.nil? and not self.grid.offset_box_buffer.empty?
+      offset_box_object = BoundingBox.depickle self.grid.offset_box_buffer
 
-      if self.offset_box_type == :offset_box
-        if self.bounds.top - offset_box_object.top > 0
-          offset_box_spacing[:top] = self.bounds.top - offset_box_object.top
+      if self.grid.offset_box_buffer == :offset_box
+        if self.grid.bounds.top - offset_box_object.top > 0
+          offset_box_spacing[:top] = self.grid.bounds.top - offset_box_object.top
         end
 
-        if self.bounds.left - offset_box_object.left > 0 and 
-          offset_box_spacing[:left] = self.bounds.left - offset_box_object.left
+        if self.grid.bounds.left - offset_box_object.left > 0 and 
+          offset_box_spacing[:left] = self.grid.bounds.left - offset_box_object.left
         end
-      elsif self.offset_box_type == :row_offset_box
+      elsif self.grid.offset_box_buffer == :row_offset_box
         # just the top margin for row offset box
-        if self.bounds.top - offset_box_object.top > 0
-          offset_box_spacing[:top] = self.bounds.top - offset_box_object.top
+        if self.grid.bounds.top - offset_box_object.top > 0
+          offset_box_spacing[:top] = self.grid.bounds.top - offset_box_object.top
         end
       end
     end

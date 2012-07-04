@@ -29,6 +29,8 @@ class Grid
   
   field :is_positioned, :type => Boolean, :default => false
 
+  field :offset_box_buffer, :type => String, :default => nil
+  field :offset_box_type, :type => Symbol, :default => :offset_box
   field :depth, :type => Integer, :default => -1
   
   # Grouping queue is the order in which grids are processed
