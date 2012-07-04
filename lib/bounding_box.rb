@@ -201,7 +201,13 @@ class BoundingBox
   def self.get_nodes_in_region(region, objects, zindex = nil)
 
     Log.info "Checking if objects #{objects} are in region #{region}"
-    objects_in_region = objects.select { |item| region.encloses? item.bounds and item.zindex >= zindex.to_i }
+    objects_in_region = objects.select do |item|
+      if item.kind_of? Layer
+        region.encloses? item.bounds and item.zindex >= zindex.to_i 
+      else 
+        region.encloses? item
+      end
+    end
 
     Log.info "#{objects_in_region} are within #{region}"
 
@@ -244,6 +250,12 @@ class BoundingBox
       horizontal_gutters.push horizontal_line if is_gutter
     end
     horizontal_gutters.sort!
+  end
+  
+  def self.grouping_boxes_possible?(bounding_boxes)
+    v_gutters = BoundingBox.get_vertical_gutters bounding_boxes
+    h_gutters = BoundingBox.get_horizontal_gutters bounding_boxes
+    return (v_gutters.size > 2 or h_gutters.size > 2)
   end
   
   def self.get_gutter_widths(bounding_boxes, gutter_bounds, gutter_type)
@@ -323,20 +335,36 @@ class BoundingBox
       end
     else
       # case 3
-      h_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, horizontal_bounds, :horizontal
-      v_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, vertical_bounds, :vertical
+      # TODO: figure out if normal first of left first orientation
+      #h_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, horizontal_bounds, :horizontal
+      #v_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, vertical_bounds, :vertical
   
       #case 3a
       root_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
       horizontal_bounds.each do |horizontal_bound|
         row_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
-        vertical_bounds.each do |vertical_bound|
+        row_bound = BoundingBox.new horizontal_bound.first, 
+          vertical_gutters.first, horizontal_bound.second, vertical_gutters.last
+
+        row_group_nodes = BoundingBox.get_nodes_in_region row_bound, bounding_boxes, zindex = nil
+        row_vertical_gutters = BoundingBox.get_vertical_gutters row_group_nodes
+        all_vertical_gutters = row_vertical_gutters + vertical_gutters
+        all_vertical_gutters.uniq!
+        all_vertical_gutters.sort!
+
+        row_trailing_vertical_gutters = all_vertical_gutters
+        row_leading_vertical_gutters  = all_vertical_gutters.rotate
+          
+        row_vertical_bounds = row_trailing_vertical_gutters.zip row_leading_vertical_gutters
+        row_vertical_bounds.pop
+        
+        row_vertical_bounds.each do |vertical_bound|
           row_group.push BoundingBox.create_from_bounds horizontal_bound, vertical_bound
         end
         root_group.push row_group
       end
-
     end
+
     return root_group
   end
   

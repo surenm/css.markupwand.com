@@ -430,7 +430,7 @@ class Layer
 
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.kind == LAYER_TEXT
-      inner_html = text
+      inner_html += text
     end
 
     attributes         = Hash.new

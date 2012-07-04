@@ -38,6 +38,7 @@ TransformersWeb::Application.routes.draw do
   match 'design/:id/preview'  => 'design#preview'
   match 'design/:id/download' => 'design#download'
   match 'design/:id/update'   => 'design#update'
+  match 'design/:id/delete'   => 'design#delete'
   
   # admin actions to regenerate stuff
   match 'design/:id/reprocess'  => 'design#reprocess'
