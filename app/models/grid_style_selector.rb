@@ -204,7 +204,7 @@ class GridStyleSelector
     all_selectors
   end
 
-  # Bubble up repeating css properties. No approximation now.
+  # Bubble up repeating css properties.
   def bubble_up_repeating_styles
     rule_repeat_hash = {}
 
@@ -222,7 +222,7 @@ class GridStyleSelector
     # Trim out the non-repeating properties.
     rule_repeat_hash.each do |rule, repeats|
       rule_key = (JSON.parse rule).keys.first
-      if repeats == grid.children.length and
+      if repeats > (grid.children.length * 0.6) and
         (Constants::css_properties.has_key? rule_key.to_sym and Constants::css_properties[rule_key.to_sym][:inherit])
         bubbleable_rules.push rule
       end 
