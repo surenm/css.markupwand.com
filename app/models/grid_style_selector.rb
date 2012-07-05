@@ -147,7 +147,7 @@ class GridStyleSelector
 
     self.grid.style_layers.each do |layer_id|
       layer = Layer.find layer_id
-      css.update layer.get_css(self)
+      css.update layer.get_style_rules(self)
     end
     
     css.update width_css(css)
@@ -181,7 +181,7 @@ class GridStyleSelector
       self.grid.children.each { |child| child.style_selector.generate_css_tree }
     else
       render_layer_obj = Layer.find(self.grid.render_layer)
-      render_layer_obj.set_css(self)
+      render_layer_obj.set_style_rules(self)
     end
   end
 
