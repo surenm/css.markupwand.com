@@ -298,7 +298,8 @@ class Layer
     font_name = nil
 
     if layer_json[:layerKind] == Layer::LAYER_TEXT
-      font_name = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[0].extract_value(:value, :textStyle, :value, :fontName, :value)
+      text_style_range = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[0]
+      font_name = text_style_range.extract_value(:value, :textStyle, :value, :fontName, :value) unless text_style_range.nil?
     end
 
     font_name
