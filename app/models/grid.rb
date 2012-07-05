@@ -108,6 +108,8 @@ class Grid
       :name        => self.name,
       :tag         => self.tag,
       :orientation => self.orientation
+      :orientation => self.orientation,
+      :zindex      => self.zindex
     }
   end
   
@@ -476,21 +478,14 @@ class Grid
     return (not intersecting_layer_pairs.empty?)
   end
   
-  # Finds out zindex of style layer
+  # Finds out zindex of this grid
   def zindex
-    zindex = nil
-    if self.style_layers.length > 0
-      self.style_layers.each do |layer_id|
-        layer = Layer.find layer_id
-        if not layer.unmaskable_layer?
-          zindex = [zindex.to_i, layer.zindex].max
-        end
-      end
-    end
+    zindex = 0
+    layers_z_indices = self.layers.collect { |layer| layer.zindex }
+    grid_zindex = layers_z_indices.min
     
-    zindex
+    return grid_zindex
   end
-
   def tag
     if not self.override_tag.nil?
       self.override_tag.to_sym
