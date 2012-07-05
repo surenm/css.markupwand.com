@@ -633,12 +633,20 @@ class Grid
       css.update width_css(css)
       css.delete :width if is_single_line_text
       
-      # Positioning
-      positioned_grid_count = (self.children.select { |grid| grid.is_positioned }).length
-      css[:position] = 'relative' if positioned_grid_count > 0
-      
-      css.update CssParser::position_absolutely(self) if is_positioned
+      # if relatively positioned
+      relatively_positioned = false
+      if not self.parent.nil?
+        positioned_siblings = self.parent.children.select { |grid| grid.is_positioned } 
+        relatively_positioned = true
+      end
 
+      if self.is_positioned
+        css.update CssParser::position_absolutely self
+      elsif relatively_positioned
+        css[:position] = 'relative'
+        css[:"z-index"] = self.zindex
+      end
+          
       # Gives out the values for spacing the box model.
       # Margin and padding
       css.update spacing_css
