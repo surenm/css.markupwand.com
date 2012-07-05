@@ -107,7 +107,6 @@ class Grid
       :id          => self.id,
       :name        => self.name,
       :tag         => self.tag,
-      :orientation => self.orientation
       :orientation => self.orientation,
       :zindex      => self.zindex
     }
