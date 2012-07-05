@@ -256,25 +256,25 @@ class GridStyleSelector
     bubble_up_repeating_styles
   end
 
-  def sass_tree(tabs = 1)
+  def sass_tree(tabs = 0)
     child_sass_trees = ''
     self.grid.children.each do |child|
       child_sass_trees += child.style_selector.sass_tree(tabs + 1)
     end
 
     spaces = ""
-    for tab in [0..tabs]
+    for tab in 0..tabs
       spaces = spaces + " "
     end
 
     if self.css_rules.empty? or self.generated_selector.nil?
-      sass = "#{spaces} #{child_sass_trees}"
+      sass = "#{spaces}#{child_sass_trees}"
     else
       css_rules_string = CssParser::to_style_string(self.css_rules).gsub(";",";\n#{spaces}")
       sass = <<sass
 #{spaces}.#{self.generated_selector} {
-#{spaces}  #{CssParser::to_style_string(self.css_rules)}
-#{spaces}  #{child_sass_trees}
+#{spaces} #{css_rules_string}
+#{spaces} #{child_sass_trees}
 #{spaces}}
 sass
     end
@@ -285,7 +285,7 @@ sass
         css_rules_string = CssParser::to_style_string(layer.css_rules).gsub(";",";\n#{spaces}")
         sass += <<sass
 #{spaces}.#{layer.generated_selector} {
-#{spaces}  #{css_rules_string}
+#{spaces} #{css_rules_string}
 #{spaces}}
 sass
       end
