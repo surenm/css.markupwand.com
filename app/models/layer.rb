@@ -250,7 +250,7 @@ class Layer
     crop_objects_for_cropped_bounds
     css      = grid_style_selector.css_rules
     is_leaf  = grid_style_selector.grid.is_leaf?
-    self.extra_selectors = grid_style_selector.selector_names
+    self.extra_selectors = grid_style_selector.extra_selectors
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
     
