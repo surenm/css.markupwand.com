@@ -101,7 +101,8 @@ class Grid
       :name        => self.name,
       :tag         => self.tag,
       :width_class => self.width_class,
-      :orientation => self.orientation
+      :orientation => self.orientation,
+      :zindex      => self.zindex
     }
   end
   
