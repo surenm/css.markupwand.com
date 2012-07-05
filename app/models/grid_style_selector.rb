@@ -102,6 +102,7 @@ class GridStyleSelector
 
   def is_single_line_text
     if not self.grid.render_layer.nil? and
+      (Layer.find self.grid.render_layer).kind == Layer::LAYER_TEXT and
       not (Layer.find self.grid.render_layer).has_newline?
         return true
     else
@@ -151,7 +152,6 @@ class GridStyleSelector
     end
     
     css.update width_css(css)
-    css.delete :width if is_single_line_text
     
     # Positioning
     positioned_grid_count = (self.grid.children.select { |grid| grid.is_positioned }).length
