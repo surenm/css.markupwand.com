@@ -106,7 +106,7 @@ class Layer
   def has_multifont?
     multifont = false
     if self.kind == Layer::LAYER_TEXT
-      multifont = (layer_json.extract_value(:textKey, :value, :textStyleRange, :value).length > 1)
+      multifont = (multifont_positions.inject(:+) > 0)
     end
 
     multifont
