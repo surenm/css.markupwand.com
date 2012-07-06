@@ -13,10 +13,16 @@
   <div class="container">
     <center>
       <img src="assets/logo.png" /><br>
+    <% if @email.nil? %>
+        <h1 style="color: #0E7E24">You seem to be new here!<br/> <a href="/" style="text-decoration: underline;">Leave you email</a> to be notified when we launch.</h1>
+    <% else %>
       <h1 style="color: #0E7E24">We'll send you an invite soon!</h1>
+    <% end %>
     </center>
     <center class="content-area">
-      <h3 style="color: white;">Meanwhile, let your friends know what you just found</h3><br/>
+      <h3 style="color: white;">
+        Meanwhile, let your friends know what you just found
+      </h3><br/>
       <div>
         <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.markupwand.com" data-hashtags="Markupwand">Tweet</a>
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
