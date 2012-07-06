@@ -233,12 +233,20 @@ class GridStyleSelector
     bubbleable_rules.each do |rule|
       rule_object = (JSON.parse rule, :symbolize_names => true)
       rule_key    = rule_object.keys.first
+      rule_value  = rule_object[rule_key]
+
       grid.children.each do |child|
-        child.style_selector.css_rules.delete rule_key
+        # Delete from the grid css.
+        if child.style_selector.css_rules[rule_key] == rule_value
+          child.style_selector.css_rules.delete rule_key
+        end
+
         if not child.render_layer.nil?
           layer_obj = Layer.find child.render_layer
-          layer_obj.css_rules.delete rule_key.to_s
-          layer_obj.save!
+          if layer_obj.css_rules[rule_key.to_s] == rule_value
+            layer_obj.css_rules.delete rule_key.to_s
+            layer_obj.save!
+          end
         end
       end
       Log.info "Deleted #{rule_key} from #{grid.to_short_s}"
