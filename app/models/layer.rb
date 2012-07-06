@@ -264,7 +264,6 @@ class Layer
       positions = multifont_positions
       positions.each_with_index do |position, index|
         self.chunk_text_css_rule[index] = CssParser::get_text_chunk_style(self, index)
-        Log.info "Chunk text style = #{self.chunk_text_css_rule[index]}"
       end
       self.save!
     end
@@ -281,6 +280,15 @@ class Layer
     self.css_rules
   end
 
+  def is_empty_text_layer?
+    if self.kind == Layer::LAYER_TEXT
+      text_content = layer_json.extract_value(:textKey, :value, :textKey, :value)
+      if text_content.length == 0
+        return true
+      end
+    end
+    return false
+  end
 
   # Selector names (includes default selector and extra selectors)
   def selector_names
@@ -296,9 +304,8 @@ class Layer
   def get_raw_font_name(position = 0)
     font_name = nil
 
-    if layer_json[:layerKind] == Layer::LAYER_TEXT
-      text_style_range = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[0]
-      font_name = text_style_range.extract_value(:value, :textStyle, :value, :fontName, :value) unless text_style_range.nil?
+    if self.kind == Layer::LAYER_TEXT and not is_empty_text_layer?
+      font_name = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[0].extract_value(:value, :textStyle, :value, :fontName, :value)
     end
 
     font_name
