@@ -59,6 +59,7 @@ class DesignController < ApplicationController
   end
   
   def show
+    @completed = (@design.status == Design::STATUS_COMPLETED)
     respond_to do |format|
       format.html
       format.json { render :json => @design.attribute_data }

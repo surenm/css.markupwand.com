@@ -1,6 +1,14 @@
+update_process_status = ->
+  $.doTimeout 10000, () ->
+    $.get("/design/#{design_id}.json", (data)->
+      if data.status == 'completed'
+        $('.status-box').addClass('hide')
+        $('.completed-box').removeClass('hide')
+      else
+        $('#design-status').html(data.status)
+        update_process_status()
+      )
+
 $(document).ready ->
   if not design? or design.status != "completed"
-    $.doTimeout 10000, () ->
-      # TODO: make this just reload this dom instead of reloading the page
-      window.location.reload()
-    
+    update_process_status()
