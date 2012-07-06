@@ -246,11 +246,11 @@ class Layer
     chosen_tag
   end
 
-  def set_css(grid_style_selector)
+  def set_style_rules(grid_style_selector)
     crop_objects_for_cropped_bounds
     css      = grid_style_selector.css_rules
     is_leaf  = grid_style_selector.grid.is_leaf?
-    self.extra_selectors = grid_style_selector.selector_names
+    self.extra_selectors = grid_style_selector.extra_selectors
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
     
@@ -275,10 +275,9 @@ class Layer
     self.save!
   end
 
+  def get_style_rules(grid_style_selector)
+    set_style_rules(grid_style_selector) if self.css_rules.empty?
 
-  # Not sure if this required
-  def get_css(grid_style_selector)
-    set_css(grid_style_selector) if self.css_rules.empty?
     self.css_rules
   end
 

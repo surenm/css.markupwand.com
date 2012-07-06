@@ -102,6 +102,7 @@ class GridStyleSelector
 
   def is_single_line_text
     if not self.grid.render_layer.nil? and
+      (Layer.find self.grid.render_layer).kind == Layer::LAYER_TEXT and
       not (Layer.find self.grid.render_layer).has_newline?
         return true
     else
@@ -147,11 +148,10 @@ class GridStyleSelector
 
     self.grid.style_layers.each do |layer_id|
       layer = Layer.find layer_id
-      css.update layer.get_css(self)
+      css.update layer.get_style_rules(self)
     end
     
     css.update width_css(css)
-    css.delete :width if is_single_line_text
     
     # Positioning
     positioned_grid_count = (self.grid.children.select { |grid| grid.is_positioned }).length
@@ -181,7 +181,7 @@ class GridStyleSelector
       self.grid.children.each { |child| child.style_selector.generate_css_tree }
     else
       render_layer_obj = Layer.find(self.grid.render_layer)
-      render_layer_obj.set_css(self)
+      render_layer_obj.set_style_rules(self)
     end
   end
 
@@ -204,7 +204,7 @@ class GridStyleSelector
     all_selectors
   end
 
-  # Bubble up repeating css properties. No approximation now.
+  # Bubble up repeating css properties.
   def bubble_up_repeating_styles
     rule_repeat_hash = {}
 
@@ -218,24 +218,35 @@ class GridStyleSelector
       end
     end
 
+    bubbleable_rules = []
     # Trim out the non-repeating properties.
     rule_repeat_hash.each do |rule, repeats|
-      if repeats != grid.children.length and 
-        not (Constants::css_properties.has_key? rule.to_sym and Constants::css_properties[rule.to_sym][:inherit])
-        rule_repeat_hash.delete rule
+      rule_key = (JSON.parse rule).keys.first
+      if repeats > (grid.children.length * 0.6) and
+        (Constants::css_properties.has_key? rule_key.to_sym and Constants::css_properties[rule_key.to_sym][:inherit])
+        bubbleable_rules.push rule
       end 
     end
    
-    # Remove all the repeating properties from the children 
-    rule_repeat_hash.each do |rule, repeat_count|
+    # Remove all the repeating properties from the children
+    # JSON parse happening everytime. Optimize later
+    bubbleable_rules.each do |rule|
       rule_object = (JSON.parse rule, :symbolize_names => true)
       rule_key    = rule_object.keys.first
+      rule_value  = rule_object[rule_key]
+
       grid.children.each do |child|
-        child.style_selector.css_rules.delete rule_key
+        # Delete from the grid css.
+        if child.style_selector.css_rules[rule_key] == rule_value
+          child.style_selector.css_rules.delete rule_key
+        end
+
         if not child.render_layer.nil?
           layer_obj = Layer.find child.render_layer
-          layer_obj.css_rules.delete rule_key.to_s
-          layer_obj.save!
+          if layer_obj.css_rules[rule_key.to_s] == rule_value
+            layer_obj.css_rules.delete rule_key.to_s
+            layer_obj.save!
+          end
         end
       end
       Log.info "Deleted #{rule_key} from #{grid.to_short_s}"
@@ -253,25 +264,25 @@ class GridStyleSelector
     bubble_up_repeating_styles
   end
 
-  def sass_tree(tabs = 1)
+  def sass_tree(tabs = 0)
     child_sass_trees = ''
     self.grid.children.each do |child|
       child_sass_trees += child.style_selector.sass_tree(tabs + 1)
     end
 
     spaces = ""
-    for tab in [0..tabs]
+    for tab in 0..tabs
       spaces = spaces + " "
     end
 
     if self.css_rules.empty? or self.generated_selector.nil?
-      sass = "#{spaces} #{child_sass_trees}"
+      sass = "#{spaces}#{child_sass_trees}"
     else
       css_rules_string = CssParser::to_style_string(self.css_rules).gsub(";",";\n#{spaces}")
       sass = <<sass
 #{spaces}.#{self.generated_selector} {
-#{spaces}  #{CssParser::to_style_string(self.css_rules)}
-#{spaces}  #{child_sass_trees}
+#{spaces} #{css_rules_string}
+#{spaces} #{child_sass_trees}
 #{spaces}}
 sass
     end
@@ -282,7 +293,7 @@ sass
         css_rules_string = CssParser::to_style_string(layer.css_rules).gsub(";",";\n#{spaces}")
         sass += <<sass
 #{spaces}.#{layer.generated_selector} {
-#{spaces}  #{css_rules_string}
+#{spaces} #{css_rules_string}
 #{spaces}}
 sass
       end
