@@ -37,9 +37,3 @@
     <img src="/processed/<%=@design.safe_name%>/<%=@design.safe_name_prefix.gsub(/_psd$/,'')%>.psd.png"/>
   </div>
 <% end %>
-
-<%= content_for :javascript do %>
-<script type="text/javascript">
-  var designs = <%= raw @design_data.to_json %>;
-</script>
-<% end %>

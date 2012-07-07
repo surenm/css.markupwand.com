@@ -70,7 +70,6 @@ class DesignController < ApplicationController
   end
   
   def preview
-    @design_data = @design.attribute_data
   end
   
   def download
