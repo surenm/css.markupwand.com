@@ -296,9 +296,13 @@ HTML
     root_grid = self.get_root_grid
 
     # Once grids are generated, run through the tree and find out style sheets.
+    Log.info "Generating CSS Tree"
     root_grid.style_selector.generate_css_tree
+
+    Log.info "Bubbling up css properties"
     root_grid.style_selector.group_css_properties
 
+    Log.info "Writing out body html"
     body_html   = root_grid.to_html
     scss_content = root_grid.style_selector.sass_tree 
 
