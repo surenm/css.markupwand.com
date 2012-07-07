@@ -217,6 +217,11 @@ class Grid
       layer.bounds == max_bounds and layer.styleable_layer?
     end
 
+    grid_style_layers.each do |layer|
+      layer.is_style_layer = true
+      layer.save!
+    end
+
     if grid_style_layers.size > 0
       Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." 
       grid_style_layers.flatten!

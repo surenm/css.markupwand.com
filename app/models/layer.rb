@@ -14,10 +14,10 @@ class Layer
   LAYER_HUESATURATION = "LayerKind.HUESATURATION"
 
   BOUND_MODES = {
-      :NORMAL_BOUNDS => :bounds,
-      :SMART_BOUNDS => :smart_bounds,
-      :EDGE_BOUNDS => :edge_detected_bounds,
-      :SNAPPED_BOUNDS => :snapped_bounds
+    :NORMAL_BOUNDS  => :bounds,
+    :SMART_BOUNDS   => :smart_bounds,
+    :EDGE_BOUNDS    => :edge_detected_bounds,
+    :SNAPPED_BOUNDS => :snapped_bounds
   }
 
   has_and_belongs_to_many :grids, :class_name => 'Grid'
@@ -29,6 +29,7 @@ class Layer
   field :raw, :type => String
   field :layer_type, :type => String, :default => nil
   field :is_overlay, :type => Boolean
+  field :is_style_layer, :type => Boolean, :default => false
 
   field :override_tag, :type => String, :default => nil
   field :layer_bounds, :type => String, :default => nil
