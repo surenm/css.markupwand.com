@@ -339,18 +339,6 @@ module CssParser
     return css_string
   end
 
-  def CssParser::cleanup_positioning_css(css)
-    positioning_symbols = [:'min-height', :width, :height, :'padding-top',
-      :'padding-left', :'padding-right', :'padding-bottom', :'margin-top',
-      :'margin-left', :'margin-right', :'margin-bottom']
-
-    positioning_symbols.each do |symbol|
-      css.delete symbol
-    end
-
-    css
-  end
-
   def CssParser::get_image_path(layer)
     image_file_name = layer.layer_json[:imagePath]
 
