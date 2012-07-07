@@ -175,6 +175,7 @@ class GridStyleSelector
 
   # Walks recursively through the grids and creates
   def generate_css_tree
+    Log.info "Setting style rules for #{self.grid}"
     set_style_rules
 
     if self.grid.render_layer.nil?
@@ -205,7 +206,7 @@ class GridStyleSelector
   end
 
   # Bubble up repeating css properties.
-  def bubble_up_repeating_styles
+  def group_repeating_styles
     rule_repeat_hash = {}
 
     # Consider render layers also.
@@ -218,19 +219,30 @@ class GridStyleSelector
       end
     end
 
+    rule_repeat_hash.each do |rule, repeats|
+      if repeats == 0
+        rule_repeat_hash.delete rule
+      end
+    end
+
     bubbleable_rules = []
+    hashable_rules   = []
     # Trim out the non-repeating properties.
     rule_repeat_hash.each do |rule, repeats|
       rule_key = (JSON.parse rule).keys.first
-      if repeats > (grid.children.length * 0.6) and
-        (Constants::css_properties.has_key? rule_key.to_sym and Constants::css_properties[rule_key.to_sym][:inherit])
-        bubbleable_rules.push rule
+      if repeats > (grid.children.length * 0.6)
+        if (Constants::css_properties.has_key? rule_key.to_sym and Constants::css_properties[rule_key.to_sym][:inherit])
+          bubbleable_rules.push rule
+        else
+          hashable_rules.push rule
+        end   
       end 
     end
    
+
     # Remove all the repeating properties from the children
     # JSON parse happening everytime. Optimize later
-    bubbleable_rules.each do |rule|
+    (hashable_rules + bubbleable_rules).each do |rule|
       rule_object = (JSON.parse rule, :symbolize_names => true)
       rule_key    = rule_object.keys.first
       rule_value  = rule_object[rule_key]
@@ -249,9 +261,15 @@ class GridStyleSelector
           end
         end
       end
+
       Log.info "Deleted #{rule_key} from #{grid.to_short_s}"
+    end
+
+    bubbleable_rules.each do |rule|
+      rule_object = (JSON.parse rule, :symbolize_names => true)
       self.css_rules.update rule_object
     end
+
 
     grid.save!
   end
@@ -261,7 +279,7 @@ class GridStyleSelector
   def group_css_properties
     grid.children.each { |kid| kid.style_selector.group_css_properties }
 
-    bubble_up_repeating_styles
+    group_repeating_styles
   end
 
   def sass_tree(tabs = 0)
