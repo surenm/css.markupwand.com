@@ -217,6 +217,11 @@ class Grid
       layer.bounds == max_bounds and layer.styleable_layer?
     end
 
+    grid_style_layers.each do |layer|
+      layer.is_style_layer = true
+      layer.save!
+    end
+
     if grid_style_layers.size > 0
       Log.info "Style layers for Grid #{grid} are #{grid_style_layers}. Adding them to grid..." 
       grid_style_layers.flatten!
@@ -441,6 +446,7 @@ class Grid
   
   def self.extract_positioned_layers(grid, layers_in_region)
     intersecting_layer_pairs = Grid.get_intersecting_nodes layers_in_region
+    return false if intersecting_layer_pairs.empty?
     
     layers_bounds = layers_in_region.collect { |layer| layer.bounds }
     offset_bounds = BoundingBox.get_super_bounds layers_bounds
@@ -554,7 +560,6 @@ class Grid
       sub_grid_args[tag] = self.tag
       sub_grid_args[:inner_html] = self.positioned_grids_html
 
-      css_rules          = self.style_selector.css_rules
       render_layer_obj   = Layer.find self.render_layer
       inner_html        += render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
       html               = inner_html

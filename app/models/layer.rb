@@ -14,10 +14,10 @@ class Layer
   LAYER_HUESATURATION = "LayerKind.HUESATURATION"
 
   BOUND_MODES = {
-      :NORMAL_BOUNDS => :bounds,
-      :SMART_BOUNDS => :smart_bounds,
-      :EDGE_BOUNDS => :edge_detected_bounds,
-      :SNAPPED_BOUNDS => :snapped_bounds
+    :NORMAL_BOUNDS  => :bounds,
+    :SMART_BOUNDS   => :smart_bounds,
+    :EDGE_BOUNDS    => :edge_detected_bounds,
+    :SNAPPED_BOUNDS => :snapped_bounds
   }
 
   has_and_belongs_to_many :grids, :class_name => 'Grid'
@@ -29,6 +29,7 @@ class Layer
   field :raw, :type => String
   field :layer_type, :type => String, :default => nil
   field :is_overlay, :type => Boolean
+  field :is_style_layer, :type => Boolean, :default => false
 
   field :override_tag, :type => String, :default => nil
   field :layer_bounds, :type => String, :default => nil
@@ -248,7 +249,9 @@ class Layer
 
   def set_style_rules(grid_style_selector)
     crop_objects_for_cropped_bounds
-    css      = grid_style_selector.css_rules
+    css      = {}
+    css.update grid_style_selector.css_rules if not self.is_style_layer
+
     is_leaf  = grid_style_selector.grid.is_leaf?
     self.extra_selectors = grid_style_selector.extra_selectors
     if self.kind == LAYER_TEXT
