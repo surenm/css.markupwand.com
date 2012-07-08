@@ -175,7 +175,6 @@ class GridStyleSelector
     self.save!
   end
   
-
   # Walks recursively through the grids and creates
   def generate_css_tree
     Log.info "Setting style rules for #{self.grid}"
@@ -187,25 +186,6 @@ class GridStyleSelector
       render_layer_obj = Layer.find(self.grid.render_layer)
       render_layer_obj.set_style_rules(self)
     end
-  end
-
-  # Selector names (includes default selector and extra selectors)
-  def selector_names
-    all_selectors = extra_selectors
-
-    layer_has_css = false
-    if self.grid.render_layer
-      render_layer_obj = Layer.find(self.grid.render_layer)
-      layer_has_css = true if not render_layer_obj.css_rules.empty?
-    end
-
-    if not self.generated_selector.nil?
-      all_selectors.push self.generated_selector if not self.css_rules.empty?
-    end
-
-    all_selectors.uniq!
-
-    all_selectors
   end
 
   # Bubble up repeating css properties.
@@ -273,6 +253,40 @@ class GridStyleSelector
 
     grid.save!
   end
+
+  # How hashing works
+  # While collecting all css rules, keep adding to a global table which has the frequency
+  # set.
+  #
+  # While grouping, remove these items from the frequency sets which were grouped.
+  # After grouping, remove all the properties which have only one item it it. These are unique
+  # items.
+  def hash_css_properties
+    Log.info "Generating CSS hashes"
+    self.grid.design
+  end
+
+  
+
+  # Selector names (includes default selector and extra selectors)
+  def selector_names
+    all_selectors = extra_selectors
+
+    layer_has_css = false
+    if self.grid.render_layer
+      render_layer_obj = Layer.find(self.grid.render_layer)
+      layer_has_css = true if not render_layer_obj.css_rules.empty?
+    end
+
+    if not self.generated_selector.nil?
+      all_selectors.push self.generated_selector if not self.css_rules.empty?
+    end
+
+    all_selectors.uniq!
+
+    all_selectors
+  end
+
 
   # Group up font-family, etc from bottom most nodes and group them up
   # Go through all the grids post order, with root node as the last node. 
