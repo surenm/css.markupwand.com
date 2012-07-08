@@ -22,6 +22,6 @@ class DesignGlobals
   end
 
   def self.destroy
-    @@designglobals = nils
+    @@designglobals = nil
   end
 end
