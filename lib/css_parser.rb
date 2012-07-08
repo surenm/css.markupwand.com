@@ -377,4 +377,14 @@ module CssParser
     "class#{design.incremental_class_counter}"
   end
 
+  def CssParser::add_to_inverted_properties(css_rules, grid)
+    css_rules.each do |rule, value|
+      json = ({rule => value}).to_json
+      if DesignGlobals.instance.css_properties_inverted.has_key? json
+        DesignGlobals.instance.css_properties_inverted[json].push grid
+      else
+        DesignGlobals.instance.css_properties_inverted[json] = [grid]
+      end
+    end
+  end
 end
