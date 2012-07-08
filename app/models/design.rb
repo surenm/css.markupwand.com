@@ -254,10 +254,9 @@ HTML
     Log.info "Getting nodes..."
     layers = []
     psd_data[:art_layers].each do |layer_id, node_json|
-      layer = Layer.create_from_raw_data node_json, self.id
-      layer.save!
+      layer = Layer.create_from_raw_data node_json, self
       layers.push layer
-      Log.debug "Added Layer #{layer} (#{layer.zindex})"
+      Log.info "Added Layer #{layer} (#{layer.zindex})"
     end
     
     Log.info "Layer bounds"
