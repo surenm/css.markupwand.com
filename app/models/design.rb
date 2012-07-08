@@ -301,6 +301,12 @@ HTML
     Log.info "Grouping CSS properties"
     root_grid.style_selector.group_css_properties
 
+    Log.info "Hashing up CSS Properties"
+    root_grid.style_selector.hash_css_properties
+
+    Log.info "Destroying design globals"
+    DesignGlobals.destroy
+
     Log.info "Writing HTML"
     body_html   = root_grid.to_html
     scss_content = root_grid.style_selector.sass_tree 
