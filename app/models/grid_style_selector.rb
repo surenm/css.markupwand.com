@@ -169,6 +169,9 @@ class GridStyleSelector
     self.generated_selector = CssParser::create_incremental_selector(self) if not css.empty?
 
     self.css_rules = css
+    
+    CssParser::add_to_inverted_properties(css, self.grid)
+
     self.save!
   end
   
