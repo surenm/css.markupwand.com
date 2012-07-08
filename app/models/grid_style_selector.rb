@@ -268,7 +268,7 @@ class GridStyleSelector
 
   
 
-  # Selector names (includes default selector and extra selectors)
+  # Selector names array(includes default selector and extra selectors)
   def selector_names
     all_selectors = extra_selectors
 
@@ -289,9 +289,10 @@ class GridStyleSelector
 
 
   # Group up font-family, etc from bottom most nodes and group them up
-  # Go through all the grids post order, with root node as the last node. 
-  def group_css_properties
-    grid.children.each { |kid| kid.style_selector.group_css_properties }
+  # Go through all the grids post order, with root node as the last node.
+  # Bubble up. 
+  def bubbleup_css_properties
+    grid.children.each { |kid| kid.style_selector.bubbleup_css_properties }
 
     group_repeating_styles
   end

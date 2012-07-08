@@ -298,8 +298,8 @@ HTML
     root_grid.style_selector.generate_css_tree
 
 
-    Log.info "Grouping CSS properties"
-    root_grid.style_selector.group_css_properties
+    Log.info "Bubble up CSS properties"
+    root_grid.style_selector.bubbleup_css_properties
 
     Log.info "Hashing up CSS Properties"
     root_grid.style_selector.hash_css_properties
