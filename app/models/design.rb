@@ -285,6 +285,7 @@ HTML
     published_folder = self.store_published_key
     
     Log.info "Parsing fonts"
+    # TODO Fork out and parallel process
     self.parse_fonts(self.layers)
 
     # Set the root path for this design. That is where all the html and css is saved to.
@@ -292,11 +293,10 @@ HTML
     
     root_grid = self.get_root_grid
 
-    Log.info "Generating CSS Tree"
     # Once grids are generated, run through the tree and find out style sheets.
+    # TODO Fork out and parallel process
     Log.info "Generating CSS Tree"
     root_grid.style_selector.generate_css_tree
-
 
     Log.info "Bubble up CSS properties"
     root_grid.style_selector.bubbleup_css_properties
