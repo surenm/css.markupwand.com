@@ -269,7 +269,14 @@ class GridStyleSelector
   # items.
   def hash_css_properties
     Log.info "Generating CSS hashes"
-    self.grid.design
+
+    if DesignGlobals.instance.css_properties_inverted.each do |rule, nodes|
+      if nodes.length == 1
+        DesignGlobals.instance.css_properties_inverted.delete rule
+      end
+    end
+
+    Log.info DesignGlobals.instance.css_properties_inverted
   end
 
   
@@ -300,7 +307,7 @@ class GridStyleSelector
   def bubbleup_css_properties
     grid.children.each { |kid| kid.style_selector.bubbleup_css_properties }
 
-    group_repeating_styles
+    bubbleup_repeating_styles
   end
 
   def sass_tree(tabs = 0)
