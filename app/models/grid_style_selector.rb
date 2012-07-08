@@ -229,15 +229,12 @@ class GridStyleSelector
     end
 
     bubbleable_rules = []
-    hashable_rules   = []
     # Trim out the non-repeating properties.
     rule_repeat_hash.each do |rule, repeats|
       rule_key = (JSON.parse rule).keys.first
       if repeats > (grid.children.length * 0.6)
         if (Constants::css_properties.has_key? rule_key.to_sym and Constants::css_properties[rule_key.to_sym][:inherit])
           bubbleable_rules.push rule
-        else
-          hashable_rules.push rule
         end   
       end 
     end
@@ -245,7 +242,7 @@ class GridStyleSelector
 
     # Remove all the repeating properties from the children
     # JSON parse happening everytime. Optimize later
-    (hashable_rules + bubbleable_rules).each do |rule|
+    bubbleable_rules.each do |rule|
       rule_object = (JSON.parse rule, :symbolize_names => true)
       rule_key    = rule_object.keys.first
       rule_value  = rule_object[rule_key]
