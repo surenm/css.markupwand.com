@@ -254,10 +254,9 @@ HTML
     Log.info "Getting nodes..."
     layers = []
     psd_data[:art_layers].each do |layer_id, node_json|
-      layer = Layer.create_from_raw_data node_json, self.id
-      layer.save!
+      layer = Layer.create_from_raw_data node_json, self
       layers.push layer
-      Log.debug "Added Layer #{layer} (#{layer.zindex})"
+      Log.info "Added Layer #{layer} (#{layer.zindex})"
     end
     
     Log.info "Layer bounds"
@@ -273,9 +272,6 @@ HTML
 
     Log.info "Grouping the grids..."
     Grid.group!
-    Log.info "Done grouping grids, printing now."
-    grid.print
-    Log.info "Done printing #{grid.id.to_s}"
     Profiler.stop
   end
   
@@ -288,6 +284,7 @@ HTML
     generated_folder = self.store_generated_key
     published_folder = self.store_published_key
     
+    Log.info "Parsing fonts"
     self.parse_fonts(self.layers)
 
     # Set the root path for this design. That is where all the html and css is saved to.
@@ -295,14 +292,16 @@ HTML
     
     root_grid = self.get_root_grid
 
+    Log.info "Generating CSS Tree"
     # Once grids are generated, run through the tree and find out style sheets.
     Log.info "Generating CSS Tree"
     root_grid.style_selector.generate_css_tree
 
-    Log.info "Bubbling up css properties"
+
+    Log.info "Grouping CSS properties"
     root_grid.style_selector.group_css_properties
 
-    Log.info "Writing out body html"
+    Log.info "Writing HTML"
     body_html   = root_grid.to_html
     scss_content = root_grid.style_selector.sass_tree 
 
