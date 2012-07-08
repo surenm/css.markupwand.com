@@ -189,7 +189,7 @@ class GridStyleSelector
   end
 
   # Bubble up repeating css properties.
-  def group_repeating_styles
+  def bubbleup_repeating_styles
     rule_repeat_hash = {}
 
     # Consider render layers also.
@@ -231,15 +231,21 @@ class GridStyleSelector
         # Delete from the grid css.
         if child.style_selector.css_rules[rule_key] == rule_value
           child.style_selector.css_rules.delete rule_key
+          DesignGlobals.instance.css_properties_inverted[rule].delete self.grid    
         end
 
         if not child.render_layer.nil?
           layer_obj = Layer.find child.render_layer
           if layer_obj.css_rules[rule_key.to_s] == rule_value
             layer_obj.css_rules.delete rule_key.to_s
+            DesignGlobals.instance.css_properties_inverted[rule].delete self.grid
             layer_obj.save!
           end
         end
+      end
+
+      if DesignGlobals.instance.css_properties_inverted[rule].empty?
+        DesignGlobals.instance.css_properties_inverted.delete rule
       end
 
       Log.info "Deleted #{rule_key} from #{grid.to_short_s}"
