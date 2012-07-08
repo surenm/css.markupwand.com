@@ -270,7 +270,7 @@ class GridStyleSelector
   def hash_css_properties
     Log.info "Generating CSS hashes"
 
-    apriori = Apriori.new(DesignGlobals.instance.css_properties_inverted, 1)
+    apriori = Apriori.new(DesignGlobals.instance.css_properties_inverted, 2)
 
     Log.info apriori.frequent_itemsets
   end
