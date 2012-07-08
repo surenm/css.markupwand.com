@@ -273,9 +273,6 @@ class GridStyleSelector
     apriori = Apriori.new(DesignGlobals.instance.css_properties_inverted, 1)
 
     Log.info apriori.frequent_itemsets
-    Log.info apriori.data_hash
-
-    Log.info DesignGlobals.instance.css_properties_inverted
   end
 
   

@@ -65,6 +65,8 @@ class Apriori
       rule_count += 1
       break 
     end
+
+    @associations
   end
 
 end
