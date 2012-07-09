@@ -269,6 +269,12 @@ class GridStyleSelector
   # While grouping, remove these items from the frequency sets which were grouped.
   # After grouping, remove all the properties which have only one item it it. These are unique
   # items.
+  #
+  # LATER TODO:
+  # Figure out how to fork this into multiple processes on to single 
+  # heroku stack using double boiler or supervisord or normal fork
+  # http://www.ruby-doc.org/core-1.9.3/Kernel.html#method-i-fork
+  # 
   def hash_css_properties
     Log.info "Generating CSS hashes"
 
@@ -291,7 +297,7 @@ class GridStyleSelector
 
   # Selector names array(includes default selector and extra selectors)
   def selector_names
-    all_selectors = extra_selectors
+    all_selectors = extra_selectors + grouped_selectors
 
     layer_has_css = false
     if self.grid.render_layer
