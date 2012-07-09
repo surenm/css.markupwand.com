@@ -40,8 +40,9 @@ class Apriori
     @associations[1] = prune_minsup first_association
   end
 
-  def candidates(count)
-    @rules.combination(count).to_a
+  def candidates(rule_count)
+    prev_association_rules = @associations[rule_count-1].keys.flatten.uniq
+    prev_association_rules.combination(rule_count).to_a
   end
 
   def frequent_itemsets
