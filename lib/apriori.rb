@@ -100,4 +100,52 @@ class Apriori
     @associations[max_association_index]
   end
 
+  def get_array_distance(array1, array2)
+    (array1 - array2).length + (array2 - array1).length
+  end
+
+  def get_rule_distance(rule1, rule2)
+    key_distance = get_array_distance(rule1.keys.first, rule2.keys.first)
+    node_distance = get_array_distance(rule1.values.first, rule2.values.first)
+    return (key_distance + node_distance)
+  end
+
+
+  def subset_rule_exists_in_association(association, subset_rule)
+    subset_exists = false
+    association.each do |rule, nodes|
+      if not (subset_rule - rule).empty?
+        subset_exists = true
+        break
+      end
+    end
+
+    subset_exists
+  end
+
+  def get_class_groups(association)
+    new_association = {}
+    association.each do |primary_rule, primary_nodes|
+      if not subset_rule_exists_in_association(new_association, primary_rule)
+        association.each do |secondary_rule, secondary_nodes|
+          if primary_rule != secondary_rule
+            rule_distance = get_rule_distance({primary_rule => primary_nodes}, {secondary_rule => secondary_nodes})
+
+            # Not sure if this should be 3 or calculated based on data.
+            if rule_distance < 3
+              new_rule = (primary_rule + secondary_rule).sort.uniq
+              new_value = (primary_nodes + secondary_nodes).sort.uniq
+              new_association.update { new_rule => new_value }
+
+              Log.info "------------------------"
+              Log.info "SIMILAR #{rule_distance}"
+              Log.info "#{primary_rule.to_s}"
+              Log.info "#{secondary_rule.to_s}"
+            end
+          end
+        end
+      end
+    end
+  end
+
 end
