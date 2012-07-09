@@ -15,10 +15,9 @@ class Apriori
   attr_accessor :data_hash, :minsup, :itemsets
 
   def initialize(data_hash, minsup)
-    @data_hash = data_hash
     @minsup    = minsup
 
-    prune_minsup
+    @data_hash = prune_minsup(data_hash)
 
     @rules     = data_hash.keys.sort
     @nodes     = data_hash.values.flatten.uniq.sort 
@@ -26,9 +25,9 @@ class Apriori
   end 
 
   # Remove all the items less than minimum support
-  def prune_minsup
-    @data_hash.each do |rule, nodes|
-      @data_hash.delete rule if nodes.length < @minsup
+  def prune_minsup(item_table)
+    item_table.each do |rule, nodes|
+      item_table.delete rule if nodes.length < @minsup
     end
   end
 
@@ -38,7 +37,7 @@ class Apriori
     keys.each do key
       first_association[key] = @data_hash[key.first]
     end
-    @associations[1] = first_association
+    @associations[1] = prune_minsup first_association
   end
 
   def candidates(count)
@@ -65,7 +64,7 @@ class Apriori
         # TODO Prune later.
       end
 
-      @associations[rule_count] = next_rule_association
+      @associations[rule_count] = prune_minsup next_rule_association
       rule_count += 1
       break 
     end
