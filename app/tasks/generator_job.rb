@@ -25,7 +25,7 @@ class GeneratorJob
         ApplicationHelper.post_simple_message("#{design.user.name} <#{design.user.email}>", "#{design.name} generated", "Your HTML & CSS has been generated, click http://www.markupwand.com/design/#{design.safe_name}/preview to download")
       end
     rescue Exception => error
-      Utils::pager_duty_alert("391c2640ab64012f2bf422000afc419f", File.basename(design.processed_file_path), error, design.user.email)
+      Utils::pager_duty_alert("391c2640ab64012f2bf422000afc419f", File.basename(design.processed_file_path), error, design.user.email) if Rails.env.production?
       design.status = Design::STATUS_FAILED
       raise error
     end
