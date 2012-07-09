@@ -8,13 +8,15 @@ require File.expand_path('../config/application', __FILE__)
 TransformersWeb::Application.load_tasks
 
 task :'fetch-css-property-index' do
+  # Ok, this is not much useful now. I manually typed out values for initial value from
+  # w3.org.
   require 'nokogiri'
   require 'open-uri'
   require 'pp'
 
   # This currently has a property list from CSS2, which covers most of the cases, will 
   # update it with a CSS3 property index later.
-  doc = Nokogiri::HTML(open('http://www.w3.org/TR/CSS/#selectors'))
+  doc = Nokogiri::HTML(open('http://www.w3.org/TR/CSS/'))
 
   property_index = {}
 
