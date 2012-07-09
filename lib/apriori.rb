@@ -34,7 +34,7 @@ class Apriori
   def first_pass
     keys = @rules.clone.zip
     first_association = {}
-    keys.each do key
+    keys.each do |key|
       first_association[key] = @data_hash[key.first]
     end
     @associations[1] = prune_minsup first_association
@@ -53,7 +53,7 @@ class Apriori
       next_rule_association = {}
       rule_candidates.each do |rules|
         prev_rule_subset = rules.slice(0, rules.length - 1)
-        extra_rule       = rules[rules.length - 1]
+        extra_rule       = [rules[rules.length - 1]]
 
         if @associations[rule_count - 1].has_key? prev_rule_subset
           items_in_rule =  @associations[1][extra_rule] & @associations[rule_count - 1][prev_rule_subset]
@@ -66,7 +66,6 @@ class Apriori
 
       @associations[rule_count] = prune_minsup next_rule_association
       rule_count += 1
-      break 
     end
 
     @associations
