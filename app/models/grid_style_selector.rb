@@ -166,7 +166,7 @@ class GridStyleSelector
     # Margin and padding
     css.update spacing_css
 
-    self.generated_selector = CssParser::create_incremental_selector(self) if not css.empty?
+    self.generated_selector = CssParser::create_incremental_selector if not css.empty?
 
     self.css_rules = css
     

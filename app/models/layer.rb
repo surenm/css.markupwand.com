@@ -269,7 +269,7 @@ class Layer
       self.save!
     end
 
-    self.generated_selector = CssParser::create_incremental_selector(self) if not css.empty?
+    self.generated_selector = CssParser::create_incremental_selector if not css.empty?
     CssParser::add_to_inverted_properties(css, grid_style_selector.grid)
 
     self.css_rules = css

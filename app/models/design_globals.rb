@@ -6,7 +6,7 @@ class DesignGlobals
   #
   # Having a singleton/global helps because you don't have to 
   # keep writing to mongodb.
-  attr_accessor :css_properties_inverted
+  attr_accessor :css_properties_inverted, :incremental_class_counter
   @@designglobals = nil
 
   def self.instance
@@ -19,6 +19,7 @@ class DesignGlobals
 
   def initialize
     @css_properties_inverted = {}
+    @incremental_class_counter = 1
   end
 
   def self.destroy
