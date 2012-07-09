@@ -27,7 +27,7 @@ class ParserJob
       Resque.enqueue GeneratorJob, design_id
     rescue Exception => error
       Utils::pager_duty_alert("f36e4c80ab63012f5d3622000af84f12", File.basename(design.processed_file_path), error, design.user.email) if Rails.env.production?
-      design.status = Design::STATUS_FAILED
+      design.set_status Design::STATUS_FAILED
       raise error
     end
   end

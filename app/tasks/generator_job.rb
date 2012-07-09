@@ -26,7 +26,7 @@ class GeneratorJob
       end
     rescue Exception => error
       Utils::pager_duty_alert("391c2640ab64012f2bf422000afc419f", File.basename(design.processed_file_path), error, design.user.email) if Rails.env.production?
-      design.status = Design::STATUS_FAILED
+      design.set_status Design::STATUS_FAILED
       raise error
     end
   end
