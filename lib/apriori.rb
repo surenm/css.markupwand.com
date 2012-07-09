@@ -126,11 +126,10 @@ class Apriori
   def reduce_association(association)
     reduced_association = association.clone
 
-    association_combinations = association.combination(2)
+    association_combinations = association.keys.combination(2).to_a
     Log.info "#{association.keys.length} associations exist, #{association_combinations.length} iterations"
 
     association_combinations.each_with_index do |association_combination, index|
-      puts "#{index}."
       primary_rule    = association_combination.first
       secondary_rule  = association_combination.second
       primary_nodes   = association[primary_rule]
