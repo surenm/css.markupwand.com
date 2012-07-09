@@ -373,9 +373,9 @@ module CssParser
     css_rules.each do |rule, value|
       json = ({rule => value}).to_json
       if DesignGlobals.instance.css_properties_inverted.has_key? json
-        DesignGlobals.instance.css_properties_inverted[json].push grid
+        DesignGlobals.instance.css_properties_inverted[json].push grid.id.to_s
       else
-        DesignGlobals.instance.css_properties_inverted[json] = [grid]
+        DesignGlobals.instance.css_properties_inverted[json] = [grid.id.to_s]
       end
     end
   end

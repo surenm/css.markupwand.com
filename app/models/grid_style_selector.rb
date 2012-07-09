@@ -233,14 +233,14 @@ class GridStyleSelector
         # Delete from the grid css.
         if child.style_selector.css_rules[rule_key] == rule_value
           child.style_selector.css_rules.delete rule_key
-          DesignGlobals.instance.css_properties_inverted[rule].delete self.grid    
+          DesignGlobals.instance.css_properties_inverted[rule].delete self.grid.id.to_s
         end
 
         if not child.render_layer.nil?
           layer_obj = Layer.find child.render_layer
           if layer_obj.css_rules[rule_key.to_s] == rule_value
             layer_obj.css_rules.delete rule_key.to_s
-            DesignGlobals.instance.css_properties_inverted[rule].delete self.grid
+            DesignGlobals.instance.css_properties_inverted[rule].delete self.grid.id.to_s
             layer_obj.save!
           end
         end
@@ -287,8 +287,11 @@ class GridStyleSelector
       rules.each { |rule| rule_hash.update rule }
       next_selector_name = CssParser::create_incremental_selector
       self.design.hashed_selectors[next_selector_name] = rule_hash
-      nodes.each do |node|
-        node.grouped_selectors.push next_selector_name
+      self.grid.design.hashed_selectors[next_selector_name] = rule_hash
+      nodes.each do |node_id|
+        grid_item = (Grid.find node_id)
+        grid_item.style_selectors.grouped_selectors.push next_selector_name
+        grid_item.save!
       end
     end
 
