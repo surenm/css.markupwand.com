@@ -273,7 +273,12 @@ class GridStyleSelector
     apriori = Apriori.new(DesignGlobals.instance.css_properties_inverted, 2)
     apriori.calculate_frequent_itemsets
     max_association_match = apriori.max_association_match
-    apriori.get_class_groups(max_association_match)
+    class_groups = apriori.get_class_groups(max_association_match)
+
+    class_groups.each do |rule, nodes|
+      Log.info rule
+      Log.info nodes.to_s
+    end
   end
 
   # Selector names array(includes default selector and extra selectors)
