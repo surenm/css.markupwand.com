@@ -46,7 +46,6 @@ class Design
   field :height, :type => Integer
   field :width, :type => Integer
   field :resolution, :type => Integer
-  field :incremental_class_counter, :type => Integer, :default => 0
 
   mount_uploader :file, DesignUploader
 
@@ -177,7 +176,6 @@ class Design
   end
   
   def reparse
-    self.incremental_class_counter = 0
     self.grids.delete_all
     self.layers.delete_all
     self.set_status Design::STATUS_PARSING
