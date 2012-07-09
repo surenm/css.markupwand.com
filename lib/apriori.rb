@@ -114,7 +114,7 @@ class Apriori
   def subset_rule_exists_in_association(association, subset_rule)
     subset_exists = false
     association.each do |rule, nodes|
-      if not (subset_rule - rule).empty?
+      if (subset_rule - rule).empty?
         subset_exists = true
         break
       end
