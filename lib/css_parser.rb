@@ -382,4 +382,39 @@ module CssParser
     end
   end
 
+  # 
+  # ["{'color': 'yellow'", "{'font-family': 'Arial'}",
+  #  "{'background-color': 'green'", "{'font-size': '2px'}"]
+  # 
+  # to
+  # 
+  # {:color => 'yellow', :'font-family' => 'Arial',
+  #  :'background-color' => 'green', :'font-size' => '2px'}
+  # 
+  #
+  # Warning 1: Changes the inner data structure
+  # Warning 2: Keeps overriding any key that repeats.
+  def CssParser::rule_array_to_hash(rule_array)
+    rule_hash = {}
+    rule_array.each do |rule_string|
+      rule_object = JSON.parse rule_string, :symbolize_names => true
+      rule_hash.update(rule_object.keys.first => rule_object.values.first)
+    end
+    
+    new_hash[selector_name] = rule_hash
+    
+    rule_hash
+  end
+
+  # 
+  # Opposite of rule_array_to_hash function
+  #
+  def CssParser::rule_hash_to_array(rule_hash)
+    rule_array = []
+    rule_hash.each do |rule, value|
+      rule_string = ({rule => value}).to_json
+      rule_array.push rule_string
+    end
+  end
+
 end
