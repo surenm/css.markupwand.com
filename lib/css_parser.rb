@@ -400,7 +400,7 @@ module CssParser
       rule_hash = {}
       rules.each do |rule_string|
         rule_object = JSON.parse rule_string, :symbolize_names => true
-        rule_hash.update {rule_object.keys.first => rule_object.values.first}
+        rule_hash.update(rule_object.keys.first => rule_object.values.first)
       end
 
       new_hash[selector_name] = rule_hash
