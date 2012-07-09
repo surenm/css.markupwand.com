@@ -283,18 +283,14 @@ class GridStyleSelector
     max_association_match = apriori.max_association_match
     class_groups = apriori.get_class_groups(max_association_match)
     class_groups.each do |rules, nodes|
-      Log.info rules
-      Log.info nodes
-      next
-
       rule_hash = {}
       rules.each { |rule| rule_hash.update (JSON.parse rule, :symbolize_names => true) }
       next_selector_name = CssParser::create_incremental_selector
       self.grid.design.hashed_selectors[next_selector_name] = rule_hash
-      nodes.each do |node_id|
-        grid_item = (Grid.find node_id)
-        grid_item.style_selector.grouped_selectors.push next_selector_name
-        grid_item.save!
+      nodes.each do |node|
+        node.style_selector.grouped_selectors.push next_selector_name
+        Log.info "Adding #{next_selector_name} to #{node.to_short_s}"
+        node.save!
       end
     end
 
