@@ -10,7 +10,7 @@ class Apriori
   #   'C' => [2]
   # }
   #
-  # min_support = 1 (atleast there should be one property i.e C is discarded)
+  # min_support = 2 (atleast there should be two nodes i.e C is discarded)
   # 
   attr_accessor :data_hash, :minsup, :itemsets
 
