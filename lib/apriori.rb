@@ -19,7 +19,7 @@ class Apriori
 
     @data_hash = prune_minsup(data_hash)
 
-    @rules     = data_hash.keys.sort
+    @rules     = data_hash.keys.sort.uniq
     @nodes     = data_hash.values.flatten.uniq.sort 
     @associations = []
   end 
@@ -48,8 +48,10 @@ class Apriori
   def calculate_frequent_itemsets
     first_pass
     rule_count = 2
+    Log.info "Calculating frequent itemsets"
 
     while not @associations[rule_count - 1].empty?
+      Log.info "Frequent itemsets for rule count = #{rule_count}"
       rule_candidates = candidates(rule_count)
       next_rule_association = {}
       rule_candidates.each do |rules|
