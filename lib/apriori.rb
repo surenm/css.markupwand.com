@@ -154,8 +154,7 @@ class Apriori
 
     i = 1
     while true
-      Log.info "Trying #{i} to reduce association"
-      Log.info "--------------------------------------------------------------"
+      Log.info "Reducing css, step #{i}"
       reduced_association = reduce_association(updated_association)
       if reduced_association != updated_association and not reduced_association.empty?
         updated_association = reduced_association
@@ -165,12 +164,7 @@ class Apriori
       i += 1
     end
 
-    Log.info "Merged associations"
-    updated_association.keys.each do |key|
-      Log.info "Style"
-      Log.info "#{key.to_s}"
-      Log.info "#{updated_association[key].to_s}, #{updated_association[key].length}"
-    end
+    updated_association
   end
 
 end
