@@ -233,14 +233,14 @@ class GridStyleSelector
         # Delete from the grid css.
         if child.style_selector.css_rules[rule_key] == rule_value
           child.style_selector.css_rules.delete rule_key
-          DesignGlobals.instance.css_properties_inverted[rule].delete self.grid.id.to_s
+          DesignGlobals.instance.css_properties_inverted[rule].delete self.grid
         end
 
         if not child.render_layer.nil?
           layer_obj = Layer.find child.render_layer
           if layer_obj.css_rules[rule_key.to_s] == rule_value
             layer_obj.css_rules.delete rule_key.to_s
-            DesignGlobals.instance.css_properties_inverted[rule].delete self.grid.id.to_s
+            DesignGlobals.instance.css_properties_inverted[rule].delete self.grid
             layer_obj.save!
           end
         end
@@ -283,6 +283,10 @@ class GridStyleSelector
     max_association_match = apriori.max_association_match
     class_groups = apriori.get_class_groups(max_association_match)
     class_groups.each do |rules, nodes|
+      Log.info rules
+      Log.info nodes
+      next
+
       rule_hash = {}
       rules.each { |rule| rule_hash.update (JSON.parse rule, :symbolize_names => true) }
       next_selector_name = CssParser::create_incremental_selector
