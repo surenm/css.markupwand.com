@@ -310,8 +310,8 @@ HTML
     DesignGlobals.destroy
 
     Log.info "Writing HTML"
-    body_html   = root_grid.to_html
-    scss_content = root_grid.style_selector.sass_tree 
+    body_html    = root_grid.to_html
+    scss_content = root_grid.style_selector.sass_tree + self.hashed_selectors_content
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
@@ -406,5 +406,23 @@ config
     target_css   = File.join base_folder, "assets", "css", "bootstrap_override.css"
 
     Store.save_to_store override_css, target_css
+  end
+
+  # Prints out the grouped styles
+  def hashed_selectors_content
+    css_content = ""
+    self.hashed_selectors.each do |selector, rules|
+      css_rules_list = ""
+      rules.each do |rule, value|
+        css_rules_list += "#{rule.to_s}: #{value.to_s};"
+      end 
+      css_content += ".#{selector} {#{css_rules_list}}"
+    end
+
+    Log.info "Writing HASHED CSS content"
+
+    Log.info css_content
+
+    css_content
   end
 end
