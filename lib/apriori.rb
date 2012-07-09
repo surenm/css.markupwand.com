@@ -45,7 +45,7 @@ class Apriori
     prev_association_rules.combination(rule_count).to_a
   end
 
-  def frequent_itemsets
+  def calculate_frequent_itemsets
     first_pass
     rule_count = 2
 

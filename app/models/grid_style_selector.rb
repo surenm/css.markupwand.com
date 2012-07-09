@@ -271,8 +271,10 @@ class GridStyleSelector
     Log.info "Generating CSS hashes"
 
     apriori = Apriori.new(DesignGlobals.instance.css_properties_inverted, 2)
+    apriori.calculate_frequent_itemsets
+    max_association_match = apriori.max_association_match
 
-    Log.info apriori.frequent_itemsets
+
   end
 
   
