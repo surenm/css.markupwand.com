@@ -9,6 +9,8 @@ class GridStyleSelector
   field :extra_selectors, :type => Array, :default => []
   field :generated_selector, :type => String
 
+  field :grouped_selectors, :type => Array, :default => []
+
   ## Spacing and padding related methods
    
   # Find out bounding box difference from it and its children.
@@ -274,11 +276,17 @@ class GridStyleSelector
     apriori.calculate_frequent_itemsets
     max_association_match = apriori.max_association_match
     class_groups = apriori.get_class_groups(max_association_match)
-
-    class_groups.each do |rule, nodes|
-      Log.info rule
-      Log.info nodes.to_s
+    class_groups.each do |rules, nodes|
+      rule_hash = {}
+      rules.each { |rule| rule_hash.update rule }
+      next_selector_name = CssParser::create_incremental_selector
+      self.design.hashed_selectors[next_selector_name] = rule_hash
+      nodes.each do |node|
+        node.grouped_selectors.push next_selector_name
+      end
     end
+
+    self.design.save!
   end
 
   # Selector names array(includes default selector and extra selectors)
