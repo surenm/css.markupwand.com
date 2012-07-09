@@ -369,6 +369,8 @@ module CssParser
     "class#{DesignGlobals.instance.incremental_class_counter}"
   end
 
+  # Adds to a inverted list where the key is the property and value
+  # is the grid.
   def CssParser::add_to_inverted_properties(css_rules, grid)
     css_rules.each do |rule, value|
       json = ({rule => value}).to_json
@@ -379,4 +381,32 @@ module CssParser
       end
     end
   end
+
+  # {
+  # 'class54' => ["{'color': 'yellow'", "{'font-family': 'Arial'}"]
+  # 'class53' => ["{'background-color': 'green'", "{'font-size': '2px'}"]
+  # }
+  # to
+  # {
+  # 'class54' => {:color => 'yellow', :'font-family' => 'Arial'},
+  # 'class55' => {:'background-color' => 'green', :'font-size' => '2px'}
+  # }
+  #
+  # Warning 1: Changes the inner data structure
+  # Warning 2: Keeps overriding any key that repeats.
+  def CssParser::rule_array_to_hash(style_hash)
+    new_hash = {}
+    style_hash.each do |selector_name, rules|
+      rule_hash = {}
+      rules.each do |rule_string|
+        rule_object = JSON.parse rule_string, :symbolize_names => true
+        rule_hash.update {rule_object.keys.first => rule_object.values.first}
+      end
+
+      new_hash[selector_name] = rule_hash
+    end
+
+    new_hash
+  end
+
 end
