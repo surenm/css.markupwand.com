@@ -125,7 +125,9 @@ class Apriori
 
   def reduce_association(association)
     reduced_association = association.clone
+    Log.info "#{association.keys.length} associations exist"
 
+    # TODO This runs n^2. Gets worse when data size is huge. 
     association.each do |primary_rule, primary_nodes|
       association.each do |secondary_rule, secondary_nodes|
         if primary_rule != secondary_rule
