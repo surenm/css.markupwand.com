@@ -9,7 +9,7 @@ class Design
   belongs_to :user
   has_many :grids
   has_many :layers
-  
+
   # Design status types
   Design::STATUS_QUEUED       = :queued
   Design::STATUS_UPLOADING    = :uploading
@@ -20,7 +20,8 @@ class Design
   Design::STATUS_GENERATING   = :generating
   Design::STATUS_REGENERATING = :regenerating
   Design::STATUS_COMPLETED    = :completed
-  
+  Design::STATUS_FAILED       = :failed
+
   Design::STATUS_CLASS = {
     Design::STATUS_QUEUED       => 'label labe-inverse',
     Design::STATUS_UPLOADING    => 'label',
@@ -30,7 +31,8 @@ class Design
     Design::STATUS_PARSED       => 'label label-warning',
     Design::STATUS_GENERATING   => 'label label-info',
     Design::STATUS_REGENERATING => 'label label-info',
-    Design::STATUS_COMPLETED    => 'label label-success'
+    Design::STATUS_COMPLETED    => 'label label-success',
+    Design::STATUS_FAILED       => 'label label-important'
   }
 
   field :name, :type => String
