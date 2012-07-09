@@ -33,8 +33,12 @@ class Apriori
   end
 
   def first_pass
-    prune_minsup
-    @associations[1] = @data_hash.clone.zip
+    keys = @rules.clone.zip
+    first_association = {}
+    keys.each do key
+      first_association[key] = @data_hash[key.first]
+    end
+    @associations[1] = first_association
   end
 
   def candidates(count)
