@@ -49,6 +49,8 @@ class Design
   field :width, :type => Integer
   field :resolution, :type => Integer
 
+  field :hashed_selectors, :type => Hash, :default => {} 
+
   mount_uploader :file, DesignUploader
 
 
