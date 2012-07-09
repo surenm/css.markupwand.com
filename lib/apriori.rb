@@ -132,7 +132,8 @@ class Apriori
     original_iterations      = association.keys.length * association.keys.length 
     Log.info "#{association.keys.length} associations exist, #{original_iterations} instead of #{association_combinations.length} iterations "
 
-    # O n^2 . Combination not working. Fix this later.
+    # O n^2 . Combination not working. 
+    # This is extremely extremely slow. Should fix this before launch.
     association.each do |primary_rule, primary_nodes|
       association.each do |secondary_rule, secondary_nodes|
         if primary_rule != secondary_rule
