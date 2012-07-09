@@ -132,6 +132,7 @@ class Apriori
     original_iterations      = association.keys.length * association.keys.length 
     Log.info "#{association.keys.length} associations exist, #{original_iterations} instead of #{association_combinations.length} iterations "
 
+    # O n^2 . Combination not working. Fix this later.
     association.each do |primary_rule, primary_nodes|
       association.each do |secondary_rule, secondary_nodes|
         if primary_rule != secondary_rule
@@ -140,6 +141,7 @@ class Apriori
           if rule_distance < 3
             new_rule  = (primary_rule + secondary_rule).sort.uniq
             new_value = (primary_nodes + secondary_nodes).sort.uniq
+            reduced_association.delete primary_rule
             reduced_association.delete secondary_rule
             reduced_association.update({ new_rule => new_value })
           end
