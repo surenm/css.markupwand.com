@@ -306,6 +306,9 @@ HTML
     Log.info "Hashing up CSS Properties"
     root_grid.style_selector.hash_css_properties
 
+    Log.info "Reducing existing css rules to remove the hashed properties"
+    root_grid.style_selector.reduce_hashed_css_properties
+
     Log.info "Destroying design globals"
     DesignGlobals.destroy
 

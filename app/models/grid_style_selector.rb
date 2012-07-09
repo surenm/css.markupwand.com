@@ -297,6 +297,36 @@ class GridStyleSelector
     self.grid.design.save!
   end
 
+  def get_subset_css_rules(css_hash)
+    css_array = CssParser::rule_hash_to_array(css_hash)
+
+    self.grouped_selectors.each do |selector|
+      hashed_css_array = CssParser::rule_hash_to_array(self.grid.design.hashed_selectors[selector])
+      css_array = css_array - hashed_css_array 
+    end
+
+    CssParser::rule_array_to_hash(css_array)
+  end
+
+  # Recursive function, to be called after hash_css_properties has been called.
+  #
+  # Once the css_hashes are calculated, remove the redundant items and override 
+  # any style that was added by the grouped css class.
+  def reduce_hashed_css_properties
+    if self.render_layer
+      render_layer_obj = Layer.find self.render_layer
+      render_layer_obj.css_rules =  get_subset_css_rules(render_layer_obj.css_rules)
+      render_layer_obj.save!
+    else
+      self.css_rules = get_subset_css_rules(self.css_rules)
+      self.save!
+
+      self.children.each do |child|
+        child.style_selector.reduce_hashed_css_properties
+      end
+    end
+  end
+
   # Selector names array(includes default selector and extra selectors)
   def selector_names
     all_selectors = extra_selectors + grouped_selectors
