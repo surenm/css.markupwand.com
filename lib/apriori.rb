@@ -123,28 +123,56 @@ class Apriori
     subset_exists
   end
 
-  def get_class_groups(association)
-    new_association = {}
+  def reduce_association(association)
+    reduced_association = {}
+
     association.each do |primary_rule, primary_nodes|
-      if not subset_rule_exists_in_association(new_association, primary_rule)
+      if not subset_rule_exists_in_association(reduced_association, primary_rule)
+
         association.each do |secondary_rule, secondary_nodes|
           if primary_rule != secondary_rule
             rule_distance = get_rule_distance({primary_rule => primary_nodes}, {secondary_rule => secondary_nodes})
 
             # Not sure if this should be 3 or calculated based on data.
             if rule_distance < 3
-              new_rule = (primary_rule + secondary_rule).sort.uniq
+              new_rule  = (primary_rule + secondary_rule).sort.uniq
               new_value = (primary_nodes + secondary_nodes).sort.uniq
-              new_association.update { new_rule => new_value }
-
-              Log.info "------------------------"
-              Log.info "SIMILAR #{rule_distance}"
-              Log.info "#{primary_rule.to_s}"
-              Log.info "#{secondary_rule.to_s}"
+              reduced_association.delete secondary_rule
+              reduced_association.update({ new_rule => new_value })
             end
           end
         end
       end
+    end
+
+    reduced_association.keys.each do |rules|
+      Log.info "#{rules.to_s}"
+    end
+
+    reduced_association
+  end
+
+  def get_class_groups(association)
+    updated_association = association 
+
+    i = 1
+    while true
+      Log.info "Trying #{i} to reduce association"
+      Log.info "--------------------------------------------------------------"
+      reduced_association = reduce_association(updated_association)
+      if reduced_association != updated_association and not reduced_association.empty?
+        updated_association = reduced_association
+      else
+        break
+      end
+      i += 1
+    end
+
+    Log.info "Merged associations"
+    updated_association.keys.each do |key|
+      Log.info "Style"
+      Log.info "#{key.to_s}"
+      Log.info "#{updated_association[key].to_s}, #{updated_association[key].length}"
     end
   end
 
