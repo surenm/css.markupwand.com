@@ -72,4 +72,32 @@ class Apriori
     @associations
   end
 
+  def get_association_item_count(association)
+    total = 0
+    if association.is_a? Hash
+      association.each do |key, value|
+        total = total + value.length
+      end
+    end
+
+    total
+  end
+
+  def max_association_match
+    if @associations.empty?
+      return nil
+    end
+
+    max_association_count = 0
+    max_association_index = -1
+
+    @associations.each_with_index do |association, index|
+      association_item_count = get_association_item_count(association)
+      max_association_index = index if association_item_count > max_association_count
+      max_association_count = association_item_count if association_item_count > max_association_count
+    end
+
+    @associations[max_association_index]
+  end
+
 end
