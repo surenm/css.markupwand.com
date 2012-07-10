@@ -283,17 +283,10 @@ HTML
     
     Profiler::start
     
-    # Set the base folder for writing html to
-    generated_folder = self.store_generated_key
-    published_folder = self.store_published_key
-    
     Log.info "Parsing fonts"
     # TODO Fork out and parallel process
     self.parse_fonts(self.layers)
 
-    # Set the root path for this design. That is where all the html and css is saved to.
-    CssParser::set_assets_root generated_folder
-    
     root_grid = self.get_root_grid
 
     # Once grids are generated, run through the tree and find out style sheets.
@@ -330,7 +323,18 @@ HTML
 
   # This usually called after changing CSS class names
   def write_html_and_css
-    Log.info "Writing HTML"
+
+
+    Log.info "Writing HTML and CSS"
+
+    # Set the base folder for writing html to
+    generated_folder = self.store_generated_key
+    published_folder = self.store_published_key
+
+
+    # Set the root path for this design. That is where all the html and css is saved to.
+    CssParser::set_assets_root generated_folder
+    
     root_grid    = self.get_root_grid
     body_html    = root_grid.to_html
     scss_content = root_grid.style_selector.sass_tree + self.hashed_selectors_content
