@@ -141,7 +141,9 @@ class Grid
   # Bounds for a grid.
   # TODO: cache this grids
   def bounds
-    if self.layers.empty?
+    if self.root
+      bounds = self.design.bounds
+    elsif self.layers.empty?
       bounds = nil
     else
       node_bounds = self.layers.collect {|layer| layer.bounds}
