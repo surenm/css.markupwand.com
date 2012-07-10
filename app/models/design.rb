@@ -320,7 +320,18 @@ HTML
     Log.info "Destroying design globals"
     DesignGlobals.destroy
 
+    write_html_and_css
+    
+    Profiler::stop
+  
+    Log.info "Successfully completed processing #{self.processed_file_path}."
+    return
+  end
+
+  # This usually called after changing CSS class names
+  def write_html_and_css
     Log.info "Writing HTML"
+    root_grid    = self.get_root_grid
     body_html    = root_grid.to_html
     scss_content = root_grid.style_selector.sass_tree + self.hashed_selectors_content
 
@@ -338,12 +349,6 @@ HTML
     Store.copy_within_store_recursively generated_folder, published_folder
     self.write_html_files publish_html, published_folder
     self.write_css_files scss_content, published_folder
-
-    
-    Profiler::stop
-  
-    Log.info "Successfully completed processing #{self.processed_file_path}."
-    return
   end
   
   def write_html_files(html_content, base_folder)
