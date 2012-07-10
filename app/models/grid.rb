@@ -256,21 +256,24 @@ class Grid
     
     # Some root grouping of nodes to recursive add as children
     root_grouping_box = BoundingBox.get_grouping_boxes available_nodes.values
-    self.orientation = root_grouping_box.orientation
-    self.save!
-
-    Log.info "Trying Root grouping box: #{root_grouping_box}..."  
-    root_grouping_box.children.each do |row_grouping_box|
-      if row_grouping_box.kind_of? BoundingBox
-        Log.info "No row grouping required. Just handling as a grouping box..."
-        available_nodes = process_grouping_box self, row_grouping_box, available_nodes
-      else
-        available_nodes = process_row_grouping_box row_grouping_box, available_nodes
-      end
-    end
     
-    if available_nodes.length > 0
-      Log.warn "Ignored nodes (#{available_nodes}) in region #{self.bounds}" 
+    if not root_grouping_box.nil?
+      self.orientation = root_grouping_box.orientation
+      self.save!
+
+      Log.info "Trying Root grouping box: #{root_grouping_box}..."  
+      root_grouping_box.children.each do |row_grouping_box|
+        if row_grouping_box.kind_of? BoundingBox
+          Log.info "No row grouping required. Just handling as a grouping box..."
+          available_nodes = process_grouping_box self, row_grouping_box, available_nodes
+        else
+          available_nodes = process_row_grouping_box row_grouping_box, available_nodes
+        end
+      end
+    
+      if available_nodes.length > 0
+        Log.warn "Ignored nodes (#{available_nodes}) in region #{self.bounds}" 
+      end
     end
     
     self.save!

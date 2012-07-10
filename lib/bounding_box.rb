@@ -293,7 +293,7 @@ class BoundingBox
     # if empty gutters, then there probably is no children here.
     # TODO: Find out if this even happens?
     if vertical_gutters.empty? or horizontal_gutters.empty?
-      return []
+      return nil
     end
     
     root_group = nil
