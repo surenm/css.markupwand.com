@@ -12,7 +12,7 @@ class GridStyleSelector
   ## Spacing and padding related methods
    
   # Find out bounding box difference from it and its children.
-  def padding_from_child
+  def get_padding
     non_style_layers = self.grid.layers.to_a.select do |layer|
       not self.grid.style_layers.to_a.include? layer.id.to_s
     end
@@ -53,7 +53,7 @@ class GridStyleSelector
     #TODO. Margin and padding are not always from
     # left and top. It is from all sides.
     margin  = offset_box_spacing
-    padding = padding_from_child
+    padding = get_padding
     css     = {}
     positions = [:top, :left, :bottom, :right]
     
