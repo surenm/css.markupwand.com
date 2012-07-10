@@ -301,7 +301,7 @@ class GridStyleSelector
   # the grouping selector
   def get_subset_css_rules(css_hash)
     css_array = CssParser::rule_hash_to_array(css_hash)
-
+    Log.info "#{css_array.length} existing rules"
     self.grouped_selectors.each do |selector|
       hashed_css_array  = CssParser::rule_hash_to_array(self.grid.design.hashed_selectors[selector])
       css_array         = css_array - hashed_css_array
@@ -314,6 +314,7 @@ class GridStyleSelector
         end
       end
     end
+    Log.info "#{css_array.length} reduced rules"
 
     CssParser::rule_array_to_hash(css_array)
   end
@@ -323,15 +324,16 @@ class GridStyleSelector
   # Once the css_hashes are calculated, remove the redundant items and override 
   # any style that was added by the grouped css class.
   def reduce_hashed_css_properties
-    if self.render_layer
-      render_layer_obj = Layer.find self.render_layer
+    Log.info "Reducing hashed properties for #{self.grid.to_short_s}"
+    if self.grid.render_layer
+      render_layer_obj = Layer.find self.grid.render_layer
       render_layer_obj.css_rules =  get_subset_css_rules(render_layer_obj.css_rules)
       render_layer_obj.save!
     else
       self.css_rules = get_subset_css_rules(self.css_rules)
       self.save!
 
-      self.children.each do |child|
+      self.grid.children.each do |child|
         child.style_selector.reduce_hashed_css_properties
       end
     end
