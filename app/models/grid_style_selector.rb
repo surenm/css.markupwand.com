@@ -144,7 +144,17 @@ class GridStyleSelector
     
     return {}
   end
-  
+
+
+  def modified_generated_selector
+    modified_selector_name = self.grid.design.selector_name_map[self.generated_selector]
+    if not modified_selector_name.nil?
+      modified_selector_name
+    else
+      self.generated_selector
+    end
+  end
+
   def set_style_rules
     css = {}
 
@@ -352,7 +362,7 @@ class GridStyleSelector
     end
 
     if not self.generated_selector.nil?
-      all_selectors.push self.generated_selector if not self.css_rules.empty?
+      all_selectors.push self.modified_generated_selector if not self.css_rules.empty?
     end
 
     all_selectors.uniq!

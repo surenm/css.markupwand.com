@@ -292,11 +292,20 @@ class Layer
     return false
   end
 
+  def modified_generated_selector(grid)
+    modified_selector_name = grid.design.selector_name_map[self.generated_selector]
+    if not modified_selector_name.nil?
+      modified_selector_name
+    else
+      self.generated_selector
+    end
+  end
+
   # Selector names (includes default selector and extra selectors)
   def selector_names(grid)
     all_selectors = extra_selectors
     if not self.css_rules.empty?
-      all_selectors.push self.generated_selector if not self.css_rules.empty?
+      all_selectors.push self.modified_generated_selector(grid) if not self.css_rules.empty?
     end
 
     if not grid.style_selector.grouped_selectors.empty?
