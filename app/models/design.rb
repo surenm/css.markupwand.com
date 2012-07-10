@@ -304,7 +304,7 @@ HTML
     Log.info "Bubble up CSS properties"
     root_grid.style_selector.bubbleup_css_properties
 
-    if ENV['FEATURE_HASHING_DISABLE'] != "true" and false
+    if ENV['FEATURE_HASHING_DISABLE'] != "true"
       Log.info "Hashing up CSS Properties"
       root_grid.style_selector.hash_css_properties
   
