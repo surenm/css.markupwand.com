@@ -40,6 +40,7 @@ class Design
   field :processed_file_path, :type => String, :default => nil
   
   field :font_map, :type => Hash, :default => {}
+  field :selector_name_map, :type => Hash, :default => {}
   field :typekit_snippet, :type => String, :default => ""
   field :google_webfonts_snippet, :type => String, :default => ""
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
@@ -303,7 +304,7 @@ HTML
     Log.info "Bubble up CSS properties"
     root_grid.style_selector.bubbleup_css_properties
 
-    if ENV['FEATURE_HASHING_DISABLE'] != "true"
+    if ENV['FEATURE_HASHING_DISABLE'] != "true" and false
       Log.info "Hashing up CSS Properties"
       root_grid.style_selector.hash_css_properties
   
@@ -311,6 +312,10 @@ HTML
       root_grid.style_selector.reduce_hashed_css_properties
     end
 
+    Log.info "Finding out selector name map"
+    self.selector_name_map = root_grid.style_selector.generate_initial_selector_name_map
+    Log.info self.selector_name_map
+    self.save!
 
     Log.info "Destroying design globals"
     DesignGlobals.destroy
