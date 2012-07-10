@@ -2,6 +2,7 @@ User.all.delete_all
 Design.all.delete_all
 Grid.all.delete_all
 Layer.all.delete_all
+DesignGallery.all.delete_all
 
 # Create an user
 [ 
