@@ -383,8 +383,8 @@ module CssParser
   end
 
   # 
-  # ["{'color': 'yellow'", "{'font-family': 'Arial'}",
-  #  "{'background-color': 'green'", "{'font-size': '2px'}"]
+  # ["{'color': 'yellow'}", "{'font-family': 'Arial'}",
+  #  "{'background-color': 'green'}", "{'font-size': '2px'}"]
   # 
   # to
   # 
@@ -400,9 +400,7 @@ module CssParser
       rule_object = JSON.parse rule_string, :symbolize_names => true
       rule_hash.update(rule_object.keys.first => rule_object.values.first)
     end
-    
-    new_hash[selector_name] = rule_hash
-    
+
     rule_hash
   end
 
@@ -415,6 +413,8 @@ module CssParser
       rule_string = ({rule => value}).to_json
       rule_array.push rule_string
     end
+
+    rule_array
   end
 
 end
