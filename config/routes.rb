@@ -34,7 +34,7 @@ TransformersWeb::Application.routes.draw do
   
   # get, put and edit designs
   match 'design/:id'          => 'design#show'
-  match 'design/:id/edit'     => 'design#edit'
+  match 'design/:id/edit'     => 'design#edit_class'
   match 'design/:id/preview'  => 'design#preview'
   match 'design/:id/gallery'  => 'design#gallery'
   match 'design/:id/download' => 'design#download'

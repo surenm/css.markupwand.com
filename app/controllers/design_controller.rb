@@ -68,6 +68,9 @@ class DesignController < ApplicationController
   
   def edit
   end
+
+  def edit_class
+  end
   
   def preview
   end
