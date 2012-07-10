@@ -116,7 +116,7 @@ class GridStyleSelector
     if self.grid.bounds.nil? or self.grid.bounds.width.nil?
       nil 
     else
-      padding = padding_from_child
+      padding = get_padding
       self.grid.bounds.width - (padding[:left] + padding[:right])
     end
   end
@@ -126,7 +126,7 @@ class GridStyleSelector
     if self.grid.bounds.nil? or self.grid.bounds.height.nil?
       nil 
     else
-      padding = padding_from_child
+      padding = get_padding
       self.grid.bounds.height - (padding[:top] + padding[:bottom])
     end
   end
