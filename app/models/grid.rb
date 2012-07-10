@@ -33,6 +33,8 @@ class Grid
   field :offset_box_type, :type => Symbol, :default => :offset_box
   field :depth, :type => Integer, :default => -1
   
+  field :grouping_box, :type => String, :default => nil
+  
   # Grouping queue is the order in which grids are processed
   @@grouping_queue = Queue.new
   
@@ -280,8 +282,9 @@ class Grid
     
     nodes_in_row_region = BoundingBox.get_nodes_in_region row_grouping_box.bounds, available_nodes.values
 
-    row_grid       = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT
-    row_grid.depth = self.depth + 1
+    row_grid = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT, :depth => self.depth + 1,
+                        :grouping_box => BoundingBox.pickle(row_grouping_box.bounds)
+      
     row_grid.set nodes_in_row_region, self
     
     Log.info "Layers in this row group are #{nodes_in_row_region}."
@@ -326,7 +329,8 @@ class Grid
       Log.info "Empty grouping box. Adding to margin for next grid to pick it up..."
       self.design.add_offset_box grouping_box.clone
     elsif grouping_box_layers.size <= available_nodes.size
-      grid = Grid.new :design => row_grid.design, :depth => row_grid.depth + 1
+      grid = Grid.new :design => row_grid.design, :depth  => row_grid.depth + 1, 
+                      :grouping_box => BoundingBox.pickle(grouping_box)
       
       # Reduce the set of nodes, remove style layers.
       Log.info "Extract style layers for this grid #{grid}..."
@@ -338,7 +342,7 @@ class Grid
       gutters_available = BoundingBox.grouping_boxes_possible? bounding_boxes
       is_positioning_done = false
       if not gutters_available and available_nodes.size > 1
-        is_positioning_done = Grid.extract_positioned_layers grid, grouping_box_layers
+        is_positioning_done = Grid.extract_positioned_layers grid, grouping_box, grouping_box_layers
       end
 
       grid.set grouping_box_layers, row_grid
@@ -444,7 +448,7 @@ class Grid
     [smaller_node, bigger_node]
   end
   
-  def self.extract_positioned_layers(grid, layers_in_region)
+  def self.extract_positioned_layers(grid, grouping_box, layers_in_region)
     intersecting_layer_pairs = Grid.get_intersecting_nodes layers_in_region
     return false if intersecting_layer_pairs.empty?
     

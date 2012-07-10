@@ -14,7 +14,7 @@ class GridStyleSelector
   ## Spacing and padding related methods
    
   # Find out bounding box difference from it and its children.
-  def padding_from_child
+  def get_padding
     non_style_layers = self.grid.layers.to_a.select do |layer|
       not self.grid.style_layers.to_a.include? layer.id.to_s
     end
@@ -32,6 +32,43 @@ class GridStyleSelector
     end
     spacing
   end
+  
+  def get_margin
+    margin = {:top => 0, :left => 0}
+    if self.grid.root == true
+      margin[:top]  += self.grid.bounds.top
+      margin[:left] += self.grid.bounds.left
+    else
+      margin_boxes = []
+
+      if not self.grid.offset_box_buffer.nil?
+        margin_boxes.push BoundingBox.depickle self.grid.offset_box_buffer
+      end
+      
+      if not self.grid.grouping_box.nil?
+        margin_boxes.push BoundingBox.depickle self.grid.grouping_box
+      end
+      
+      if not margin_boxes.empty?
+        children_bounds     = self.grid.layers.collect { |layer| layer.bounds }
+        children_superbound = BoundingBox.get_super_bounds children_bounds        
+        margin_superbound   = BoundingBox.get_super_bounds margin_boxes
+
+        if not margin_superbound.nil? and not children_superbound.nil?
+          margin[:top] = children_superbound.top - margin_superbound.top
+          margin[:left] = children_superbound.left - margin_superbound.left
+        elsif not margin_superbound.nil?
+          margin[:top] = margin_superbound.top
+          margin[:left] = margin_superbound.left
+        elsif not children_superbound.nil?
+          # how can this be???
+        end
+      end
+    end
+      
+    return margin
+  end
+  
   
   # Spacing includes margin and padding.
   # Margin  = separate the block from things outside it
@@ -54,8 +91,8 @@ class GridStyleSelector
   def spacing_css
     #TODO. Margin and padding are not always from
     # left and top. It is from all sides.
-    margin  = offset_box_spacing
-    padding = padding_from_child
+    margin  = get_margin
+    padding = get_padding
     css     = {}
     positions = [:top, :left, :bottom, :right]
     
@@ -72,35 +109,6 @@ class GridStyleSelector
     css
   end
   
- # For css
-  def offset_box_spacing
-    offset_box_spacing = {:top => 0, :left => 0}
-    if not self.grid.offset_box_buffer.nil? and not self.grid.offset_box_buffer.empty?
-      offset_box_object = BoundingBox.depickle self.grid.offset_box_buffer
-
-      if self.grid.offset_box_type == :offset_box
-        if self.grid.bounds.top - offset_box_object.top > 0
-          offset_box_spacing[:top] = self.grid.bounds.top - offset_box_object.top
-        end
-
-        if self.grid.bounds.left - offset_box_object.left > 0 and 
-          offset_box_spacing[:left] = self.grid.bounds.left - offset_box_object.left
-        end
-      elsif self.grid.offset_box_type == :row_offset_box
-        # just the top margin for row offset box
-        if self.grid.bounds.top - offset_box_object.top > 0
-          offset_box_spacing[:top] = self.grid.bounds.top - offset_box_object.top
-        end
-      end
-    end
-
-    if self.grid.root == true
-      offset_box_spacing[:top]    += self.grid.bounds.top
-      offset_box_spacing[:left]   += self.grid.bounds.left
-    end
-    
-    offset_box_spacing
-  end
 
   def is_single_line_text
     if not self.grid.render_layer.nil? and
@@ -117,7 +125,7 @@ class GridStyleSelector
     if self.grid.bounds.nil? or self.grid.bounds.width.nil?
       nil 
     else
-      padding = padding_from_child
+      padding = get_padding
       self.grid.bounds.width - (padding[:left] + padding[:right])
     end
   end
@@ -127,7 +135,7 @@ class GridStyleSelector
     if self.grid.bounds.nil? or self.grid.bounds.height.nil?
       nil 
     else
-      padding = padding_from_child
+      padding = get_padding
       self.grid.bounds.height - (padding[:top] + padding[:bottom])
     end
   end
