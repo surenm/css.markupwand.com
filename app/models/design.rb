@@ -303,11 +303,14 @@ HTML
     Log.info "Bubble up CSS properties"
     root_grid.style_selector.bubbleup_css_properties
 
-    Log.info "Hashing up CSS Properties"
-    root_grid.style_selector.hash_css_properties
+    if ENV['FEATURE_HASHING_DISABLE'] != "true"
+      Log.info "Hashing up CSS Properties"
+      root_grid.style_selector.hash_css_properties
+  
+      Log.info "Reducing existing css rules to remove the hashed properties"
+      root_grid.style_selector.reduce_hashed_css_properties
+    end
 
-    Log.info "Reducing existing css rules to remove the hashed properties"
-    root_grid.style_selector.reduce_hashed_css_properties
 
     Log.info "Destroying design globals"
     DesignGlobals.destroy
