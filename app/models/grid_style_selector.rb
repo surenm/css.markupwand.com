@@ -370,6 +370,28 @@ class GridStyleSelector
     bubbleup_repeating_styles
   end
 
+  def generate_initial_selector_name_map
+    selector_hash = {}
+    initial_selector_names = grouped_selectors
+    if self.grid.render_layer
+      render_layer_obj = Layer.find self.grid.render_layer
+      initial_selector_names.push(render_layer_obj.generated_selector) if not render_layer_obj.generated_selector.empty?
+    else
+      initial_selector_names.push(generated_selector) if not generated_selector.empty?
+    end
+
+    initial_selector_names.each do |selector|
+      selector_hash.update({ selector => selector })
+    end
+
+
+    self.grid.children.each do |child|
+      selector_hash.update(child.style_selector.generate_initial_selector_name_map)
+    end
+
+    selector_hash
+  end
+
   def sass_tree(tabs = 0)
     child_sass_trees = ''
     self.grid.children.each do |child|
