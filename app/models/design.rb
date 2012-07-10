@@ -85,6 +85,10 @@ class Design
     return root_grids.last
   end
   
+  def bounds 
+    BoundingBox.new 0, 0, self.height, self.width
+  end
+  
   def attribute_data(minimal=false)
     if minimal
       {
