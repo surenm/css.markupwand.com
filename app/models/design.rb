@@ -87,11 +87,20 @@ class Design
     return root_grids.last
   end
   
-  def attribute_data
+  def attribute_data(minimal=false)
+    if minimal
+      {
+        :name          => self.name,
+        :psd_file_path => self.psd_file_path,
+        :id            => self.safe_name,
+        :status        => self.status,
+      }
+    end
     grids       = {}
     layers      = {}
     css_classes = {}
     grid_data   = {}
+
 
     if self.status == Design::STATUS_COMPLETED
       grids = self.grids.collect do |grid|

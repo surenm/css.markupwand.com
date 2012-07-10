@@ -73,11 +73,14 @@ class FontMap
     # Pick out the uniq items
     # Right now, pick the first item. Optimize this later.
     fonts_list.each do |font|
-      if not font_matches[font].empty?
-        font_data = font_matches[font].first
-        font_json = ApplicationHelper::get_json("http://typekit.com#{font_data['link']}")
-        font_map[font]  = font_json['family']['slug']
-        font_urls.push font_json['family']['web_link']
+      begin
+        if not font_matches[font].empty?
+          font_data = font_matches[font].first
+          font_json = ApplicationHelper::get_json("http://typekit.com#{font_data['link']}")
+          font_map[font]  = font_json['family']['slug']
+          font_urls.push font_json['family']['web_link']
+        end
+      rescue SocketError => error
       end
     end
     
