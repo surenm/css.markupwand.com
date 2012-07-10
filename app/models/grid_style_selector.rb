@@ -93,8 +93,8 @@ class GridStyleSelector
     end
 
     if self.grid.root == true
-      offset_box_spacing[:top]    += self.grid.bounds.top
-      offset_box_spacing[:left]   += self.grid.bounds.left
+      offset_box_spacing[:top]  += self.grid.bounds.top
+      offset_box_spacing[:left] += self.grid.bounds.left
     end
     
     offset_box_spacing
