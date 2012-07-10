@@ -293,10 +293,14 @@ class Layer
   end
 
   # Selector names (includes default selector and extra selectors)
-  def selector_names
+  def selector_names(grid)
     all_selectors = extra_selectors
     if not self.css_rules.empty?
       all_selectors.push self.generated_selector if not self.css_rules.empty?
+    end
+
+    if not grid.style_selector.grouped_selectors.empty?
+      all_selectors = all_selectors + grid.style_selector.grouped_selectors
     end
 
     all_selectors.uniq!
@@ -447,7 +451,7 @@ class Layer
     attributes[:"data-grid-id"] = args.fetch :"data-grid-id", ""
     attributes[:"data-layer-id"] = self.id.to_s
     attributes[:"data-layer-name"] = self.name
-    attributes[:class] = self.selector_names.join(" ") if not self.selector_names.empty?
+    attributes[:class] = self.selector_names(grid).join(" ") if not self.selector_names(grid).empty?
 
     if tag == :img
       attributes[:src] = image_path
