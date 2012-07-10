@@ -282,17 +282,19 @@ class Grid
     
     nodes_in_row_region = BoundingBox.get_nodes_in_region row_grouping_box.bounds, available_nodes.values
 
-    row_grid = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT, :depth => self.depth + 1,
-                        :grouping_box => BoundingBox.pickle(row_grouping_box.bounds)
-      
-    row_grid.set nodes_in_row_region, self
-    
-    Log.info "Layers in this row group are #{nodes_in_row_region}."
 
     if nodes_in_row_region.empty?
       Log.info "Marking this grouping box as margin..."
       self.design.row_offset_box = row_grouping_box.bounds
+      
     else
+      row_grid = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT, :depth => self.depth + 1,
+                          :grouping_box => BoundingBox.pickle(row_grouping_box.bounds)
+
+      row_grid.set nodes_in_row_region, self
+
+      Log.info "Layers in this row group are #{nodes_in_row_region}."
+      
       Log.info "Extracting style layers out of the row grid #{row_grid}"
       available_nodes = Grid.extract_style_layers row_grid, available_nodes, row_grouping_box
     
