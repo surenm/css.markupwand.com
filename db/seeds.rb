@@ -16,6 +16,9 @@ Layer.all.delete_all
   user.save!
 end
 
+# Create a Design Gallery object
+DesignGallery.create
+
 # TODO: A sample photoshop file
 
 # TODO: A sample photoshop processed file
