@@ -71,6 +71,9 @@ class DesignController < ApplicationController
   
   def preview
   end
+
+  def gallery
+  end
   
   def download
     tmp_folder = Store::fetch_from_store @design.store_published_key

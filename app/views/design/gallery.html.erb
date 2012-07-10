@@ -1,0 +1,39 @@
+<%= content_for :content do %>
+  <div id="editor-header" class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="action row center">
+        <div class="forward right">
+          <% if current_user.admin? %>
+            <a href="#" id="design-preview-button" class="btn btn-large btn-secondary forward">
+              View Design
+            </a>
+            <script>
+              $('#design-preview-dialog').dialog({ autoOpen: false, position: [960, 70],  width: "960"})
+              $('#design-preview-button').click(function(){
+                $("#design-preview-dialog").dialog("open");
+              });
+            </script>
+          <% end %>
+          <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large btn-success forward">
+            ↓ Download Markup
+          </a>
+          <a href='<%= "/published/#{@design.safe_name}/index.html" %>' class="btn btn-large btn-primary forward">
+            ➚ Popout
+          </a>
+        </div>
+        <div class="left back">
+          <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/edit">  ← Edit some more! </a>
+        </div>
+        <div class="name"><small> Design: </small><%= @design.name %> </div>
+      </div>
+    </div>
+    <div class = "clearfix"> </div>
+  </div>
+  <iframe id="preview-iframe" src='<%= "/published/#{@design.safe_name}/index.html" %>'></iframe>
+<% end %>
+
+<%= content_for :admin_content do %>
+  <div id="design-preview-dialog">
+    <img src="/processed/<%=@design.safe_name%>/<%=@design.safe_name_prefix.gsub(/_psd$/,'')%>.psd.png"/>
+  </div>
+<% end %>
