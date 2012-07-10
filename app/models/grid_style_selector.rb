@@ -51,19 +51,13 @@ class GridStyleSelector
         children_bounds     = self.grid.layers.collect { |layer| layer.bounds }
         children_superbound = BoundingBox.get_super_bounds children_bounds        
         margin_superbound   = BoundingBox.get_super_bounds margin_boxes
-
+            
         if not margin_superbound.nil? and not children_superbound.nil?
           margin[:top] = children_superbound.top - margin_superbound.top
           margin[:left] = children_superbound.left - margin_superbound.left
-        elsif not margin_superbound.nil?
-          margin[:top] = margin_superbound.top
-          margin[:left] = margin_superbound.left
-        elsif not children_superbound.nil?
-          # how can this be???
         end
       end
     end
-      
     return margin
   end
   
@@ -103,7 +97,6 @@ class GridStyleSelector
         css["padding-#{position}".to_sym] = "#{padding[position]}px" if padding[position] > 0
       end  
     end
-    
     css
   end
   
