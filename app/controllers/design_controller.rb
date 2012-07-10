@@ -70,6 +70,7 @@ class DesignController < ApplicationController
   end
 
   def edit_class
+    @selector_name_map = @design.selector_name_map
   end
   
   def preview

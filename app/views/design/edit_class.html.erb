@@ -16,46 +16,36 @@
   <div class = "clearfix"> </div>
 </div>
 <div id='editor-controls'>
+  <div style="text-align:center;">
+    <div class="saveclasses btn btn-success"> Save classes </div>
+  </div>
   <div id='editor'>
     <div class="accordion" id="class-edit-accordion">
       <form>
+        <%= @selector_name_map.each do |selector, modified_selector| %>
         <div class="accordion-group">
           <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#class-edit-accordion" href="#collapseOne">
-              <input type="text" name="collapseOne" value=".class1">
-              ..
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#class-edit-accordion" href="#<%= selector %>">
+              <input tabindex="2"  type="text" name="<%= selector %>" data-original="<%= modified_selector %>" value="<%= modified_selector %>">..
             </a>
           </div>
-          <div id="collapseOne" class="accordion-body in collapse" style="height: auto; ">
+          <div id="<%= selector %>" class="accordion-body collapse" style="height: 0px; ">
             <div class="accordion-inner">
-              {css properties}
+              <pre class="prettyprint">
+{
+  position: relative;
+  padding-top: 90px;
+  background-color: white;
+  background-image: url(../img/grid-18px-masked.png);
+  background-repeat: repeat-x;
+  background-position: 0 40px;
+}
+              </pre>
             </div>
           </div>
         </div>
-        <div class="accordion-group">
-          <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#class-edit-accordion" href="#collapseTwo">
-              <input type="text" name="collapseOne" value=".class2">..
-            </a>
-          </div>
-          <div id="collapseTwo" class="accordion-body collapse" style="height: 0px; ">
-            <div class="accordion-inner">
-              {css properties}
-            </div>
-          </div>
-        </div>
-        <div class="accordion-group">
-          <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#class-edit-accordion" href="#collapseThree">
-              <input type="text" name="collapseOne" value=".class3">..
-            </a>
-          </div>
-          <div id="collapseThree" class="accordion-body collapse" style="height: 0px; ">
-            <div class="accordion-inner">
-              {css properties}
-            </div>
-          </div>
-        </div>
+        <% end %>
+
       </form>
     </div>
   </div>
