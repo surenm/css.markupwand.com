@@ -297,12 +297,22 @@ class GridStyleSelector
     self.grid.design.save!
   end
 
+  # Finds out subset CSS rules which are not taken care by 
+  # the grouping selector
   def get_subset_css_rules(css_hash)
     css_array = CssParser::rule_hash_to_array(css_hash)
 
     self.grouped_selectors.each do |selector|
-      hashed_css_array = CssParser::rule_hash_to_array(self.grid.design.hashed_selectors[selector])
-      css_array = css_array - hashed_css_array 
+      hashed_css_array  = CssParser::rule_hash_to_array(self.grid.design.hashed_selectors[selector])
+      css_array         = css_array - hashed_css_array
+      overridable_items = hashed_css_array - css_array
+      overridable_items.each do |rule|
+        rule_object = JSON.parse rule, :symbolize_names => true
+        rule_key    = rule_object.keys.first
+        if Constants::css_properties.has_key? rule_key.to_sym
+          css_array.push({rule_key => Constants::css_properties[rule_key.to_sym][:initial]}.to_json)
+        end
+      end
     end
 
     CssParser::rule_array_to_hash(css_array)
