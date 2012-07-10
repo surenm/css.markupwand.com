@@ -4,7 +4,7 @@ showAccordion = (node)->
 
 addAccordionListeners =->
   $('#class-edit-accordion input').focus( ->
-    console.log('focussed')
+    $($("#editor-iframe").contents()).find('body').find('.' + $(this).data('original')).css('border', '1px solid red')
     showAccordion($(this).parent().attr('href'))
   )
 
