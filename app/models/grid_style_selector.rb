@@ -97,6 +97,20 @@ class GridStyleSelector
       offset_box_spacing[:left] += self.grid.bounds.left
     end
     
+    if not self.grid.grouping_box.nil?
+      grouping_box_object = BoundingBox.depickle self.grid.grouping_box
+      
+      non_style_layers = self.grid.layers.to_a.select do |layer|
+        not self.grid.style_layers.to_a.include? layer.id.to_s
+      end
+      children_bounds = non_style_layers.collect { |layer| layer.bounds }
+      children_superbound = BoundingBox.get_super_bounds children_bounds
+      
+      if not children_superbound.nil?
+        offset_box_spacing[:top]  += (children_superbound.top - grouping_box_object.top)
+        offset_box_spacing[:left]  += (children_superbound.left - grouping_box_object.left)
+      end
+    end
     offset_box_spacing
   end
 
