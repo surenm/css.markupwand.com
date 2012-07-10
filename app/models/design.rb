@@ -91,13 +91,14 @@ class Design
   
   def attribute_data(minimal=false)
     if minimal
-      {
+      return {
         :name          => self.name,
         :psd_file_path => self.psd_file_path,
         :id            => self.safe_name,
         :status        => self.status,
       }
     end
+    
     grids       = {}
     layers      = {}
     css_classes = {}
