@@ -1,0 +1,74 @@
+<%= content_for :css do %>
+  <%= stylesheet_link_tag "app/editor", :media => "all" %>
+  <%= render "shared/templates" %>
+<% end %>
+<%= content_for :content do %>
+<div id="editor-header" class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="action row center">
+      <div class="forward right"> 
+        <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/preview/"> Preview → </a> 
+      </div>
+      <div class="back left"> <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/">  ← Back to Design Page </a></div>
+      <div class="name"><small> Design: </small><%= @design.name %> </div>
+    </div>
+  </div>
+  <div class = "clearfix"> </div>
+</div>
+<div id='editor-controls'>
+  <div id='editor'>
+    <div class="accordion" id="class-edit-accordion">
+      <form>
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#class-edit-accordion" href="#collapseOne">
+              <input type="text" name="collapseOne" value=".class1">
+              ..
+            </a>
+          </div>
+          <div id="collapseOne" class="accordion-body in collapse" style="height: auto; ">
+            <div class="accordion-inner">
+              {css properties}
+            </div>
+          </div>
+        </div>
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#class-edit-accordion" href="#collapseTwo">
+              <input type="text" name="collapseOne" value=".class2">..
+            </a>
+          </div>
+          <div id="collapseTwo" class="accordion-body collapse" style="height: 0px; ">
+            <div class="accordion-inner">
+              {css properties}
+            </div>
+          </div>
+        </div>
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a class="accordion-toggle" data-toggle="collapse" data-parent="#class-edit-accordion" href="#collapseThree">
+              <input type="text" name="collapseOne" value=".class3">..
+            </a>
+          </div>
+          <div id="collapseThree" class="accordion-body collapse" style="height: 0px; ">
+            <div class="accordion-inner">
+              {css properties}
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class='ide'>
+  <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html'></iframe>
+</div>
+<% end %>
+
+<%= content_for :javascript do %>
+<script type="text/javascript">
+/* Get the current class mappings here*/
+var class_mappings = {'a' : 'b', 'c' : 'd'};
+</script>
+<%= javascript_include_tag "app/edit_class" %>
+<% end %>
