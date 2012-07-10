@@ -55,12 +55,19 @@ class GridStyleSelector
         if not margin_superbound.nil? and not children_superbound.nil?
           margin[:top] = children_superbound.top - margin_superbound.top
           margin[:left] = children_superbound.left - margin_superbound.left
+        elsif not margin_superbound.nil?
+          margin[:top] = margin_superbound.top
+          margin[:left] = margin_superbound.left
+        elsif not children_superbound.nil?
+          # how can this be???
         end
       end
     end
       
     return margin
   end
+  
+  
   # Spacing includes margin and padding.
   # Margin  = separate the block from things outside it
   # Padding = to move the contents away from the edges of the block.
