@@ -9,7 +9,7 @@ class GridStyleSelector
   field :extra_selectors, :type => Array, :default => []
   field :generated_selector, :type => String
 
-  field :grouped_selectors, :type => Array, :default => []
+  field :hashed_selectors, :type => Array, :default => []
 
   ## Spacing and padding related methods
    
@@ -306,7 +306,7 @@ class GridStyleSelector
       next_selector_name = CssParser::create_incremental_selector
       self.grid.design.hashed_selectors[next_selector_name] = rule_hash
       nodes.each do |node|
-        node.style_selector.grouped_selectors.push next_selector_name
+        node.style_selector.hashed_selectors.push next_selector_name
         Log.info "Adding #{next_selector_name} to #{node.to_short_s}"
         node.save!
       end
@@ -321,7 +321,7 @@ class GridStyleSelector
     original_css_array = CssParser::rule_hash_to_array(css_hash)
     css_array          = original_css_array.clone
     Log.info "#{css_array.length} existing rules"
-    self.grouped_selectors.each do |selector|
+    self.hashed_selectors.each do |selector|
       hashed_css_array  = CssParser::rule_hash_to_array(self.grid.design.hashed_selectors[selector])
       css_array         = css_array - hashed_css_array
       # This might cause bug when there are more than one group selector
@@ -361,7 +361,7 @@ class GridStyleSelector
 
   # Selector names array(includes default selector and extra selectors)
   def selector_names
-    all_selectors = extra_selectors + grouped_selectors
+    all_selectors = extra_selectors + hashed_selectors
 
     layer_has_css = false
     if self.grid.render_layer
@@ -390,7 +390,7 @@ class GridStyleSelector
 
   def generate_initial_selector_name_map
     selector_hash = {}
-    initial_selector_names = grouped_selectors
+    initial_selector_names = hashed_selectors
     if self.grid.render_layer
       render_layer_obj = Layer.find self.grid.render_layer
       initial_selector_names.push(render_layer_obj.generated_selector) if not render_layer_obj.generated_selector.empty?
