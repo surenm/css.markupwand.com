@@ -20,6 +20,7 @@ module CssParser
   def CssParser::set_assets_root(root)
     # Create assets folder
     assets_path = File.join root, "assets"
+    Log.info "Setting assets path to #{assets_path}"
     ENV["ASSETS_DIR"] = assets_path.to_s
   end
   
@@ -331,12 +332,12 @@ module CssParser
     css
   end
 
-  def CssParser::to_style_string(css)
+  def CssParser::to_style_string(css, spaces = ' ')
     css_string = ""
     css.each do |key,value|
       css_string += "#{key}: #{value}; "
     end
-    return css_string
+    return css_string.gsub(";",";\n#{spaces}")
   end
 
   def CssParser::get_image_path(layer)
