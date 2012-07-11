@@ -29,7 +29,7 @@
   <script type="text/javascript">
     var design_id = '<%=  raw @design.safe_name %>';
     <% if @design.status == Design::STATUS_COMPLETED %>
-    var design = <%= raw @design.attribute_data.to_json %>;
+    var design = <%= raw @design.attribute_data(true).to_json %>;
     <% else %>
     var design = null;
     <% end %>
