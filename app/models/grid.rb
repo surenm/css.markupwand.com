@@ -553,14 +553,18 @@ class Grid
       attributes[:class] = self.style_selector.selector_names.join(" ") if not self.style_selector.selector_names.empty?
  
       sub_grid_args = Hash.new
-        
+      positioned_html = positioned_grids_html sub_grid_args
+      if not positioned_html.empty?
+        inner_html += content_tag :div, '', :class => 'marginfix'
+      end
+      
       child_nodes = self.children.select { |node| not node.is_positioned }
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
       end
 
-      inner_html += positioned_grids_html(sub_grid_args)
+      inner_html += positioned_html
       
       if child_nodes.length > 0
         html = content_tag tag, inner_html, attributes, false
