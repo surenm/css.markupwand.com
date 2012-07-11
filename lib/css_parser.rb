@@ -257,8 +257,8 @@ module CssParser
     css =  {}
     if grid.bounds and not grid.zindex.nil?
       css[:position]  = 'absolute'
-      css[:top]       = (grid.bounds.top - grid.parent.bounds.top).to_s + 'px'
-      css[:left]      = (grid.bounds.left - grid.parent.bounds.left).to_s + 'px'
+      css[:top]       = (grid.bounds.top - grid.parent.bounds.top + 1).to_s + 'px'
+      css[:left]      = (grid.bounds.left - grid.parent.bounds.left + 1).to_s + 'px'
       css[:'z-index'] = grid.zindex
     end
     
