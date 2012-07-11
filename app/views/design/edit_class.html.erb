@@ -31,16 +31,7 @@
           </div>
           <div id="<%= selector %>" class="accordion-body collapse" style="height: 0px; ">
             <div class="accordion-inner">
-              <pre class="prettyprint">
-{
-  position: relative;
-  padding-top: 90px;
-  background-color: white;
-  background-image: url(../img/grid-18px-masked.png);
-  background-repeat: repeat-x;
-  background-position: 0 40px;
-}
-              </pre>
+              <pre class="prettyprint">  <%= CssParser::to_style_string(modified_selector['css']) %></pre>
             </div>
           </div>
         </div>
