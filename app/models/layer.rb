@@ -308,8 +308,8 @@ class Layer
       all_selectors.push self.modified_generated_selector(grid) if not self.css_rules.empty?
     end
 
-    if not grid.style_selector.grouped_selectors.empty?
-      all_selectors = all_selectors + grid.style_selector.grouped_selectors
+    if not grid.style_selector.hashed_selectors.empty?
+      all_selectors = all_selectors + grid.style_selector.hashed_selectors
     end
 
     all_selectors.uniq!
