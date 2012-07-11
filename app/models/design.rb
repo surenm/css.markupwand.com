@@ -291,6 +291,10 @@ HTML
     Log.info "Generating body HTML..."
     
     Profiler::start
+    generated_folder = self.store_generated_key
+    
+    # Set the root path for this design. That is where all the html and css is saved to.
+    CssParser::set_assets_root generated_folder
     
     Log.info "Parsing fonts"
     # TODO Fork out and parallel process
@@ -332,14 +336,11 @@ HTML
 
   # This usually called after changing CSS class names
   def write_html_and_css
-
-
     Log.info "Writing HTML and CSS"
 
     # Set the base folder for writing html to
     generated_folder = self.store_generated_key
     published_folder = self.store_published_key
-
 
     # Set the root path for this design. That is where all the html and css is saved to.
     CssParser::set_assets_root generated_folder
