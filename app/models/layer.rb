@@ -295,7 +295,7 @@ class Layer
   def modified_generated_selector(grid)
     modified_selector_name = grid.design.selector_name_map[self.generated_selector]
     if not modified_selector_name.nil?
-      modified_selector_name
+      modified_selector_name["name"]
     else
       self.generated_selector
     end

@@ -161,7 +161,7 @@ class GridStyleSelector
   def modified_generated_selector
     modified_selector_name = self.grid.design.selector_name_map[self.generated_selector]
     if not modified_selector_name.nil?
-      modified_selector_name
+      modified_selector_name["name"]
     else
       self.generated_selector
     end
@@ -403,7 +403,7 @@ class GridStyleSelector
     end
 
     if not initial_selector_name.nil?
-      selector_hash = { initial_selector_name => initial_selector_name }
+      selector_hash = { initial_selector_name => {"name" => initial_selector_name} }
     end
 
 
