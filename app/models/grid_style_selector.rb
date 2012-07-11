@@ -154,6 +154,10 @@ class GridStyleSelector
   end
 
 
+  # Selector names are usually generated,
+  # but when the user edits the selector name (aka class name)
+  # we want to pick it up from the modified selector map
+  # and return
   def modified_generated_selector
     modified_selector_name = self.grid.design.selector_name_map[self.generated_selector]
     if not modified_selector_name.nil?
@@ -390,16 +394,16 @@ class GridStyleSelector
 
   def generate_initial_selector_name_map
     selector_hash = {}
-    initial_selector_names = hashed_selectors
+    initial_selector_name = nil
     if self.grid.render_layer
       render_layer_obj = Layer.find self.grid.render_layer
-      initial_selector_names.push(render_layer_obj.generated_selector) if not render_layer_obj.generated_selector.empty?
+      initial_selector_name = (render_layer_obj.generated_selector) if not render_layer_obj.generated_selector.empty?
     else
-      initial_selector_names.push(generated_selector) if not generated_selector.empty?
+      initial_selector_name = (generated_selector) if not generated_selector.empty?
     end
 
-    initial_selector_names.each do |selector|
-      selector_hash.update({ selector => selector })
+    if not initial_selector_name.nil?
+      selector_hash = { initial_selector_name => initial_selector_name }
     end
 
 
