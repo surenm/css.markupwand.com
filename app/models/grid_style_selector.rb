@@ -171,9 +171,18 @@ class GridStyleSelector
     css.update width_css(css)
     
     # Positioning
-    positioned_grid_count = (self.grid.children.select { |grid| grid.is_positioned }).length
-    css[:position] = 'relative' if positioned_grid_count > 0
     self.extra_selectors.push('pull-left') if not (self.grid.parent.nil?) and (self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT)
+    positioned_children = self.grid.children.select { |child_grid| child_grid.is_positioned }
+
+    positioned_siblings = []
+    if not self.grid.root and not self.grid.is_positioned
+      positioned_siblings = self.grid.parent.children.select { |sibling_grid| sibling_grid.is_positioned }
+    end
+
+    if positioned_children.size > 0 or positioned_siblings.size > 0
+      css[:position]  = 'relative'
+      css[:"z-index"] = self.grid.zindex
+    end
     
     css.update CssParser::position_absolutely(grid) if grid.is_positioned
 
