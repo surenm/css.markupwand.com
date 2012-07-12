@@ -272,8 +272,8 @@ module CssParser
   
   def CssParser::parse_shape(layer, grid)
     layer_json = layer.layer_json
-    shape_css = nil
       
+    shape_css = {}
     if layer_json.has_key? :path_items and not layer_json[:path_items].empty?
       path_segments = layer_json[:path_items].collect do |path_point|
         Shape::PathSegment.new(path_point)
