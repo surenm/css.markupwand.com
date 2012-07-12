@@ -11,7 +11,7 @@ class Shape::PathSegment
 
   CURVE_TYPE_CONCAVE = :curve_type_concave
   CURVE_TYPE_CONVEX = :curve_type_convex
-  CURVE_TYPE_BOTH = :curve_type_both
+  CURVE_TYPE_COMPLEX = :curve_type_complex
   CURVE_TYPE_NONE = :curve_type_none
 
   private
@@ -23,23 +23,36 @@ class Shape::PathSegment
     end
   end
 
+  def get_curve_type(anchor, dir1, dir2)
+    if anchor <= dir1 and anchor <= dir2
+      @curve_type = CURVE_TYPE_CONCAVE
+    elsif anchor >= dir1 and anchor >= dir2
+      @curve_type = CURVE_TYPE_CONVEX
+    else
+      @curve_type = CURVE_TYPE_COMPLEX
+    end
+  end
+
   def set_curve
     if self.type.nil?
       set_type
     end
 
     if self.type == TYPE_STRAIGHT
-      @curve_type = CURVE_NONE
+      @curve_dir = CURVE_DIR_NONE
+      @curve_type = CURVE_TYPE_NONE
     elsif self.point.x == self.left_dir.x and self.left_dir.x == self.right_dir.x
-        @curve_type = CURVE_TYPE_Y
+      @curve_dir = CURVE_DIR_Y
+      @curve_type = get_curve_type(self.point.y, self.left_dir.y, self.right_dir.y)
     elsif self.point.y == self.left_dir.y and self.left_dir.y == self.right_dir.y
-        @curve_type = CURVE_TYPE_X
+      @curve_dir = CURVE_DIR_X
+      @curve_type = get_curve_type(self.point.x, self.left_dir.x, self.right_dir.x)
     else
-        @curve_type = CURVE_TYPE_BOTH
-    end
-
-    if self.type == TYPE_STRAIGHT
-
+      @curve_dir = CURVE_DIR_BOTH
+      # FIXME: Curve type may not be complex here.
+      # But since we don't care about the type, setting it to complex for simplicity of code.
+      # This would anyways be handled as image
+      @curve_type = CURVE_TYPE_COMPLEX
     end
   end
 
@@ -64,5 +77,33 @@ class Shape::PathSegment
     path_item_list.select do |other_item|
       self.parallel? other_item
     end
+  end
+
+  def curved?
+    !(self.curve_dir == CURVE_DIR_NONE and self.curve_type == CURVE_TYPE_NONE)
+  end
+
+  def curved_x?
+    self.curve_dir == CURVE_DIR_X
+  end
+
+  def curved_y?
+    self.curve_dir == CURVE_DIR_Y
+  end
+
+  def curved_both_axes?
+    self.curve_dir == CURVE_DIR_BOTH
+  end
+
+  def concave?
+    self.curve_type == CURVE_TYPE_CONCAVE
+  end
+
+  def convex?
+    self.curve_type == CURVE_TYPE_CONVEX
+  end
+
+  def complex?
+    self.curve_type == CURVE_TYPE_COMPLEX
   end
 end

@@ -23,13 +23,56 @@ class Shape::Box
     # In a simple rounded rectangle, lines would turn slightly in just one dimension at a time
     # No segment should have turn in more than one dimension(x or y only; not both)
     # And there can't be an odd number of segments for a box
-    elsif num_straight_segments == 0 and num_segments%2 == 0
-      curves = path_segments.collect { |segment| segment.curve_type }
-      non_boxy_curves = curves.select {|curve| curve == Shape::PathSegment::CURVE_TYPE_BOTH}
-      x_curves = curves.select {|curve| curve == Shape::PathSegment::CURVE_TYPE_X}
-      y_curves = curves.select {|curve| curve == Shape::PathSegment::CURVE_TYPE_Y}
-      curve_balance_index = x_curves - y_curves
-      if non_boxy_curves.size == 0 and curve_balance_index == 0
+    elsif num_straight_segments == 0 and num_segments.even?
+      curve_data = {
+          :x => {
+            :count => 0,
+            :concave_count => 0,
+            :convex_count => 0
+          },
+          :y => {
+              :count => 0,
+              :concave_count => 0,
+              :convex_count => 0
+          }
+      }
+
+      num_non_boxy_curves = 0
+
+      path_segments.each do |segment|
+        if segment.curved_x?
+          curve_data[:x][:count] += 1
+          if segment.convex?
+            curve_data[:x][:convex_count] += 1
+          elsif segment.concave?
+            curve_data[:x][:concave_count] += 1
+          else
+            num_non_boxy_curves += 1
+          end
+        elsif segment.curved_y?
+          curve_data[:y][:count] += 1
+          if segment.convex?
+            curve_data[:y][:convex_count] += 1
+          elsif segment.concave?
+            curve_data[:y][:concave_count] += 1
+          else
+            num_non_boxy_curves += 1
+          end
+        else
+          num_non_boxy_curves += 1
+        end
+      end
+
+      curves_balanced = true
+      if curve_data[:x][:count].odd? or curve_data[:y][:count].odd?
+        curves_balanced = false
+      end
+      if (curve_data[:x][:convex_count] != curve_data[:x][:concave_count] or
+          curve_data[:y][:convex_count] != curve_data[:y][:concave_count])
+         curves_balanced = false
+      end
+
+      if num_non_boxy_curves == 0 and curves_balanced
         return true
       end
     end
