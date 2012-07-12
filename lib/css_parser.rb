@@ -271,13 +271,11 @@ module CssParser
     shape_css = nil
       
     if layer_json.has_key? :path_items and not layer_json[:path_items].empty?
-      if layer_json[:path_items].length == 4 
-        if (layer_json[:path_items][0][1] == layer_json[:path_items][1][1]) and (layer_json[:path_items][0][0] == layer_json[:path_items][3][0])
-           shape_css = CssParser::parse_box layer, grid
-        end
-      elsif layer_json[:path_items].length == 8
-        shape_css = CssParser::parse_box layer, grid
-      elsif layer_json[:path_items].length == 6
+      path_segments = layer_json[:path_items].collect do |path_point|
+        Shape::PathSegment.new(path_point)
+      end
+
+      if Shape::Box.is_box? path_segments
         shape_css = CssParser::parse_box layer, grid
       end
       
@@ -299,8 +297,6 @@ module CssParser
         shape_css[:'min-height'] = "#{layer.bounds.height}px"
         shape_css[:'min-width'] = "#{layer.bounds.width}px"
       end
-    else
-      shape_css = CssParser::parse_box layer, grid
     end
     return shape_css
   end
