@@ -20,6 +20,40 @@ body {
     }
   }
 
+  #css_editor {
+    ul {
+      margin: 10px 0 10px 20px;;
+      list-style: none;
+
+      li {
+        margin:0;
+        padding:0;
+      }
+
+      pre {
+        width: 80%;
+        display: none;
+      }
+
+      input {
+        background-color: inherit;
+        border:1px solid #aaf;
+      }
+
+      input:focus {
+        background-color: #fef;
+      }
+
+    }
+
+    .save-wrapper {
+      padding:10px;
+      border: 1px solid #555;
+      text-align: center;
+    }
+
+  }
+
   #editor-controls {
     position: absolute;
     top: 53px;
