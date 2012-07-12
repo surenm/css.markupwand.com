@@ -289,7 +289,6 @@ HTML
     Log.info "Creating root grid..."
     grid = Grid.new :design => self, :root => true, :depth => 0
     grid.set layers, nil
-    grid.extract_body_style_layers
     grid.save!
 
     Log.info "Grouping the grids..."
