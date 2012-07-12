@@ -188,7 +188,12 @@ class Design
 
     self.push_to_processing_queue
   end
-  
+
+  def regenerate_html
+    self.set_status Design::STATUS_REGENERATING
+    Resque.enqueue HtmlRegeneratorJob, self.id  
+  end
+
   def reparse
     self.grids.delete_all
     self.layers.delete_all
