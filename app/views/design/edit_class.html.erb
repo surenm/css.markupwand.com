@@ -16,28 +16,24 @@
   <div class = "clearfix"> </div>
 </div>
 <div id='editor-controls'>
-  <div style="text-align:center;">
-    <div class="saveclasses btn btn-success"> Save classes </div>
-  </div>
-  <div id='editor'>
-    <div class="accordion" id="class-edit-accordion">
-      <form>
-        <%= @selector_name_map.each do |selector, modified_selector| %>
-        <div class="accordion-group">
-          <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#class-edit-accordion" href="#<%= selector %>">
-              <input tabindex="2"  type="text" name="<%= selector %>" data-original="<%= modified_selector['name'] %>" value="<%= modified_selector['name'] %>">..
-            </a>
-          </div>
-          <div id="<%= selector %>" class="accordion-body collapse" style="height: 0px; ">
-            <div class="accordion-inner">
-              <pre class="prettyprint">  <%= CssParser::to_style_string(modified_selector['css']) %></pre>
-            </div>
-          </div>
-        </div>
+  <div id="editor">
+    <div id="css_editor">
+      <%= form_tag "/design/#{@design.safe_name}/save_class" do %>
+      <div class="save-wrapper">
+        <input type="submit" class="saveclasses btn btn-success" name="save_classes"  value="Save classes">
+      </div>
+      <ul>
+        <% @selector_name_map.each do |selector, modified_selector| %>
+        <li>
+          <input tabindex="1"  type="text" name="class_map['<%= selector %>']" data-original="<%= modified_selector['name'] %>" value="<%= modified_selector['name'] %>">
+          <pre>  <%= CssParser::to_style_string(modified_selector['css']) %></pre>
+        </li>
         <% end %>
-
-      </form>
+      </ul>
+      <div class="save-wrapper">
+        <input type="submit" class="saveclasses btn btn-success" name="save_classes"  value="Save classes">
+      </div>
+      <% end %>
     </div>
   </div>
 </div>
