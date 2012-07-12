@@ -72,6 +72,17 @@ class DesignController < ApplicationController
   def edit_class
     @selector_name_map = @design.selector_name_map
   end
+
+  def save_class
+    params['class_map'].each do |lookup, value|
+      lookup_key = lookup.gsub("'",'')
+      @design.selector_name_map[lookup_key]['name'] = value
+    end
+
+    @design.save!
+    @design.regenerate_html
+    redirect_to :action => :show, :id => @design.safe_name
+  end
   
   def preview
   end
