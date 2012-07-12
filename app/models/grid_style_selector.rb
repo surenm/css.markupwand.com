@@ -44,19 +44,23 @@ class GridStyleSelector
       if not self.grid.offset_box_buffer.nil?
         margin_boxes.push BoundingBox.depickle self.grid.offset_box_buffer
       end
-      
+
       if not self.grid.grouping_box.nil?
         margin_boxes.push BoundingBox.depickle self.grid.grouping_box
-      end
+      end      
       
       if not margin_boxes.empty?
         children_bounds     = self.grid.layers.collect { |layer| layer.bounds }
         children_superbound = BoundingBox.get_super_bounds children_bounds        
         margin_superbound   = BoundingBox.get_super_bounds margin_boxes
-            
+          
         if not margin_superbound.nil? and not children_superbound.nil?
-          margin[:top] = children_superbound.top - margin_superbound.top
-          margin[:left] = children_superbound.left - margin_superbound.left
+          if self.grid.offset_box_type == :offset_box
+            margin[:top] = children_superbound.top - margin_superbound.top
+            margin[:left] = children_superbound.left - margin_superbound.left
+          elsif self.grid.offset_box_type == :row_offset_box
+            margin[:top] = children_superbound.top - margin_superbound.top
+          end
         end
       end
     end
