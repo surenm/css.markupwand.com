@@ -119,12 +119,21 @@ class GridStyleSelector
   
   # Width subtracted by padding
   def unpadded_width
-    if self.grid.bounds.nil? or self.grid.bounds.width.nil?
-      nil 
-    else
+    width = 0
+
+    if not self.grid.bounds.nil? or not self.grid.bounds.width.nil?
+      width += self.grid.bounds.width
+      
       padding = get_padding
-      self.grid.bounds.width - (padding[:left] + padding[:right])
+      width -= padding[:left] + padding[:right]
+      
+      grouping_box = BoundingBox.depickle self.grid.grouping_box
+      if not grouping_box.nil?
+        initial_offset = self.grid.bounds.left - grouping_box.left
+        width += initial_offset
+      end
     end
+    return width
   end
   
   # Height subtracted by padding
