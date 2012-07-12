@@ -170,7 +170,7 @@ class GridStyleSelector
     
     css.update width_css(css)
     
-    # Positioning
+    # Positioning - absolute is handled separately. Just find out if a grid has to be relatively positioned
     positioned_children = self.grid.children.select { |child_grid| child_grid.is_positioned }
 
     positioned_siblings = []
@@ -183,9 +183,12 @@ class GridStyleSelector
       css[:"z-index"] = self.grid.zindex
     end
     
+    # float left class if parent is set to GRID_ORIENT_LEFT
     if not self.grid.root and (self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT)
       self.extra_selectors.push 'pull-left'
     end
+    
+    # Handle absolute positioning now
     css.update CssParser::position_absolutely(grid) if grid.is_positioned
 
     self.extra_selectors.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
