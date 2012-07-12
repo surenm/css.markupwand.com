@@ -44,19 +44,23 @@ class GridStyleSelector
       if not self.grid.offset_box_buffer.nil?
         margin_boxes.push BoundingBox.depickle self.grid.offset_box_buffer
       end
-      
+
       if not self.grid.grouping_box.nil?
         margin_boxes.push BoundingBox.depickle self.grid.grouping_box
-      end
+      end      
       
       if not margin_boxes.empty?
         children_bounds     = self.grid.layers.collect { |layer| layer.bounds }
         children_superbound = BoundingBox.get_super_bounds children_bounds        
         margin_superbound   = BoundingBox.get_super_bounds margin_boxes
-            
+          
         if not margin_superbound.nil? and not children_superbound.nil?
-          margin[:top] = children_superbound.top - margin_superbound.top
-          margin[:left] = children_superbound.left - margin_superbound.left
+          if self.grid.offset_box_type == :offset_box
+            margin[:top] = children_superbound.top - margin_superbound.top
+            margin[:left] = children_superbound.left - margin_superbound.left
+          elsif self.grid.offset_box_type == :row_offset_box
+            margin[:top] = children_superbound.top - margin_superbound.top
+          end
         end
       end
     end
@@ -115,22 +119,36 @@ class GridStyleSelector
   
   # Width subtracted by padding
   def unpadded_width
-    if self.grid.bounds.nil? or self.grid.bounds.width.nil?
-      nil 
-    else
+    width = 0
+
+    if not self.grid.bounds.nil? or not self.grid.bounds.width.nil?
+      width += self.grid.bounds.width
+      
       padding = get_padding
-      self.grid.bounds.width - (padding[:left] + padding[:right])
+      width -= padding[:left] + padding[:right]
+      
+      grouping_box = BoundingBox.depickle self.grid.grouping_box
+      if not grouping_box.nil?
+        initial_offset = self.grid.bounds.left - grouping_box.left
+        width += initial_offset
+      end
     end
+    return width
   end
   
   # Height subtracted by padding
   def unpadded_height
-    if self.grid.bounds.nil? or self.grid.bounds.height.nil?
-      nil 
-    else
+    height = 0
+
+    if not self.grid.bounds.nil? or not self.grid.bounds.width.nil?
+      height += self.grid.bounds.height
+      
       padding = get_padding
-      self.grid.bounds.height - (padding[:top] + padding[:bottom])
+      height -= padding[:top] + padding[:bottom]
+      
     end
+    return height
+
   end
   
   # If the width has already not been set, set the width.
@@ -170,11 +188,25 @@ class GridStyleSelector
     
     css.update width_css(css)
     
-    # Positioning
-    positioned_grid_count = (self.grid.children.select { |grid| grid.is_positioned }).length
-    css[:position] = 'relative' if positioned_grid_count > 0
-    self.extra_selectors.push('pull-left') if not (self.grid.parent.nil?) and (self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT)
+    # Positioning - absolute is handled separately. Just find out if a grid has to be relatively positioned
+    positioned_children = self.grid.children.select { |child_grid| child_grid.is_positioned }
+
+    positioned_siblings = []
+    if not self.grid.root and not self.grid.is_positioned
+      positioned_siblings = self.grid.parent.children.select { |sibling_grid| sibling_grid.is_positioned }
+    end
+
+    if positioned_children.size > 0 or positioned_siblings.size > 0
+      css[:position]  = 'relative'
+      css[:"z-index"] = self.grid.zindex
+    end
     
+    # float left class if parent is set to GRID_ORIENT_LEFT
+    if not self.grid.root and (self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT)
+      self.extra_selectors.push 'pull-left'
+    end
+    
+    # Handle absolute positioning now
     css.update CssParser::position_absolutely(grid) if grid.is_positioned
 
     self.extra_selectors.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
