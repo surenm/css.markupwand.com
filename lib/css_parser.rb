@@ -272,8 +272,8 @@ module CssParser
   
   def CssParser::parse_shape(layer, grid)
     layer_json = layer.layer_json
-      
-    shape_css = {}
+    shape_css = nil
+
     if layer_json.has_key? :path_items and not layer_json[:path_items].empty?
       path_segments = layer_json[:path_items].collect do |path_point|
         Shape::PathSegment.new(path_point)
@@ -302,6 +302,7 @@ module CssParser
         shape_css[:'min-width'] = "#{layer.bounds.width}px"
       end
     end
+    shape_css = {} if shape_css.nil?
     return shape_css
   end
 

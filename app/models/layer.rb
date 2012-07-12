@@ -277,7 +277,7 @@ class Layer
   end
 
   def get_style_rules(grid_style_selector)
-    set_style_rules(grid_style_selector) if self.css_rules.empty?
+    set_style_rules(grid_style_selector) #if self.css_rules.empty?
 
     self.css_rules
   end
