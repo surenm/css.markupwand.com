@@ -390,7 +390,7 @@ class GridStyleSelector
     initial_selector_name = nil
     if self.grid.render_layer
       render_layer_obj = Layer.find self.grid.render_layer
-      initial_selector_name = (render_layer_obj.generated_selector) if not render_layer_obj.generated_selector.empty?
+      initial_selector_name = (render_layer_obj.generated_selector) if not render_layer_obj.generated_selector.nil?
       css = render_layer_obj.css_rules.clone
     else
       initial_selector_name = (generated_selector) if not generated_selector.empty?
