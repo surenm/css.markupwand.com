@@ -23,12 +23,12 @@ class Design
   Design::STATUS_FAILED       = :failed
 
   Design::STATUS_CLASS = {
-    Design::STATUS_QUEUED       => 'label labe-inverse',
+    Design::STATUS_QUEUED       => 'label label-inverse',
     Design::STATUS_UPLOADING    => 'label',
     Design::STATUS_UPLOADED     => 'label',
     Design::STATUS_PROCESSING   => 'label label-important',
     Design::STATUS_PARSING      => 'label label-warning',
-    Design::STATUS_PARSED       => 'label label-warning',
+    Design::STATUS_PARSED       => 'label label-info',
     Design::STATUS_GENERATING   => 'label label-info',
     Design::STATUS_REGENERATING => 'label label-info',
     Design::STATUS_COMPLETED    => 'label label-success',
@@ -87,15 +87,20 @@ class Design
     return root_grids.last
   end
   
+  def bounds 
+    BoundingBox.new 0, 0, self.height, self.width
+  end
+  
   def attribute_data(minimal=false)
     if minimal
-      {
+      return {
         :name          => self.name,
         :psd_file_path => self.psd_file_path,
         :id            => self.safe_name,
         :status        => self.status,
       }
     end
+    
     grids       = {}
     layers      = {}
     css_classes = {}
@@ -315,7 +320,7 @@ HTML
     Log.info "Bubble up CSS properties"
     root_grid.style_selector.bubbleup_css_properties
 
-    if ENV['FEATURE_HASHING_DISABLE'] != "true"
+    if ENV['FEATURE_HASHING_CSS'] == "true"
       Log.info "Hashing up CSS Properties"
       root_grid.style_selector.hash_css_properties
   

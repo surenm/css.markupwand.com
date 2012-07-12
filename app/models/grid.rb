@@ -141,7 +141,9 @@ class Grid
   # Bounds for a grid.
   # TODO: cache this grids
   def bounds
-    if self.layers.empty?
+    if self.root
+      bounds = self.design.bounds
+    elsif self.layers.empty?
       bounds = nil
     else
       node_bounds = self.layers.collect {|layer| layer.bounds}
@@ -256,21 +258,24 @@ class Grid
     
     # Some root grouping of nodes to recursive add as children
     root_grouping_box = BoundingBox.get_grouping_boxes available_nodes.values
-    self.orientation = root_grouping_box.orientation
-    self.save!
-
-    Log.info "Trying Root grouping box: #{root_grouping_box}..."  
-    root_grouping_box.children.each do |row_grouping_box|
-      if row_grouping_box.kind_of? BoundingBox
-        Log.info "No row grouping required. Just handling as a grouping box..."
-        available_nodes = process_grouping_box self, row_grouping_box, available_nodes
-      else
-        available_nodes = process_row_grouping_box row_grouping_box, available_nodes
-      end
-    end
     
-    if available_nodes.length > 0
-      Log.warn "Ignored nodes (#{available_nodes}) in region #{self.bounds}" 
+    if not root_grouping_box.nil?
+      self.orientation = root_grouping_box.orientation
+      self.save!
+
+      Log.info "Trying Root grouping box: #{root_grouping_box}..."  
+      root_grouping_box.children.each do |row_grouping_box|
+        if row_grouping_box.kind_of? BoundingBox
+          Log.info "No row grouping required. Just handling as a grouping box..."
+          available_nodes = process_grouping_box self, row_grouping_box, available_nodes
+        else
+          available_nodes = process_row_grouping_box row_grouping_box, available_nodes
+        end
+      end
+    
+      if available_nodes.length > 0
+        Log.warn "Ignored nodes (#{available_nodes}) in region #{self.bounds}" 
+      end
     end
     
     self.save!
@@ -282,17 +287,19 @@ class Grid
     
     nodes_in_row_region = BoundingBox.get_nodes_in_region row_grouping_box.bounds, available_nodes.values
 
-    row_grid = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT, :depth => self.depth + 1,
-                        :grouping_box => BoundingBox.pickle(row_grouping_box.bounds)
-      
-    row_grid.set nodes_in_row_region, self
-    
-    Log.info "Layers in this row group are #{nodes_in_row_region}."
 
     if nodes_in_row_region.empty?
       Log.info "Marking this grouping box as margin..."
       self.design.row_offset_box = row_grouping_box.bounds
+      
     else
+      row_grid = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT, :depth => self.depth + 1,
+                          :grouping_box => BoundingBox.pickle(row_grouping_box.bounds)
+
+      row_grid.set nodes_in_row_region, self
+
+      Log.info "Layers in this row group are #{nodes_in_row_region}."
+      
       Log.info "Extracting style layers out of the row grid #{row_grid}"
       available_nodes = Grid.extract_style_layers row_grid, available_nodes, row_grouping_box
     
@@ -546,14 +553,18 @@ class Grid
       attributes[:class] = self.style_selector.selector_names.join(" ") if not self.style_selector.selector_names.empty?
  
       sub_grid_args = Hash.new
-        
+      positioned_html = positioned_grids_html sub_grid_args
+      if not positioned_html.empty?
+        inner_html += content_tag :div, '', :class => 'marginfix'
+      end
+      
       child_nodes = self.children.select { |node| not node.is_positioned }
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
       end
 
-      inner_html += positioned_grids_html(sub_grid_args)
+      inner_html += positioned_html
       
       if child_nodes.length > 0
         html = content_tag tag, inner_html, attributes, false
