@@ -12,7 +12,7 @@ class Shape::Box
     # Not considering cases where the designer drew a line of a certain length,
     # changed mind and drew another segment to extend the line, etc.
     # And each of those straight lines need to have a parallel pair
-    if num_straight_segments == 2
+    if num_straight_segments == 2 and path_segments.size == num_straight_segments
       return true if straight_segments[0].parallel? straight_segments[1]
     elsif num_straight_segments == 4
       if (straight_segments[0].parallel? straight_segments[1] and straight_segments[2].parallel? straight_segments[3]) or

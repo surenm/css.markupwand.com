@@ -163,11 +163,16 @@ module CssParser
   end
   
   def CssParser::parse_box_rounded_corners(layer)
-    if layer.has_key? :path_items and layer[:path_items].length == 8
-      radius = layer[:path_items][2][0] - layer[:path_items][1][0]
+    path_points = []
+    if layer.has_key? :path_items and layer[:path_items].has_key? :points
+      path_points = layer[:path_items][:points]
+    end
+
+    if path_points.length == 8
+      radius = path_points[2][0] - path_points[1][0]
       return {:'border-radius' => "#{radius}px"}
-    elsif layer.has_key? :path_items and layer[:path_items].length == 6
-      radius = layer[:path_items][2][0] - layer[:path_items][1][0]
+    elsif path_points.length == 6
+      radius = path_points[2][0] - path_points[1][0]
       return {:'border-radius' => "#{radius}px"}
     else
       return {}
@@ -274,12 +279,17 @@ module CssParser
     layer_json = layer.layer_json
     shape_css = nil
 
-    if layer_json.has_key? :path_items and not layer_json[:path_items].empty?
-      path_segments = layer_json[:path_items].collect do |path_point|
+    path_points = []
+    if layer_json.has_key? :path_items and layer_json[:path_items].has_key? :points
+      path_points = layer_json[:path_items][:points]
+    end
+
+    if not path_points.empty?
+      path_segments = path_points.collect do |path_point|
         Shape::PathSegment.new(path_point)
       end
 
-      if Shape::Box.is_box? path_segments
+      if Shape::Box.is_box? path_segments and not layer_json[:path_items][:num_subpaths]
         shape_css = CssParser::parse_box layer, grid
       end
       
