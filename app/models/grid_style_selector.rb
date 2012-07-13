@@ -135,7 +135,7 @@ class GridStyleSelector
   def unpadded_width
     width = 0
 
-    if not self.grid.bounds.nil? or not self.grid.bounds.width.nil?
+    if not self.grid.bounds.nil? and not self.grid.bounds.width.nil?
       width += self.grid.bounds.width
       
       padding = get_padding
@@ -154,7 +154,7 @@ class GridStyleSelector
   def unpadded_height
     height = 0
 
-    if not self.grid.bounds.nil? or not self.grid.bounds.width.nil?
+    if not self.grid.bounds.nil? and not self.grid.bounds.width.nil?
       height += self.grid.bounds.height
       
       padding = get_padding
