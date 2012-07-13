@@ -8,4 +8,8 @@ class Shape::Point
   def ==(other)
     self.x == other.x and self.y == other.y
   end
+
+  def inspect
+    "(#{x}, #{y})"
+  end
 end

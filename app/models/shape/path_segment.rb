@@ -24,6 +24,8 @@ class Shape::PathSegment
   end
 
   def get_curve_type(anchor, dir1, dir2)
+    # FIXME: This logic is not right to check if something is concave or convex.
+    # But letting it be there for the time being
     if anchor <= dir1 and anchor <= dir2
       @curve_type = CURVE_TYPE_CONCAVE
     elsif anchor >= dir1 and anchor >= dir2
@@ -105,5 +107,9 @@ class Shape::PathSegment
 
   def complex?
     self.curve_type == CURVE_TYPE_COMPLEX
+  end
+
+  def inspect
+    "Point: #{self.point} | Left Dir: #{self.left_dir} | Right Dir: #{self.right_dir}"
   end
 end

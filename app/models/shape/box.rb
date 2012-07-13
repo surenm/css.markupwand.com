@@ -37,8 +37,6 @@ class Shape::Box
           }
       }
 
-      num_non_boxy_curves = 0
-
       path_segments.each do |segment|
         if segment.curved_x?
           curve_data[:x][:count] += 1
@@ -46,8 +44,6 @@ class Shape::Box
             curve_data[:x][:convex_count] += 1
           elsif segment.concave?
             curve_data[:x][:concave_count] += 1
-          else
-            num_non_boxy_curves += 1
           end
         elsif segment.curved_y?
           curve_data[:y][:count] += 1
@@ -55,11 +51,7 @@ class Shape::Box
             curve_data[:y][:convex_count] += 1
           elsif segment.concave?
             curve_data[:y][:concave_count] += 1
-          else
-            num_non_boxy_curves += 1
           end
-        else
-          num_non_boxy_curves += 1
         end
       end
 
@@ -72,7 +64,11 @@ class Shape::Box
          curves_balanced = false
       end
 
-      if num_non_boxy_curves == 0 and curves_balanced
+      # Ideally should check if none of the segments are not suitable for a standard box.
+      # Reserving for later, and looking at whether curves are balanced alone.
+      # The concave/convex logic isn't perfectly right. Won't work for cases where
+      # one segment would form the entire curved side(with a large border radius) of a button
+      if curves_balanced
         return true
       end
     end
