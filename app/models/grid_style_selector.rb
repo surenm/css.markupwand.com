@@ -35,18 +35,6 @@ class GridStyleSelector
   
   def get_margin
     margin = {:top => 0, :left => 0}
-
-    use_grouping_box = true
-    self.grid.children.each do |child_grid|
-      use_grouping_box = false if child_grid.is_positioned
-    end
-    
-    if not self.grid.parent.nil?
-      self.grid.parent.children.each do |sibling_grid|
-        use_grouping_box = false if sibling_grid.is_positioned and not self.grid.is_positioned
-      end
-    end
-      
     if self.grid.root == true
       margin[:top]  += self.grid.bounds.top
       margin[:left] += self.grid.bounds.left
