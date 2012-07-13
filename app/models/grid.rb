@@ -30,7 +30,6 @@ class Grid
   field :is_positioned, :type => Boolean, :default => false
 
   field :offset_box_buffer, :type => String, :default => nil
-  field :offset_box_type, :type => Symbol, :default => :grid_offset_box
   field :depth, :type => Integer, :default => -1
   
   field :grouping_box, :type => String, :default => nil
@@ -315,7 +314,6 @@ class Grid
       if not self.design.row_offset_box.nil?
         Log.info "Setting top margin for this row grid..."
         row_grid.offset_box_buffer = BoundingBox.pickle self.design.row_offset_box
-        row_grid.offset_box_type   = :row_offset_box
         self.design.reset_row_offset_box
       end
       row_grid.save!
@@ -325,7 +323,7 @@ class Grid
   end
   
   # Process a grouping box atomically
-  def process_grouping_box(row_grid, grouping_box, available_nodes, offset_box_type = :grid_offset_box)
+  def process_grouping_box(row_grid, grouping_box, available_nodes)
     Log.info "Trying grouping box #{grouping_box}..."
     raw_grouping_box_layers = BoundingBox.get_nodes_in_region grouping_box, available_nodes.values, zindex
     
@@ -343,8 +341,7 @@ class Grid
     else
       grid = Grid.new :design => row_grid.design, 
                       :depth  => row_grid.depth + 1, 
-                      :grouping_box => BoundingBox.pickle(grouping_box),
-                      :offset_box_type => offset_box_type
+                      :grouping_box => BoundingBox.pickle(grouping_box)
       
       # Reduce the set of nodes, remove style layers.
       Log.info "Extract style layers for this grid #{grid}..."
