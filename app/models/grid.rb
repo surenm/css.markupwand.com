@@ -265,7 +265,7 @@ class Grid
       root_grouping_box.children.each do |row_grouping_box|
         if row_grouping_box.kind_of? BoundingBox
           Log.info "No row grouping required. Just handling as a grouping box..."
-          available_nodes = process_grouping_box self, row_grouping_box, available_nodes, :row_offset_box
+          available_nodes = process_grouping_box self, row_grouping_box, available_nodes
         else
           available_nodes = process_row_grouping_box row_grouping_box, available_nodes
         end
@@ -291,7 +291,9 @@ class Grid
       self.design.row_offset_box = row_grouping_box.bounds
       
     else
-      row_grid = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT, :depth => self.depth + 1,
+      row_grid = Grid.new :design => self.design, 
+                          :orientation => Constants::GRID_ORIENT_LEFT, 
+                          :depth => self.depth + 1,
                           :grouping_box => BoundingBox.pickle(row_grouping_box.bounds)
 
       row_grid.set nodes_in_row_region, self
