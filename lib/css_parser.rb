@@ -294,7 +294,7 @@ module CssParser
         Shape::PathSegment.new(path_point)
       end
 
-      if Shape::Box.is_box? path_segments and not layer_json[:path_items][:num_subpaths]
+      if Shape::Box.is_box? path_segments and not layer_json[:path_items][:num_subpaths] > 1
         shape_css = CssParser::parse_box layer, grid
       end
       
