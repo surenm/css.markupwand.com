@@ -153,10 +153,15 @@ module CssParser
   
   def CssParser::parse_box_border(layer)
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :frameFX
-      border = layer[:layerEffects][:value][:frameFX]
-      size   = CssParser::box_border_width(layer).to_s + 'px'
-      color  = parse_color(border[:value][:color])
-      {:border => "#{size} solid #{color}"}
+      stroke_enabled = layer.extract_value(:layerEffects, :value, :frameFX, :value, :enabled, :value)
+      if stroke_enabled
+        border = layer[:layerEffects][:value][:frameFX]
+        size   = CssParser::box_border_width(layer).to_s + 'px'
+        color  = parse_color(border[:value][:color])
+        {:border => "#{size} solid #{color}"}
+      else
+        {}
+      end
     else
       {}
     end
