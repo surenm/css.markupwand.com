@@ -379,7 +379,7 @@ class Grid
       nodes_in_region.each do |node_right|
         if node_left != node_right 
           if node_left.intersect? node_right and !(node_left.encloses? node_right or node_right.encloses? node_left)
-            if node_left.bounds.area < node_right.bounds.area
+            if node_left.zindex < node_right.zindex
               intersecting_node_pairs.push [node_left, node_right]
             else
               intersecting_node_pairs.push [node_right, node_left]
