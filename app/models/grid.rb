@@ -328,30 +328,32 @@ class Grid
     raw_grouping_box_layers = BoundingBox.get_nodes_in_region grouping_box, available_nodes.values, zindex
     
     Log.info "Checking for error intersections in layers #{raw_grouping_box_layers}"
-    grouping_box_layers = Grid.fix_error_intersections raw_grouping_box_layers
+    all_grouping_box_layers = Grid.fix_error_intersections raw_grouping_box_layers
+    grouping_box_layers = Hash.new
+    all_grouping_box_layers.each do |layer| 
+      grouping_box_layers[layer.uid] = layer
+      available_nodes.delete layer.uid
+    end    
 
     if grouping_box_layers.empty?
       Log.info "Empty grouping box. Adding to margin for next grid to pick it up..."
       self.design.add_offset_box grouping_box.clone
-    elsif grouping_box_layers.size <= available_nodes.size
-      grid = Grid.new :design => row_grid.design, :depth  => row_grid.depth + 1, 
-                      :grouping_box => BoundingBox.pickle(grouping_box)
+    else
+      grid = Grid.new :design => row_grid.design, :depth  => row_grid.depth + 1, :grouping_box => BoundingBox.pickle(grouping_box)
       
       # Reduce the set of nodes, remove style layers.
       Log.info "Extract style layers for this grid #{grid}..."
-      available_nodes = Grid.extract_style_layers grid, available_nodes, grouping_box
-        
+      grouping_box_layers = Grid.extract_style_layers grid, grouping_box_layers, grouping_box
+
       # If where are still intersecting layers, make them positioned layers and remove them
-      Log.info "Handle intersections gracefully..."
-      bounding_boxes = available_nodes.values.collect { |node| node.bounds }
+      bounding_boxes = grouping_box_layers.values.collect { |node| node.bounds }
       gutters_available = BoundingBox.grouping_boxes_possible? bounding_boxes
       is_positioning_done = false
-      if not gutters_available and available_nodes.size > 1
-        is_positioning_done = Grid.extract_positioned_layers grid, grouping_box, grouping_box_layers
+      if not gutters_available and grouping_box_layers.size > 1
+        is_positioning_done = Grid.extract_positioned_layers grid, grouping_box, grouping_box_layers.values
       end
 
-      grid.set grouping_box_layers, row_grid
-      grouping_box_layers.each { |layer| available_nodes.delete layer.uid }
+      grid.set all_grouping_box_layers, row_grid
             
       if not self.design.offset_box.nil?
         #Pickup spacing that the previous box allocated.
