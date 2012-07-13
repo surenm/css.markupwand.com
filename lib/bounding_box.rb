@@ -319,6 +319,7 @@ class BoundingBox
     # => 3b. the grids are to be grouped first by vertical gutters
     # 3a and 3b are decided by the largest gutter size.
     
+    root_group_vertical_bound = [vertical_gutters.first, vertical_gutters.last]
     if vertical_bounds.size == 1 
       # case 1
       root_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
@@ -330,9 +331,11 @@ class BoundingBox
       # case 2
       root_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
       horizontal_bound = horizontal_bounds.first
+      root_group.bounds = BoundingBox.create_from_bounds horizontal_bound, root_group_vertical_bound
       vertical_bounds.each do |vertical_bound|
         root_group.push BoundingBox.create_from_bounds horizontal_bound, vertical_bound
       end
+      
     else
       # case 3
       # TODO: figure out if normal first of left first orientation
@@ -343,11 +346,10 @@ class BoundingBox
       root_group = GroupingBox.new Constants::GRID_ORIENT_NORMAL
       horizontal_bounds.each do |horizontal_bound|
         row_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
-        row_bound = BoundingBox.new horizontal_bound.first, 
-          vertical_gutters.first, horizontal_bound.second, vertical_gutters.last
+        row_bound = BoundingBox.create_from_bounds horizontal_bound, root_group_vertical_bound
         
         row_group.bounds = row_bound
-
+        
         row_group_nodes = BoundingBox.get_nodes_in_region row_bound, bounding_boxes, zindex = nil
         row_vertical_gutters = BoundingBox.get_vertical_gutters row_group_nodes
 
