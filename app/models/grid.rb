@@ -469,6 +469,7 @@ class Grid
          flow_layers_in_region.push layer
        end
     end
+    Log.info "Flow layers: #{flow_layers_in_region}"
     
     inner_grid = Grid.new :design => grid.design, :depth => grid.depth + 1
     inner_grid.set flow_layers_in_region, grid
@@ -477,14 +478,17 @@ class Grid
     @@grouping_queue.push inner_grid
     
     positioned_layers_in_region = layers_in_region - flow_layers_in_region
+    Log.info  "Positioned Layers: #{positioned_layers_in_region}"
     
     positioned_layers_in_region.sort! { |layer1, layer2| layer1.zindex <=> layer2.zindex }
     positioned_layers_in_region.each do |layer|
-      layers_in_grid   = BoundingBox.get_nodes_in_region layer.bounds, layers_in_region, layer.zindex
-      layers_in_region = layers_in_region - layers_in_grid
+      layers_in_grid   = BoundingBox.get_nodes_in_region layer.bounds, positioned_layers_in_region, layer.zindex
+      positioned_layers_in_region = positioned_layers_in_region - layers_in_grid
       
       positioned_grid  = Grid.new :design => grid.design, :depth => grid.depth + 1, :is_positioned => true
       positioned_grid.set layers_in_grid, grid
+      
+      Log.info "Creating a new positioned grid with #{layers_in_grid}"
       
       @@grouping_queue.push positioned_grid
     end
