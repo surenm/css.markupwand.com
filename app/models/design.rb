@@ -10,6 +10,8 @@ class Design
   has_many :grids
   has_many :layers
 
+  embeds_one :font_map, :class_name => 'GridStyleSelector'
+
   # Design status types
   Design::STATUS_QUEUED       = :queued
   Design::STATUS_UPLOADING    = :uploading
