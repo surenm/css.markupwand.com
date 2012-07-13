@@ -141,9 +141,7 @@ class Grid
   # Bounds for a grid.
   # TODO: cache this grids
   def bounds
-    if self.root
-      bounds = self.design.bounds
-    elsif self.layers.empty?
+    if self.layers.empty?
       bounds = nil
     else
       node_bounds = self.layers.collect {|layer| layer.bounds}
@@ -480,7 +478,7 @@ class Grid
     
     positioned_layers_in_region = layers_in_region - flow_layers_in_region
     
-    positioned_layers_in_region.sort! { |layer1, layer2| layer2.zindex <=> layer1.zindex }
+    positioned_layers_in_region.sort! { |layer1, layer2| layer1.zindex <=> layer2.zindex }
     positioned_layers_in_region.each do |layer|
       layers_in_grid   = BoundingBox.get_nodes_in_region layer.bounds, layers_in_region, layer.zindex
       layers_in_region = layers_in_region - layers_in_grid
