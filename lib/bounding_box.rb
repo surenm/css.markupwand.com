@@ -345,15 +345,14 @@ class BoundingBox
         row_group = GroupingBox.new Constants::GRID_ORIENT_LEFT
         row_bound = BoundingBox.new horizontal_bound.first, 
           vertical_gutters.first, horizontal_bound.second, vertical_gutters.last
+        
+        row_group.bounds = row_bound
 
         row_group_nodes = BoundingBox.get_nodes_in_region row_bound, bounding_boxes, zindex = nil
         row_vertical_gutters = BoundingBox.get_vertical_gutters row_group_nodes
-        all_vertical_gutters = row_vertical_gutters + vertical_gutters
-        all_vertical_gutters.uniq!
-        all_vertical_gutters.sort!
 
-        row_trailing_vertical_gutters = all_vertical_gutters
-        row_leading_vertical_gutters  = all_vertical_gutters.rotate
+        row_trailing_vertical_gutters = row_vertical_gutters
+        row_leading_vertical_gutters  = row_vertical_gutters.rotate
           
         row_vertical_bounds = row_trailing_vertical_gutters.zip row_leading_vertical_gutters
         row_vertical_bounds.pop
@@ -361,6 +360,7 @@ class BoundingBox
         row_vertical_bounds.each do |vertical_bound|
           row_group.push BoundingBox.create_from_bounds horizontal_bound, vertical_bound
         end
+        
         root_group.push row_group
       end
     end
