@@ -13,7 +13,7 @@ class GroupingBox
   end
   
   def to_s
-    "#{@orientation} - #{@children}"
+    "#{@orientation} - #{bounds} - #{@children}"
   end
   
   def bounds
