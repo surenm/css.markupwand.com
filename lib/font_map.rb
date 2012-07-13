@@ -1,5 +1,14 @@
 class FontMap
-  attr_accessor :layers, :font_map, :typekit_snippet, :google_webfonts_snippet
+
+  embedded_in :design
+
+  attr_accessor :layers
+
+  field :font_map_hash, :type => Hash, :default => {}
+  field :typekit_snippet, :type => Hash, :default => {}
+  field :google_webfonts_snippet, :type => Hash, :default => {}
+  field :missing_fonts_list, :type => Array
+  field :uploaded_fonts, :type => Array
 
   FONT_MAP = { 'Helvetica World' => 'Helvetica' }
 
@@ -9,14 +18,10 @@ class FontMap
      'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Georgia',
      'Impact', 'Times New Roman', 'Trebuchet MS', 'Verdana', 'Webdings']
   
-  def initialize(layers)
-    @layers = layers
-    self.find_web_fonts    
-  end
   
   # Find out fonts and urls from
   # Google and Typekit
-  def find_web_fonts    
+  def find_web_fonts(@layers)
     fonts_list = []
 
     @layers.each do |layer|
@@ -32,12 +37,25 @@ class FontMap
     typekit_fonts = find_in_typekit(fonts_list)
     google_fonts  = find_in_google(fonts_list)
     
-    @font_map = {}
-    @font_map.update typekit_fonts[:map]
-    @font_map.update google_fonts[:map]
+    @font_map_hash = {}
+    @font_map_hash.update typekit_fonts[:map]
+    @font_map_hash.update google_fonts[:map]
+    @missing_fonts_list = fonts_list
+    @font_map_hash.each do |font_name, _|
+      @missing_fonts_list.delete font_name
+    end
     
     @google_webfonts_snippet = google_fonts[:snippet]
     @typekit_snippet = if not typekit_fonts[:snippet].empty? then typekit_fonts[:snippet]  else '' end
+
+  end
+
+  def get_font(font_name)
+    if @font_map_hash.has_key? font_name
+      @font_map_hash[font_name]
+    else
+      font_name
+    end
   end
   
   def find_in_typekit(fonts_list)
