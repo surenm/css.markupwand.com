@@ -55,7 +55,7 @@ class GridStyleSelector
         margin_superbound   = BoundingBox.get_super_bounds margin_boxes
           
         if not margin_superbound.nil? and not children_superbound.nil?
-          if self.grid.offset_box_type == :offset_box
+          if self.grid.offset_box_type == :grid_offset_box
             margin[:top] = children_superbound.top - margin_superbound.top
             margin[:left] = children_superbound.left - margin_superbound.left
           elsif self.grid.offset_box_type == :row_offset_box
