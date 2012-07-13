@@ -30,7 +30,7 @@ class Grid
   field :is_positioned, :type => Boolean, :default => false
 
   field :offset_box_buffer, :type => String, :default => nil
-  field :offset_box_type, :type => Symbol, :default => :offset_box
+  field :offset_box_type, :type => Symbol, :default => :grid_offset_box
   field :depth, :type => Integer, :default => -1
   
   field :grouping_box, :type => String, :default => nil
@@ -265,7 +265,7 @@ class Grid
       root_grouping_box.children.each do |row_grouping_box|
         if row_grouping_box.kind_of? BoundingBox
           Log.info "No row grouping required. Just handling as a grouping box..."
-          available_nodes = process_grouping_box self, row_grouping_box, available_nodes
+          available_nodes = process_grouping_box self, row_grouping_box, available_nodes, :row_offset_box
         else
           available_nodes = process_row_grouping_box row_grouping_box, available_nodes
         end
@@ -323,7 +323,7 @@ class Grid
   end
   
   # Process a grouping box atomically
-  def process_grouping_box(row_grid, grouping_box, available_nodes)
+  def process_grouping_box(row_grid, grouping_box, available_nodes, offset_box_type = :grid_offset_box)
     Log.info "Trying grouping box #{grouping_box}..."
     raw_grouping_box_layers = BoundingBox.get_nodes_in_region grouping_box, available_nodes.values, zindex
     
@@ -339,7 +339,10 @@ class Grid
       Log.info "Empty grouping box. Adding to margin for next grid to pick it up..."
       self.design.add_offset_box grouping_box.clone
     else
-      grid = Grid.new :design => row_grid.design, :depth  => row_grid.depth + 1, :grouping_box => BoundingBox.pickle(grouping_box)
+      grid = Grid.new :design => row_grid.design, 
+                      :depth  => row_grid.depth + 1, 
+                      :grouping_box => BoundingBox.pickle(grouping_box),
+                      :offset_box_type => offset_box_type
       
       # Reduce the set of nodes, remove style layers.
       Log.info "Extract style layers for this grid #{grid}..."
