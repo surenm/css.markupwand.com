@@ -230,7 +230,7 @@ class Grid
       grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
       grid.style_layers.uniq!
 
-      Log.info "Deleting #{style_layers} from grid..."
+      Log.info "Deleting #{grid_style_layers} from grid..."
       grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
     end
     return available_layers
