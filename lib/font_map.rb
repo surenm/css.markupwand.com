@@ -1,4 +1,7 @@
 class FontMap
+  include Mongoid::Document
+  include Mongoid::Timestamps::Created
+  include Mongoid::Timestamps::Updated  
 
   embedded_in :design
 
@@ -7,8 +10,8 @@ class FontMap
   field :font_map_hash, :type => Hash, :default => {}
   field :typekit_snippet, :type => Hash, :default => {}
   field :google_webfonts_snippet, :type => Hash, :default => {}
-  field :missing_fonts_list, :type => Array
-  field :uploaded_fonts, :type => Array
+  field :missing_fonts_list, :type => Array, :default => []
+  field :uploaded_fonts, :type => Array, :default => []
 
   FONT_MAP = { 'Helvetica World' => 'Helvetica' }
 
@@ -21,10 +24,10 @@ class FontMap
   
   # Find out fonts and urls from
   # Google and Typekit
-  def find_web_fonts(@layers)
+  def find_web_fonts(layers)
     fonts_list = []
 
-    @layers.each do |layer|
+    layers.each do |layer|
       raw_layer_font = layer.get_raw_font_name
       if not DEFAULT_FONTS.include? raw_layer_font
         fonts_list.push raw_layer_font
@@ -37,22 +40,22 @@ class FontMap
     typekit_fonts = find_in_typekit(fonts_list)
     google_fonts  = find_in_google(fonts_list)
     
-    @font_map_hash = {}
-    @font_map_hash.update typekit_fonts[:map]
-    @font_map_hash.update google_fonts[:map]
-    @missing_fonts_list = fonts_list
-    @font_map_hash.each do |font_name, _|
-      @missing_fonts_list.delete font_name
+    self.font_map_hash = {}
+    self.font_map_hash.update typekit_fonts[:map]
+    self.font_map_hash.update google_fonts[:map]
+    self.missing_fonts_list = fonts_list.clone
+    self.font_map_hash.each do |font_name, _|
+      self.missing_fonts_list.delete font_name
     end
-    
-    @google_webfonts_snippet = google_fonts[:snippet]
-    @typekit_snippet = if not typekit_fonts[:snippet].empty? then typekit_fonts[:snippet]  else '' end
 
+    self.google_webfonts_snippet = google_fonts[:snippet]
+    self.typekit_snippet = if not typekit_fonts[:snippet].empty? then typekit_fonts[:snippet]  else '' end
+    self.save!
   end
 
   def get_font(font_name)
-    if @font_map_hash.has_key? font_name
-      @font_map_hash[font_name]
+    if self.font_map_hash.has_key? font_name
+      self.font_map_hash[font_name]
     else
       font_name
     end
