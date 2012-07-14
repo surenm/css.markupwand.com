@@ -104,8 +104,9 @@ class DesignController < ApplicationController
       saveable_fonts[font][:filename] = filename
       generated_url = File.join @design.store_generated_key, "assets", "fonts", filename
       published_url = File.join @design.store_published_key, "assets", "fonts", filename
-      Store::write_from_filepicker generated_url, data[:url]
-      Store::write_from_filepicker published_url, data[:url]
+      Store::write_from_url generated_url, data[:url]
+      Store::write_from_url published_url, data[:url]
+
     end
 
     @design.font_map.update_downloaded_fonts(saveable_fonts)
