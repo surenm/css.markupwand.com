@@ -30,7 +30,6 @@ class Grid
   field :is_positioned, :type => Boolean, :default => false
 
   field :offset_box_buffer, :type => String, :default => nil
-  field :offset_box_type, :type => Symbol, :default => :offset_box
   field :depth, :type => Integer, :default => -1
   
   field :grouping_box, :type => String, :default => nil
@@ -291,7 +290,9 @@ class Grid
       self.design.row_offset_box = row_grouping_box.bounds
       
     else
-      row_grid = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT, :depth => self.depth + 1,
+      row_grid = Grid.new :design => self.design, 
+                          :orientation => Constants::GRID_ORIENT_LEFT, 
+                          :depth => self.depth + 1,
                           :grouping_box => BoundingBox.pickle(row_grouping_box.bounds)
 
       row_grid.set nodes_in_row_region, self
@@ -313,7 +314,6 @@ class Grid
       if not self.design.row_offset_box.nil?
         Log.info "Setting top margin for this row grid..."
         row_grid.offset_box_buffer = BoundingBox.pickle self.design.row_offset_box
-        row_grid.offset_box_type   = :row_offset_box
         self.design.reset_row_offset_box
       end
       row_grid.save!
@@ -339,7 +339,9 @@ class Grid
       Log.info "Empty grouping box. Adding to margin for next grid to pick it up..."
       self.design.add_offset_box grouping_box.clone
     else
-      grid = Grid.new :design => row_grid.design, :depth  => row_grid.depth + 1, :grouping_box => BoundingBox.pickle(grouping_box)
+      grid = Grid.new :design => row_grid.design, 
+                      :depth  => row_grid.depth + 1, 
+                      :grouping_box => BoundingBox.pickle(grouping_box)
       
       # Reduce the set of nodes, remove style layers.
       Log.info "Extract style layers for this grid #{grid}..."
