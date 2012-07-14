@@ -20,7 +20,7 @@ module CssParser
   def CssParser::set_assets_root(root)
     # Create assets folder
     assets_path = File.join root, "assets"
-    Log.info "Setting assets path to #{assets_path}"
+    Log.debug "Setting assets path to #{assets_path}"
     ENV["ASSETS_DIR"] = assets_path.to_s
   end
   
@@ -71,9 +71,13 @@ module CssParser
     
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
       shadow_value = parse_shadow(layer[:layerEffects][:value][:dropShadow])
-      css[:'box-shadow']         = shadow_value
-      css[:'-webkit-box-shadow'] = shadow_value
-      css[:'-moz-box-shadow']    = shadow_value
+      shadow_enabled = CssParser::is_effect_enabled(layer, :dropShadow)
+
+      if shadow_enabled
+        css[:'box-shadow']         = shadow_value
+        css[:'-webkit-box-shadow'] = shadow_value
+        css[:'-moz-box-shadow']    = shadow_value
+      end
     end
     
     css
@@ -86,7 +90,26 @@ module CssParser
     else
       {}
     end
-    
+  end
+
+  def CssParser::parse_color_overlay(layer)
+    css = {}
+    layer_json = layer.layer_json
+    if layer_json.has_key? :layerEffects and layer_json[:layerEffects][:value].has_key? :solidFill
+      enabled = CssParser::is_effect_enabled(layer_json, :solidFill)
+
+      if enabled
+        color_object = layer_json.extract_value(:layerEffects, :value, :solidFill, :value, :color)
+        color        = CssParser::parse_color(color_object)
+        if layer.kind == Layer::LAYER_TEXT
+          css[:color] = color 
+        else
+          css[:'background-color'] = color
+        end
+      end
+    end
+
+    css
   end
   
   def CssParser::get_text_chunk_style(layer, chunk_index = 0)
@@ -109,7 +132,16 @@ module CssParser
     css.update(CssTextParser::parse_font_size(layer, chunk_index))
 
     # Color
-    css.update(CssTextParser::parse_text_color(text_style))
+    color_overlay  = CssParser::parse_color_overlay(layer)
+    color_gradient = CssParser::parse_gradient(layer)
+
+    if not color_overlay.empty?
+      css.update(color_overlay)
+    elsif not color_gradient.empty?
+      css.update(color_gradient)
+    else
+      css.update(CssTextParser::parse_text_color(text_style))
+    end
 
     # Shadows 
     css.update(CssTextParser::parse_font_shadow(layer_json))
@@ -156,7 +188,7 @@ module CssParser
   
   def CssParser::parse_box_border(layer)
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :frameFX
-      stroke_enabled = layer.extract_value(:layerEffects, :value, :frameFX, :value, :enabled, :value)
+      stroke_enabled = CssParser::is_effect_enabled(layer, :frameFX)
       if stroke_enabled
         border = layer[:layerEffects][:value][:frameFX]
         size   = CssParser::box_border_width(layer).to_s + 'px'
@@ -243,28 +275,38 @@ module CssParser
     
     css
   end
+
+  def CssParser::is_effect_enabled(layer_json, effect)
+     layer_json.extract_value(:layerEffects, :value, effect, :value, :enabled, :value) == true
+  end
   
-  def CssParser::parse_box_gradient(layer)
+  def CssParser::parse_gradient(layer)
+    layer_json = layer.layer_json
     css = {}
     
-    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :gradientFill
-      gradient_array = []
-      colors = layer[:layerEffects][:value][:gradientFill][:value][:gradient][:value][:colors][:value]
-      angle = layer[:layerEffects][:value][:gradientFill][:value][:angle][:value]
-      gradient_array.push "#{angle}deg"
-      
-      colors.each do |color|
-        color_hash = parse_color(color[:value][:color])
-        position   = ((color[:value][:location][:value] * 100)/4096.0).round.to_s
-        gradient_array.push "#{color_hash} #{position}%"
+    if layer_json.has_key? :layerEffects and layer_json[:layerEffects][:value].has_key? :gradientFill
+      colors = layer_json[:layerEffects][:value][:gradientFill][:value][:gradient][:value][:colors][:value]
+      gradient_enabled = CssParser::is_effect_enabled(layer_json, :gradientFill)
+
+      if gradient_enabled
+        if layer.kind == Layer::LAYER_TEXT
+          css[:color] = parse_color(colors.first[:value][:color])
+        else
+          gradient_array = []
+          angle = layer_json[:layerEffects][:value][:gradientFill][:value][:angle][:value]
+          gradient_array.push "#{angle}deg"
+          
+          colors.each do |color|
+            color_hash = parse_color(color[:value][:color])
+            position   = ((color[:value][:location][:value] * 100)/4096.0).round.to_s
+            gradient_array.push "#{color_hash} #{position}%"
+          end
+          
+          gradient_value = gradient_array.join ", "
+          css[:'background-image'] = "-webkit-linear-gradient(#{gradient_value})"
+          # FIXME Use compass here, for cross browser issues.
+        end
       end
-      
-      gradient_value = gradient_array.join ", "
-      css[:'background-image'] = "-webkit-linear-gradient(#{gradient_value})"
-      # FIXME Change data type of css from hash to a data structure that allows duplicate hash keys. 
-      #  css[:'background-image'] = "-o-linear-gradient(#{gradient_value})"
-      #  css[:'background-image'] = "-moz-linear-gradient(#{gradient_value})"
-      #  css[:'background-image'] = "linear-gradient(#{gradient_value})"
     end
     
     css
@@ -340,7 +382,7 @@ module CssParser
     css.update parse_box_border(layer.layer_json)
     
     # Box gradient 
-    css.update(parse_box_gradient(layer.layer_json))
+    css.update(parse_gradient(layer))
     
     # Box shadow
     css.update(parse_box_shadow(layer.layer_json))

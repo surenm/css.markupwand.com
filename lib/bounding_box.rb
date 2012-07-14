@@ -200,7 +200,7 @@ class BoundingBox
 
   def self.get_nodes_in_region(region, objects, zindex = nil)
 
-    Log.info "Checking if objects #{objects} are in region #{region}"
+    Log.debug "Checking if objects #{objects} are in region #{region}"
     objects_in_region = objects.select do |item|
       if item.kind_of? Layer
         region.encloses? item.bounds and item.zindex >= zindex.to_i 
@@ -209,7 +209,7 @@ class BoundingBox
       end
     end
 
-    Log.info "#{objects_in_region} are within #{region}"
+    Log.debug "#{objects_in_region} are within #{region}"
 
     return objects_in_region
   end
@@ -287,8 +287,8 @@ class BoundingBox
     # Get the vertical and horizontal gutters at this level
     vertical_gutters   = BoundingBox.get_vertical_gutters bounding_boxes
     horizontal_gutters = BoundingBox.get_horizontal_gutters bounding_boxes
-    Log.info "Vertical Gutters: #{vertical_gutters}"
-    Log.info "Horizontal Gutters: #{horizontal_gutters}"
+    Log.debug "Vertical Gutters: #{vertical_gutters}"
+    Log.debug "Horizontal Gutters: #{horizontal_gutters}"
 
     # if empty gutters, then there probably is no children here.
     # TODO: Find out if this even happens?
@@ -366,7 +366,7 @@ class BoundingBox
         root_group.push row_group
       end
     end
-
+    Log.info root_group
     return root_group
   end
   

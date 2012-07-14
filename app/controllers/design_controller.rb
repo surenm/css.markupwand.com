@@ -95,17 +95,27 @@ class DesignController < ApplicationController
     params['font'].each do |font, url|
       if not url.empty?
         filetype = FontMap.filetype(params['font_name'][font])
-        saveable_fonts[font] = { :url => url, :name => params['font_name'][font], :type => filetype}
+        saveable_fonts[font] = { :url => url, :name => params['font_name'][font], :type => filetype }
       end
     end
 
     saveable_fonts.each do |font, data|
-      filename = font.gsub("'",'') + '.' + data[:type].to_s
+      filename = font + '.' + data[:type].to_s
       saveable_fonts[font][:filename] = filename
       generated_url = File.join @design.store_generated_key, "assets", "fonts", filename
       published_url = File.join @design.store_published_key, "assets", "fonts", filename
-      Store::write_from_filepicker generated_url, data[:url]
-      Store::write_from_filepicker published_url, data[:url]
+      Store::write_from_url generated_url, data[:url]
+      Store::write_from_url published_url, data[:url]
+
+      user_font_exists = @user.user_fonts.where(:font_name => font).length > 0
+
+      if not user_font_exists
+        user_font = UserFont.new :fontname => font, :filename => filename, :type => data[:type].to_s
+        user_font.user = @user
+        user_font.save_from_url data[:url] 
+        user_font.save!
+        @user.save!
+      end
     end
 
     @design.font_map.update_downloaded_fonts(saveable_fonts)

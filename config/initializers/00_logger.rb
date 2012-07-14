@@ -4,9 +4,8 @@ include Log4r
 module Log
   LOGGER = Log4r::Logger.new 'logger'
   LOGGER.outputters = Log4r::StdoutOutputter.new 'console'
-  if Rails.env.development?
-    LOGGER.level = Log4r::DEBUG
-    LOGGER.add Log4r::FileOutputter.new 'debugger', :filename => File.join(Rails.root, "log", "#{Rails.env}-debug.log")
+  if not ENV["LOG_LEVEL"].nil?
+    LOGGER.level = Log4r.const_get ENV["LOG_LEVEL"]
   else 
     LOGGER.level = Log4r::INFO
   end

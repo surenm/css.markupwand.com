@@ -394,13 +394,13 @@ class Layer
   end
 
   def crop_image(image_file)
-    Log.info "Checking whether to crop #{image_file}"
+    Log.debug "Checking whether to crop #{image_file}"
     if self.bounds == self.initial_bounds
-      Log.info "Decided not to crop"
+      Log.debug "Decided not to crop"
       return
     end
 
-    Log.info "Decided that it should be cropped"
+    Log.debug "Decided that it should be cropped"
 
     image_name = File.basename image_file
 
@@ -408,16 +408,16 @@ class Layer
 
     processed_folder = File.dirname design.processed_file_path
     current_image_path = File.join processed_folder, image_name
-    Log.info "Reading the image #{current_image_path}"
+    Log.debug "Reading the image #{current_image_path}"
     current_image = Image.read(current_image_path).first
 
     image_width = current_image.columns
     image_height = current_image.rows
 
-    Log.info "Checking if the image in disk is bigger than the desired size"
+    Log.debug "Checking if the image in disk is bigger than the desired size"
 
     if image_width >= self.bounds.width and image_height >= self.bounds.height
-      Log.info "Yes it is! Cropping..."
+      Log.debug "Yes it is! Cropping..."
 
       top_offset = (self.bounds.top - self.initial_bounds.top).abs
       left_offset = (self.bounds.left - self.initial_bounds.left).abs
@@ -426,7 +426,7 @@ class Layer
       current_image.crop!(left_offset, top_offset, self.bounds.width, self.bounds.height)
       current_image.write(current_image_path)
 
-      Log.info "Saving to the store"
+      Log.debug "Saving to the store"
       Store::save_to_store current_image_path, File.join(design.store_processed_key, image_name)
     elsif  image_width < self.bounds.width and image_height < self.bounds.height
       Log.error "Looks like the image has been cropped to a smaller size than desired."
@@ -446,8 +446,7 @@ class Layer
   def to_html(args = {}, is_leaf, grid)
 
     Log.info "[HTML] Layer #{self.to_s}"
-
-
+    
     generated_tag = tag_name(is_leaf)
     tag = args.fetch :tag, generated_tag
 
@@ -485,7 +484,7 @@ class Layer
   end
 
   def inspect
-    self.to_s
+    self.name
   end
 
   def print(indent_level = 0)
