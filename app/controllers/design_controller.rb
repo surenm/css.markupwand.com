@@ -88,7 +88,6 @@ class DesignController < ApplicationController
   end
 
   def fonts_upload
-    #response       = RestClient.get file_url
     saveable_fonts = {}
     params['font'].each do |font, url|
       if not url.empty?
@@ -99,13 +98,18 @@ class DesignController < ApplicationController
 
     saveable_fonts.each do |font, data|
       filename = font.gsub("'",'') + '.' + data[:type].to_s
-      saveable_fonts[font][:generated] = File.join @design.store_generated_key, "assets", "fonts", filename
-      saveable_fonts[font][:published] = File.join @design.store_published_key, "assets", "fonts", filename
-      Store::write_from_filepicker saveable_fonts[font][:generated], data[:url]
-      Store::write_from_filepicker saveable_fonts[font][:published], data[:url]
+      saveable_fonts[font][:filename] = filename
+      generated_url = File.join @design.store_generated_key, "assets", "fonts", filename
+      published_url = File.join @design.store_published_key, "assets", "fonts", filename
+      Store::write_from_filepicker generated_url, data[:url]
+      Store::write_from_filepicker published_url, data[:url]
     end
+
+    @design.font_map.update_downloaded_fonts(saveable_fonts)
+    @design.font_map.save!
+    @design.save!
     
-    render :json => { :saveable_fonts => saveable_fonts }
+    render :json => { :saveable_fonts => saveable_fonts, :font_map => @design.font_map }
   end
 
   def fonts
