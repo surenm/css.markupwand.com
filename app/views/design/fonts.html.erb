@@ -36,6 +36,15 @@
         <% end %>
         </table>
       <% end %>
+
+      <% if @user.user_fonts.length > 0 %>
+        <h3> User fonts </h3>
+        <table>
+        <% @user.user_fonts.each do |font| %>
+          <tr><td><%= font[:fontame] %></td><td> <a href="/published/<%= font.file_path %>"><%= font[:filename] %></a></td><td> (todo - show a preview)</td></tr>
+        <% end %>
+        </table>
+      <% end %>
     </div>
   </div>
   <%= javascript_include_tag "http://api.filepicker.io/v0/filepicker.js" %>
