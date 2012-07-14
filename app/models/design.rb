@@ -10,7 +10,7 @@ class Design
   has_many :grids
   has_many :layers
 
-  embeds_one :font_map, :class_name => 'GridStyleSelector'
+  embeds_one :font_map
 
   # Design status types
   Design::STATUS_QUEUED       = :queued
@@ -37,22 +37,22 @@ class Design
     Design::STATUS_FAILED       => 'label label-important'
   }
 
+  # File meta data
   field :name, :type => String
   field :psd_file_path, :type => String
   field :processed_file_path, :type => String, :default => nil
-  
-  field :font_map, :type => Hash, :default => {}
-  field :selector_name_map, :type => Hash, :default => {}
-  field :typekit_snippet, :type => String, :default => ""
-  field :google_webfonts_snippet, :type => String, :default => ""
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
   field :storage, :type => String, :default => "local"
   
+  # CSS Related
+  field :selector_name_map, :type => Hash, :default => {}  
+  field :hashed_selectors, :type => Hash, :default => {} 
+
+  
+  # Document properties
   field :height, :type => Integer
   field :width, :type => Integer
   field :resolution, :type => Integer
-
-  field :hashed_selectors, :type => Hash, :default => {} 
 
   mount_uploader :file, DesignUploader
 
@@ -232,11 +232,9 @@ class Design
   end
   
   def parse_fonts(layers)
-    design_fonts = FontMap.new layers
-    
-    self.font_map.update design_fonts.font_map
-    self.typekit_snippet = design_fonts.typekit_snippet
-    self.google_webfonts_snippet = design_fonts.google_webfonts_snippet
+    self.font_map = FontMap.new
+    self.font_map.find_web_fonts layers
+    self.font_map.save!
     self.save!
   end
   
@@ -248,7 +246,7 @@ class Design
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>  
 HTML
     
-    "#{typekit_header}\n #{self.google_webfonts_snippet}"
+    "#{typekit_header}\n #{self.font_map.google_webfonts_snippet}"
   end
 
   # Parses the photoshop file json data and decomposes into grids
