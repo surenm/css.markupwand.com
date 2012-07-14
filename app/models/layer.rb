@@ -477,7 +477,7 @@ class Layer
   end
 
   def inspect
-    self.to_s
+    self.name
   end
 
   def print(indent_level = 0)
