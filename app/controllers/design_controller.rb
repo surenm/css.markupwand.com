@@ -109,7 +109,7 @@ class DesignController < ApplicationController
     @design.font_map.save!
     @design.save!
     
-    render :json => { :saveable_fonts => saveable_fonts, :font_map => @design.font_map }
+    redirect_to :action => :fonts, :id => @design.safe_name
   end
 
   def fonts
