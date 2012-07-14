@@ -90,7 +90,25 @@ module CssParser
     else
       {}
     end
-    
+  end
+
+  def CssParser::parse_color_overlay(layer)
+    css = {}
+    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :solidFill
+      enabled = layer.extract_value(:layerEffects, :value, :solidFill, :value, :enabled, :value)
+
+      if enabled
+        color_object = layer.extract_value(:layerEffects, :value, :solidFill, :value, :color)
+        color        = CssParser::parse_color(color_object)
+        if layer.kind == Layer::LAYER_TEXT
+          css[:color] = color 
+        else
+          css[:'background-color'] = color
+        end
+      end
+    end
+
+    css
   end
   
   def CssParser::get_text_chunk_style(layer, chunk_index = 0)
@@ -113,7 +131,13 @@ module CssParser
     css.update(CssTextParser::parse_font_size(layer, chunk_index))
 
     # Color
-    css.update(CssTextParser::parse_text_color(text_style))
+    color_overlay = CssTextParser::parse_color_overlay(layer)
+
+    if color_overlay.empty?
+      css.update(CssTextParser::parse_text_color(text_style))
+    else
+      css.update(color_overlay)
+    end
 
     # Shadows 
     css.update(CssTextParser::parse_font_shadow(layer_json))
