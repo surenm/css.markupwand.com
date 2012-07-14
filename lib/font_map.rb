@@ -10,7 +10,7 @@ class FontMap
   field :font_map_hash, :type => Hash, :default => {}
   field :typekit_snippet, :type => Hash, :default => {}
   field :google_webfonts_snippet, :type => Hash, :default => {}
-  field :missing_fonts_list, :type => Array, :default => []
+  field :missing_fonts, :type => Array, :default => []
   field :uploaded_fonts, :type => Array, :default => []
 
   FONT_MAP = { 'Helvetica World' => 'Helvetica' }
@@ -37,19 +37,18 @@ class FontMap
     fonts_list.uniq!
     fonts_list.compact!
         
-    typekit_fonts = find_in_typekit(fonts_list)
     google_fonts  = find_in_google(fonts_list)
     
     self.font_map_hash = {}
     self.font_map_hash.update typekit_fonts[:map]
     self.font_map_hash.update google_fonts[:map]
-    self.missing_fonts_list = fonts_list.clone
+    self.missing_fonts = fonts_list.clone
     self.font_map_hash.each do |font_name, _|
-      self.missing_fonts_list.delete font_name
+      self.missing_fonts.delete font_name
     end
 
     self.google_webfonts_snippet = google_fonts[:snippet]
-    self.typekit_snippet = if not typekit_fonts[:snippet].empty? then typekit_fonts[:snippet]  else '' end
+    self.typekit_snippet = ''
     self.save!
   end
 
