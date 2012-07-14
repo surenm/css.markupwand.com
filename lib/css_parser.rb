@@ -94,11 +94,12 @@ module CssParser
 
   def CssParser::parse_color_overlay(layer)
     css = {}
-    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :solidFill
-      enabled = layer.extract_value(:layerEffects, :value, :solidFill, :value, :enabled, :value)
+    layer_json = layer.layer_json
+    if layer_json.has_key? :layerEffects and layer_json[:layerEffects][:value].has_key? :solidFill
+      enabled = layer_json.extract_value(:layerEffects, :value, :solidFill, :value, :enabled, :value)
 
       if enabled
-        color_object = layer.extract_value(:layerEffects, :value, :solidFill, :value, :color)
+        color_object = layer_json.extract_value(:layerEffects, :value, :solidFill, :value, :color)
         color        = CssParser::parse_color(color_object)
         if layer.kind == Layer::LAYER_TEXT
           css[:color] = color 
@@ -131,7 +132,7 @@ module CssParser
     css.update(CssTextParser::parse_font_size(layer, chunk_index))
 
     # Color
-    color_overlay = CssTextParser::parse_color_overlay(layer)
+    color_overlay = CssParser::parse_color_overlay(layer)
 
     if color_overlay.empty?
       css.update(CssTextParser::parse_text_color(text_style))
