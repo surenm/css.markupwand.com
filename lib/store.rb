@@ -69,9 +69,9 @@ module Store
   end
   
   # Write to a target url
-  # Usually, target = /email/safe_filename/, filepicker_url = http://filepicker.io/api/xxx
-  def Store::write_from_filepicker(target, filepicker_url)
-    response      = RestClient.get filepicker_url
+  # Usually, target = /email/safe_filename/, url = http://filepicker.io/api/xxx
+  def Store::write_from_url(target, url)
+    response      = RestClient.get url
     response_data = response.body
     Store::write_contents_to_store(target, response_data)
   end

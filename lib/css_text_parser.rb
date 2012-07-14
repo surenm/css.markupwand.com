@@ -28,7 +28,7 @@ module CssTextParser
     text_style     = layer.layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[position]
     font_caps      = text_style.extract_value(:value, :textStyle, :value, :fontCaps, :value)
 
-    if TEXT_TRANSFORM[font_caps] != 'none'
+    if TEXT_TRANSFORM[font_caps] != 'none' and not TEXT_TRANSFORM[font_caps].nil?
       {:'text-transform' => TEXT_TRANSFORM[font_caps]}
     else
       {}
@@ -73,8 +73,13 @@ module CssTextParser
   def CssTextParser::parse_font_shadow(layer)
     
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
-      {:'text-shadow' =>
-         CssParser::parse_shadow(layer[:layerEffects][:value][:dropShadow]) }
+      shadow_enabled = CssParser::is_effect_enabled(layer, :dropShadow)
+
+      if shadow_enabled        
+        {:'text-shadow' => CssParser::parse_shadow(layer[:layerEffects][:value][:dropShadow]) }
+      else
+        {}
+      end
     else
       {}
     end

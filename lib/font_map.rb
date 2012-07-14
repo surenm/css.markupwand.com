@@ -46,6 +46,8 @@ class FontMap
       self.missing_fonts.delete font_name
     end
 
+    copy_from_userfonts(fonts_list)
+
     self.google_webfonts_snippet = google_fonts[:snippet]
     self.typekit_snippet = ''
     self.save!
@@ -123,10 +125,11 @@ class FontMap
     files.each do |file|
       file_path = google_folder.join(file)
       font_data = JSON.parse(File.open(file_path).read)
-      
+  
       fonts_list.each do |font_name|
+        reduced_font = reduced_font_name(font_name, true)
         matches = font_data['items'].find_all do |google_font|
-          google_font['family'] =~ /#{reduced_font_name(font_name)}/i
+          google_font['family'] =~ /#{reduced_font}/i
         end
         
         if matches.length > 0
@@ -162,6 +165,27 @@ HTML
     {:snippet => webfont_code, :map => font_map }
   end
 
+  def copy_from_userfonts(fonts_list)
+    font_map = {}
+    user_fonts = self.design.user.user_fonts
+    user_fonts_obtained = []
+    user_fonts.each do |font|
+      if not fonts_list.find_index(font.fontname).nil?
+        src  = font.file_path
+        dest = self.design.store_published_key, "assets", "fonts", font.filename
+        Store::copy_within_store src, dest
+        user_fonts_obtained.push({ :name => font.fontname, :file => font.filename })
+      end
+    end
+
+    user_fonts_obtained.each do |font|
+      self.missing_fonts.delete font[:name]
+      self.uploaded_fonts.update({ font[:name] => font[:file] })
+      self.save!
+    end
+
+  end
+
   # Sample payload
   # {
   #  'Helvetica Neue'{
@@ -181,17 +205,20 @@ HTML
       self.missing_fonts.delete stripped_font_name
       uploaded_font = {stripped_font_name => font_data[:filename]}
       self.uploaded_fonts.update uploaded_font
-      
-      Log.info self.missing_fonts
-      Log.info stripped_font_name
     end
   end
 
-  def reduced_font_name(font)
+  def reduced_font_name(font, google = true)
     removable_patterns = ['-Bold', '-Regular']
     modified_font = font
     removable_patterns.each do |pattern|
       modified_font = modified_font.gsub(pattern,'')
+      if google
+        # hack for google to convert camel cases to spaces
+        modified_font_pieces = modified_font.split /(?=[A-Z])/
+        modified_font_chomped = modified_font_pieces.map { |piece| piece.strip}
+        modified_font = modified_font_chomped.join(" ")
+      end
     end
 
     modified_font
