@@ -81,8 +81,12 @@ class Shape::PathSegment
     end
   end
 
+  def straight?
+    (self.curve_dir == CURVE_DIR_NONE and self.curve_type == CURVE_TYPE_NONE)
+  end
+
   def curved?
-    !(self.curve_dir == CURVE_DIR_NONE and self.curve_type == CURVE_TYPE_NONE)
+    !straight?
   end
 
   def curved_x?
@@ -107,6 +111,16 @@ class Shape::PathSegment
 
   def complex?
     self.curve_type == CURVE_TYPE_COMPLEX
+  end
+
+  def curved_at_one_end?
+    if curved_x?
+      [self.point.x, self.left_dir.x, self.right_dir.x].uniq.size == 2
+    elsif curved_y?
+      [self.point.y, self.left_dir.y, self.right_dir.y].uniq.size == 2
+    else
+      return false
+    end
   end
 
   def inspect
