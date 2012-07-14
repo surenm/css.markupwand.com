@@ -437,10 +437,10 @@ class GridStyleSelector
     selector_hash
   end
 
-  def sass_tree(tabs = 0)
-    child_sass_trees = ''
+  def scss_tree(tabs = 0)
+    child_scss_trees = ''
     self.grid.children.each do |child|
-      child_sass_trees += child.style_selector.sass_tree(tabs + 1)
+      child_scss_trees += child.style_selector.scss_tree(tabs + 1)
     end
 
     spaces = ""
@@ -449,13 +449,13 @@ class GridStyleSelector
     end
 
     if self.css_rules.empty? or self.generated_selector.nil?
-      sass = "#{spaces}#{child_sass_trees}"
+      sass = "#{spaces}#{child_scss_trees}"
     else
       css_rules_string = CssParser::to_style_string(self.css_rules, spaces)
       sass = <<sass
 #{spaces}.#{self.modified_generated_selector} {
 #{spaces} #{css_rules_string}
-#{spaces} #{child_sass_trees}
+#{spaces} #{child_scss_trees}
 #{spaces}}
 sass
     end

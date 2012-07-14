@@ -10,6 +10,8 @@ class Design
   has_many :grids
   has_many :layers
 
+  embeds_one :font_map
+
   # Design status types
   Design::STATUS_QUEUED       = :queued
   Design::STATUS_UPLOADING    = :uploading
@@ -35,22 +37,22 @@ class Design
     Design::STATUS_FAILED       => 'label label-important'
   }
 
+  # File meta data
   field :name, :type => String
   field :psd_file_path, :type => String
   field :processed_file_path, :type => String, :default => nil
-  
-  field :font_map, :type => Hash, :default => {}
-  field :selector_name_map, :type => Hash, :default => {}
-  field :typekit_snippet, :type => String, :default => ""
-  field :google_webfonts_snippet, :type => String, :default => ""
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
   field :storage, :type => String, :default => "local"
   
+  # CSS Related
+  field :selector_name_map, :type => Hash, :default => {}  
+  field :hashed_selectors, :type => Hash, :default => {} 
+
+  
+  # Document properties
   field :height, :type => Integer
   field :width, :type => Integer
   field :resolution, :type => Integer
-
-  field :hashed_selectors, :type => Hash, :default => {} 
 
   mount_uploader :file, DesignUploader
 
@@ -230,23 +232,14 @@ class Design
   end
   
   def parse_fonts(layers)
-    design_fonts = FontMap.new layers
-    
-    self.font_map.update design_fonts.font_map
-    self.typekit_snippet = design_fonts.typekit_snippet
-    self.google_webfonts_snippet = design_fonts.google_webfonts_snippet
+    self.font_map = FontMap.new
+    self.font_map.find_web_fonts layers
+    self.font_map.save!
     self.save!
   end
   
   def webfonts_snippet
-    # TODO Generate this depending upon user
-    # The javascript url is user specific.
-    typekit_header = <<HTML
-    <script type="text/javascript" src="http://use.typekit.com/kdl3dlc.js"></script>
-    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>  
-HTML
-    
-    "#{typekit_header}\n #{self.google_webfonts_snippet}"
+    self.font_map.google_webfonts_snippet
   end
 
   # Parses the photoshop file json data and decomposes into grids
@@ -356,7 +349,7 @@ HTML
     
     root_grid    = self.get_root_grid
     body_html    = root_grid.to_html
-    scss_content = root_grid.style_selector.sass_tree + self.hashed_selectors_content
+    scss_content = self.font_map.font_scss + root_grid.style_selector.scss_tree + self.hashed_selectors_content 
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
@@ -394,11 +387,14 @@ HTML
     compile_dir = Rails.root.join("tmp", self.safe_name)
     FileUtils.mkdir_p compile_dir
     config_rb = <<config
+http_path = ""
 css_dir = "."
 sass_dir = "."
 output_style = :expanded 
 line_comments = false
-preferred_syntax = :sass    
+preferred_syntax = :scss
+relative_assets = true    
+fonts_dir = ""   
 config
     
     sass_file = Rails.root.join("tmp", self.safe_name, 'style.scss')

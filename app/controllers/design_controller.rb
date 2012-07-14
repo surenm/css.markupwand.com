@@ -85,6 +85,39 @@ class DesignController < ApplicationController
   end
   
   def preview
+    if @design.status != Design::STATUS_COMPLETED
+      redirect_to :action => :show, :id => @design.safe_name
+    end
+  end
+
+  def fonts_upload
+    saveable_fonts = {}
+    params['font'].each do |font, url|
+      if not url.empty?
+        filetype = FontMap.filetype(params['font_name'][font])
+        saveable_fonts[font] = { :url => url, :name => params['font_name'][font], :type => filetype}
+      end
+    end
+
+    saveable_fonts.each do |font, data|
+      filename = font.gsub("'",'') + '.' + data[:type].to_s
+      saveable_fonts[font][:filename] = filename
+      generated_url = File.join @design.store_generated_key, "assets", "fonts", filename
+      published_url = File.join @design.store_published_key, "assets", "fonts", filename
+      Store::write_from_filepicker generated_url, data[:url]
+      Store::write_from_filepicker published_url, data[:url]
+    end
+
+    @design.font_map.update_downloaded_fonts(saveable_fonts)
+    @design.font_map.save!
+    @design.save!
+    @design.regenerate_html
+    
+    redirect_to :action => :fonts, :id => @design.safe_name
+  end
+
+  def fonts
+    @missing_fonts = @design.font_map.missing_fonts
   end
 
   def gallery
@@ -130,6 +163,11 @@ class DesignController < ApplicationController
   
   def reparse
     @design.reparse
+    redirect_to :action => :show, :id => @design.safe_name
+  end
+
+  def write_html
+    @design.regenerate_html
     redirect_to :action => :show, :id => @design.safe_name
   end
 

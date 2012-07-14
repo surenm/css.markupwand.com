@@ -331,14 +331,7 @@ class Layer
     return nil if raw_font_name.nil?
 
     design = self.grids.first.design
-    font_map = design.font_map
-    if font_map.has_key? raw_font_name
-      font_name = font_map[raw_font_name]
-    else
-      font_name = raw_font_name
-    end
-
-    font_name
+    design.font_map.get_font raw_font_name
   end
 
   # A Layer whose bounds are zero

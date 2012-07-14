@@ -1,5 +1,17 @@
 class FontMap
-  attr_accessor :layers, :font_map, :typekit_snippet, :google_webfonts_snippet
+  include Mongoid::Document
+  include Mongoid::Timestamps::Created
+  include Mongoid::Timestamps::Updated  
+
+  embedded_in :design
+
+  attr_accessor :layers
+
+  field :font_map_hash, :type => Hash, :default => {}
+  field :typekit_snippet, :type => Hash, :default => {}
+  field :google_webfonts_snippet, :type => Hash, :default => {}
+  field :missing_fonts, :type => Array, :default => []
+  field :uploaded_fonts, :type => Hash, :default => {}
 
   FONT_MAP = { 'Helvetica World' => 'Helvetica' }
 
@@ -8,18 +20,14 @@ class FontMap
   DEFAULT_FONTS = ['Helvetica', 'Lucida Sans', 'Tahoma', 'Andale Mono',
      'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Georgia',
      'Impact', 'Times New Roman', 'Trebuchet MS', 'Verdana', 'Webdings']
-  
-  def initialize(layers)
-    @layers = layers
-    self.find_web_fonts    
-  end
+
   
   # Find out fonts and urls from
   # Google and Typekit
-  def find_web_fonts    
+  def find_web_fonts(layers)
     fonts_list = []
 
-    @layers.each do |layer|
+    layers.each do |layer|
       raw_layer_font = layer.get_raw_font_name
       if not DEFAULT_FONTS.include? raw_layer_font
         fonts_list.push raw_layer_font
@@ -29,15 +37,26 @@ class FontMap
     fonts_list.uniq!
     fonts_list.compact!
         
-    typekit_fonts = find_in_typekit(fonts_list)
     google_fonts  = find_in_google(fonts_list)
     
-    @font_map = {}
-    @font_map.update typekit_fonts[:map]
-    @font_map.update google_fonts[:map]
-    
-    @google_webfonts_snippet = google_fonts[:snippet]
-    @typekit_snippet = if not typekit_fonts[:snippet].empty? then typekit_fonts[:snippet]  else '' end
+    self.font_map_hash = {}
+    self.font_map_hash.update google_fonts[:map]
+    self.missing_fonts = fonts_list.clone
+    self.font_map_hash.each do |font_name, _|
+      self.missing_fonts.delete font_name
+    end
+
+    self.google_webfonts_snippet = google_fonts[:snippet]
+    self.typekit_snippet = ''
+    self.save!
+  end
+
+  def get_font(font_name)
+    if self.font_map_hash.has_key? font_name
+      self.font_map_hash[font_name]
+    else
+      font_name
+    end
   end
   
   def find_in_typekit(fonts_list)
@@ -143,6 +162,31 @@ HTML
     {:snippet => webfont_code, :map => font_map }
   end
 
+  # Sample payload
+  # {
+  #  'Helvetica Neue'{
+  #    url: "https://www.filepicker.io/api/file/XtsSASkBQyOJ8923bsWV",
+  #    name: "HelveticaNeue.ttf",
+  #    type: "ttf",
+  #    generated: ".yy./generated/assets/fonts/Helvetica Neue.ttf",
+  #    published: ".xx./published/assets/fonts/Helvetica Neue.ttf"
+  #  },
+  #  'MuseoSans': {
+  #   ..sameasabove..
+  #   }
+  # }
+  def update_downloaded_fonts(downloaded_fonts_data)
+    downloaded_fonts_data.each do |font_name, font_data|
+      stripped_font_name = font_name.gsub("'",'')
+      self.missing_fonts.delete stripped_font_name
+      uploaded_font = {stripped_font_name => font_data[:filename]}
+      self.uploaded_fonts.update uploaded_font
+      
+      Log.info self.missing_fonts
+      Log.info stripped_font_name
+    end
+  end
+
   def reduced_font_name(font)
     removable_patterns = ['-Bold', '-Regular']
     modified_font = font
@@ -152,5 +196,42 @@ HTML
 
     modified_font
   end
-  
+
+  # Writes out fonts scss
+  # Uses compass/css3
+  def font_scss
+    if self.uploaded_fonts.length > 0 
+      prelude = <<scss
+@import "compass/css3";
+scss
+    
+    uploaded_fonts_scss = ""
+    self.uploaded_fonts.each do |font_name, font_filename|
+      font_specific_scss = <<scss
+@include font-face("#{font_name}", font-files("#{File.join "..", "fonts", font_filename}"));
+scss
+      uploaded_fonts_scss += font_specific_scss
+    end
+
+      return prelude + uploaded_fonts_scss
+    else
+      ""
+    end
+  end
+
+  # Get filetype for a font file name
+  def self.filetype(filename)
+    filetype = filename.split('.').last
+    filetype.downcase!
+
+    case filetype
+    when 'woff'
+      return :woff
+    when 'otf'
+      return :otf
+    else
+      return :ttf
+    end
+  end
+
 end

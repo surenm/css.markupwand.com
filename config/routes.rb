@@ -40,12 +40,15 @@ TransformersWeb::Application.routes.draw do
   match 'design/:id/gallery'  => 'design#gallery'
   match 'design/:id/download' => 'design#download'
   match 'design/:id/update'   => 'design#update'
+  match 'design/:id/fonts'    => 'design#fonts'
+  match 'design/:id/fonts_upload'   => 'design#fonts_upload'
   match 'design/:id/delete'   => 'design#delete'
   
   # admin actions to regenerate stuff
   match 'design/:id/reprocess'  => 'design#reprocess'
   match 'design/:id/reparse'    => 'design#reparse'
   match 'design/:id/regenerate' => 'design#regenerate'
+  match 'design/:id/write_html' => 'design#write_html'
 
   # convinience methods to view logs, dom
   match 'design/:id/view-logs'  => 'design#view_logs'
