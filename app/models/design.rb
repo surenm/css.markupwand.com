@@ -239,14 +239,7 @@ class Design
   end
   
   def webfonts_snippet
-    # TODO Generate this depending upon user
-    # The javascript url is user specific.
-    typekit_header = <<HTML
-    <script type="text/javascript" src="http://use.typekit.com/kdl3dlc.js"></script>
-    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>  
-HTML
-    
-    "#{typekit_header}\n #{self.font_map.google_webfonts_snippet}"
+    self.font_map.google_webfonts_snippet
   end
 
   # Parses the photoshop file json data and decomposes into grids
