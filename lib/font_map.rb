@@ -197,6 +197,28 @@ HTML
     modified_font
   end
 
+  # Writes out fonts scss
+  # Uses compass/css3
+  def font_scss
+    if self.uploaded_fonts.length > 0 
+      prelude = <<scss
+@import "compass/css3";
+scss
+    
+    uploaded_fonts_scss = ""
+    self.uploaded_fonts.each do |font_name, font_filename|
+      font_specific_scss = <<scss
+@include font-face("#{font_name}", font-files("#{File.join "..", "fonts", font_filename}"));
+scss
+      uploaded_fonts_scss += font_specific_scss
+    end
+
+      return prelude + uploaded_fonts_scss
+    else
+      ""
+    end
+  end
+
   # Get filetype for a font file name
   def self.filetype(filename)
     filetype = filename.split('.').last
