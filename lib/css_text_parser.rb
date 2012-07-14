@@ -73,7 +73,7 @@ module CssTextParser
   def CssTextParser::parse_font_shadow(layer)
     
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
-      shadow_enabled = layer.extract_value(:layerEffects, :value, :dropShadow, :value, :enabled, :value)
+      shadow_enabled = CssParser::is_effect_enabled(layer, :dropShadow)
 
       if shadow_enabled        
         {:'text-shadow' => CssParser::parse_shadow(layer[:layerEffects][:value][:dropShadow]) }
