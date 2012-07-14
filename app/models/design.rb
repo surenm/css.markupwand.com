@@ -349,7 +349,7 @@ class Design
     
     root_grid    = self.get_root_grid
     body_html    = root_grid.to_html
-    scss_content = root_grid.style_selector.sass_tree + self.hashed_selectors_content
+    scss_content = self.font_map.font_scss + root_grid.style_selector.scss_tree + self.hashed_selectors_content 
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
@@ -387,11 +387,14 @@ class Design
     compile_dir = Rails.root.join("tmp", self.safe_name)
     FileUtils.mkdir_p compile_dir
     config_rb = <<config
+http_path = ""
 css_dir = "."
 sass_dir = "."
 output_style = :expanded 
 line_comments = false
-preferred_syntax = :sass    
+preferred_syntax = :scss
+relative_assets = true    
+fonts_dir = ""   
 config
     
     sass_file = Rails.root.join("tmp", self.safe_name, 'style.scss')
