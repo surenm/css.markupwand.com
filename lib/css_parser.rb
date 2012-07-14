@@ -273,27 +273,30 @@ module CssParser
     css
   end
   
-  def CssParser::parse_box_gradient(layer)
+  def CssParser::parse_gradient(layer)
+    layer_json = layer.layer_json
     css = {}
     
-    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :gradientFill
-      gradient_array = []
-      colors = layer[:layerEffects][:value][:gradientFill][:value][:gradient][:value][:colors][:value]
-      angle = layer[:layerEffects][:value][:gradientFill][:value][:angle][:value]
-      gradient_array.push "#{angle}deg"
-      
-      colors.each do |color|
-        color_hash = parse_color(color[:value][:color])
-        position   = ((color[:value][:location][:value] * 100)/4096.0).round.to_s
-        gradient_array.push "#{color_hash} #{position}%"
+    if layer_json.has_key? :layerEffects and layer_json[:layerEffects][:value].has_key? :gradientFill
+      colors = layer_json[:layerEffects][:value][:gradientFill][:value][:gradient][:value][:colors][:value]
+
+      if layer.kind == Layer::LAYER_TEXT
+        css[:color] = parse_color(color.first[:value][:color])
+      else
+        gradient_array = []
+        angle = layer_json[:layerEffects][:value][:gradientFill][:value][:angle][:value]
+        gradient_array.push "#{angle}deg"
+        
+        colors.each do |color|
+          color_hash = parse_color(color[:value][:color])
+          position   = ((color[:value][:location][:value] * 100)/4096.0).round.to_s
+          gradient_array.push "#{color_hash} #{position}%"
+        end
+        
+        gradient_value = gradient_array.join ", "
+        css[:'background-image'] = "-webkit-linear-gradient(#{gradient_value})"
+        # FIXME Use compass here, for cross browser issues.
       end
-      
-      gradient_value = gradient_array.join ", "
-      css[:'background-image'] = "-webkit-linear-gradient(#{gradient_value})"
-      # FIXME Change data type of css from hash to a data structure that allows duplicate hash keys. 
-      #  css[:'background-image'] = "-o-linear-gradient(#{gradient_value})"
-      #  css[:'background-image'] = "-moz-linear-gradient(#{gradient_value})"
-      #  css[:'background-image'] = "linear-gradient(#{gradient_value})"
     end
     
     css
@@ -369,7 +372,7 @@ module CssParser
     css.update parse_box_border(layer.layer_json)
     
     # Box gradient 
-    css.update(parse_box_gradient(layer.layer_json))
+    css.update(parse_gradient(layer))
     
     # Box shadow
     css.update(parse_box_shadow(layer.layer_json))
