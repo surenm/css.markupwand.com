@@ -2,28 +2,39 @@
   <%= stylesheet_link_tag "app/fonts", :media => "all" %>
   <%= render 'shared/header' %>
   <div class="font-box" class="container">
+    <a class="btn pull-left back" href="/design/<%= @design.safe_name %>/preview">← Back to design</a>
     <h2>Fonts for <%= @design.name %></h2>
 
     <div class="container missing-fonts">
-    <h3>Missing fonts</h3>
-      <%= form_tag "/design/#{@design.safe_name}/fonts_upload" do %>
-      <table>
-      <% @missing_fonts.each do |font| %>
-        <% font_safe = font.gsub(' ','-') %>
-        <tr>
-          <td> <%= font %> </td>
-          <td> <a target="_new" href="http://google.com/search?q=<%= font.gsub(' ','+') %> ttf" class="google">(google)</a> </td>
-          <td>
-            <input type="button" class="btn upload-font-button" value="choose font" id="<%= font_safe %>-button" name="font['<%= font %>']-button" />
-            <input type="hidden" name="font['<%= font %>']" id="<%= font_safe %>-url" value=""/>
-            <input type="hidden" name="font_name['<%= font %>']" id="<%= font_safe %>-upload-name" value=""/>
-            <span class="font-upload-name" id="<%= font_safe %>-name"></span>
-          </td>
-        </tr>
+    <% if @missing_fonts.length > 0 %> 
+      <h3>Missing fonts</h3>
+        <%= form_tag "/design/#{@design.safe_name}/fonts_upload" do %>
+        <table>
+        <% @missing_fonts.each do |font| %>
+          <% font_safe = font.gsub(' ','-') %>
+          <tr>
+            <td> <%= font %> </td>
+            <td> <a target="_new" href="http://google.com/search?q=<%= font.gsub(' ','+') %> ttf" class="google">(google)</a> </td>
+            <td>
+              <input type="button" class="btn upload-font-button" value="choose font" id="<%= font_safe %>-button" name="font['<%= font %>']-button" />
+              <input type="hidden" name="font['<%= font %>']" id="<%= font_safe %>-url" value=""/>
+              <input type="hidden" name="font_name['<%= font %>']" id="<%= font_safe %>-upload-name" value=""/>
+              <span class="font-upload-name" id="<%= font_safe %>-name"></span>
+            </td>
+          </tr>
+        <% end %>
+        </table>
+        <input type="submit" name="save_fonts" value="Upload fonts" class="btn btn-primary"/>
+        <% end %>
       <% end %>
-      </table>
-      <input type="submit" name="save_fonts" value="Upload fonts" class="btn btn-primary"/>
 
+      <% if @design.font_map.uploaded_fonts.length > 0 %>
+        <h3> Available fonts </h3>
+        <table>
+        <% @design.font_map.uploaded_fonts.each do |font, filename| %>
+          <tr><td><%= font %></td><td> <a href="/published/<%= @design.safe_name %>/assets/fonts/<%= filename %>"><%= filename %></a></td><td> (todo - show a preview)</td></tr>
+        <% end %>
+        </table>
       <% end %>
     </div>
   </div>
