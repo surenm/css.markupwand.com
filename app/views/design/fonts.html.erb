@@ -16,9 +16,9 @@
             <td> <%= font %> </td>
             <td> <a target="_new" href="http://google.com/search?q=<%= font.gsub(' ','+') %> ttf" class="google">(google)</a> </td>
             <td>
-              <input type="button" class="btn upload-font-button" value="choose font" id="<%= font_safe %>-button" name="font['<%= font %>']-button" />
-              <input type="hidden" name="font['<%= font %>']" id="<%= font_safe %>-url" value=""/>
-              <input type="hidden" name="font_name['<%= font %>']" id="<%= font_safe %>-upload-name" value=""/>
+              <input type="button" class="btn upload-font-button" value="choose font" id="<%= font_safe %>-button"/>
+              <input type="hidden" name="font[<%= font %>]" id="<%= font_safe %>-url" value=""/>
+              <input type="hidden" name="font_name[<%= font %>]" id="<%= font_safe %>-upload-name" value=""/>
               <span class="font-upload-name" id="<%= font_safe %>-name"></span>
             </td>
           </tr>
@@ -41,7 +41,7 @@
         <h3> User fonts </h3>
         <table>
         <% @user.user_fonts.each do |font| %>
-          <tr><td><%= font[:fontame] %></td><td> <a href="/published/<%= font.file_path %>"><%= font[:filename] %></a></td><td> (todo - show a preview)</td></tr>
+          <tr><td><%= font.fontname %></td><td> <a href="/published/<%= font.file_path %>"><%= font.filename %></a></td><td> (todo - show a preview)</td></tr>
         <% end %>
         </table>
       <% end %>
