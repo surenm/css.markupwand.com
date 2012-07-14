@@ -372,7 +372,7 @@ module CssParser
   def CssParser::parse_background_image(layer, grid)
     css = {}
     css[:background] = "url('../../#{layer.image_path}') no-repeat"
-    css[:'background-size'] = "contain"
+    css[:'background-size'] = "100% 100%"
     if grid
       css[:width] = "#{grid.style_selector.unpadded_width}px"
       css[:height] = "#{grid.style_selector.unpadded_height}px"
