@@ -272,6 +272,10 @@ module CssParser
     
     css
   end
+
+  def CssParser::is_effect_enabled(layer_json, effect)
+     layer_json.extract_value(:layerEffects, :value, effect, :value, :enabled, :value) == true
+  end
   
   def CssParser::parse_gradient(layer)
     layer_json = layer.layer_json
