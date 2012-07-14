@@ -95,12 +95,12 @@ class DesignController < ApplicationController
     params['font'].each do |font, url|
       if not url.empty?
         filetype = FontMap.filetype(params['font_name'][font])
-        saveable_fonts[font] = { :url => url, :name => params['font_name'][font], :type => filetype}
+        saveable_fonts[font] = { :url => url, :name => params['font_name'][font], :type => filetype }
       end
     end
 
     saveable_fonts.each do |font, data|
-      filename = font.gsub("'",'') + '.' + data[:type].to_s
+      filename = font + '.' + data[:type].to_s
       saveable_fonts[font][:filename] = filename
       generated_url = File.join @design.store_generated_key, "assets", "fonts", filename
       published_url = File.join @design.store_published_key, "assets", "fonts", filename
