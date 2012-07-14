@@ -1,0 +1,23 @@
+<%= content_for :content do %>
+  <%= stylesheet_link_tag "app/fonts", :media => "all" %>
+  <%= render 'shared/header' %>
+  <div class="font-box" class="container">
+    <h2>Fonts for <%= @design.name %></h2>
+
+    <div class="container missing-fonts">
+
+    <h3>Missing fonts</h3>
+      <table>
+      <% @missing_fonts.each do |font| %>
+        <tr>
+          <td> <%= font %> </td>
+          <td> <a target="_new" href="http://google.com/search?q=<%= font.gsub(' ','+') %> ttf" class="google">(google)</a> </td>
+          <td> <input type="filepicker" name="font_uploads" value="Upload file" data-fp-option-modal="true" data-fp-text="upload"/> </td>
+        </tr>
+      <% end %>
+      </table>
+    </div>
+  </div>
+  <%= javascript_include_tag "http://api.filepicker.io/v0/filepicker.js" %>
+  <%= javascript_include_tag "app/fonts" %>
+<% end %>
