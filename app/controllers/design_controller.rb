@@ -88,7 +88,7 @@ class DesignController < ApplicationController
   end
 
   def fonts
-    render :json => {:font => @design.font_map.missing_fonts_list}
+    @missing_fonts = @design.font_map.missing_fonts
   end
 
   def gallery
