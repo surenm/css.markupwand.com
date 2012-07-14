@@ -45,7 +45,7 @@ module Store
   def Store::write_contents_to_remote_store(file_key, file_contents)
     s3_bucket = Store::get_remote_store
 
-    Log.info "Saving contents to #{file_key} in remote store #{s3_bucket.name}..."
+    Log.debug "Saving contents to #{file_key} in remote store #{s3_bucket.name}..."
 
     fptr = s3_bucket.objects[file_key]
     fptr.write file_contents
@@ -54,7 +54,7 @@ module Store
   def Store::write_contents_to_local_store(file_key, file_contents)
     local_store = Store::get_local_store
     
-    Log.info "Saving contents to #{file_key} in local store..."
+    Log.debug "Saving contents to #{file_key} in local store..."
     
     file_path   = File.join local_store, file_key
     Store::write_contents_to_local_file file_path, file_contents
@@ -93,7 +93,7 @@ module Store
   def Store::copy_within_remote_store(src_path, destination_path)
     s3_bucket = Store::get_remote_store
     
-    Log.info "Copying #{src_path} from #{s3_bucket.name} to #{destination_path}..."
+    Log.debug "Copying #{src_path} from #{s3_bucket.name} to #{destination_path}..."
     
     source_object      = s3_bucket.objects[src_path]
     destination_object = s3_bucket.objects[destination_path]
@@ -140,7 +140,7 @@ module Store
     bucket = Store::get_remote_store
     
     tmp_folder  = Rails.root.join 'tmp', 'store'
-    Log.info "Fetching #{remote_folder} from Remote store #{bucket.name} to #{tmp_folder}..."
+    Log.debug "Fetching #{remote_folder} from Remote store #{bucket.name} to #{tmp_folder}..."
 
     files = bucket.objects.with_prefix remote_folder
     files.each do |file|
@@ -148,7 +148,7 @@ module Store
 
       destination_path = File.join tmp_folder, file.key
       
-      Log.info "Fetching #{file.key} from Remote store to #{destination_path}"
+      Log.debug "Fetching #{file.key} from Remote store to #{destination_path}"
       Store::write_contents_to_local_file destination_path, contents
     end
     return tmp_folder
@@ -159,7 +159,7 @@ module Store
     abs_remote_folder = File.join local_store, remote_folder
     
     tmp_folder = Rails.root.join 'tmp', 'store', remote_folder
-    Log.info "Fetching #{remote_folder} from local store #{local_store} to #{tmp_folder}..."
+    Log.debug "Fetching #{remote_folder} from local store #{local_store} to #{tmp_folder}..."
 
     files = Dir["#{abs_remote_folder}/**/*"]
     Log.debug files
@@ -172,7 +172,7 @@ module Store
       store_file_key = file_pathname.relative_path_from(Pathname.new abs_remote_folder)      
       destination_path = File.join tmp_folder, store_file_key
       
-      Log.info "Fetching #{store_file_key} from local store to #{destination_path}"
+      Log.debug "Fetching #{store_file_key} from local store to #{destination_path}"
       Store::write_contents_to_local_file destination_path, contents
     end
     return tmp_folder  
@@ -192,7 +192,7 @@ module Store
 
     tmp_file = Rails.root.join 'tmp', 'store', remote_file_path
     contents = remote_file.read
-    Log.info "Fetching #{remote_file_path} from remote store #{bucket.name} to #{tmp_file}..."    
+    Log.debug "Fetching #{remote_file_path} from remote store #{bucket.name} to #{tmp_file}..."    
     Store::write_contents_to_local_file tmp_file, contents
     
     return tmp_file
@@ -205,7 +205,7 @@ module Store
     tmp_file = Rails.root.join 'tmp', 'store', remote_file_path
     contents = File.read remote_file
     
-    Log.info "Fetching #{remote_file} from local store #{local_store} to #{tmp_file}..."    
+    Log.debug "Fetching #{remote_file} from local store #{local_store} to #{tmp_file}..."    
     Store::write_contents_to_local_file tmp_file, contents
     
     return tmp_file
@@ -220,14 +220,14 @@ module Store
   end
   
   def Store::delete_from_remote_store(file_path)
-    Log.info "Deleting #{file_path} from remote store..."
+    Log.debug "Deleting #{file_path} from remote store..."
     bucket = Store::get_remote_store
     files = bucket.objects.with_prefix file_path
     files.each { |file_obj| file_obj.delete }  
   end
   
   def Store::delete_from_local_store(file_path)
-    Log.info "Deleting #{file_path} from local store..."
+    Log.debug "Deleting #{file_path} from local store..."
     local_store = Store::get_local_store
     abs_file_path = File.join local_store, file_path
     FileUtils.rm_r abs_file_path if File.exists? abs_file_path
