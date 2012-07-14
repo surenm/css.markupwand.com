@@ -2,8 +2,6 @@ class UploaderJob
   @queue = :uploader
   
   def self.perform(design_id, design_data)
-    Log.level = Log4r::DEBUG
-
     design_data.symbolize_keys!
     
     design = Design.find design_id

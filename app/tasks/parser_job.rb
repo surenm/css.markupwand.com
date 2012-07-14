@@ -3,7 +3,6 @@ class ParserJob
 
   def self.perform(readable_design_id)
     begin
-      Log.level = Log4r::INFO
       design_id = readable_design_id.split('-').last
       design = Design.find design_id
 
