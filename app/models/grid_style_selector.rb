@@ -222,7 +222,7 @@ class GridStyleSelector
   
   # Walks recursively through the grids and creates
   def generate_css_tree
-    Log.info "Setting style rules for #{self.grid}"
+    Log.debug "Setting style rules for #{self.grid}..."
     set_style_rules
 
     if self.grid.render_layer.nil?

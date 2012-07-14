@@ -20,7 +20,7 @@ module CssParser
   def CssParser::set_assets_root(root)
     # Create assets folder
     assets_path = File.join root, "assets"
-    Log.info "Setting assets path to #{assets_path}"
+    Log.debug "Setting assets path to #{assets_path}"
     ENV["ASSETS_DIR"] = assets_path.to_s
   end
   

@@ -282,10 +282,11 @@ class Design
     Log.info "Grouping the grids..."
     Grid.group!
     Profiler.stop
+    Log.info "Successfully completed parsing #{self.name}"
   end
   
   def generate_markup(args={})
-    Log.info "Generating body HTML..."
+    Log.info "Beginning to generate markup and css for #{self.name}..."
     
     Profiler::start
     generated_folder = self.store_generated_key
@@ -293,7 +294,7 @@ class Design
     # Set the root path for this design. That is where all the html and css is saved to.
     CssParser::set_assets_root generated_folder
     
-    Log.info "Parsing fonts"
+    Log.info "Parsing fonts..."
     # TODO Fork out and parallel process
     self.parse_fonts(self.layers)
 
@@ -301,10 +302,10 @@ class Design
 
     # Once grids are generated, run through the tree and find out style sheets.
     # TODO Fork out and parallel process
-    Log.info "Generating CSS Tree"
+    Log.info "Generating CSS Tree..."
     root_grid.style_selector.generate_css_tree
 
-    Log.info "Bubble up CSS properties"
+    Log.info "Bubble up CSS properties..."
     root_grid.style_selector.bubbleup_css_properties
 
     if ENV['FEATURE_HASHING_CSS'] == "true"
@@ -315,25 +316,25 @@ class Design
       root_grid.style_selector.reduce_hashed_css_properties
     end
 
-    Log.info "Finding out selector name map"
+    Log.info "Finding out selector name map..."
     self.selector_name_map = root_grid.style_selector.generate_initial_selector_name_map
-    Log.info self.selector_name_map
+    Log.debug self.selector_name_map
     self.save!
 
-    Log.info "Destroying design globals"
+    Log.debug "Destroying design globals..."
     DesignGlobals.destroy
 
     write_html_and_css
     
     Profiler::stop
   
-    Log.info "Successfully completed processing #{self.processed_file_path}."
+    Log.info "Successfully completed generating #{self.name}"
     return
   end
 
   # This usually called after changing CSS class names
   def write_html_and_css
-    Log.info "Writing HTML and CSS"
+    Log.info "Writing HTML and CSS..."
 
     # Set the base folder for writing html to
     generated_folder = self.store_generated_key
@@ -366,7 +367,7 @@ class Design
     html_file_name = File.join base_folder, 'index.html'
 
     # Programatically do this so that it works on heroku
-    Log.info "Tidying up the html..."
+    Log.debug "Tidying up the html..."
     nasty_html = TidyFFI::Tidy.with_options(:indent => "auto",
       :indent_attributes => false, :char_encoding => 'utf8',
       :indent_spaces => 4, :wrap => 200).new(html_content)
