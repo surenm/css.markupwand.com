@@ -351,6 +351,14 @@ class Layer
     StylesHash.add_and_get_class CssParser::to_style_string(css)
   end
 
+  def text_type
+    if layer_json.has_key? :textType
+      return layer_json[:textType]
+    else
+      return ""
+    end
+  end
+
   def text
     if self.kind == LAYER_TEXT
       original_text = layer_json[:textKey][:value][:textKey][:value]
