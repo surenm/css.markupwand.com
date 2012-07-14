@@ -85,6 +85,9 @@ class DesignController < ApplicationController
   end
   
   def preview
+    if @design.status != Design::STATUS_COMPLETED
+      redirect_to :action => :show, :id => @design.safe_name
+    end
   end
 
   def fonts_upload
@@ -108,6 +111,7 @@ class DesignController < ApplicationController
     @design.font_map.update_downloaded_fonts(saveable_fonts)
     @design.font_map.save!
     @design.save!
+    @design.regenerate_html
     
     redirect_to :action => :fonts, :id => @design.safe_name
   end
@@ -159,6 +163,11 @@ class DesignController < ApplicationController
   
   def reparse
     @design.reparse
+    redirect_to :action => :show, :id => @design.safe_name
+  end
+
+  def write_html
+    @design.regenerate_html
     redirect_to :action => :show, :id => @design.safe_name
   end
 
