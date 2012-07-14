@@ -172,5 +172,20 @@ HTML
 
     modified_font
   end
-  
+
+  # Get filetype for a font file name
+  def self.filetype(filename)
+    filetype = filename.split('.').last
+    filetype.downcase!
+
+    case filetype
+    when 'woff'
+      return :woff
+    when 'otf'
+      return :otf
+    else
+      return :ttf
+    end
+  end
+
 end
