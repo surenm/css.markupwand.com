@@ -8,6 +8,7 @@ $(document).ready ->
       id = $(button).attr('id')
       id = id.replace('-button', '')
       $('#' + id + '-url').val(url)
+      $('#' + id + '-upload-name').val(data.filename)
       $('#' + id + '-name').html(data.filename)
       $(button).attr("disabled", "disabled");
     return
