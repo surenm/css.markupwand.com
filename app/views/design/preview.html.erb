@@ -28,6 +28,11 @@
     </div>
   </div>
   <div class = "clearfix"> </div>
+  <% if @design.font_map.missing_fonts.length > 0 %>
+    <div class="font-error alert alert-error">
+    We couldn't find few of your fonts. <a href="/design/<%= @design.safe_name %>/fonts">Upload your fonts</a> for better results
+    </div>
+  <% end %>
 </div>
 <iframe id="preview-iframe" src='<%= "/published/#{@design.safe_name}/index.html" %>'></iframe>
 <% end %>
