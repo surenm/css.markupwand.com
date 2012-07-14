@@ -5,19 +5,25 @@
     <h2>Fonts for <%= @design.name %></h2>
 
     <div class="container missing-fonts">
-    <%= form_tag "design/#{@design.safe_name}/fonts_upload" do %>
-
     <h3>Missing fonts</h3>
+      <%= form_tag "/design/#{@design.safe_name}/fonts_upload" do %>
       <table>
       <% @missing_fonts.each do |font| %>
+        <% font_safe = font.gsub(' ','-') %>
         <tr>
           <td> <%= font %> </td>
           <td> <a target="_new" href="http://google.com/search?q=<%= font.gsub(' ','+') %> ttf" class="google">(google)</a> </td>
-          <td> <input type="filepicker" name="font['<%= font %>']" value="Upload file" data-fp-option-modal="true" data-fp-text="upload"/> </td>
+          <td>
+            <input type="button" class="btn upload-font-button" value="choose font" id="<%= font_safe %>-button" name="font['<%= font %>']-button" />
+            <input type="hidden" name="font['<%= font %>']" id="<%= font_safe %>-url" value=""/>
+            <span class="font-upload-name" id="<%= font_safe %>-name"></span>
+          </td>
         </tr>
       <% end %>
       </table>
-    <% end %>
+      <input type="submit" name="save_fonts" value="Upload fonts" class="btn btn-primary"/>
+
+      <% end %>
     </div>
   </div>
   <%= javascript_include_tag "http://api.filepicker.io/v0/filepicker.js" %>
