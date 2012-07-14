@@ -322,21 +322,23 @@ class Grid
   
   # Process a grouping box atomically
   def process_grouping_box(row_grid, grouping_box, available_nodes)
-    Log.info "Trying grouping box #{grouping_box}..."
+    Log.debug "Trying grouping box #{grouping_box}..."
     raw_grouping_box_layers = BoundingBox.get_nodes_in_region grouping_box, available_nodes.values, zindex
     
-    Log.info "Checking for error intersections in layers #{raw_grouping_box_layers}"
-    all_grouping_box_layers = Grid.fix_error_intersections raw_grouping_box_layers
-    grouping_box_layers = Hash.new
-    all_grouping_box_layers.each do |layer| 
-      grouping_box_layers[layer.uid] = layer
-      available_nodes.delete layer.uid
-    end    
-
-    if grouping_box_layers.empty?
-      Log.info "Empty grouping box. Adding to margin for next grid to pick it up..."
+    if raw_grouping_box_layers.empty?
+      Log.info "No layers in #{grouping_box}. Marking this grouping box as margin..."
       self.design.add_offset_box grouping_box.clone
     else
+      Log.info "Layers in #{grouping_box} are #{raw_grouping_box_layers}. Creating a new grid..."
+
+      Log.debug "Checking for error intersections in layers #{raw_grouping_box_layers}"
+      all_grouping_box_layers = Grid.fix_error_intersections raw_grouping_box_layers
+      grouping_box_layers = Hash.new
+      all_grouping_box_layers.each do |layer| 
+        grouping_box_layers[layer.uid] = layer
+        available_nodes.delete layer.uid
+      end    
+            
       grid = Grid.new :design => row_grid.design, 
                       :depth  => row_grid.depth + 1, 
                       :grouping_box => BoundingBox.pickle(grouping_box)
