@@ -490,14 +490,15 @@ class Grid
     Log.debug  "Positioned Layers: #{positioned_layers_in_region}"
     
     positioned_layers_in_region.sort! { |layer1, layer2| layer1.zindex <=> layer2.zindex }
-    positioned_layers_in_region.each do |layer|
+    while not positioned_layers_in_region.empty?
+      layer = positioned_layers_in_region.first
       layers_in_grid   = BoundingBox.get_nodes_in_region layer.bounds, positioned_layers_in_region, layer.zindex
       positioned_layers_in_region = positioned_layers_in_region - layers_in_grid
-      
+    
       Log.info "Creating a new positioned grid with #{layers_in_grid}..."
       positioned_grid  = Grid.new :design => grid.design, :depth => grid.depth + 1, :is_positioned => true
       positioned_grid.set layers_in_grid, grid
-      
+    
       @@grouping_queue.push positioned_grid
     end
     
