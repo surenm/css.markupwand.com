@@ -40,6 +40,7 @@ TransformersWeb::Application.routes.draw do
   match 'design/:id/gallery'  => 'design#gallery'
   match 'design/:id/download' => 'design#download'
   match 'design/:id/update'   => 'design#update'
+  match 'design/:id/fonts'   => 'design#fonts'
   match 'design/:id/delete'   => 'design#delete'
   
   # admin actions to regenerate stuff
