@@ -48,6 +48,7 @@ TransformersWeb::Application.routes.draw do
   match 'design/:id/reprocess'  => 'design#reprocess'
   match 'design/:id/reparse'    => 'design#reparse'
   match 'design/:id/regenerate' => 'design#regenerate'
+  match 'design/:id/write_html' => 'design#write_html'
 
   # convinience methods to view logs, dom
   match 'design/:id/view-logs'  => 'design#view_logs'
