@@ -26,7 +26,8 @@ class User
   validates_presence_of :name, :email
   
   has_many :designs
-  
+  has_many :user_fonts  
+
   def self.get_email_domain(email_address)
     return email_address.split('@').last
   end
