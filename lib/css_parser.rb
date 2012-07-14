@@ -71,9 +71,13 @@ module CssParser
     
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
       shadow_value = parse_shadow(layer[:layerEffects][:value][:dropShadow])
-      css[:'box-shadow']         = shadow_value
-      css[:'-webkit-box-shadow'] = shadow_value
-      css[:'-moz-box-shadow']    = shadow_value
+      shadow_enabled = layer.extract_value(:layerEffects, :value, :dropShadow, :value, :enabled, :value)
+
+      if shadow_enabled
+        css[:'box-shadow']         = shadow_value
+        css[:'-webkit-box-shadow'] = shadow_value
+        css[:'-moz-box-shadow']    = shadow_value
+      end
     end
     
     css
