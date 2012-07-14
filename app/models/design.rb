@@ -250,7 +250,7 @@ class Design
     end
 
     Profiler.start    
-    Log.info "Beginning to process #{self.processed_file_path}..."
+    Log.info "Beginning to process #{self.name}..."
 
     # Parse the JSON
     fptr     = File.read self.processed_file_path
@@ -274,11 +274,6 @@ class Design
       Log.info "Added Layer #{layer} (#{layer.zindex})"
     end
     
-    Log.info "Layer bounds"
-    layers.each do |layer|
-      Log.info "#{layer.bounds}"
-    end
-
     Log.info "Creating root grid..."
     grid = Grid.new :design => self, :root => true, :depth => 0
     grid.set layers, nil
