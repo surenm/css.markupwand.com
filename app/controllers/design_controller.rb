@@ -87,6 +87,27 @@ class DesignController < ApplicationController
   def preview
   end
 
+  def fonts_upload
+    #response       = RestClient.get file_url
+    saveable_fonts = {}
+    params['font'].each do |font, url|
+      if not url.empty?
+        filetype = FontMap.filetype(params['font_name'][font])
+        saveable_fonts[font] = { :url => url, :name => params['font_name'][font], :type => filetype}
+      end
+    end
+
+    saveable_fonts.each do |font, data|
+      filename = font.gsub("'",'') + '.' + data[:type].to_s
+      saveable_fonts[font][:generated] = File.join @design.store_generated_key, "assets", "fonts", filename
+      saveable_fonts[font][:published] = File.join @design.store_published_key, "assets", "fonts", filename
+      Store::write_from_filepicker saveable_fonts[font][:generated], data[:url]
+      Store::write_from_filepicker saveable_fonts[font][:published], data[:url]
+    end
+    
+    render :json => { :saveable_fonts => saveable_fonts }
+  end
+
   def fonts
     @missing_fonts = @design.font_map.missing_fonts
   end
