@@ -20,7 +20,7 @@ class FontMap
   DEFAULT_FONTS = ['Helvetica', 'Lucida Sans', 'Tahoma', 'Andale Mono',
      'Arial', 'Arial Black', 'Comic Sans MS', 'Courier New', 'Georgia',
      'Impact', 'Times New Roman', 'Trebuchet MS', 'Verdana', 'Webdings']
-  
+
   
   # Find out fonts and urls from
   # Google and Typekit
@@ -160,6 +160,31 @@ HTML
     end
 
     {:snippet => webfont_code, :map => font_map }
+  end
+
+  # Sample payload
+  # {
+  #  'Helvetica Neue'{
+  #    url: "https://www.filepicker.io/api/file/XtsSASkBQyOJ8923bsWV",
+  #    name: "HelveticaNeue.ttf",
+  #    type: "ttf",
+  #    generated: ".yy./generated/assets/fonts/Helvetica Neue.ttf",
+  #    published: ".xx./published/assets/fonts/Helvetica Neue.ttf"
+  #  },
+  #  'MuseoSans': {
+  #   ..sameasabove..
+  #   }
+  # }
+  def update_downloaded_fonts(downloaded_fonts_data)
+    downloaded_fonts_data.each do |font_name, font_data|
+      stripped_font_name = font_name.gsub("'",'')
+      self.missing_fonts.delete stripped_font_name
+      uploaded_font = {stripped_font_name => font_data[:filename]}
+      self.uploaded_fonts.update uploaded_font
+      
+      Log.info self.missing_fonts
+      Log.info stripped_font_name
+    end
   end
 
   def reduced_font_name(font)
