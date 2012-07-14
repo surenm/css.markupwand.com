@@ -30,7 +30,6 @@ class Grid
   field :is_positioned, :type => Boolean, :default => false
 
   field :offset_box_buffer, :type => String, :default => nil
-  field :offset_box_type, :type => Symbol, :default => :offset_box
   field :depth, :type => Integer, :default => -1
   
   field :grouping_box, :type => String, :default => nil
@@ -141,9 +140,7 @@ class Grid
   # Bounds for a grid.
   # TODO: cache this grids
   def bounds
-    if self.root
-      bounds = self.design.bounds
-    elsif self.layers.empty?
+    if self.layers.empty?
       bounds = nil
     else
       node_bounds = self.layers.collect {|layer| layer.bounds}
@@ -232,7 +229,7 @@ class Grid
       grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
       grid.style_layers.uniq!
 
-      Log.info "Deleting #{style_layers} from grid..."
+      Log.info "Deleting #{grid_style_layers} from grid..."
       grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
     end
     return available_layers
@@ -293,7 +290,9 @@ class Grid
       self.design.row_offset_box = row_grouping_box.bounds
       
     else
-      row_grid = Grid.new :design => self.design, :orientation => Constants::GRID_ORIENT_LEFT, :depth => self.depth + 1,
+      row_grid = Grid.new :design => self.design, 
+                          :orientation => Constants::GRID_ORIENT_LEFT, 
+                          :depth => self.depth + 1,
                           :grouping_box => BoundingBox.pickle(row_grouping_box.bounds)
 
       row_grid.set nodes_in_row_region, self
@@ -315,7 +314,6 @@ class Grid
       if not self.design.row_offset_box.nil?
         Log.info "Setting top margin for this row grid..."
         row_grid.offset_box_buffer = BoundingBox.pickle self.design.row_offset_box
-        row_grid.offset_box_type   = :row_offset_box
         self.design.reset_row_offset_box
       end
       row_grid.save!
@@ -330,30 +328,34 @@ class Grid
     raw_grouping_box_layers = BoundingBox.get_nodes_in_region grouping_box, available_nodes.values, zindex
     
     Log.info "Checking for error intersections in layers #{raw_grouping_box_layers}"
-    grouping_box_layers = Grid.fix_error_intersections raw_grouping_box_layers
+    all_grouping_box_layers = Grid.fix_error_intersections raw_grouping_box_layers
+    grouping_box_layers = Hash.new
+    all_grouping_box_layers.each do |layer| 
+      grouping_box_layers[layer.uid] = layer
+      available_nodes.delete layer.uid
+    end    
 
     if grouping_box_layers.empty?
       Log.info "Empty grouping box. Adding to margin for next grid to pick it up..."
       self.design.add_offset_box grouping_box.clone
-    elsif grouping_box_layers.size <= available_nodes.size
-      grid = Grid.new :design => row_grid.design, :depth  => row_grid.depth + 1, 
+    else
+      grid = Grid.new :design => row_grid.design, 
+                      :depth  => row_grid.depth + 1, 
                       :grouping_box => BoundingBox.pickle(grouping_box)
       
       # Reduce the set of nodes, remove style layers.
       Log.info "Extract style layers for this grid #{grid}..."
-      available_nodes = Grid.extract_style_layers grid, available_nodes, grouping_box
-        
+      grouping_box_layers = Grid.extract_style_layers grid, grouping_box_layers, grouping_box
+
       # If where are still intersecting layers, make them positioned layers and remove them
-      Log.info "Handle intersections gracefully..."
-      bounding_boxes = available_nodes.values.collect { |node| node.bounds }
+      bounding_boxes = grouping_box_layers.values.collect { |node| node.bounds }
       gutters_available = BoundingBox.grouping_boxes_possible? bounding_boxes
       is_positioning_done = false
-      if not gutters_available and available_nodes.size > 1
-        is_positioning_done = Grid.extract_positioned_layers grid, grouping_box, grouping_box_layers
+      if not gutters_available and grouping_box_layers.size > 1
+        is_positioning_done = Grid.extract_positioned_layers grid, grouping_box, grouping_box_layers.values
       end
 
-      grid.set grouping_box_layers, row_grid
-      grouping_box_layers.each { |layer| available_nodes.delete layer.uid }
+      grid.set all_grouping_box_layers, row_grid
             
       if not self.design.offset_box.nil?
         #Pickup spacing that the previous box allocated.
@@ -381,7 +383,7 @@ class Grid
       nodes_in_region.each do |node_right|
         if node_left != node_right 
           if node_left.intersect? node_right and !(node_left.encloses? node_right or node_right.encloses? node_left)
-            if node_left.bounds.area < node_right.bounds.area
+            if node_left.zindex < node_right.zindex
               intersecting_node_pairs.push [node_left, node_right]
             else
               intersecting_node_pairs.push [node_right, node_left]
@@ -471,6 +473,7 @@ class Grid
          flow_layers_in_region.push layer
        end
     end
+    Log.info "Flow layers: #{flow_layers_in_region}"
     
     inner_grid = Grid.new :design => grid.design, :depth => grid.depth + 1
     inner_grid.set flow_layers_in_region, grid
@@ -479,14 +482,17 @@ class Grid
     @@grouping_queue.push inner_grid
     
     positioned_layers_in_region = layers_in_region - flow_layers_in_region
+    Log.info  "Positioned Layers: #{positioned_layers_in_region}"
     
-    positioned_layers_in_region.sort! { |layer1, layer2| layer2.zindex <=> layer1.zindex }
+    positioned_layers_in_region.sort! { |layer1, layer2| layer1.zindex <=> layer2.zindex }
     positioned_layers_in_region.each do |layer|
-      layers_in_grid   = BoundingBox.get_nodes_in_region layer.bounds, layers_in_region, layer.zindex
-      layers_in_region = layers_in_region - layers_in_grid
+      layers_in_grid   = BoundingBox.get_nodes_in_region layer.bounds, positioned_layers_in_region, layer.zindex
+      positioned_layers_in_region = positioned_layers_in_region - layers_in_grid
       
       positioned_grid  = Grid.new :design => grid.design, :depth => grid.depth + 1, :is_positioned => true
       positioned_grid.set layers_in_grid, grid
+      
+      Log.info "Creating a new positioned grid with #{layers_in_grid}"
       
       @@grouping_queue.push positioned_grid
     end

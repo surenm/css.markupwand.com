@@ -15,13 +15,11 @@ class GridStyleSelector
    
   # Find out bounding box difference from it and its children.
   def get_padding
-    flow_layers = []
-    self.grid.children.each do |child_grid|
-      flow_layers.push child_grid.layers if not child_grid.is_positioned
+    non_style_layers = self.grid.layers.to_a.select do |layer|
+      not self.grid.style_layers.to_a.include? layer.id.to_s
     end
-    flow_layers.flatten!
     
-    children_bounds = flow_layers.collect { |layer| layer.bounds }
+    children_bounds = non_style_layers.collect { |layer| layer.bounds }
     children_superbound = BoundingBox.get_super_bounds children_bounds
     spacing = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
     
@@ -37,18 +35,6 @@ class GridStyleSelector
   
   def get_margin
     margin = {:top => 0, :left => 0}
-
-    use_grouping_box = true
-    self.grid.children.each do |child_grid|
-      use_grouping_box = false if child_grid.is_positioned
-    end
-    
-    if not self.grid.parent.nil?
-      self.grid.parent.children.each do |sibling_grid|
-        use_grouping_box = false if sibling_grid.is_positioned and not self.grid.is_positioned
-      end
-    end
-      
     if self.grid.root == true
       margin[:top]  += self.grid.bounds.top
       margin[:left] += self.grid.bounds.left
@@ -67,14 +53,10 @@ class GridStyleSelector
         children_bounds     = self.grid.layers.collect { |layer| layer.bounds }
         children_superbound = BoundingBox.get_super_bounds children_bounds        
         margin_superbound   = BoundingBox.get_super_bounds margin_boxes
-          
+           
         if not margin_superbound.nil? and not children_superbound.nil?
-          if self.grid.offset_box_type == :offset_box
-            margin[:top] = children_superbound.top - margin_superbound.top
-            margin[:left] = children_superbound.left - margin_superbound.left
-          elsif self.grid.offset_box_type == :row_offset_box
-            margin[:top] = children_superbound.top - margin_superbound.top
-          end
+          margin[:top] = children_superbound.top - margin_superbound.top
+          margin[:left] = children_superbound.left - margin_superbound.left
         end
       end
     end
@@ -135,7 +117,7 @@ class GridStyleSelector
   def unpadded_width
     width = 0
 
-    if not self.grid.bounds.nil? or not self.grid.bounds.width.nil?
+    if not self.grid.bounds.nil? and not self.grid.bounds.width.nil?
       width += self.grid.bounds.width
       
       padding = get_padding
@@ -154,7 +136,7 @@ class GridStyleSelector
   def unpadded_height
     height = 0
 
-    if not self.grid.bounds.nil? or not self.grid.bounds.width.nil?
+    if not self.grid.bounds.nil? and not self.grid.bounds.width.nil?
       height += self.grid.bounds.height
       
       padding = get_padding
@@ -439,7 +421,7 @@ class GridStyleSelector
       initial_selector_name = (render_layer_obj.generated_selector) if not render_layer_obj.generated_selector.nil?
       css = render_layer_obj.css_rules.clone
     else
-      initial_selector_name = (generated_selector) if not generated_selector.empty?
+      initial_selector_name = (generated_selector) if not generated_selector.nil? and not generated_selector.empty?
       css = self.css_rules.clone
     end
 
