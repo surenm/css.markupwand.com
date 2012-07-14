@@ -16,7 +16,24 @@ module CssTextParser
     1131312242 => 'center',
     1281713780 => 'left',
     1382508660 => 'right'
-  } 
+  }
+
+  TEXT_TRANSFORM = {
+    1316121964 => 'none',
+    1621       => 'uppercase'
+  }
+
+
+  def CssTextParser::parse_text_transform(layer, position = 0)
+    text_style     = layer.layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[position]
+    font_caps      = text_style.extract_value(:value, :textStyle, :value, :fontCaps, :value)
+
+    if TEXT_TRANSFORM[font_caps] != 'none'
+      {:'text-transform' => TEXT_TRANSFORM[font_caps]}
+    else
+      {}
+    end
+  end
   
   def CssTextParser::parse_font_name(layer, position = 0)
     mapped_font = layer.get_font_name(position)
@@ -95,7 +112,7 @@ module CssTextParser
       {}
     end
   end
-  
+
   def CssTextParser::parse_text_letter_spacing(font_info)
     #Same reference as above
     if not font_info[:tracking].nil? and font_info[:tracking] != 0
