@@ -16,7 +16,7 @@ module Shape::Circle
   # of a square that could be formed with these two points as the diagonal.
   def self.my_type? path
     path_points = path.path_points
-    fully_curved_points = path_points.select {|point| point.curved_both_sides?}
+    fully_curved_points = path_points.select {|point| point.curved_on_both_ends?}
 
     if path_points.size != 4 or fully_curved_points.size != 4
       return false

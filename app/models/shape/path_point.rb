@@ -102,27 +102,29 @@ class Shape::PathPoint
     self.curve_dir == CURVE_DIR_BOTH
   end
 
-  def curved_both_sides?
+  def curved_on_both_ends?
     self.point != self.right_dir and self.right_dir != self.left_dir and self.left_dir != self.point
   end
 
-  def concave?
-    self.curve_type == CURVE_TYPE_CONCAVE
-  end
-
-  def convex?
-    self.curve_type == CURVE_TYPE_CONVEX
-  end
-
-  def complex?
-    self.curve_type == CURVE_TYPE_COMPLEX
-  end
-
   def curved_at_one_end?
+    curved_at_right_end_only? or curved_at_left_end_only?
+  end
+
+  def curved_at_right_end_only?
     if curved_x?
-      [self.point.x, self.left_dir.x, self.right_dir.x].uniq.size == 2
+      self.point.x == self.left_dir.x and self.right_dir.x != self.point.x
     elsif curved_y?
-      [self.point.y, self.left_dir.y, self.right_dir.y].uniq.size == 2
+      self.point.y == self.left_dir.y and self.right_dir.y != self.point.y
+    else
+      return false
+    end
+  end
+
+  def curved_at_left_end_only?
+    if curved_x?
+      self.point.x != self.left_dir.x and self.right_dir.x == self.point.x
+    elsif curved_y?
+      self.point.y != self.left_dir.y and self.right_dir.y == self.point.y
     else
       return false
     end
@@ -138,6 +140,10 @@ class Shape::PathPoint
 
   def handle_flat?
     self.left_dir.y == self.right_dir.y or self.left_dir.x == self.right_dir.x
+  end
+
+  def handle_none?
+    self.right_dir == self.point and self.point == self.left_dir
   end
 
   def perpendicular? other

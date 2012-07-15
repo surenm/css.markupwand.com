@@ -55,35 +55,38 @@ module Shape::Box
     return CssParser.parse_box layer, grid
   end
 
+  # Use a whitelist of box patterns instead of a generic pattern
   def self.my_type?(path)
-    path_segments = path.path_points
-    num_segments = path_segments.size
-    straight_segments = path_segments.select { |segment| segment.straight? }
-    num_straight_segments = straight_segments.size
-    segments_curved_at_one_end = path_segments.select { |segment| segment.curved_at_one_end?}
-    num_curved_at_one_end = segments_curved_at_one_end.size
-    num_non_boxy_segments = num_segments - (num_straight_segments + num_curved_at_one_end)
+    path_points = path.path_points
 
-    if num_non_boxy_segments == num_segments
-      return false
-    # There has to be either 2 or 4 lines in a sharp rectangle
-    # Not considering cases where the designer drew a line of a certain length,
-    # changed mind and drew another segment to extend the line, etc.
-    # And each of those straight lines need to have a parallel pair
-    elsif num_straight_segments == 2 and path_segments.size == num_straight_segments
-      return true if straight_segments[0].parallel? straight_segments[1]
-    elsif num_straight_segments == 4 and curves_balanced? path_segments and
-      ((straight_segments[0].parallel? straight_segments[1] and straight_segments[2].parallel? straight_segments[3]) or
-        (straight_segments[0].parallel? straight_segments[2] and straight_segments[1].parallel? straight_segments[3]) or
-        (straight_segments[0].parallel? straight_segments[3] and straight_segments[1].parallel? straight_segments[2]))
-      return true
-    # In a simple rounded rectangle, lines would turn slightly in just one dimension at a time
-    # No segment should have turn in more than one dimension(x or y only; not both)
-    # And there can't be an odd number of segments for a box
-    elsif num_non_boxy_segments >0 and num_non_boxy_segments <= 4 and num_non_boxy_segments.even? and num_segments.even? and num_segments <= 8
-      if curves_balanced? path_segments
-        return true
+    # Regular rectangles with sharp edges, and Lines
+    # Consecutive points would have the same value on only one of the axes
+    # and that axis would be different for consecutive pairs
+    # Handle length should be 0 for all points
+    if path_points.size == 4
+      path_points.each do |path_point|
+        prev_point = path_point.prev
+        next_point = path_point.next
+        unless path_point.handle_none? and prev_point.handle_none? and next_point.handle_none?
+          return false
+        end
+        if (prev_point.point.x == path_point.point.x and path_point.point.y == next_point.point.y) or
+            (prev_point.point.y == path_point.point.y and path_point.point.x == next_point.point.x)
+          return true
+        end
       end
+    elsif path_points.size == 6
+      path_points.each do |path_point|
+        prev_point = path_point.prev
+        unless (prev_point.curved_on_both_ends? and path_point.curved_at_right_end_only?) or
+            (prev_point.curved_at_right_end_only? and path_point.curved_at_left_end_only?) or
+            (prev_point.curved_at_left_end_only? and path_point.curved_on_both_ends?)
+          return false
+        end
+      end
+      return true
+    elsif path_points.size == 8
+      return false
     end
     return false
   end
