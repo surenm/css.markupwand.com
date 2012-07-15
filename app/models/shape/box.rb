@@ -1,7 +1,4 @@
-class Shape::Box
-  def initialize
-
-  end
+module Shape::Box
 
   def self.curves_balanced?(path_segments)
     # Ideally should check if none of the segments are not suitable for a standard box.
@@ -54,7 +51,12 @@ class Shape::Box
     return true
   end
 
-  def self.is_box?(path_segments)
+  def self.parse(layer, grid)
+    return CssParser.parse_box layer, grid
+  end
+
+  def self.my_type?(path)
+    path_segments = path.path_points
     num_segments = path_segments.size
     straight_segments = path_segments.select { |segment| segment.straight? }
     num_straight_segments = straight_segments.size
@@ -78,7 +80,7 @@ class Shape::Box
     # In a simple rounded rectangle, lines would turn slightly in just one dimension at a time
     # No segment should have turn in more than one dimension(x or y only; not both)
     # And there can't be an odd number of segments for a box
-    elsif num_non_boxy_segments <= 4 and num_non_boxy_segments.even? and num_segments.even? and num_segments <= 8
+    elsif num_non_boxy_segments >0 and num_non_boxy_segments <= 4 and num_non_boxy_segments.even? and num_segments.even? and num_segments <= 8
       if curves_balanced? path_segments
         return true
       end

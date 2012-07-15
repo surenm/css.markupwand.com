@@ -335,12 +335,11 @@ module CssParser
     end
 
     if not path_points.empty?
-      path_segments = path_points.collect do |path_point|
-        Shape::PathSegment.new(path_point)
-      end
+      path = Shape::Path.new path_points
 
-      if Shape::Box.is_box? path_segments and not layer_json[:path_items][:num_subpaths] > 1
-        shape_css = CssParser::parse_box layer, grid
+      css_shape = Shape::Shape.css_shape path
+      unless css_shape.nil? or layer_json[:path_items][:num_subpaths] > 1
+        shape_css = css_shape.parse layer, grid
       end
       
 

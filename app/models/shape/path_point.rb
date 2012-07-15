@@ -1,5 +1,6 @@
-class Shape::PathSegment
+class Shape::PathPoint
   attr_reader :point, :left_dir, :right_dir, :type, :curve_dir, :curve_type
+  attr_accessor :prev, :next
 
   TYPE_STRAIGHT = :straight
   TYPE_CURVED = :curved
@@ -101,6 +102,10 @@ class Shape::PathSegment
     self.curve_dir == CURVE_DIR_BOTH
   end
 
+  def curved_both_sides?
+    self.point != self.right_dir and self.right_dir != self.left_dir and self.left_dir != self.point
+  end
+
   def concave?
     self.curve_type == CURVE_TYPE_CONCAVE
   end
@@ -120,6 +125,34 @@ class Shape::PathSegment
       [self.point.y, self.left_dir.y, self.right_dir.y].uniq.size == 2
     else
       return false
+    end
+  end
+
+  def handle_ascending?
+    raise "Not implemented"
+  end
+
+  def handle_descending?
+    raise "Not implemented"
+  end
+
+  def handle_flat?
+    self.left_dir.y == self.right_dir.y or self.left_dir.x == self.right_dir.x
+  end
+
+  def perpendicular? other
+    # If parallel to axes, one slope would be infinity.
+    # So, just use == logic
+    if self.left_dir.y == self.right_dir.y
+      return true if other.left_dir.x == other.left_dir.x
+    elsif self.left_dir.x == self.right_dir.x
+      return true if other.left_dir.y == other.left_dir.y
+    elsif other.left_dir.x == other.left_dir.x or other.left_dir.y == other.left_dir.y
+      return false
+    else
+      slope_self = (self.left_dir.y - self.right_dir.y)/(self.left_dir.x - self.right_dir.x)
+      slope_other = (other.left_dir.y - other.right_dir.y)/(other.left_dir.x - other.right_dir.x)
+      return slope_other/slope_self
     end
   end
 

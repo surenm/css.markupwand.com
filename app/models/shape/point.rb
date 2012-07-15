@@ -9,6 +9,10 @@ class Shape::Point
     self.x == other.x and self.y == other.y
   end
 
+  def distance_squared(other)
+    ((self.x - other.x) * (self.x - other.x)) + ((self.y - other.y)*(self.y - other.y))
+  end
+
   def inspect
     "(#{x}, #{y})"
   end
