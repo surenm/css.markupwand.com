@@ -86,7 +86,12 @@ module Store
     if not Dir.exists? abs_destination_dir
       FileUtils.mkdir_p abs_destination_dir
     end
+
+    if File.directory?(abs_src_file)
+      abs_src_file += '/.'
+    end
     
+    Log.info "Copying locally from #{abs_src_file} to #{abs_destination_file}"
     FileUtils.cp_r abs_src_file, abs_destination_file
   end
   
