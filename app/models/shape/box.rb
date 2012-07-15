@@ -86,7 +86,16 @@ module Shape::Box
       end
       return true
     elsif path_points.size == 8
-      return false
+      path_points.each do |path_point|
+        prev_point = path_point.prev
+        next_point = path_point.next
+        unless ((prev_point.curved_at_right_end_only? and path_point.curved_at_left_end_only? and next_point.curved_at_right_end_only?) or
+            (prev_point.curved_at_left_end_only? and path_point.curved_at_right_end_only? and next_point.curved_at_left_end_only?)) and
+            prev_point.perpendicular? path_point and path_point.perpendicular? next_point
+          return false
+        end
+      end
+      return true
     end
     return false
   end
