@@ -125,7 +125,7 @@ class DesignController < ApplicationController
       Store::write_from_url generated_url, data[:url]
       Store::write_from_url published_url, data[:url]
 
-      user_font_exists = @user.user_fonts.where(:font_name => font).length > 0
+      user_font_exists = @user.user_fonts.where(:fontname => font).length > 0
 
       if not user_font_exists
         user_font = UserFont.new :fontname => font, :filename => filename, :type => data[:type].to_s
