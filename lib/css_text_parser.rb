@@ -24,6 +24,11 @@ module CssTextParser
     1927       => 'uppercase'
   }
 
+  TEXT_UNDERLINE = {
+    1666       => 'none',
+    1668       => 'underline'
+  }
+
 
   def CssTextParser::parse_text_transform(layer, position = 0)
     text_style     = layer.layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[position]
@@ -33,6 +38,17 @@ module CssTextParser
       {:'text-transform' => TEXT_TRANSFORM[font_caps]}
     else
       {}
+    end
+  end
+
+  def CssTextParser::parse_text_underline(layer, position = 0)
+    text_style     = layer.layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[position]
+    underline      = text_style.extract_value(:value, :textStyle, :value, :underline, :value)
+
+    if TEXT_UNDERLINE[underline] == 'none'
+      {}
+    else 
+      { :'text-decoration' => TEXT_UNDERLINE[underline] }
     end
   end
   
