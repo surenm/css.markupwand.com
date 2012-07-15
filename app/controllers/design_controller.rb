@@ -22,7 +22,7 @@ class DesignController < ApplicationController
     if params[:secret] == '02b0c8ad8a141b04693e923b3d56a918'
       design_data = params[:design]
       design      = Design.new :name => design_data[:name], :store => Store::get_S3_bucket_name
-      design.user = User.find(params[:email]).first
+      design.user = User.find_by_email(params[:email])
       design.save!
       
       Resque.enqueue UploaderJob, design.id, design_data
