@@ -47,7 +47,7 @@ module CssTextParser
 
     if TEXT_UNDERLINE[underline] == 'none'
       {}
-    else 
+    elsif TEXT_UNDERLINE.has_key? underline
       { :'text-decoration' => TEXT_UNDERLINE[underline] }
     end
   end
