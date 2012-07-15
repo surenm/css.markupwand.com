@@ -26,7 +26,7 @@ class BatchUpload
 
       markupwand_post_data =  {
         :"design[file_url]" => file_url,
-        :"design[name]" => file_name },
+        :"design[name]" => file_name,
         :email  => email,
         :secret => secret
       }
