@@ -50,7 +50,7 @@ module CssTextParser
     elsif TEXT_UNDERLINE.has_key? underline
       { :'text-decoration' => TEXT_UNDERLINE[underline] }
     else
-      Log.info "Unknown underline value for #{layer} = #{TEXT_UNDERLINE[underline]}"
+      Log.info "Unknown underline value for #{layer} = #{underline}"
       {}
     end
   end
