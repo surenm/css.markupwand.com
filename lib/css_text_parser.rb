@@ -124,10 +124,12 @@ module CssTextParser
     if not font_info[:tracking].nil? and font_info[:tracking] != 0
       letter_spacing = (font_info[:tracking][:value])
 
-      if letter_spacing > 0
+      if letter_spacing > 49
         letter_spacing = 1
-      elsif letter_spacing < 0
+      elsif letter_spacing < -49
         letter_spacing = -1
+      else
+        letter_spacing = 0
       end
 
       if letter_spacing != 0
