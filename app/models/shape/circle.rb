@@ -1,6 +1,12 @@
 module Shape::Circle
   def self.parse layer, grid
-    return CssParser::parse_box layer, grid
+    css = CssParser::parse_box layer, grid
+    if layer.layer_json.has_key? :path_items and layer.layer_json[:path_items].has_key? :points
+      path_points = layer.layer_json[:path_items][:points]
+    end
+    radius = (path_points[1][0] - path_points[0][0]).abs
+    css.update(:'border-radius' => "#{radius}px")
+    return css
   end
 
   # Four points:
