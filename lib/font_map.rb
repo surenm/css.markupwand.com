@@ -173,6 +173,7 @@ HTML
       if not fonts_list.find_index(font.fontname).nil?
         src  = font.file_path
         dest = self.design.store_published_key, "assets", "fonts", font.filename
+        Log.info "Copying from #{src} to #{dest}"
         Store::copy_within_store src, dest
         user_fonts_obtained.push({ :name => font.fontname, :file => font.filename })
       end
