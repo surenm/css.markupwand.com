@@ -1,4 +1,12 @@
 require 'open-uri'
+#
+# Usage:
+# open up rails console in your dev machine
+#
+# [1] pry(main)> BatchUpload.upload('/Users/alagu/Dropbox/markupwand/psd_sources/Test cases/unit tests/font-text','allagappan@gmail.com')
+#
+# pass second param as 'beta' to upload to beta machine
+# 
 class BatchUpload
   def self.upload(folder, email, target = 'prod')
     upload_data = {:mimetypes => ["*/*"],
@@ -12,17 +20,17 @@ class BatchUpload
     url = URI.parse "https://www.filepicker.io/api/path/computer/"
     url.query = "js_session=" + URI.encode(upload_data.to_json)
     secret = '02b0c8ad8a141b04693e923b3d56a918'
-    markupwand_url = (target == 'prod') ? 'http://www.markupwand.com/upload_danger' : 'http://beta.markupwand.com/upload_danger' 
+    markupwand_url = (target == 'prod') ? 'http://www.markupwand.com/design/upload_danger' : 'http://beta.markupwand.com/design/upload_danger' 
+    puts markupwand_url
 
     files.each do |file|
-      print "Uploading #{file} to filepicker"
       contents = open(file, "rb") {|io| io.read }
       data = RestClient.post url.to_s, {:fileUpload => File.new(file)}, {"Content-Type" => "application/octet-stream"}
       data_obj = JSON.parse(data)
       file_url = data_obj['data']['url']
       file_name = data_obj['data']['filename']
 
-      puts "    done (#{url}"
+      puts "Uploaded #{file_name} to filepicker"
 
       markupwand_post_data =  {
         :"design[file_url]" => file_url,
@@ -31,13 +39,11 @@ class BatchUpload
         :secret => secret
       }
 
-      puts "Markupwand post data"
+      puts "Uploading to markupwand"
 
       markupwand_response_data = RestClient.post markupwand_url, markupwand_post_data
 
       puts markupwand_response_data
-
-      break
     end
   end
 end
