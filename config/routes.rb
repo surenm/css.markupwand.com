@@ -27,10 +27,11 @@ TransformersWeb::Application.routes.draw do
   if Constants::store_remote?
     match 'design/new'       => 'design#new'
     match 'design/uploaded'  => 'design#uploaded', :as => :uploaded_callback
-    match 'design/upload_danger'  => 'design#upload_danger', :as => :uploaded_callback
+    match 'design/upload_danger'  => 'design#upload_danger'
   else
     match 'design/new'       => 'design#local_new'
     match 'design/uploaded'  => 'design#local_uploaded', :as => :uploaded_callback
+    match 'design/upload_danger'  => 'design#upload_danger'
   end
   
   # get, put and edit designs
