@@ -1,6 +1,6 @@
 class DesignController < ApplicationController
-  before_filter :require_login
-  before_filter :is_user_design, :except => [:new, :uploaded, :local_new, :local_uploaded, :index]
+  before_filter :require_login, :except => [:upload_danger]
+  before_filter :is_user_design, :except => [:new, :uploaded, :local_new, :local_uploaded, :index, :upload_danger]
   
   private
   def is_user_design
@@ -16,6 +16,24 @@ class DesignController < ApplicationController
   def new
     @design = Design.new
   end
+
+  def upload_danger
+    # Stupid security for now.
+    if params[:secret] == '02b0c8ad8a141b04693e923b3d56a918'
+      design_data = params[:design]
+      design      = Design.new :name => design_data[:name], :store => Store::get_S3_bucket_name
+      design.user = User.find_by_email(params[:email])
+      design.save!
+      
+      Resque.enqueue UploaderJob, design.id, design_data
+
+      render :json => {:status => 'OK'}
+    else
+      render :json => {:status => 'ERROR'}
+    end
+
+  end
+
   
   def uploaded
     design_data = params[:design]

@@ -20,7 +20,8 @@ module CssTextParser
 
   TEXT_TRANSFORM = {
     1316121964 => 'none',
-    1621       => 'uppercase'
+    1621       => 'uppercase',
+    1927       => 'uppercase'
   }
 
 
@@ -121,10 +122,18 @@ module CssTextParser
   def CssTextParser::parse_text_letter_spacing(font_info)
     #Same reference as above
     if not font_info[:tracking].nil? and font_info[:tracking] != 0
-      letter_spacing = (font_info[:tracking][:value]/20.0).round
+      letter_spacing = (font_info[:tracking][:value])
+
+      if letter_spacing > 49
+        letter_spacing = 1
+      elsif letter_spacing < -49
+        letter_spacing = -1
+      else
+        letter_spacing = 0
+      end
 
       if letter_spacing != 0
-        {:'letter-spacing' => (font_info[:tracking][:value]/20.0).round.to_s + 'px'}
+        {:'letter-spacing' => (letter_spacing).to_s + 'px'}
       else
         {}
       end
