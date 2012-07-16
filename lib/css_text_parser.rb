@@ -24,6 +24,13 @@ module CssTextParser
     1927       => 'uppercase'
   }
 
+  TEXT_UNDERLINE = {
+    1666       => 'none',
+    1668       => 'underline',
+    1972       => 'none',
+    1974       => 'underline'
+  }
+
 
   def CssTextParser::parse_text_transform(layer, position = 0)
     text_style     = layer.layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[position]
@@ -32,6 +39,20 @@ module CssTextParser
     if TEXT_TRANSFORM[font_caps] != 'none' and not TEXT_TRANSFORM[font_caps].nil?
       {:'text-transform' => TEXT_TRANSFORM[font_caps]}
     else
+      {}
+    end
+  end
+
+  def CssTextParser::parse_text_underline(layer, position = 0)
+    text_style     = layer.layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[position]
+    underline      = text_style.extract_value(:value, :textStyle, :value, :underline, :value)
+
+    if TEXT_UNDERLINE[underline] == 'none'
+      {}
+    elsif TEXT_UNDERLINE.has_key? underline
+      { :'text-decoration' => TEXT_UNDERLINE[underline] }
+    else
+      Log.info "Unknown underline value for #{layer} = #{underline}"
       {}
     end
   end

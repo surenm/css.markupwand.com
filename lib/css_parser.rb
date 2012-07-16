@@ -128,6 +128,9 @@ module CssParser
     # Text-color
     css.update(CssTextParser::parse_text_transform(layer, chunk_index))
 
+    # Text-underline
+    css.update(CssTextParser::parse_text_underline(layer, chunk_index))
+
     # Font size
     css.update(CssTextParser::parse_font_size(layer, chunk_index))
 
