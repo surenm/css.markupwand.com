@@ -26,7 +26,9 @@ module CssTextParser
 
   TEXT_UNDERLINE = {
     1666       => 'none',
-    1668       => 'underline'
+    1668       => 'underline',
+    1972       => 'none',
+    1974       => 'underline'
   }
 
 
