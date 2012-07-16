@@ -380,7 +380,14 @@ module CssParser
     css.update(parse_box_width(layer, grid))
     
     # Background-color
-    css.update(parse_box_background_color(layer.layer_json))
+    # Color information
+    color_overlay = CssParser::parse_color_overlay(layer)
+
+    if not color_overlay.empty?
+      css.update(color_overlay)
+    else
+      css.update(parse_box_background_color(layer.layer_json))
+    end
 
     # Box border
     css.update parse_box_border(layer.layer_json)
