@@ -53,7 +53,7 @@ module CssParser
   end
   
   
-  def CssParser::parse_shadow(shadow)
+  def CssParser::parse_shadow(shadow, position = 'outer')
     opacity = if shadow[:value].has_key? :opacity and shadow[:value][:opacity][:value] < 100 
         (shadow[:value][:opacity][:value]/100.0)
       else
@@ -62,24 +62,36 @@ module CssParser
     
     color = parse_color(shadow[:value][:color], opacity)
     size  = shadow[:value][:distance][:value]
+    shadow_position = position == 'inner' ? 'inset' : ''  
     
-    "#{size}px #{size}px #{size}px #{color}"
+    "#{size}px #{size}px #{size}px #{color} #{shadow_position}"
   end
   
   def CssParser::parse_box_shadow(layer)
     css = {}
     
+    shadow_value = []
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
-      shadow_value = parse_shadow(layer[:layerEffects][:value][:dropShadow])
-      shadow_enabled = CssParser::is_effect_enabled(layer, :dropShadow)
-
-      if shadow_enabled
-        css[:'box-shadow']         = shadow_value
-        css[:'-webkit-box-shadow'] = shadow_value
-        css[:'-moz-box-shadow']    = shadow_value
+      outer_shadow = CssParser::is_effect_enabled(layer, :dropShadow)
+      if outer_shadow
+        shadow_value.push parse_shadow(layer[:layerEffects][:value][:dropShadow])
       end
     end
-    
+
+    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :innerShadow
+      inner_shadow_enabled = CssParser::is_effect_enabled(layer, :innerShadow)
+      if inner_shadow_enabled
+        shadow_value.push parse_shadow(layer[:layerEffects][:value][:innerShadow], 'inner')
+      end
+    end
+
+    if not shadow_value.empty?
+      shadow_string = shadow_value.join ","
+      css[:'box-shadow']         = shadow_string
+      css[:'-webkit-box-shadow'] = shadow_string
+      css[:'-moz-box-shadow']    = shadow_string
+    end
+
     css
   end
   
