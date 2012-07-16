@@ -392,8 +392,11 @@ module CssParser
     css.update(parse_box_width(layer, grid))
     
     # Background-color
-    # Color information
+    # Color overlay
     color_overlay = CssParser::parse_color_overlay(layer)
+    
+    color_gradient = CssParser::parse_gradient(layer)
+
 
     if not color_overlay.empty?
       css.update(color_overlay)
@@ -401,11 +404,13 @@ module CssParser
       css.update(parse_box_background_color(layer.layer_json))
     end
 
+    # If color overlay is not set, consider gradient
+    if color_overlay.empty?
+      css.update(color_gradient)
+    end
+
     # Box border
     css.update parse_box_border(layer.layer_json)
-    
-    # Box gradient 
-    css.update(parse_gradient(layer))
     
     # Box shadow
     css.update(parse_box_shadow(layer.layer_json))
