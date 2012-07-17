@@ -196,9 +196,9 @@ class Design
     self.push_to_processing_queue
   end
 
-  def regenerate_html
+  def write_html_job
     self.set_status Design::STATUS_REGENERATING
-    Resque.enqueue HtmlRegeneratorJob, self.id  
+    Resque.enqueue HtmlWriterJob, self.id  
   end
 
   def reparse
