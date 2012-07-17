@@ -145,6 +145,7 @@ class Apriori
             reduced_association.delete primary_rule
             reduced_association.delete secondary_rule
             reduced_association.update({ new_rule => new_value })
+            break
           end
         end
       end
