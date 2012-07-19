@@ -165,6 +165,7 @@ class Design
       new_offset_box = BoundingBox.get_super_bounds [bounding_box, self.offset_box]
     end
     Rails.cache.write "#{self.id}-offset_box", BoundingBox.pickle(new_offset_box)
+    return new_offset_box
   end
   
   # Accessor for offset bounding box

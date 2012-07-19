@@ -359,7 +359,17 @@ class Grid
             
       if not self.design.offset_box.nil?
         #Pickup spacing that the previous box allocated.
-        grid.offset_box_buffer = BoundingBox.pickle self.design.offset_box
+        previous_sibling = nil
+        siblings = grid.parent.children.sort{|child1, child2| child1.grouping_box <=> child2.grouping_box} unless grid.parent.nil?
+        self_index = siblings.index(grid) unless siblings.nil?
+        previous_sibling = siblings[self_index - 1] if not self_index.nil? and  self_index > 0
+        if !previous_sibling.nil? and previous_sibling.layers.first.kind == Layer::LAYER_TEXT and previous_sibling.layers.first.text_type == "TextType.POINTTEXT"
+          previous_sibling.offset_box_buffer = BoundingBox.pickle previous_sibling.design.add_offset_box self.design.offset_box.clone
+          previous_sibling.save!
+        else
+          grid.offset_box_buffer = BoundingBox.pickle self.design.offset_box
+        end
+
         Log.info "Setting #{self.design.offset_box} margin offset box for the above grid..."
         grid.save!
 

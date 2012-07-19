@@ -152,10 +152,16 @@ class GridStyleSelector
   # TODO Find out if there is any case when width is set.
   
   def width_css(css)
-    if not css.has_key? :width and not is_single_line_text and
+    if not css.has_key? :width #and not is_single_line_text and
       not unpadded_width.nil? and unpadded_width != 0
+      width = 0
+      if is_single_line_text
+        offset_buffer_box = BoundingBox.depickle self.grid.offset_box_buffer
+        width += offset_buffer_box.width
+      end
+      width += unpadded_width
      
-      return {:width => unpadded_width.to_s + 'px'}
+      return {:width => width.to_s + 'px'}
     end
     
     return {}
