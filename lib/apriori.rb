@@ -103,7 +103,7 @@ class Apriori
   end
 
   def get_array_distance(array1, array2)
-    [(array1 - array2).length, (array2 - array1).length].max
+    [(array1 - array2).length, (array2 - array1).length].min
   end
 
   def get_rule_distance(rule1, rule2)
