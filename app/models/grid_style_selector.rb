@@ -321,6 +321,7 @@ class GridStyleSelector
   # 
   def hash_css_properties
     Log.info "Generating CSS hashes"
+    design_hashed_selector_hash = {}
 
     apriori = Apriori.new(DesignGlobals.instance.css_properties_inverted, 2)
     apriori.calculate_frequent_itemsets
@@ -330,7 +331,7 @@ class GridStyleSelector
       rule_hash = {}
       rules.each { |rule| rule_hash.update (JSON.parse rule, :symbolize_names => true) }
       next_selector_name = CssParser::create_incremental_selector
-      self.grid.design.hashed_selectors[next_selector_name] = rule_hash
+      design_hashed_selector_hash[next_selector_name] = rule_hash
       nodes.each do |node|
         node.style_selector.hashed_selectors.push next_selector_name
         Log.info "Adding #{next_selector_name} to #{node.to_short_s}"
@@ -338,7 +339,7 @@ class GridStyleSelector
       end
     end
 
-    self.grid.design.save!
+    design_hashed_selector_hash
   end
 
   # Finds out subset CSS rules which are not taken care by 
