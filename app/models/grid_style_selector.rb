@@ -157,7 +157,7 @@ class GridStyleSelector
       width = 0
       if is_single_line_text
         offset_buffer_box = BoundingBox.depickle self.grid.offset_box_buffer
-        width += offset_buffer_box.width
+        width += offset_buffer_box.width unless offset_buffer_box.nil?
       end
       width += unpadded_width
      
