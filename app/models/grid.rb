@@ -331,7 +331,7 @@ class Grid
     else
       Log.info "Layers in #{grouping_box} are #{raw_grouping_box_layers}. Creating a new grid..."
 
-      Log.debug "Checking for error intersections in layers #{raw_grouping_box_layers}"
+      Log.info "Checking for error intersections in layers #{raw_grouping_box_layers}"
       all_grouping_box_layers = Grid.fix_error_intersections raw_grouping_box_layers
       grouping_box_layers = Hash.new
       all_grouping_box_layers.each do |layer| 
@@ -412,7 +412,7 @@ class Grid
       if intersect_percent_left > 90 or intersect_percent_right > 90
         is_error_intersection = true
         corrected_layers = Grid.crop_inner_intersect intersecting_layers
-      elsif intersect_percent_left < 5 and intersect_percent_right < 5
+      elsif intersect_percent_left < 10 and intersect_percent_right < 10
         is_error_intersection = true
         corrected_layers = Grid.crop_outer_intersect intersecting_layers
       end
