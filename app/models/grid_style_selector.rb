@@ -350,18 +350,27 @@ class GridStyleSelector
     Log.info "#{css_array.length} existing rules"
     self.hashed_selectors.each do |selector|
       hashed_css_array  = CssParser::rule_hash_to_array(self.grid.design.hashed_selectors[selector])
+      Log.info "#{css_array} vs #{hashed_css_array}"
       css_array         = css_array - hashed_css_array
+      Log.info "Post reduction #{css_array}"
       # This might cause bug when there are more than one group selector
       overridable_items = hashed_css_array - original_css_array
       overridable_items.each do |rule|
         rule_object = JSON.parse rule, :symbolize_names => true
         rule_key    = rule_object.keys.first
         if Constants::css_properties.has_key? rule_key.to_sym
-          css_array.push({rule_key => Constants::css_properties[rule_key.to_sym][:initial]}.to_json)
+          overridable_rule = {rule_key => Constants::css_properties[rule_key.to_sym][:initial]}.to_json
+          Log.info "Overridable rule = #{overridable_rule}"
+          css_array.push(overridable_rule)
         end
       end
     end
-    Log.info "#{css_array.length} reduced rules"
+
+    # reverse the array, so that the items which belong to original css_array come in the last
+    # and while converting them into hash, they get priority and overriden items don't.
+    css_array.reverse! 
+
+    Log.info "#{css_array.length} reduced rules. Contents = #{css_array}"
 
     CssParser::rule_array_to_hash(css_array)
   end
