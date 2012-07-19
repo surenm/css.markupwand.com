@@ -308,14 +308,12 @@ class Design
     Log.info "Bubble up CSS properties..."
     root_grid.style_selector.bubbleup_css_properties
 
-    if true      
-      Log.info "Hashing up CSS Properties"
-      self.hashed_selectors = root_grid.style_selector.hash_css_properties
-      self.save!
+    Log.info "Hashing up CSS Properties"
+    self.hashed_selectors = root_grid.style_selector.hash_css_properties
+    self.save!
 
-      Log.info "Reducing existing css rules to remove the hashed properties"
-      root_grid.style_selector.reduce_hashed_css_properties
-    end
+    Log.info "Reducing existing css rules to remove the hashed properties"
+    root_grid.style_selector.reduce_hashed_css_properties
 
     Log.info "Finding out selector name map..."
     self.selector_name_map = root_grid.style_selector.generate_initial_selector_name_map
