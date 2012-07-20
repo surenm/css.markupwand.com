@@ -283,7 +283,10 @@ class GridStyleSelector
         # Delete from the grid css.
         if child.style_selector.css_rules[rule_key] == rule_value
           child.style_selector.css_rules.delete rule_key
-          DesignGlobals.instance.css_properties_inverted[rule].delete self.grid
+          if DesignGlobals.instance.css_properties_inverted.has_key? rule
+            DesignGlobals.instance.css_properties_inverted[rule].delete child
+          end
+
           child.save!
         end
 
@@ -291,13 +294,16 @@ class GridStyleSelector
           layer_obj = Layer.find child.render_layer
           if layer_obj.css_rules[rule_key.to_s] == rule_value
             layer_obj.css_rules.delete rule_key.to_s
-            DesignGlobals.instance.css_properties_inverted[rule].delete self.grid
+            if DesignGlobals.instance.css_properties_inverted.has_key? rule
+              DesignGlobals.instance.css_properties_inverted[rule].delete child
+            end
+
             layer_obj.save!
           end
         end
       end
 
-      if DesignGlobals.instance.css_properties_inverted[rule].empty?
+      if not DesignGlobals.instance.css_properties_inverted[rule].nil? and DesignGlobals.instance.css_properties_inverted[rule].empty?
         DesignGlobals.instance.css_properties_inverted.delete rule
       end
 
