@@ -1,22 +1,45 @@
 <%= content_for :content do %>
-<%= stylesheet_link_tag "app/landing_page", :media => "all" %>
-<% end %>
 
-<%= content_for :content do %>
+
+  <div class="header">
+    <div class="header-logo-wrap">
+      <img class="header-logo" src="/assets/logo-small-monocolor.png">
+    </div>
+  </div>
 <div id="landing-page">
-  <div class="container">
-    <center>
-      <img src="assets/logo.png" /><br>
-      <h1 color=>Magically convert photoshop designs to valid html markup</h1>
-    </center>
-    <center class="content-area">
-      <h2 style="color: #eeeeee">Coming soon! </h2> <h3 style="color: #eeeeee"> Want a sneak peek?</h3>
-      <form id="getinvite" action="getinvite" method="POST">
-      <input name="email" class="prefilled-field default-value" id="invite-email" value="email@address.com"/>
-      <input type="submit" class="action-button" value="Request Invite Now!"/>
-      <div id="validation-result" class="error"></div>
-      </form>
-    </center>
+
+  <div class="container flow-block-wrap">
+
+      <div class="row flows-block">
+          <img class="pull-left photoshop-icon" src="./assets/photoshop-icon.png"><img class="pull-left arrow1" src="/assets/arrow1.png"><img class="pull-left markupwand-icon" src=
+          "/assets/wand.png"><img class="pull-left arrow2" src="/assets/arrow2.png">
+
+          <div class="pull-left html-css-block">
+              HTML <span class="ampersand">&amp;</span> CSS
+          </div>
+      </div>
+
+      <div class="row flows-text-block">
+          <div class="pull-left">
+              Your photoshop file
+          </div>
+
+          <div class="pull-left markupwand-item">
+              Markupwand
+          </div>
+
+          <div class="pull-left plug-into-item">
+              Plug into your code
+          </div>
+      </div>
+  </div>
+
+  <div class="container email-invite-box">
+    <form id="getinvite" action="getinvite" method="POST">
+    <input name="email" class="input-large" id="invite-email" placeholder="user@gmail.com"/>
+    <input type="submit" class="btn btn-large btn-primary" value="Request Invite Now!"/>
+    <div id="validation-result" class="error"></div>
+    </form>
     <center>
       <%= render 'shared/snippets/gplusone' %>
       <%= render 'shared/snippets/tweet' %>

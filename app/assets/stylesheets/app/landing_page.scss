@@ -4,11 +4,27 @@
 @import "compass/css3/box-shadow";
 @import "compass/utilities";
 
-#landing-page {
 
-  img {
-    margin-top: 30px;
-  }
+   
+.header {
+ min-height: 37px;
+ width: 100%;
+ background-color: #5f2f71;
+ padding-top: 12px;
+ padding-bottom: 0;
+
+ .header-logo-wrap {
+   width: 960px;
+   margin: 0 auto;
+   text-align: left;  
+ }
+}
+
+#landing-page {
+  min-height: 422px;
+  background-color: #ffffff;
+  padding-bottom: 278px;
+ 
 
   .drop {
     background: #CEDEEB url("/assets/noise.png") repeat;
@@ -22,6 +38,97 @@
     background-color: #d9d9d9;
     height: 40px;
   }
+
+  .flow-block-wrap {
+    margin:0 auto;
+  }
+
+
+  .flows-block {
+   width: 800px;
+   margin-top: 78px;
+   font-family: Vollkorn;
+   font-size: 42px;
+   margin: 50px auto;
+  
+
+   .photoshop-icon {
+    width: 128px;
+    
+   }
+  
+   .arrow1 {
+    width: 116px;
+    margin-top: 54px;
+    margin-left: 15px;
+    
+   }
+  
+   .markupwand-icon {
+    width: 125px;
+    margin-top: 21px;
+    margin-left: 32px;
+    
+   }
+   
+
+   .arrow2 {
+    width: 116px;
+    margin-top: 65px;
+    margin-left: 17px;
+    
+   }
+   
+   .html-css-block {
+    width: 110px;
+    margin-top: 26px;
+    margin-left: 32px;
+    color: #000000;
+    line-height: 44px;
+    letter-spacing: -1px;
+    text-align: center;
+
+    .ampersand {
+      font-family: Baskerville,'Goudy Old Style',Palatino,'Book Antiqua',serif;
+      font-style: italic;
+      font-weight: lighter;
+    }
+    
+   }
+
+  }
+  
+  .flows-text-block {
+   width: 877px;
+   margin: 40px auto;
+   font-family: Ubuntu;
+   font-weight: bold;
+   font-size: 24px;
+   color: #0c437b;
+   letter-spacing: -1px;
+   
+   .markupwand-item {
+    margin-left: 121px;
+    
+   }
+   
+   .plug-into-item {
+    margin-left: 115px;
+    
+   }
+
+  }
+
+  .email-invite-box {
+    margin: 60px auto 60px auto;
+    text-align: center;
+
+    #invite-email {
+      margin-bottom: 0;
+      min-height: 25px;
+    }
+  }
+
 }
 
 
