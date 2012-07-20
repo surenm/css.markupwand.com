@@ -471,36 +471,36 @@ class Grid
     intersecting_layers = intersecting_layer_pairs.flatten.uniq
     intersecting_layers.sort! { |layer1, layer2| layer2.bounds.area <=> layer1.bounds.area }
 
-    flow_layers_in_region = [intersecting_layers.first]
-    layers_in_region.each do |layer|
-       if not intersecting_layers.include? layer
-         flow_layers_in_region.push layer
-       end
-    end
-    Log.debug "Flow layers: #{flow_layers_in_region}"
+    largest_layer = intersecting_layers.delete_at 0
+    flow_layers_in_region = [largest_layer]
     
-    Log.info "Creating a new flow grid with #{layers_in_region} with #{flow_layers_in_region}"
-    inner_grid = Grid.new :design => grid.design, :depth => grid.depth + 1
-    inner_grid.set flow_layers_in_region, grid
-    inner_grid.offset_box_buffer = BoundingBox.pickle offset_bounds
-    inner_grid.save!
-    @@grouping_queue.push inner_grid
+    Log.debug  "Positioned Layers in region are #{intersecting_layers}"
     
-    positioned_layers_in_region = layers_in_region - flow_layers_in_region
-    Log.debug  "Positioned Layers: #{positioned_layers_in_region}"
+    # Sort by zindex so that topmost intersecting layer becomes parent for the node it contains
+    intersecting_layers.sort! { |layer1, layer2| layer1.zindex <=> layer2.zindex }
     
-    positioned_layers_in_region.sort! { |layer1, layer2| layer1.zindex <=> layer2.zindex }
-    while not positioned_layers_in_region.empty?
-      layer = positioned_layers_in_region.first
-      layers_in_grid   = BoundingBox.get_nodes_in_region layer.bounds, positioned_layers_in_region, layer.zindex
-      positioned_layers_in_region = positioned_layers_in_region - layers_in_grid
-    
+    while not intersecting_layers.empty?
+      layer = intersecting_layers.first
+      layers_in_grid   = BoundingBox.get_nodes_in_region layer.bounds, layers_in_region, layer.zindex
+      intersecting_layers = intersecting_layers - layers_in_grid
+      layers_in_region = layers_in_region - layers_in_grid
+  
       Log.info "Creating a new positioned grid with #{layers_in_grid}..."
       positioned_grid  = Grid.new :design => grid.design, :depth => grid.depth + 1, :is_positioned => true
       positioned_grid.set layers_in_grid, grid
     
       @@grouping_queue.push positioned_grid
     end
+    
+    flow_layers_in_region += layers_in_region
+    Log.debug "Flow layers in region #{grouping_box} are #{flow_layers_in_region}."
+    
+    Log.info "Creating a new flow grid with #{flow_layers_in_region}..."
+    flow_grid = Grid.new :design => grid.design, :depth => grid.depth + 1
+    flow_grid.set flow_layers_in_region, grid
+    flow_grid.offset_box_buffer = BoundingBox.pickle offset_bounds
+    flow_grid.save!
+    @@grouping_queue.push flow_grid
     
     return (not intersecting_layer_pairs.empty?)
   end
