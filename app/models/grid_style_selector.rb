@@ -11,7 +11,7 @@ class GridStyleSelector
 
   field :hashed_selectors, :type => Array, :default => []
 
-  ## Spacing and padding related methods
+
   ## helper methods
   def get_border_width(css)
     border_width = nil
@@ -24,6 +24,19 @@ class GridStyleSelector
     end
     return border_width
   end
+  
+  def is_single_line_text
+    if not self.grid.render_layer.nil? and
+      (Layer.find self.grid.render_layer).kind == Layer::LAYER_TEXT and
+      not (Layer.find self.grid.render_layer).has_newline? and
+     (Layer.find self.grid.render_layer).text_type != "TextType.PARAGRAPHTEXT"
+        return true
+    else
+      return false
+    end
+  end
+
+  ## Spacing and padding related method
    
   # Find out bounding box difference from it and its children.
   def get_padding
@@ -114,17 +127,6 @@ class GridStyleSelector
     css
   end
   
-
-  def is_single_line_text
-    if not self.grid.render_layer.nil? and
-      (Layer.find self.grid.render_layer).kind == Layer::LAYER_TEXT and
-      not (Layer.find self.grid.render_layer).has_newline? and
-     (Layer.find self.grid.render_layer).text_type != "TextType.PARAGRAPHTEXT"
-        return true
-    else
-      return false
-    end
-  end
   
   # Width subtracted by padding
   def unpadded_width
