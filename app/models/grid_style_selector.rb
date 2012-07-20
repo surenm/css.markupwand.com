@@ -240,7 +240,9 @@ class GridStyleSelector
 
     # Consider render layers also.
     grid.children.each do |child|
-      child.style_selector.css_rules.each do |css_property, css_value|
+      rules_hash = child.style_selector.css_rules
+      rules_hash = (Layer.find child.render_layer).css_rules if not child.render_layer.nil?
+      rules_hash.each do |css_property, css_value|
         css_rule_hash_key = ({ css_property.to_sym => css_value }).to_json
 
         rule_repeat_hash[css_rule_hash_key] ||= 0
@@ -249,22 +251,26 @@ class GridStyleSelector
     end
 
     rule_repeat_hash.each do |rule, repeats|
-      if repeats == 0
-        rule_repeat_hash.delete rule
-      end
+      rule_repeat_hash.delete rule if repeats == 0
     end
 
     bubbleable_rules = []
     # Trim out the non-repeating properties.
     rule_repeat_hash.each do |rule, repeats|
       rule_key = (JSON.parse rule).keys.first
-      if repeats > (grid.children.length * 0.6)
+      if is_text_rule?(rule_key)
+        child_grids = get_text_containing_grids grid.children
+      else
+        child_grids = grid.children
+      end
+
+      if repeats > (child_grids.length * 0.6)
         if (Constants::css_properties.has_key? rule_key.to_sym and Constants::css_properties[rule_key.to_sym][:inherit])
           bubbleable_rules.push rule
+          Log.info "Bubbling up #{rule}"
         end   
       end 
     end
-   
 
     # Remove all the repeating properties from the children
     # JSON parse happening everytime. Optimize later
@@ -278,6 +284,7 @@ class GridStyleSelector
         if child.style_selector.css_rules[rule_key] == rule_value
           child.style_selector.css_rules.delete rule_key
           DesignGlobals.instance.css_properties_inverted[rule].delete self.grid
+          child.save!
         end
 
         if not child.render_layer.nil?
@@ -305,6 +312,33 @@ class GridStyleSelector
 
     grid.save!
   end
+
+
+  def is_text_rule?(rule)
+    rule.to_s.index('font-') != nil
+  end
+
+  def get_text_containing_grids(grids)
+    grids_array = grids.to_a
+    text_containing_grids = grids_array.select do |grid|
+      if grid.is_text_grid?
+        true
+      else
+        has_font_property = false
+        grid.style_selector.css_rules.each do |rule, value|
+          if is_text_rule?(rule)
+            has_font_property = true
+            break
+          end
+        end
+
+        has_font_property
+      end
+    end
+
+    text_containing_grids
+  end
+
 
   # How hashing works
   # While collecting all css rules, keep adding to a global table which has the frequency
