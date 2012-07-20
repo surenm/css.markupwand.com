@@ -532,6 +532,15 @@ class Grid
       (render_layer_obj.tag_name(self.is_leaf?) == :img)
     end
   end
+
+  def is_text_grid?
+    if self.render_layer.nil?
+      false
+    else
+      render_layer_obj = Layer.find self.render_layer
+      (render_layer_obj.kind == Layer::LAYER_TEXT)
+    end
+  end
   
   ## Markup generation methods
   
