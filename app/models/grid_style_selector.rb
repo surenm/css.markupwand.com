@@ -435,9 +435,15 @@ class GridStyleSelector
     end
   end
 
+  def modified_hashed_selector
+    design = Design.find self.grid.design.id
+    modified = hashed_selectors.map { |selector| design.selector_name_map[selector]['name'] }
+    modified
+  end
+
   # Selector names array(includes default selector and extra selectors)
   def selector_names
-    all_selectors = extra_selectors + hashed_selectors
+    all_selectors = extra_selectors + modified_hashed_selector
 
     layer_has_css = false
     if self.grid.render_layer
