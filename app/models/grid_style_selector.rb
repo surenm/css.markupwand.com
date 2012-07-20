@@ -109,24 +109,24 @@ class GridStyleSelector
   #       (considering width and margins of its siblings.)
   #
   #    2(b) and 2(c) are exclusive
-  def spacing_css
-    #TODO. Margin and padding are not always from
-    # left and top. It is from all sides.
+  def set_white_space
     margin  = get_margin
     padding = get_padding
-    css     = {}
+
     positions = [:top, :left, :bottom, :right]
-    
+
+    spacing = {}
     positions.each do |position|
       if margin.has_key? position
-        css["margin-#{position}".to_sym] = "#{margin[position]}px" if margin[position] > 0
+        spacing["margin-#{position}".to_sym] = "#{margin[position]}px" if margin[position] > 0
       end
       
       if padding.has_key? position
-        css["padding-#{position}".to_sym] = "#{padding[position]}px" if padding[position] > 0
+        spacing["padding-#{position}".to_sym] = "#{padding[position]}px" if padding[position] > 0
       end  
     end
-    css
+    
+    self.css_rules.update spacing
   end
   
   
@@ -226,7 +226,7 @@ class GridStyleSelector
     
     # Gives out the values for spacing the box model.
     # Margin and padding
-    css.update spacing_css
+    self.set_white_space
 
     self.generated_selector = CssParser::create_incremental_selector if not css.empty?
 
