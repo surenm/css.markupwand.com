@@ -1,50 +1,39 @@
 <%= content_for :content do %>
 
-
-  <div class="header">
-    <div class="header-logo-wrap">
-      <img class="header-logo" src="/assets/logo-small-monocolor.png">
-    </div>
-  </div>
 <div id="landing-page">
 
-  <div class="container flow-block-wrap">
+  <div class="container homepage-box">
+    <img src="/assets/logo.png">
 
-      <div class="row flows-block">
-          <img class="pull-left photoshop-icon" src="./assets/photoshop-icon.png"><img class="pull-left arrow1" src="/assets/arrow1.png"><img class="pull-left markupwand-icon" src=
-          "/assets/wand.png"><img class="pull-left arrow2" src="/assets/arrow2.png">
+    <div class="statement">
+      Magically convert your photoshop files to HTML <span class="ampersand">&</span> CSS.
+    </div>
 
-          <div class="pull-left html-css-block">
-              HTML <span class="ampersand">&amp;</span> CSS
-          </div>
-      </div>
 
-      <div class="row flows-text-block">
-          <div class="pull-left">
-              Your photoshop file
-          </div>
+    <div class="features">
+    <ul>
+      <li>Save time in recreating a design from a PSD file to HTML</li> <li> · </li>
+      <li>No absolute positioning, no page as images</li> <li> · </li>
+      <li>Minimal, maintainable markup</li>
+      <li>Uses Compass/SASS for maintainable CSS</li> <li>
+    </ul>
+    </div>
 
-          <div class="pull-left markupwand-item">
-              Markupwand
-          </div>
 
-          <div class="pull-left plug-into-item">
-              Plug into your code
-          </div>
-      </div>
+    <div class="container email-invite-box">
+      <form id="getinvite" action="getinvite" method="POST">
+      <input name="email" class="input-large" id="invite-email" placeholder="user@gmail.com"/>
+      <input type="submit" class="btn btn-large btn-primary" value="Request Invite Now!"/>
+      <div id="validation-result" class="error"></div>
+      </form>
+    </div>
   </div>
-
-  <div class="container email-invite-box">
-    <form id="getinvite" action="getinvite" method="POST">
-    <input name="email" class="input-large" id="invite-email" placeholder="user@gmail.com"/>
-    <input type="submit" class="btn btn-large btn-primary" value="Request Invite Now!"/>
-    <div id="validation-result" class="error"></div>
-    </form>
-    <center>
+  <div class="viral container">
+    <div class="viral-inner">
       <%= render 'shared/snippets/gplusone' %>
       <%= render 'shared/snippets/tweet' %>
       <%= render 'shared/snippets/fbshare' %>
-    </center>
+    </div>
   </div>
 </div>
 

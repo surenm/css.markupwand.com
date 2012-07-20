@@ -38,6 +38,28 @@
     .statement {
       font-size: 20px;
       font-family: 'Average', serif;
+      font-weight: bold;
+      color: #3F474C;
+    }
+
+    .features {
+      margin-top: 10px;
+      ul {
+        list-style: none;
+
+        li {
+          display: inline-block;
+          margin-left: 5px;
+          margin-right: 5px;
+          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          color: #939799;
+          font-size: 12px;
+        }
+
+        li:last {
+          clear:both;
+        }
+      }
     }
   }
 
