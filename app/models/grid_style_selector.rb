@@ -186,14 +186,10 @@ class GridStyleSelector
   end
 
   def set_style_rules
-    css = {}
-
     self.grid.style_layers.each do |layer_id|
       layer = Layer.find layer_id
-      css.update layer.get_style_rules(self)
+      self.css_rules.update layer.get_style_rules(self)
     end
-    
-    css.update width_css(css)
     
     # Positioning - absolute is handled separately. Just find out if a grid has to be relatively positioned
     if self.grid.positioned_children.size > 0 or self.grid.positioned_siblings.size > 0
@@ -206,22 +202,19 @@ class GridStyleSelector
     end
     
     # Handle absolute positioning now
-    css.update CssParser::position_absolutely(grid) if grid.is_positioned
+    self.css_rules.update CssParser::position_absolutely(grid) if grid.is_positioned
 
     self.extra_selectors.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
     
-    # Gives out the values for spacing the box model.
     # Margin and padding
     self.set_white_space
     
     # Update width
     self.set_width
 
-    self.generated_selector = CssParser::create_incremental_selector if not css.empty?
-
-    self.css_rules = css
+    self.generated_selector = CssParser::create_incremental_selector if not self.css_rules.empty?
     
-    CssParser::add_to_inverted_properties(css, self.grid)
+    CssParser::add_to_inverted_properties(self.css_rules, self.grid)
 
     self.save!
   end
