@@ -13,10 +13,10 @@ class GridStyleSelector
 
 
   ## helper methods
-  def get_border_width(css)
+  def get_border_width
     border_width = nil
-    if css.has_key? :border
-      border_properties = css.fetch(:border).split
+    if self.css_rules.has_key? :border
+      border_properties = self.css_rules.fetch(:border).split
       border_width_str = border_properties[0].scan(/\d+/).first
       if not border_width_str.nil?
         border_width = border_width_str.to_i
@@ -49,11 +49,19 @@ class GridStyleSelector
     padding = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
     
     if not self.grid.bounds.nil? and not children_superbound.nil?
-      padding[:top]     = (children_superbound.top  - self.grid.bounds.top)
-      padding[:bottom]  = (self.grid.bounds.bottom - children_superbound.bottom)
+      padding[:top]    = (children_superbound.top  - self.grid.bounds.top)
+      padding[:bottom] = (self.grid.bounds.bottom - children_superbound.bottom)
+      padding[:left]   = (children_superbound.left - self.grid.bounds.left) 
+      padding[:right]  = (self.grid.bounds.right - children_superbound.right)
       
-      padding[:left]  = (children_superbound.left - self.grid.bounds.left) 
-      padding[:right] = (self.grid.bounds.right - children_superbound.right)
+
+      border_width = self.get_border_width
+      if not border_width.nil?
+        padding[:top]    -= border_width
+        padding[:bottom] -= border_width
+        padding[:left]   -= border_width
+        padding[:right]  -= border_width
+      end
     end
     padding
   end
@@ -163,12 +171,9 @@ class GridStyleSelector
   
   # If the width has already not been set, set the width
   def set_width
-    css = self.css_rules
-    width_css = {}
-
     width = self.unpadded_width
-    if not css.has_key? :width and not self.is_single_line_text and not width.nil? and width != 0
-      self.css_rules.update :width => width.to_s + 'px'
+    if not self.is_single_line_text and not width.nil? and width != 0
+      status = self.css_rules.update :width => width.to_s + 'px'
     end
   end
 
