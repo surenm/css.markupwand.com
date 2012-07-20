@@ -59,6 +59,8 @@ class GridStyleSelector
   end
   
   def get_margin
+    #TODO. Margin is not always from left and top. It is from all sides.
+
     margin = {:top => 0, :left => 0}
     if self.grid.root == true
       margin[:top]  += self.grid.bounds.top
