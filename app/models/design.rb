@@ -190,9 +190,7 @@ class Design
   end
   
   def reprocess
-    self.grids.delete_all
-    self.layers.delete_all
-
+    self.reset
     self.push_to_processing_queue
   end
 
@@ -201,9 +199,16 @@ class Design
     Resque.enqueue HtmlWriterJob, self.id  
   end
 
-  def reparse
+  def reset
     self.grids.delete_all
     self.layers.delete_all
+    self.hashed_selectors  = {}
+    self.selector_name_map = {}
+    self.save!
+  end
+
+  def reparse
+    self.reset
     self.set_status Design::STATUS_PARSING
     Resque.enqueue ParserJob, self.safe_name
   end
