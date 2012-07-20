@@ -137,6 +137,18 @@ class Grid
     return tree
   end
   
+  def positioned_children
+    self.children.select { |child_grid| child_grid.is_positioned }
+  end
+  
+  def positioned_siblings
+    if not self.root
+      self.parent.children.select { |sibling_grid| sibling_grid.is_positioned }
+    else
+      []
+    end
+  end
+  
   # Bounds for a grid.
   # TODO: cache this grids
   def bounds
