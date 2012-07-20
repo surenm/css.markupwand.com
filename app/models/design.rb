@@ -314,7 +314,7 @@ class Design
     Log.info "Bubble up CSS properties..."
     root_grid.style_selector.bubbleup_css_properties
 
-    if ENV['HASH_CSS'] == true or self.is_css_hashed 
+    if ENV['HASH_CSS'] == "true" or self.is_css_hashed 
       Log.info "Hashing up CSS Properties"
       self.hashed_selectors = root_grid.style_selector.hash_css_properties
       self.save!
