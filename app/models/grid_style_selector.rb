@@ -90,7 +90,6 @@ class GridStyleSelector
     return margin
   end
   
-  
   # Spacing includes margin and padding.
   # Margin  = separate the block from things outside it
   # Padding = to move the contents away from the edges of the block.
@@ -135,9 +134,9 @@ class GridStyleSelector
     width = 0
 
     if not self.grid.bounds.nil? and not self.grid.bounds.width.nil?
+      padding = self.get_padding
+
       width += self.grid.bounds.width
-      
-      padding = get_padding
       width -= padding[:left] + padding[:right]
       
       grouping_box = BoundingBox.depickle self.grid.grouping_box
@@ -154,29 +153,24 @@ class GridStyleSelector
     height = 0
 
     if not self.grid.bounds.nil? and not self.grid.bounds.width.nil?
+      padding = self.get_padding
+
       height += self.grid.bounds.height
-      
-      padding = get_padding
       height -= padding[:top] + padding[:bottom]
-      
     end
     return height
-
   end
   
-  # If the width has already not been set, set the width.
-  # TODO Find out if there is any case when width is set.
-  
-  def width_css(css)
-    if not css.has_key? :width and not is_single_line_text and
-      not unpadded_width.nil? and unpadded_width != 0
-     
-      return {:width => unpadded_width.to_s + 'px'}
+  # If the width has already not been set, set the width
+  def set_width
+    css = self.css_rules
+    width_css = {}
+
+    width = self.unpadded_width
+    if not css.has_key? :width and not self.is_single_line_text and not width.nil? and width != 0
+      self.css_rules.update :width => width.to_s + 'px'
     end
-    
-    return {}
   end
-
 
   # Selector names are usually generated,
   # but when the user edits the selector name (aka class name)
@@ -227,6 +221,9 @@ class GridStyleSelector
     # Gives out the values for spacing the box model.
     # Margin and padding
     self.set_white_space
+    
+    # Update width
+    self.set_width
 
     self.generated_selector = CssParser::create_incremental_selector if not css.empty?
 
