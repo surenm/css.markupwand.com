@@ -457,6 +457,23 @@ class Grid
     [smaller_node, bigger_node]
   end
   
+  def self.get_most_intersecting_layer(intersecting_layer_pairs)
+    intersect_counts = Hash.new
+
+    intersecting_layer_pairs.each do |pair|
+      intersect_counts[pair.first] = 0 if intersect_counts[pair.first].nil?
+      intersect_counts[pair.second] = 0 if intersect_counts[pair.second].nil?
+      
+
+      intersect_counts[pair.first] += 1
+      intersect_counts[pair.second] += 1    
+    end
+    
+    max_intersecting_layer = intersect_counts.sort {|a,b| a.second <=> b.second }.first
+    
+    return max_intersecting_layer.first
+  end
+  
   def self.extract_positioned_layers(grid, grouping_box, layers_in_region)
     intersecting_layer_pairs = Grid.get_intersecting_nodes layers_in_region
     
