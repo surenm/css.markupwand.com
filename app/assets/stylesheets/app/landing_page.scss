@@ -137,3 +137,28 @@
   text-shadow: 3px 2px 2px red;
 
 }
+
+a.start-using-button {
+  min-height: 24px;
+  width: 186px;
+  margin: auto 0px;
+  @include background-image(linear-gradient(#F2A54D, #F27521));
+  border-radius: 10px;
+  margin-top: 97px;
+  padding-top: 18px;
+  margin-left: 35px;
+  padding-left: 49px;
+  padding-bottom: 18px;
+  padding-right: 49px;
+  font-family: Asap;
+  font-weight: bold;
+  font-size: 24px;
+  color: #ffffff;
+
+
+}
+
+a.start-using-button:hover {
+  @include background-image(linear-gradient(#F27521, #F2A54D));
+  text-decoration: none;
+}

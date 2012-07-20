@@ -1,3 +1,9 @@
+@import "compass/css3";
+@import "compass/css3/images";
+@import "compass/css3/opacity";
+@import "compass/css3/box-shadow";
+@import "compass/utilities";
+
 .instruction {
   width: 821px;
   margin-top: 64px;
@@ -134,8 +140,7 @@ a.start-using-button {
   min-height: 36px;
   width: 186px;
   margin: auto 0px;
-  background-color: #f61616;
-  background-image: -webkit-linear-gradient(90deg, #850202 0%, #e30404 100%);
+  @include background-image(linear-gradient(#F2A54D, #F27521));
   border-radius: 10px;
   margin-top: 97px;
   padding-top: 22px;
@@ -152,8 +157,8 @@ a.start-using-button {
 }
 
 a.start-using-button:hover {
-  background-image: -webkit-linear-gradient(90deg, #e30404 0%, #850202 100%);
-  text-decoration: underline;
+  @include background-image(linear-gradient(#F27521, #F2A54D));
+  text-decoration: none;
 }
 
 .before-start {
