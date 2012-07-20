@@ -309,7 +309,7 @@ class Layer
     end
 
     if not grid.style_selector.hashed_selectors.empty?
-      all_selectors = all_selectors + grid.style_selector.hashed_selectors
+      all_selectors = all_selectors + grid.style_selector.modified_hashed_selector
     end
 
     all_selectors.uniq!

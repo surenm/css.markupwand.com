@@ -325,7 +325,7 @@ class Design
 
     Log.info "Finding out selector name map..."
     self.selector_name_map = root_grid.style_selector.generate_initial_selector_name_map
-    Log.debug self.selector_name_map
+    self.selector_name_map.update(get_hashed_selector_map)
     self.save!
 
     Log.debug "Destroying design globals..."
@@ -337,6 +337,15 @@ class Design
   
     Log.info "Successfully completed generating #{self.name}"
     return
+  end
+
+  def get_hashed_selector_map
+    map = {}
+    self.hashed_selectors.each do |selector, value|
+      map.update( {selector => {"name" => selector, "css" => value }})
+    end
+
+    map
   end
 
   # This usually called after changing CSS class names
