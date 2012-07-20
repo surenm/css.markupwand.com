@@ -47,6 +47,7 @@ class Design
   # CSS Related
   field :selector_name_map, :type => Hash, :default => {}  
   field :hashed_selectors, :type => Hash, :default => {} 
+  field :is_css_hashed,    :type => Boolean, :default => false
 
   
   # Document properties
@@ -313,12 +314,14 @@ class Design
     Log.info "Bubble up CSS properties..."
     root_grid.style_selector.bubbleup_css_properties
 
-    Log.info "Hashing up CSS Properties"
-    self.hashed_selectors = root_grid.style_selector.hash_css_properties
-    self.save!
+    if ENV['HASH_CSS'] == true or self.is_css_hashed 
+      Log.info "Hashing up CSS Properties"
+      self.hashed_selectors = root_grid.style_selector.hash_css_properties
+      self.save!
 
-    Log.info "Reducing existing css rules to remove the hashed properties"
-    root_grid.style_selector.reduce_hashed_css_properties
+      Log.info "Reducing existing css rules to remove the hashed properties"
+      root_grid.style_selector.reduce_hashed_css_properties
+    end
 
     Log.info "Finding out selector name map..."
     self.selector_name_map = root_grid.style_selector.generate_initial_selector_name_map
