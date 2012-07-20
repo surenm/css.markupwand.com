@@ -46,16 +46,16 @@ class GridStyleSelector
     
     children_bounds = non_style_layers.collect { |layer| layer.bounds }
     children_superbound = BoundingBox.get_super_bounds children_bounds
-    spacing = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
+    padding = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
     
     if not self.grid.bounds.nil? and not children_superbound.nil?
-      spacing[:top]     = (children_superbound.top  - self.grid.bounds.top)
-      spacing[:bottom]  = (self.grid.bounds.bottom - children_superbound.bottom)
+      padding[:top]     = (children_superbound.top  - self.grid.bounds.top)
+      padding[:bottom]  = (self.grid.bounds.bottom - children_superbound.bottom)
       
-      spacing[:left]  = (children_superbound.left - self.grid.bounds.left) 
-      spacing[:right] = (self.grid.bounds.right - children_superbound.right)
+      padding[:left]  = (children_superbound.left - self.grid.bounds.left) 
+      padding[:right] = (self.grid.bounds.right - children_superbound.right)
     end
-    spacing
+    padding
   end
   
   def get_margin
