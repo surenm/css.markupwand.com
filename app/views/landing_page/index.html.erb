@@ -1,27 +1,39 @@
 <%= content_for :content do %>
-<%= stylesheet_link_tag "app/landing_page", :media => "all" %>
-<% end %>
 
-<%= content_for :content do %>
 <div id="landing-page">
-  <div class="container">
-    <center>
-      <img src="assets/logo.png" /><br>
-      <h1 color=>Magically convert photoshop designs to valid html markup</h1>
-    </center>
-    <center class="content-area">
-      <h2 style="color: #eeeeee">Coming soon! </h2> <h3 style="color: #eeeeee"> Want a sneak peek?</h3>
+
+  <div class="container homepage-box">
+    <%= image_tag "logo.png" %>
+
+    <div class="statement">
+      Magically convert your photoshop files to HTML <span class="ampersand">&</span> CSS.
+    </div>
+
+
+    <div class="features">
+    <ul>
+      <li>Save time in recreating a design from a PSD file to HTML</li> <li> · </li>
+      <li>No absolute positioning, no page as images</li> <li> · </li>
+      <li>Minimal, maintainable markup</li>
+      <li>Uses Compass/SASS for maintainable CSS</li> <li>
+    </ul>
+    </div>
+
+
+    <div class="container email-invite-box">
       <form id="getinvite" action="getinvite" method="POST">
-      <input name="email" class="prefilled-field default-value" id="invite-email" value="email@address.com"/>
-      <input type="submit" class="action-button" value="Request Invite Now!"/>
+      <input name="email" class="input-large" id="invite-email" placeholder="user@gmail.com"/>
+      <input type="submit" class="btn btn-large btn-primary" value="Request Invite Now!"/>
       <div id="validation-result" class="error"></div>
       </form>
-    </center>
-    <center>
+    </div>
+  </div>
+  <div class="viral container">
+    <div class="viral-inner">
       <%= render 'shared/snippets/gplusone' %>
       <%= render 'shared/snippets/tweet' %>
       <%= render 'shared/snippets/fbshare' %>
-    </center>
+    </div>
   </div>
 </div>
 
