@@ -11,7 +11,7 @@ module Log
   end
   
   def Log.method_missing(method, *args, &block)
-    LOGGER.send method, args[0]
+    LOGGER.send method, args[0].ai
     return
   end
   
