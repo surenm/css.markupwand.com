@@ -12,6 +12,18 @@ class GridStyleSelector
   field :hashed_selectors, :type => Array, :default => []
 
   ## Spacing and padding related methods
+  ## helper methods
+  def get_border_width(css)
+    border_width = nil
+    if css.has_key? :border
+      border_properties = css.fetch(:border).split
+      border_width_str = border_properties[0].scan(/\d+/).first
+      if not border_width_str.nil?
+        border_width = border_width_str.to_i
+      end
+    end
+    return border_width
+  end
    
   # Find out bounding box difference from it and its children.
   def get_padding
