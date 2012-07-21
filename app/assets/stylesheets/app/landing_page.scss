@@ -4,14 +4,82 @@
 @import "compass/css3/box-shadow";
 @import "compass/utilities";
 
+
+   
+.header {
+ min-height: 37px;
+ width: 100%;
+ background-color: #5f2f71;
+ padding-top: 12px;
+ padding-bottom: 0;
+
+ .header-logo-wrap {
+   width: 960px;
+   margin: 0 auto;
+   text-align: left;  
+ }
+}
+
 #landing-page {
 
-  img {
-    margin-top: 30px;
+  .homepage-box {
+    text-align: center;
+    background-color: #fff;
+    margin-top: 40px;
+    border-radius: 4px;
+    @include single-box-shadow;
+    @include box-shadow(rgba(black, 0.05) 0 0 8px, rgba(black, 0.1) 0 0 1px, rgba(black, 0.1) 0 1px 0, white 0 1px 0 inset);
+
+    img {
+      margin: 30px 0;
+    }
+
+    .statement {
+      font-size: 20px;
+      font-family: 'Average', serif;
+      font-weight: bold;
+      color: #3F474C;
+    }
+
+    .features {
+      margin-top: 10px;
+      ul {
+        list-style: none;
+
+        li {
+          display: inline-block;
+          margin-left: 5px;
+          margin-right: 5px;
+          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+          color: #939799;
+          font-size: 12px;
+        }
+
+        li:last {
+          clear:both;
+        }
+      }
+    }
   }
 
+  .email-response {
+    font-size: 17px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+
+
+
+  .viral {
+    margin-top: 20px;
+    text-align: center;
+
+    .viral-inner {
+      width:310px;
+      margin: 0 auto;
+    }
+  }
+ 
   .drop {
-    background: #CEDEEB url("/assets/noise.png") repeat;
     @include border-radius(8px);
     border: 1px dotted #106AA3;
     width: 80%;
@@ -22,6 +90,26 @@
     background-color: #d9d9d9;
     height: 40px;
   }
+
+
+  .ampersand {
+    font-family: Baskerville,'Goudy Old Style',Palatino,'Book Antiqua',serif;
+    font-style: italic;
+    font-weight: lighter;
+  }
+
+
+
+  .email-invite-box {
+    margin: 60px auto 60px auto;
+    text-align: center;
+
+    #invite-email {
+      margin-bottom: 0;
+      min-height: 25px;
+    }
+  }
+
 }
 
 
@@ -48,4 +136,28 @@
   color: white;
   text-shadow: 3px 2px 2px red;
 
+}
+
+a.start-using-button {
+  min-height: 24px;
+  width: 186px;
+  margin: auto 0px;
+  @include background-image(linear-gradient(#F2A54D, #F27521));
+  border-radius: 10px;
+  margin-top: 97px;
+  padding-top: 18px;
+  margin-left: 35px;
+  padding-left: 49px;
+  padding-bottom: 18px;
+  padding-right: 49px;
+  font-family: Asap;
+  font-size: 24px;
+  color: #ffffff;
+
+
+}
+
+a.start-using-button:hover {
+  @include background-image(linear-gradient(#F27521, #F2A54D));
+  text-decoration: none;
 }

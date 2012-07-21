@@ -47,6 +47,7 @@ class Design
   # CSS Related
   field :selector_name_map, :type => Hash, :default => {}  
   field :hashed_selectors, :type => Hash, :default => {} 
+  field :is_css_hashed,    :type => Boolean, :default => false
 
   
   # Document properties
@@ -191,9 +192,7 @@ class Design
   end
   
   def reprocess
-    self.grids.delete_all
-    self.layers.delete_all
-
+    self.reset
     self.push_to_processing_queue
   end
 
@@ -202,9 +201,16 @@ class Design
     Resque.enqueue HtmlWriterJob, self.id  
   end
 
-  def reparse
+  def reset
     self.grids.delete_all
     self.layers.delete_all
+    self.hashed_selectors  = {}
+    self.selector_name_map = {}
+    self.save!
+  end
+
+  def reparse
+    self.reset
     self.set_status Design::STATUS_PARSING
     Resque.enqueue ParserJob, self.safe_name
   end
@@ -309,17 +315,18 @@ class Design
     Log.info "Bubble up CSS properties..."
     root_grid.style_selector.bubbleup_css_properties
 
-    if ENV['FEATURE_HASHING_CSS'] == "true"
+    if ENV['HASH_CSS'] == "true" or self.is_css_hashed 
       Log.info "Hashing up CSS Properties"
-      root_grid.style_selector.hash_css_properties
-  
+      self.hashed_selectors = root_grid.style_selector.hash_css_properties
+      self.save!
+
       Log.info "Reducing existing css rules to remove the hashed properties"
       root_grid.style_selector.reduce_hashed_css_properties
     end
 
     Log.info "Finding out selector name map..."
     self.selector_name_map = root_grid.style_selector.generate_initial_selector_name_map
-    Log.debug self.selector_name_map
+    self.selector_name_map.update(get_hashed_selector_map)
     self.save!
 
     Log.debug "Destroying design globals..."
@@ -331,6 +338,15 @@ class Design
   
     Log.info "Successfully completed generating #{self.name}"
     return
+  end
+
+  def get_hashed_selector_map
+    map = {}
+    self.hashed_selectors.each do |selector, value|
+      map.update( {selector => {"name" => selector, "css" => value }})
+    end
+
+    map
   end
 
   # This usually called after changing CSS class names

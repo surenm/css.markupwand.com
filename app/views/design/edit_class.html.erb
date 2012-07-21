@@ -38,14 +38,10 @@
   </div>
 </div>
 <div class='ide'>
-  <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html'></iframe>
+  <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html' onload="parent.iframeLoaded();"></iframe>
 </div>
 <% end %>
 
 <%= content_for :javascript do %>
-<script type="text/javascript">
-/* Get the current class mappings here*/
-var class_mappings = {'a' : 'b', 'c' : 'd'};
-</script>
 <%= javascript_include_tag "app/edit_class" %>
 <% end %>

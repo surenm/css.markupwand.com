@@ -1,0 +1,166 @@
+<% content_for :content do %>
+  <%= render 'shared/header' %>
+  <%= stylesheet_link_tag "app/tutorial", :media => "all" %>
+  <div class="container">
+    <div class="before-start">
+      Before you start,
+    </div>
+    <div class="tips-headline">
+      5 Tips to get good quality code
+    </div>
+  <div class="instruction">
+  <div class="row instruction-heading">
+    <div class="pull-left instruction-number">
+      <div>
+        1
+      </div>
+    </div>
+
+    <div class="pull-left instruction-title">
+      Break your page into smaller pieces
+    </div>
+  </div>
+
+  <div class="row instruction-description">
+    <div class="pull-left instruction-description-text">
+      Markupwand gives good quality code for pieces of a page. The smaller the pieces, the better.
+      <br/>
+      <br/>
+      Break your page into multiple photoshop files, each containing one logical piece .
+      Generate code for each piece - one by one.
+    </div>
+  </div>
+
+  <div class="row instruction-illustration">
+    <div class="pull-left">
+      <img class="" src="./assets/illustration-break-page.png">
+    </div>
+  </div>
+</div>
+  <div class="instruction">
+    <div class="row instruction-heading">
+      <div class="pull-left instruction-number">
+        <div>
+          2
+        </div>
+      </div>
+
+      <div class="pull-left instruction-title">
+        Use different text elements for logically different text
+      </div>
+    </div>
+
+    <div class="row instruction-description">
+      <div class="pull-left instruction-description-text">
+        For list items and navigation links, use one text element per item.
+      </div>
+    </div>
+
+    <div class="row instruction-illustration">
+      <div class="illustration-container1">
+        <div class="row illustration-row">
+          <img class="pull-left illustration-row-image" src="./assets/illustration-text-right.png"><img class="pull-left illustration-right-wrong" src="./assets/tick.png">
+        </div>
+
+        <div class="row illustration-row">
+          <img class="pull-left illustration-row-image" src="./assets/illustration-text-wrong.png"><img class="pull-left illustration-right-wrong" src="./assets/error.png">
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="instruction">
+      <div class="row instruction-heading">
+        <div class="pull-left instruction-number">
+          <div>
+            3
+          </div>
+        </div>
+
+        <div class="pull-left instruction-title">
+          Each icon or image should be a single layer in PSD
+        </div>
+      </div>
+
+      <div class="row instruction-description">
+        <div class="pull-left instruction-description-text">
+          If you design an icon or an image in Photoshop, you might have designed it using multiple layers. If you would want it to come out as one image in HTML, please merge the layers together.
+        </div>
+      </div>
+
+      <div class="row instruction-illustration">
+        <div class="pull-left">
+          <img class="" src="./assets/illustration-merge-layers.png">
+        </div>
+      </div>
+    </div>
+    <div class="instruction">
+      <div class="row instruction-heading">
+        <div class="pull-left instruction-number">
+          <div>
+            4
+          </div>
+        </div>
+
+        <div class="pull-left instruction-title">
+          Want CSS buttons? Use shapes; not images.
+        </div>
+      </div>
+
+      <div class="row instruction-description">
+        <div class="pull-left instruction-description-text">
+          If you use a standard shape - such as rectangle or rounded rectangle, Markupwand would give you CSS code. If you use images, you would get images.
+          <br/>
+          <br/>
+          Draw buttons using shapes instead of images, to get CSS buttons.
+        </div>
+      </div>
+
+      <div class="row instruction-illustration">
+        <div class="illustration-container2">
+          <div class="row illustration-row">
+            <img class="pull-left illustration-row-image" src="./assets/illustration-shapes-right.png"><img class="pull-left illustration-right-wrong" src="./assets/tick.png">
+          </div>
+
+          <div class="row illustration-row">
+            <img class="pull-left illustration-row-image" src="./assets/illustration-shapes-wrong.png"><img class="pull-left illustration-right-wrong" src="./assets/error.png">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="instruction">
+      <div class="row instruction-heading">
+        <div class="pull-left instruction-number">
+          <div>
+            5
+          </div>
+        </div>
+
+        <div class="pull-left instruction-title">
+          Avoid hacks
+        </div>
+      </div>
+
+      <div class="row instruction-description">
+        <div class="pull-left instruction-description-text">
+          Designers sometimes do hacks to get effects. Examples include:
+          <br>
+          1. Positioning a gray colored copy of a layer just below the layer, to get shadow effect
+          <br/>
+          2. Hiding part of a layer below another layer instead of resizing it.
+          <br/>
+          <br/>
+          Please avoid such hacks to get good quality code.
+        </div>
+      </div>
+    </div>
+    <a class="start-using-button" href="/design/new">
+        Start Using!
+    </a>
+    <div class="clearfix"></div>
+    <div class="gauth-reason">
+      (Converting PSD to HTML would take about 10 mins. Please provide Google Auth in the next step, so that we could notify you when the conversion is done)
+    </div>
+    <div class="clearfix" style="margin-bottom: 50px"></div>
+  </div>
+  <%= render 'shared/footer' %>
+<% end %>

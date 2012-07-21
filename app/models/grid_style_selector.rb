@@ -11,7 +11,32 @@ class GridStyleSelector
 
   field :hashed_selectors, :type => Array, :default => []
 
-  ## Spacing and padding related methods
+
+  ## helper methods
+  def get_border_width
+    border_width = nil
+    if self.css_rules.has_key? :border
+      border_properties = self.css_rules.fetch(:border).split
+      border_width_str = border_properties[0].scan(/\d+/).first
+      if not border_width_str.nil?
+        border_width = border_width_str.to_i
+      end
+    end
+    return border_width
+  end
+  
+  def is_single_line_text
+    if not self.grid.render_layer.nil? and
+      (Layer.find self.grid.render_layer).kind == Layer::LAYER_TEXT and
+      not (Layer.find self.grid.render_layer).has_newline? and
+     (Layer.find self.grid.render_layer).text_type != "TextType.PARAGRAPHTEXT"
+        return true
+    else
+      return false
+    end
+  end
+
+  ## Spacing and padding related method
    
   # Find out bounding box difference from it and its children.
   def get_padding
@@ -21,19 +46,29 @@ class GridStyleSelector
     
     children_bounds = non_style_layers.collect { |layer| layer.bounds }
     children_superbound = BoundingBox.get_super_bounds children_bounds
-    spacing = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
+    padding = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
     
     if not self.grid.bounds.nil? and not children_superbound.nil?
-      spacing[:top]     = (children_superbound.top  - self.grid.bounds.top)
-      spacing[:bottom]  = (self.grid.bounds.bottom - children_superbound.bottom)
+      padding[:top]    = (children_superbound.top  - self.grid.bounds.top)
+      padding[:bottom] = (self.grid.bounds.bottom - children_superbound.bottom)
+      padding[:left]   = (children_superbound.left - self.grid.bounds.left) 
+      padding[:right]  = (self.grid.bounds.right - children_superbound.right)
       
-      spacing[:left]  = (children_superbound.left - self.grid.bounds.left) 
-      spacing[:right] = (self.grid.bounds.right - children_superbound.right)
+
+      border_width = self.get_border_width
+      if not border_width.nil?
+        padding[:top]    -= border_width
+        padding[:bottom] -= border_width
+        padding[:left]   -= border_width
+        padding[:right]  -= border_width
+      end
     end
-    spacing
+    padding
   end
   
   def get_margin
+    #TODO. Margin is not always from left and top. It is from all sides.
+
     margin = {:top => 0, :left => 0}
     if self.grid.root == true
       margin[:top]  += self.grid.bounds.top
@@ -63,7 +98,6 @@ class GridStyleSelector
     return margin
   end
   
-  
   # Spacing includes margin and padding.
   # Margin  = separate the block from things outside it
   # Padding = to move the contents away from the edges of the block.
@@ -82,46 +116,35 @@ class GridStyleSelector
   #       (considering width and margins of its siblings.)
   #
   #    2(b) and 2(c) are exclusive
-  def spacing_css
-    #TODO. Margin and padding are not always from
-    # left and top. It is from all sides.
+  def set_white_space
     margin  = get_margin
     padding = get_padding
-    css     = {}
+
     positions = [:top, :left, :bottom, :right]
-    
+
+    spacing = {}
     positions.each do |position|
       if margin.has_key? position
-        css["margin-#{position}".to_sym] = "#{margin[position]}px" if margin[position] > 0
+        spacing["margin-#{position}".to_sym] = "#{margin[position]}px" if margin[position] > 0
       end
       
       if padding.has_key? position
-        css["padding-#{position}".to_sym] = "#{padding[position]}px" if padding[position] > 0
+        spacing["padding-#{position}".to_sym] = "#{padding[position]}px" if padding[position] > 0
       end  
     end
-    css
+    
+    self.css_rules.update spacing
   end
   
-
-  def is_single_line_text
-    if not self.grid.render_layer.nil? and
-      (Layer.find self.grid.render_layer).kind == Layer::LAYER_TEXT and
-      not (Layer.find self.grid.render_layer).has_newline? and
-     (Layer.find self.grid.render_layer).text_type != "TextType.PARAGRAPHTEXT"
-        return true
-    else
-      return false
-    end
-  end
   
   # Width subtracted by padding
   def unpadded_width
     width = 0
 
     if not self.grid.bounds.nil? and not self.grid.bounds.width.nil?
+      padding = self.get_padding
+
       width += self.grid.bounds.width
-      
-      padding = get_padding
       width -= padding[:left] + padding[:right]
       
       grouping_box = BoundingBox.depickle self.grid.grouping_box
@@ -138,35 +161,21 @@ class GridStyleSelector
     height = 0
 
     if not self.grid.bounds.nil? and not self.grid.bounds.width.nil?
+      padding = self.get_padding
+
       height += self.grid.bounds.height
-      
-      padding = get_padding
       height -= padding[:top] + padding[:bottom]
-      
     end
     return height
-
   end
-  
-  # If the width has already not been set, set the width.
-  # TODO Find out if there is any case when width is set.
-  
-  def width_css(css)
-    if not css.has_key? :width #and not is_single_line_text and
-      not unpadded_width.nil? and unpadded_width != 0
-      width = 0
-      if is_single_line_text
-        offset_buffer_box = BoundingBox.depickle self.grid.offset_box_buffer
-        width += offset_buffer_box.width unless offset_buffer_box.nil?
-      end
-      width += unpadded_width
-     
-      return {:width => width.to_s + 'px'}
+
+  # If the width has already not been set, set the width
+  def set_width
+    width = self.unpadded_width
+    if not self.is_single_line_text and not width.nil? and width != 0
+      status = self.css_rules.update :width => width.to_s + 'px'
     end
-    
-    return {}
   end
-
 
   # Selector names are usually generated,
   # but when the user edits the selector name (aka class name)
@@ -182,26 +191,14 @@ class GridStyleSelector
   end
 
   def set_style_rules
-    css = {}
-
     self.grid.style_layers.each do |layer_id|
       layer = Layer.find layer_id
-      css.update layer.get_style_rules(self)
+      self.css_rules.update layer.get_style_rules(self)
     end
-    
-    css.update width_css(css)
     
     # Positioning - absolute is handled separately. Just find out if a grid has to be relatively positioned
-    positioned_children = self.grid.children.select { |child_grid| child_grid.is_positioned }
-
-    positioned_siblings = []
-    if not self.grid.root and not self.grid.is_positioned
-      positioned_siblings = self.grid.parent.children.select { |sibling_grid| sibling_grid.is_positioned }
-    end
-
-    if positioned_children.size > 0 or positioned_siblings.size > 0
-      css[:position]  = 'relative'
-      css[:"z-index"] = self.grid.zindex
+    if self.grid.positioned_children.size > 0 or self.grid.positioned_siblings.size > 0
+      self.css_rules.update  :position => 'relative', :'z-index' => self.grid.zindex
     end
     
     # float left class if parent is set to GRID_ORIENT_LEFT
@@ -210,19 +207,19 @@ class GridStyleSelector
     end
     
     # Handle absolute positioning now
-    css.update CssParser::position_absolutely(grid) if grid.is_positioned
+    self.css_rules.update CssParser::position_absolutely(grid) if grid.is_positioned
 
     self.extra_selectors.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
     
-    # Gives out the values for spacing the box model.
     # Margin and padding
-    css.update spacing_css
-
-    self.generated_selector = CssParser::create_incremental_selector if not css.empty?
-
-    self.css_rules = css
+    self.set_white_space
     
-    CssParser::add_to_inverted_properties(css, self.grid)
+    # Update width
+    self.set_width
+
+    self.generated_selector = CssParser::create_incremental_selector if not self.css_rules.empty?
+    
+    CssParser::add_to_inverted_properties(self.css_rules, self.grid)
 
     self.save!
   end
@@ -230,7 +227,7 @@ class GridStyleSelector
   # Walks recursively through the grids and creates
   def generate_css_tree
     Log.info "Setting style rules for #{self.grid}..."
-    set_style_rules
+    self.set_style_rules
 
     if self.grid.render_layer.nil?
       self.grid.children.each { |child| child.style_selector.generate_css_tree }
@@ -246,7 +243,9 @@ class GridStyleSelector
 
     # Consider render layers also.
     grid.children.each do |child|
-      child.style_selector.css_rules.each do |css_property, css_value|
+      rules_hash = child.style_selector.css_rules
+      rules_hash = (Layer.find child.render_layer).css_rules if not child.render_layer.nil?
+      rules_hash.each do |css_property, css_value|
         css_rule_hash_key = ({ css_property.to_sym => css_value }).to_json
 
         rule_repeat_hash[css_rule_hash_key] ||= 0
@@ -255,22 +254,26 @@ class GridStyleSelector
     end
 
     rule_repeat_hash.each do |rule, repeats|
-      if repeats == 0
-        rule_repeat_hash.delete rule
-      end
+      rule_repeat_hash.delete rule if repeats == 0
     end
 
     bubbleable_rules = []
     # Trim out the non-repeating properties.
     rule_repeat_hash.each do |rule, repeats|
       rule_key = (JSON.parse rule).keys.first
-      if repeats > (grid.children.length * 0.6)
+      if is_text_rule?(rule_key)
+        child_grids = get_text_containing_grids grid.children
+      else
+        child_grids = grid.children
+      end
+
+      if repeats > (child_grids.length * 0.6)
         if (Constants::css_properties.has_key? rule_key.to_sym and Constants::css_properties[rule_key.to_sym][:inherit])
           bubbleable_rules.push rule
+          Log.info "Bubbling up #{rule}"
         end   
       end 
     end
-   
 
     # Remove all the repeating properties from the children
     # JSON parse happening everytime. Optimize later
@@ -283,20 +286,27 @@ class GridStyleSelector
         # Delete from the grid css.
         if child.style_selector.css_rules[rule_key] == rule_value
           child.style_selector.css_rules.delete rule_key
-          DesignGlobals.instance.css_properties_inverted[rule].delete self.grid
+          if DesignGlobals.instance.css_properties_inverted.has_key? rule
+            DesignGlobals.instance.css_properties_inverted[rule].delete child
+          end
+
+          child.save!
         end
 
         if not child.render_layer.nil?
           layer_obj = Layer.find child.render_layer
           if layer_obj.css_rules[rule_key.to_s] == rule_value
             layer_obj.css_rules.delete rule_key.to_s
-            DesignGlobals.instance.css_properties_inverted[rule].delete self.grid
+            if DesignGlobals.instance.css_properties_inverted.has_key? rule
+              DesignGlobals.instance.css_properties_inverted[rule].delete child
+            end
+
             layer_obj.save!
           end
         end
       end
 
-      if DesignGlobals.instance.css_properties_inverted[rule].empty?
+      if not DesignGlobals.instance.css_properties_inverted[rule].nil? and DesignGlobals.instance.css_properties_inverted[rule].empty?
         DesignGlobals.instance.css_properties_inverted.delete rule
       end
 
@@ -311,6 +321,33 @@ class GridStyleSelector
 
     grid.save!
   end
+
+
+  def is_text_rule?(rule)
+    rule.to_s.index('font-') != nil
+  end
+
+  def get_text_containing_grids(grids)
+    grids_array = grids.to_a
+    text_containing_grids = grids_array.select do |grid|
+      if grid.is_text_grid?
+        true
+      else
+        has_font_property = false
+        grid.style_selector.css_rules.each do |rule, value|
+          if is_text_rule?(rule)
+            has_font_property = true
+            break
+          end
+        end
+
+        has_font_property
+      end
+    end
+
+    text_containing_grids
+  end
+
 
   # How hashing works
   # While collecting all css rules, keep adding to a global table which has the frequency
@@ -327,6 +364,7 @@ class GridStyleSelector
   # 
   def hash_css_properties
     Log.info "Generating CSS hashes"
+    design_hashed_selector_hash = {}
 
     apriori = Apriori.new(DesignGlobals.instance.css_properties_inverted, 2)
     apriori.calculate_frequent_itemsets
@@ -336,7 +374,7 @@ class GridStyleSelector
       rule_hash = {}
       rules.each { |rule| rule_hash.update (JSON.parse rule, :symbolize_names => true) }
       next_selector_name = CssParser::create_incremental_selector
-      self.grid.design.hashed_selectors[next_selector_name] = rule_hash
+      design_hashed_selector_hash[next_selector_name] = rule_hash
       nodes.each do |node|
         node.style_selector.hashed_selectors.push next_selector_name
         Log.info "Adding #{next_selector_name} to #{node.to_short_s}"
@@ -344,7 +382,7 @@ class GridStyleSelector
       end
     end
 
-    self.grid.design.save!
+    design_hashed_selector_hash
   end
 
   # Finds out subset CSS rules which are not taken care by 
@@ -355,18 +393,27 @@ class GridStyleSelector
     Log.info "#{css_array.length} existing rules"
     self.hashed_selectors.each do |selector|
       hashed_css_array  = CssParser::rule_hash_to_array(self.grid.design.hashed_selectors[selector])
+      Log.info "#{css_array} vs #{hashed_css_array}"
       css_array         = css_array - hashed_css_array
+      Log.info "Post reduction #{css_array}"
       # This might cause bug when there are more than one group selector
       overridable_items = hashed_css_array - original_css_array
       overridable_items.each do |rule|
         rule_object = JSON.parse rule, :symbolize_names => true
         rule_key    = rule_object.keys.first
         if Constants::css_properties.has_key? rule_key.to_sym
-          css_array.push({rule_key => Constants::css_properties[rule_key.to_sym][:initial]}.to_json)
+          overridable_rule = {rule_key => Constants::css_properties[rule_key.to_sym][:initial]}.to_json
+          Log.info "Overridable rule = #{overridable_rule}"
+          css_array.push(overridable_rule)
         end
       end
     end
-    Log.info "#{css_array.length} reduced rules"
+
+    # reverse the array, so that the items which belong to original css_array come in the last
+    # and while converting them into hash, they get priority and overriden items don't.
+    css_array.reverse! 
+
+    Log.info "#{css_array.length} reduced rules. Contents = #{css_array}"
 
     CssParser::rule_array_to_hash(css_array)
   end
@@ -391,9 +438,15 @@ class GridStyleSelector
     end
   end
 
+  def modified_hashed_selector
+    design = Design.find self.grid.design.id
+    modified = hashed_selectors.map { |selector| design.selector_name_map[selector]['name'] }
+    modified
+  end
+
   # Selector names array(includes default selector and extra selectors)
   def selector_names
-    all_selectors = extra_selectors + hashed_selectors
+    all_selectors = extra_selectors + modified_hashed_selector
 
     layer_has_css = false
     if self.grid.render_layer

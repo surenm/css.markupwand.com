@@ -48,6 +48,10 @@ class BoundingBox
       return self.width * self.height
     end
   end
+  
+  def bounds
+    self
+  end
 
   def to_s
     "(#{self.top}, #{self.left}, #{self.bottom}, #{self.right})"
@@ -366,7 +370,7 @@ class BoundingBox
         root_group.push row_group
       end
     end
-    Log.info root_group
+
     return root_group
   end
   

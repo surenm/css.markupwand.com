@@ -8,7 +8,7 @@
       <div class="completed-box <%= 'hide' if not @completed %>">
         <div style="font-size: 18px; margin: 20px;"> 
           Uploaded on <%= @design.created_at.to_formatted_s(:short) %> <br>
-          Status: <%= @design.status %> 
+          Status: Completed
         </div>
     
         <div style="text-align: center; font-size: 18px; margin: 20px"> 
@@ -20,6 +20,7 @@
       <div class="status-box <%= 'hide' if @completed %>">
         <h3 id="design-status"> <%=  @design.status %>...</h3>
         <img class="loading" src="/assets/loading-ninja.gif">
+        <div>You can close this page, we'll send an email to <%= @user.email %> once your page is ready</div>
       </div>
     
     </div>

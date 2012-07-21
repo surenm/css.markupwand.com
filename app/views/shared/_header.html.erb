@@ -1,3 +1,4 @@
+<% user_logged_in = !current_user.nil? %>
 <div id="header" class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="container">
@@ -8,12 +9,15 @@
           <li>
             <a class="upload" href="/design/new"> +Upload design  </a>
           </li>
-          
+
+          <% if user_logged_in %>
           <li>
             <a href="/designs"> My designs </a>
           </li>
+          <% end %>
         </ul>
       </div>
+      <% if user_logged_in %>
       <div class="nav-collapse collapse right">
         <ul class="nav">
           <li class="active">
@@ -21,6 +25,7 @@
           </li>  
         </ul>
       </div>
+      <% end %>
     </div>
   </div>
   <div class="clearfix"></div>

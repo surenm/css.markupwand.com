@@ -137,6 +137,18 @@ class Grid
     return tree
   end
   
+  def positioned_children
+    self.children.select { |child_grid| child_grid.is_positioned }
+  end
+  
+  def positioned_siblings
+    if not self.root
+      self.parent.children.select { |sibling_grid| sibling_grid.is_positioned }
+    else
+      []
+    end
+  end
+  
   # Bounds for a grid.
   # TODO: cache this grids
   def bounds
@@ -343,7 +355,7 @@ class Grid
     else
       Log.info "Layers in #{grouping_box} are #{raw_grouping_box_layers}. Creating a new grid..."
 
-      Log.debug "Checking for error intersections in layers #{raw_grouping_box_layers}"
+      Log.info "Checking for error intersections in layers #{raw_grouping_box_layers}"
       all_grouping_box_layers = Grid.fix_error_intersections raw_grouping_box_layers
       grouping_box_layers = Hash.new
       all_grouping_box_layers.each do |layer| 
@@ -430,7 +442,7 @@ class Grid
       if intersect_percent_left > 90 or intersect_percent_right > 90
         is_error_intersection = true
         corrected_layers = Grid.crop_inner_intersect intersecting_layers
-      elsif intersect_percent_left < 5 and intersect_percent_right < 5
+      elsif intersect_percent_left < 10 and intersect_percent_right < 10
         is_error_intersection = true
         corrected_layers = Grid.crop_outer_intersect intersecting_layers
       end
@@ -475,6 +487,23 @@ class Grid
     [smaller_node, bigger_node]
   end
   
+  def self.get_most_intersecting_layer(intersecting_layer_pairs)
+    intersect_counts = Hash.new
+
+    intersecting_layer_pairs.each do |pair|
+      intersect_counts[pair.first] = 0 if intersect_counts[pair.first].nil?
+      intersect_counts[pair.second] = 0 if intersect_counts[pair.second].nil?
+      
+
+      intersect_counts[pair.first] += 1
+      intersect_counts[pair.second] += 1    
+    end
+    
+    max_intersecting_layer = intersect_counts.sort {|a,b| a.second <=> b.second }.first
+    
+    return max_intersecting_layer.first
+  end
+  
   def self.extract_positioned_layers(grid, grouping_box, layers_in_region)
     intersecting_layer_pairs = Grid.get_intersecting_nodes layers_in_region
     
@@ -489,36 +518,40 @@ class Grid
     intersecting_layers = intersecting_layer_pairs.flatten.uniq
     intersecting_layers.sort! { |layer1, layer2| layer2.bounds.area <=> layer1.bounds.area }
 
-    flow_layers_in_region = [intersecting_layers.first]
-    layers_in_region.each do |layer|
-       if not intersecting_layers.include? layer
-         flow_layers_in_region.push layer
-       end
-    end
-    Log.debug "Flow layers: #{flow_layers_in_region}"
+    flow_layers_in_region = []
+    largest_layer = intersecting_layers.delete_at 0
+
+    Log.debug "Adding the layer #{largest_layer} as flow node..."
+    flow_layers_in_region.push largest_layer
+
+    # Sort by zindex so that topmost intersecting layer becomes parent for the node it contains
+    intersecting_layers.sort! { |layer1, layer2| layer1.zindex <=> layer2.zindex }
+    Log.debug  "Positioned Layers in region are #{intersecting_layers}"
     
-    Log.info "Creating a new flow grid with #{layers_in_region} with #{flow_layers_in_region}"
-    inner_grid = Grid.new :design => grid.design, :depth => grid.depth + 1
-    inner_grid.set flow_layers_in_region, grid
-    inner_grid.offset_box_buffer = BoundingBox.pickle offset_bounds
-    inner_grid.save!
-    @@grouping_queue.push inner_grid
-    
-    positioned_layers_in_region = layers_in_region - flow_layers_in_region
-    Log.debug  "Positioned Layers: #{positioned_layers_in_region}"
-    
-    positioned_layers_in_region.sort! { |layer1, layer2| layer1.zindex <=> layer2.zindex }
-    while not positioned_layers_in_region.empty?
-      layer = positioned_layers_in_region.first
-      layers_in_grid   = BoundingBox.get_nodes_in_region layer.bounds, positioned_layers_in_region, layer.zindex
-      positioned_layers_in_region = positioned_layers_in_region - layers_in_grid
-    
-      Log.info "Creating a new positioned grid with #{layers_in_grid}..."
+    while not intersecting_layers.empty?
+      layer = intersecting_layers.first
+
+      layers_in_grid = BoundingBox.get_nodes_in_region layer.bounds, layers_in_region, layer.zindex
+      
+      intersecting_layers = intersecting_layers - layers_in_grid
+      layers_in_region    = layers_in_region - layers_in_grid
+      
+      Log.info "Adding a new positioned grid with #{layers_in_grid}..."
       positioned_grid  = Grid.new :design => grid.design, :depth => grid.depth + 1, :is_positioned => true
       positioned_grid.set layers_in_grid, grid
-    
+
       @@grouping_queue.push positioned_grid
     end
+  
+    flow_layers_in_region += layers_in_region
+    Log.debug "Flow layers in region #{grouping_box} are #{flow_layers_in_region}."
+    
+    Log.info "Creating a new flow grid with #{flow_layers_in_region}..."
+    flow_grid = Grid.new :design => grid.design, :depth => grid.depth + 1
+    flow_grid.set flow_layers_in_region, grid
+    flow_grid.offset_box_buffer = BoundingBox.pickle offset_bounds
+    flow_grid.save!
+    @@grouping_queue.push flow_grid
     
     return (not intersecting_layer_pairs.empty?)
   end
@@ -548,6 +581,15 @@ class Grid
     else 
       render_layer_obj = Layer.find self.render_layer
       (render_layer_obj.tag_name(self.is_leaf?) == :img)
+    end
+  end
+
+  def is_text_grid?
+    if self.render_layer.nil?
+      false
+    else
+      render_layer_obj = Layer.find self.render_layer
+      (render_layer_obj.kind == Layer::LAYER_TEXT)
     end
   end
   

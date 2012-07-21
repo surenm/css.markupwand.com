@@ -32,8 +32,10 @@
 
 
 body {
-  background: url('/assets/bg_top.gif') repeat transparent;
-  font-family: 'Ubuntu', serif;
+  font-family: 'Ubuntu', serif;  
+  background: #DCDFE6;
+  @include background-image(linear-gradient(left top, #F1F3F6, #DCDFE6)); 
+
   line-height: 25px;
   overflow: auto;
 }

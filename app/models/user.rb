@@ -52,6 +52,8 @@ class User
       user = User.find_by_email data["email"]
       user.update_attributes! :admin => true
     else
+      subject = "New User #{data['name']} (#{data['email']})"
+      ApplicationHelper.post_simple_message("alerts+newuser@markupwand.com", subject, "")
       user = User.create! :email => data["email"], :name => data["name"], :first_name => data["first_name"], :last_name => data["last_name"], :admin => true
     end
     

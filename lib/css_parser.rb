@@ -197,26 +197,23 @@ module CssParser
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? effect and effect_enabled
       border = layer[:layerEffects][:value][effect]
       return border[:value][:size][:value]
-     else
-      return 0
     end
-
+    
+    return 0
   end
   
   def CssParser::parse_box_border(layer)
+    css = {}
     if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :frameFX
       stroke_enabled = CssParser::is_effect_enabled(layer, :frameFX)
       if stroke_enabled
         border = layer[:layerEffects][:value][:frameFX]
         size   = CssParser::box_border_width(layer).to_s + 'px'
         color  = parse_color(border[:value][:color])
-        {:border => "#{size} solid #{color}"}
-      else
-        {}
+        css = {:border => "#{size} solid #{color}"}
       end
-    else
-      {}
     end
+    return css
   end
   
   def CssParser::parse_box_rounded_corners(layer)

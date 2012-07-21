@@ -139,12 +139,13 @@ class Apriori
         if primary_rule != secondary_rule
           rule_distance = get_rule_distance({primary_rule => primary_nodes}, {secondary_rule => secondary_nodes})
           # Not sure if this should be 3 or calculated based on data.
-          if rule_distance < 3
+          if rule_distance < 2
             new_rule  = (primary_rule + secondary_rule).sort.uniq
             new_value = (primary_nodes + secondary_nodes).sort.uniq
             reduced_association.delete primary_rule
             reduced_association.delete secondary_rule
             reduced_association.update({ new_rule => new_value })
+            break
           end
         end
       end
