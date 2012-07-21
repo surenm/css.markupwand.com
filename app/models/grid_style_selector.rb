@@ -11,7 +11,32 @@ class GridStyleSelector
 
   field :hashed_selectors, :type => Array, :default => []
 
-  ## Spacing and padding related methods
+
+  ## helper methods
+  def get_border_width
+    border_width = nil
+    if self.css_rules.has_key? :border
+      border_properties = self.css_rules.fetch(:border).split
+      border_width_str = border_properties[0].scan(/\d+/).first
+      if not border_width_str.nil?
+        border_width = border_width_str.to_i
+      end
+    end
+    return border_width
+  end
+  
+  def is_single_line_text
+    if not self.grid.render_layer.nil? and
+      (Layer.find self.grid.render_layer).kind == Layer::LAYER_TEXT and
+      not (Layer.find self.grid.render_layer).has_newline? and
+     (Layer.find self.grid.render_layer).text_type != "TextType.PARAGRAPHTEXT"
+        return true
+    else
+      return false
+    end
+  end
+
+  ## Spacing and padding related method
    
   # Find out bounding box difference from it and its children.
   def get_padding
@@ -21,19 +46,29 @@ class GridStyleSelector
     
     children_bounds = non_style_layers.collect { |layer| layer.bounds }
     children_superbound = BoundingBox.get_super_bounds children_bounds
-    spacing = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
+    padding = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
     
     if not self.grid.bounds.nil? and not children_superbound.nil?
-      spacing[:top]     = (children_superbound.top  - self.grid.bounds.top)
-      spacing[:bottom]  = (self.grid.bounds.bottom - children_superbound.bottom)
+      padding[:top]    = (children_superbound.top  - self.grid.bounds.top)
+      padding[:bottom] = (self.grid.bounds.bottom - children_superbound.bottom)
+      padding[:left]   = (children_superbound.left - self.grid.bounds.left) 
+      padding[:right]  = (self.grid.bounds.right - children_superbound.right)
       
-      spacing[:left]  = (children_superbound.left - self.grid.bounds.left) 
-      spacing[:right] = (self.grid.bounds.right - children_superbound.right)
+
+      border_width = self.get_border_width
+      if not border_width.nil?
+        padding[:top]    -= border_width
+        padding[:bottom] -= border_width
+        padding[:left]   -= border_width
+        padding[:right]  -= border_width
+      end
     end
-    spacing
+    padding
   end
   
   def get_margin
+    #TODO. Margin is not always from left and top. It is from all sides.
+
     margin = {:top => 0, :left => 0}
     if self.grid.root == true
       margin[:top]  += self.grid.bounds.top
@@ -63,7 +98,6 @@ class GridStyleSelector
     return margin
   end
   
-  
   # Spacing includes margin and padding.
   # Margin  = separate the block from things outside it
   # Padding = to move the contents away from the edges of the block.
@@ -82,46 +116,35 @@ class GridStyleSelector
   #       (considering width and margins of its siblings.)
   #
   #    2(b) and 2(c) are exclusive
-  def spacing_css
-    #TODO. Margin and padding are not always from
-    # left and top. It is from all sides.
+  def set_white_space
     margin  = get_margin
     padding = get_padding
-    css     = {}
+
     positions = [:top, :left, :bottom, :right]
-    
+
+    spacing = {}
     positions.each do |position|
       if margin.has_key? position
-        css["margin-#{position}".to_sym] = "#{margin[position]}px" if margin[position] > 0
+        spacing["margin-#{position}".to_sym] = "#{margin[position]}px" if margin[position] > 0
       end
       
       if padding.has_key? position
-        css["padding-#{position}".to_sym] = "#{padding[position]}px" if padding[position] > 0
+        spacing["padding-#{position}".to_sym] = "#{padding[position]}px" if padding[position] > 0
       end  
     end
-    css
+    
+    self.css_rules.update spacing
   end
   
-
-  def is_single_line_text
-    if not self.grid.render_layer.nil? and
-      (Layer.find self.grid.render_layer).kind == Layer::LAYER_TEXT and
-      not (Layer.find self.grid.render_layer).has_newline? and
-     (Layer.find self.grid.render_layer).text_type != "TextType.PARAGRAPHTEXT"
-        return true
-    else
-      return false
-    end
-  end
   
   # Width subtracted by padding
   def unpadded_width
     width = 0
 
     if not self.grid.bounds.nil? and not self.grid.bounds.width.nil?
+      padding = self.get_padding
+
       width += self.grid.bounds.width
-      
-      padding = get_padding
       width -= padding[:left] + padding[:right]
       
       grouping_box = BoundingBox.depickle self.grid.grouping_box
@@ -138,29 +161,21 @@ class GridStyleSelector
     height = 0
 
     if not self.grid.bounds.nil? and not self.grid.bounds.width.nil?
+      padding = self.get_padding
+
       height += self.grid.bounds.height
-      
-      padding = get_padding
       height -= padding[:top] + padding[:bottom]
-      
     end
     return height
-
   end
   
-  # If the width has already not been set, set the width.
-  # TODO Find out if there is any case when width is set.
-  
-  def width_css(css)
-    if not css.has_key? :width and not is_single_line_text and
-      not unpadded_width.nil? and unpadded_width != 0
-     
-      return {:width => unpadded_width.to_s + 'px'}
+  # If the width has already not been set, set the width
+  def set_width
+    width = self.unpadded_width
+    if not self.is_single_line_text and not width.nil? and width != 0
+      status = self.css_rules.update :width => width.to_s + 'px'
     end
-    
-    return {}
   end
-
 
   # Selector names are usually generated,
   # but when the user edits the selector name (aka class name)
@@ -176,26 +191,14 @@ class GridStyleSelector
   end
 
   def set_style_rules
-    css = {}
-
     self.grid.style_layers.each do |layer_id|
       layer = Layer.find layer_id
-      css.update layer.get_style_rules(self)
+      self.css_rules.update layer.get_style_rules(self)
     end
-    
-    css.update width_css(css)
     
     # Positioning - absolute is handled separately. Just find out if a grid has to be relatively positioned
-    positioned_children = self.grid.children.select { |child_grid| child_grid.is_positioned }
-
-    positioned_siblings = []
-    if not self.grid.root and not self.grid.is_positioned
-      positioned_siblings = self.grid.parent.children.select { |sibling_grid| sibling_grid.is_positioned }
-    end
-
-    if positioned_children.size > 0 or positioned_siblings.size > 0
-      css[:position]  = 'relative'
-      css[:"z-index"] = self.grid.zindex
+    if self.grid.positioned_children.size > 0 or self.grid.positioned_siblings.size > 0
+      self.css_rules.update  :position => 'relative', :'z-index' => self.grid.zindex
     end
     
     # float left class if parent is set to GRID_ORIENT_LEFT
@@ -204,19 +207,19 @@ class GridStyleSelector
     end
     
     # Handle absolute positioning now
-    css.update CssParser::position_absolutely(grid) if grid.is_positioned
+    self.css_rules.update CssParser::position_absolutely(grid) if grid.is_positioned
 
     self.extra_selectors.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
     
-    # Gives out the values for spacing the box model.
     # Margin and padding
-    css.update spacing_css
-
-    self.generated_selector = CssParser::create_incremental_selector if not css.empty?
-
-    self.css_rules = css
+    self.set_white_space
     
-    CssParser::add_to_inverted_properties(css, self.grid)
+    # Update width
+    self.set_width
+
+    self.generated_selector = CssParser::create_incremental_selector if not self.css_rules.empty?
+    
+    CssParser::add_to_inverted_properties(self.css_rules, self.grid)
 
     self.save!
   end
@@ -224,7 +227,7 @@ class GridStyleSelector
   # Walks recursively through the grids and creates
   def generate_css_tree
     Log.info "Setting style rules for #{self.grid}..."
-    set_style_rules
+    self.set_style_rules
 
     if self.grid.render_layer.nil?
       self.grid.children.each { |child| child.style_selector.generate_css_tree }

@@ -68,6 +68,9 @@ TransformersWeb::Application.routes.draw do
     
   # TODO: add admin authentication for Admin URL's 
   mount Resque::Server.new, :at => "/resque"
+
+  # tutorial page
+  match 'start' => 'tutorials#index'
   
   # Main page redirects to index
   root :to => 'landing_page#index'
