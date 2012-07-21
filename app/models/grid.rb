@@ -147,7 +147,19 @@ class Grid
       bounds = BoundingBox.get_super_bounds node_bounds
     end
     return bounds
-  end 
+  end
+
+  def siblings
+    grid.parent.children.sort{|child1, child2| child1.grouping_box <=> child2.grouping_box} unless self.root
+  end
+
+  def previous_sibling
+    #Pickup spacing that the previous box allocated.
+    previous_sibling = nil
+    siblings = self.siblings
+    self_index = siblings.index(grid) unless siblings.nil?
+    previous_sibling = siblings[self_index - 1] if not self_index.nil? and  self_index > 0
+  end
   
   # Its a Leaf grid if it has no children and has one render layer
   def is_leaf?
@@ -358,12 +370,8 @@ class Grid
       grid.set all_grouping_box_layers, row_grid
             
       if not self.design.offset_box.nil?
-        #Pickup spacing that the previous box allocated.
-        previous_sibling = nil
-        siblings = grid.parent.children.sort{|child1, child2| child1.grouping_box <=> child2.grouping_box} unless grid.parent.nil?
-        self_index = siblings.index(grid) unless siblings.nil?
-        previous_sibling = siblings[self_index - 1] if not self_index.nil? and  self_index > 0
-        if !previous_sibling.nil? and previous_sibling.layers.first.kind == Layer::LAYER_TEXT and previous_sibling.layers.first.text_type == "TextType.POINTTEXT"
+
+        if !self.previous_sibling.nil? and previous_sibling.layers.first.kind == Layer::LAYER_TEXT and previous_sibling.layers.first.text_type == "TextType.POINTTEXT"
           previous_sibling.offset_box_buffer = BoundingBox.pickle previous_sibling.design.add_offset_box self.design.offset_box.clone
           previous_sibling.save!
         else
