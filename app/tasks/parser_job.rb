@@ -28,7 +28,7 @@ class ParserJob
 
     rescue Exception => error
       error_description = "Parsing failed for #{design.user.email} on design #{design.safe_name}"
-      Utils::pager_duty_alert error_description, :error => error, :user => design.user.email
+      Utils::pager_duty_alert error_description, :error => error.message, :user => design.user.email
       design.set_status Design::STATUS_FAILED
       raise error
     end
