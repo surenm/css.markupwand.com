@@ -37,10 +37,6 @@ class Design
     Design::STATUS_FAILED       => 'label label-important'
   }
 
-  Design::OFFSET_BOX_KEY           = "#{self.id}-offset_box"
-  Design::ROW_OFFSET_BOX_KEY       = "#{self.id}-row_offset_box"
-  Design::GROUPING_IDENTIFIERS_KEY = "#{self.id}-grouping-identifiers"
-
   # File meta data
   field :name, :type => String
   field :psd_file_path, :type => String
@@ -84,6 +80,18 @@ class Design
   
   def store_published_key
     File.join self.store_key_prefix, "published"
+  end
+  
+  def offset_box_key
+    "#{self.id}-offset_box"
+  end
+  
+  def row_offset_box_key
+    "#{self.id}-row_offset_box"
+  end
+  
+  def grouping_identifiers_key
+    "#{self.id}-grouping-identifiers"
   end
   
   def get_root_grid
@@ -169,39 +177,39 @@ class Design
     else 
       new_offset_box = BoundingBox.get_super_bounds [bounding_box, self.offset_box]
     end
-    Rails.cache.write Design::OFFSET_BOX_KEY, BoundingBox.pickle(new_offset_box)
+    Rails.cache.write self.offset_box_key, BoundingBox.pickle(new_offset_box)
   end
   
   # Accessor for offset bounding box
   # De-serializes the offset box from mongo data.
   def offset_box
-    BoundingBox.depickle Rails.cache.read Design::OFFSET_BOX_KEY
+    BoundingBox.depickle Rails.cache.read self.offset_box_key
   end
   
   def reset_offset_box
-    Rails.cache.delete Design::OFFSET_BOX_KEY
+    Rails.cache.delete self.offset_box_key
   end
   
   def row_offset_box=(bounding_box)
-    Rails.cache.write Design::ROW_OFFSET_BOX_KEY, BoundingBox.pickle(bounding_box)
+    Rails.cache.write self.row_offset_box_key, BoundingBox.pickle(bounding_box)
   end
   
   def row_offset_box
-    BoundingBox.depickle Rails.cache.read Design::ROW_OFFSET_BOX_KEY
+    BoundingBox.depickle Rails.cache.read self.row_offset_box_key
   end
   
   def reset_row_offset_box
-    Rails.cache.delete Design::ROW_OFFSET_BOX_KEY
+    Rails.cache.delete self.row_offset_box_key
   end
   
   def add_grouping_identifier(identifier)
     grouping_identifiers = self.get_grouping_identifiers
     grouping_identifiers.push identifier
-    Rails.cache.write Design::GROUPING_IDENTIFIERS_KEY, grouping_identifiers.to_json.to_s
+    Rails.cache.write self.grouping_identifiers_key, grouping_identifiers.to_json.to_s
   end
   
   def get_grouping_identifiers
-    raw_grouping_identifiers = Rails.cache.read Design::GROUPING_IDENTIFIERS_KEY
+    raw_grouping_identifiers = Rails.cache.read self.grouping_identifiers_key
     grouping_identifiers = JSON.parse raw_grouping_identifiers
     grouping_identifiers = [] if grouping_identifiers.nil?
     return grouping_identifiers
@@ -210,7 +218,7 @@ class Design
   def flush_grouping_identifiers
     grouping_identifiers = self.get_grouping_identifiers
     grouping_identifiers.each { |identifier| Rails.cache.delete identifier }
-    Rails.cache.delete Design::GROUPING_IDENTIFIERS_KEY
+    Rails.cache.delete self.grouping_identifiers_key
   end
   
   def reprocess
