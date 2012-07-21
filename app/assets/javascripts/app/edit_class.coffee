@@ -1,6 +1,10 @@
 iframe_doc =->
   $($("#editor-iframe").contents())
 
+showStyles = (node)->
+  $(node).parent().parent().find('pre').hide()
+  $(node).parent().find('pre').show()
+
 addFocusOverlay = (node)->
   offset = $(node).offset()
   focus_overlay_div = document.createElement 'div'
@@ -16,6 +20,7 @@ clearFocusOverlays =->
 
 addFocusListeners =->
   $('#css_editor input').focus( ->
+    showStyles(this)
     selector_nodes = $(iframe_doc()).find('body').find('.' + $(this).data('original'))
     clearFocusOverlays()
     for node in selector_nodes
