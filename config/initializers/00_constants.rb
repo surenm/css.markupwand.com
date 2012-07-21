@@ -10,7 +10,7 @@ module Constants
   Constants::PROCESSING_QUEUE = "markupwand-processing"
   
   # Max retry with grouping
-  Constatns::GROUPING_MAX_RETRIES = 3
+  Constants::GROUPING_MAX_RETRIES = 3
   
   # Round to nearest 5
   def Constants::round_to_nearest_five(num)
