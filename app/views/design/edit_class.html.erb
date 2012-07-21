@@ -38,7 +38,7 @@
   </div>
 </div>
 <div class='ide'>
-  <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html'></iframe>
+  <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html' onload="parent.iframeLoaded();"></iframe>
 </div>
 <% end %>
 

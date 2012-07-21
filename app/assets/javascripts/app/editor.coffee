@@ -18,7 +18,3 @@ $(document).ready ->
   window.app = new EditorApp()
   
   Backbone.history.start()
-
-    
-  
-  
