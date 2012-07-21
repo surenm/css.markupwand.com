@@ -15,17 +15,16 @@ module Utils
     end
   end
 
-  def Utils::pager_duty_alert(service_key, file_name, error, user)
-    Log.debug "Sending message to pager duty"
+  def Utils::pager_duty_alert(error_description, args)
+    return if Rails.env.development?
+    
+    Log.debug "Sending message to pager duty..."  
+    service_key = "f36e4c80ab63012f5d3622000af84f12"
     post_data = {
         "service_key" => service_key,
-        "event_type" => "trigger",
-        "description" => "<FAILURE>\nUser:#{user}\nFile: #{file_name}\nReason:#{error.to_s}",
-        "details" => {
-            "file" => file_name,
-            "error" => error,
-            "user" => user
-        }
+        "event_type"  => "trigger",
+        "description" => error_description,
+        "details"     => args
     }
     payload = post_data.to_json
     req = Net::HTTP::Post.new('/generic/2010-04-15/create_event.json', initheader = {'Content-Type' => 'application/json'})
