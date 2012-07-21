@@ -74,6 +74,25 @@ class Grid
     digest = Digest::MD5.hexdigest raw_identifier
     return digest
   end
+  
+  def get_grouping_count
+    count = Rails.cache.read self.unique_identifier
+    if count.nil?
+      design.add_grouping_identifier self.unique_identifier
+      count = 0
+    end
+    return count
+  end
+
+  def increment_grouping_count
+    count = self.get_grouping_count
+    Rails.cache.write self.unique_identifier, (count + 1)
+  end
+
+  def reset_grouping_count
+    Rails.cache.delete self.unique_identifier
+  end
+  
   def print(indent_level=0)
     spaces = ""
     prefix = "|--"
