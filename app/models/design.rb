@@ -210,8 +210,8 @@ class Design
   
   def get_grouping_identifiers
     raw_grouping_identifiers = Rails.cache.read self.grouping_identifiers_key
+    raw_grouping_identifiers = "[]" if raw_grouping_identifiers.nil?
     grouping_identifiers = JSON.parse raw_grouping_identifiers
-    grouping_identifiers = [] if grouping_identifiers.nil?
     return grouping_identifiers
   end
   
