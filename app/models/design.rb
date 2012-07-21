@@ -159,9 +159,19 @@ class Design
     }
   end
   
+    
   def set_status(status)
     self.status = status
     self.save!
+    
+    if status == Design::STATUS_COMPLETED
+      if not design.user.admin
+        to      = "#{design.user.name} <#{design.user.email}>"
+        subject = "#{design.name} generated"
+        text    = "Your HTML & CSS has been generated, click http://#{ENV['APP_URL']}/design/#{design.safe_name}/preview to download"
+        ApplicationHelper.post_simple_message to, subject, text
+      end
+    end
   end
 
   # Offset box is a box, that is an empty grid that appears before
