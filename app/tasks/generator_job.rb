@@ -20,12 +20,11 @@ class GeneratorJob
 
       # mark editing complete
       design.set_status Design::STATUS_COMPLETED
-
-      if Rails.env.production?
-        ApplicationHelper.post_simple_message("#{design.user.name} <#{design.user.email}>", "#{design.name} generated", "Your HTML & CSS has been generated, click http://www.markupwand.com/design/#{design.safe_name}/preview to download")
-      end
+      
+      ApplicationHelper.post_simple_message("#{design.user.name} <#{design.user.email}>", "#{design.name} generated", "Your HTML & CSS has been generated, click http://www.markupwand.com/design/#{design.safe_name}/preview to download")
     rescue Exception => error
-      Utils::pager_duty_alert("391c2640ab64012f2bf422000afc419f", File.basename(design.processed_file_path), error, design.user.email) if Rails.env.production?
+      error_description = "HTML generation failed for #{design.user.email} on design #{design.safe_name}"
+      Utils::pager_duty_alert error_description, :error => error, :user => design.user.email
       design.set_status Design::STATUS_FAILED
       raise error
     end

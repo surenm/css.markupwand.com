@@ -25,7 +25,8 @@ class ParserJob
       # Generate markup for editing and publishing
       Resque.enqueue GeneratorJob, design_id
     rescue Exception => error
-      Utils::pager_duty_alert("f36e4c80ab63012f5d3622000af84f12", File.basename(design.processed_file_path), error, design.user.email) if Rails.env.production?
+      error_description = "Parsing failed for #{design.user.email} on design #{design.safe_name}"
+      Utils::pager_duty_alert error_description, :error => error, :user => design.user.email
       design.set_status Design::STATUS_FAILED
       raise error
     end
