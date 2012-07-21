@@ -37,6 +37,8 @@ class Design
     Design::STATUS_FAILED       => 'label label-important'
   }
 
+  Design::OFFSET_BOX_KEY           = "#{self.id}-offset_box"
+  Design::ROW_OFFSET_BOX_KEY       = "#{self.id}-row_offset_box"
   # File meta data
   field :name, :type => String
   field :psd_file_path, :type => String
@@ -165,29 +167,30 @@ class Design
     else 
       new_offset_box = BoundingBox.get_super_bounds [bounding_box, self.offset_box]
     end
-    Rails.cache.write "#{self.id}-offset_box", BoundingBox.pickle(new_offset_box)
+    Rails.cache.write Design::OFFSET_BOX_KEY, BoundingBox.pickle(new_offset_box)
   end
   
   # Accessor for offset bounding box
   # De-serializes the offset box from mongo data.
   def offset_box
-    BoundingBox.depickle Rails.cache.read "#{self.id}-offset_box"
+    BoundingBox.depickle Rails.cache.read Design::OFFSET_BOX_KEY
   end
   
   def reset_offset_box
-    Rails.cache.delete "#{self.id}-offset_box"
+    Rails.cache.delete Design::OFFSET_BOX_KEY
   end
   
   def row_offset_box=(bounding_box)
-    Rails.cache.write "#{self.id}-row_offset_box", BoundingBox.pickle(bounding_box)
+    Rails.cache.write Design::ROW_OFFSET_BOX_KEY, BoundingBox.pickle(bounding_box)
   end
   
   def row_offset_box
-    BoundingBox.depickle Rails.cache.read "#{self.id}-row_offset_box"
+    BoundingBox.depickle Rails.cache.read Design::ROW_OFFSET_BOX_KEY
   end
   
   def reset_row_offset_box
-    Rails.cache.delete "#{self.id}-row_offset_box"
+    Rails.cache.delete Design::ROW_OFFSET_BOX_KEY
+  end
   end
   
   def reprocess
@@ -289,6 +292,7 @@ class Design
     Grid.group!
     Profiler.stop
     Log.info "Successfully completed parsing #{self.name}"
+    Log.info "Successfully completed parsing #{self.name}" if design.status != Design::STATUS_FAILED
   end
   
   def generate_markup(args={})
