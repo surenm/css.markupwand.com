@@ -20,10 +20,12 @@ class ParserJob
       end
 
       design.parse
-      design.set_status Design::STATUS_PARSED
 
-      # Generate markup for editing and publishing
-      Resque.enqueue GeneratorJob, design_id
+      if design.status != Design::STATUS_FAILED
+        design.set_status Design::STATUS_PARSED
+        Resque.enqueue GeneratorJob, design_id
+      end
+
     rescue Exception => error
       error_description = "Parsing failed for #{design.user.email} on design #{design.safe_name}"
       Utils::pager_duty_alert error_description, :error => error, :user => design.user.email
