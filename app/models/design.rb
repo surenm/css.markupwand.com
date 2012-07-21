@@ -39,6 +39,8 @@ class Design
 
   Design::OFFSET_BOX_KEY           = "#{self.id}-offset_box"
   Design::ROW_OFFSET_BOX_KEY       = "#{self.id}-row_offset_box"
+  Design::GROUPING_IDENTIFIERS_KEY = "#{self.id}-grouping-identifiers"
+
   # File meta data
   field :name, :type => String
   field :psd_file_path, :type => String
@@ -191,6 +193,24 @@ class Design
   def reset_row_offset_box
     Rails.cache.delete Design::ROW_OFFSET_BOX_KEY
   end
+  
+  def add_grouping_identifier(identifier)
+    grouping_identifiers = self.get_grouping_identifiers
+    grouping_identifiers.push identifier
+    Rails.cache.write Design::GROUPING_IDENTIFIERS_KEY, grouping_identifiers.to_json.to_s
+  end
+  
+  def get_grouping_identifiers
+    raw_grouping_identifiers = Rails.cache.read Design::GROUPING_IDENTIFIERS_KEY
+    grouping_identifiers = JSON.parse raw_grouping_identifiers
+    grouping_identifiers = [] if grouping_identifiers.nil?
+    return grouping_identifiers
+  end
+  
+  def flush_grouping_identifiers
+    grouping_identifiers = self.get_grouping_identifiers
+    grouping_identifiers.each { |identifier| Rails.cache.delete identifier }
+    Rails.cache.delete Design::GROUPING_IDENTIFIERS_KEY
   end
   
   def reprocess
@@ -291,7 +311,7 @@ class Design
     Log.info "Grouping the grids..."
     Grid.group!
     Profiler.stop
-    Log.info "Successfully completed parsing #{self.name}"
+    design.flush_grouping_identifiers
     Log.info "Successfully completed parsing #{self.name}" if design.status != Design::STATUS_FAILED
   end
   
