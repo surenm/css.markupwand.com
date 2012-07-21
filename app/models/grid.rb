@@ -197,6 +197,15 @@ class Grid
   def self.group!
     while not @@grouping_queue.empty?
       grid = @@grouping_queue.pop
+      
+      if grid.get_grouping_count < Constants::GROUPING_MAX_RETRIES
+        grid.increment_grouping_count
+      else
+        Log.fatal "Infinite loop detected..."
+        grid.design.set_status Design::STATUS_FAILED
+        raise "Infinite loop detected on layers - #{self.layers}"
+      end
+      
       Log.info "Grouping #{grid.layers.to_a}..."
       grid.group!
     end
