@@ -11,7 +11,11 @@ module Log
   end
   
   def Log.method_missing(method, *args, &block)
-    LOGGER.send method, args[0].ai
+    if Rails.env.development?
+      LOGGER.send method, args[0].ai
+    else 
+      LOGGER.send method, args[0]
+    end
     return
   end
   
