@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 class Grid
   include Mongoid::Document
   include Mongoid::Timestamps::Created
@@ -66,6 +68,12 @@ class Grid
     end
   end
   
+  def unique_identifier
+    layer_uids = self.layers.collect { |layer| layer.uid }
+    raw_identifier = "#{self.design.id}-#{layer_uids.join '-'}"
+    digest = Digest::MD5.hexdigest raw_identifier
+    return digest
+  end
   def print(indent_level=0)
     spaces = ""
     prefix = "|--"
