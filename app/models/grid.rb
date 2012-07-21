@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 class Grid
   include Mongoid::Document
   include Mongoid::Timestamps::Created
@@ -64,6 +66,31 @@ class Grid
       end
       "Grid (parent) #{names.to_s}"
     end
+  end
+  
+  def unique_identifier
+    layer_uids = self.layers.collect { |layer| layer.uid }
+    raw_identifier = "#{self.design.id}-#{layer_uids.join '-'}"
+    digest = Digest::MD5.hexdigest raw_identifier
+    return digest
+  end
+  
+  def get_grouping_count
+    count = Rails.cache.read self.unique_identifier
+    if count.nil?
+      design.add_grouping_identifier self.unique_identifier
+      count = 0
+    end
+    return count
+  end
+
+  def increment_grouping_count
+    count = self.get_grouping_count
+    Rails.cache.write self.unique_identifier, (count + 1)
+  end
+
+  def reset_grouping_count
+    Rails.cache.delete self.unique_identifier
   end
   
   def print(indent_level=0)
@@ -170,6 +197,15 @@ class Grid
   def self.group!
     while not @@grouping_queue.empty?
       grid = @@grouping_queue.pop
+      
+      if grid.get_grouping_count < Constants::GROUPING_MAX_RETRIES
+        grid.increment_grouping_count
+      else
+        Log.fatal "Infinite loop detected..."
+        grid.design.set_status Design::STATUS_FAILED
+        raise "Infinite loop detected on layers - #{self.layers}"
+      end
+      
       Log.info "Grouping #{grid.layers.to_a}..."
       grid.group!
     end

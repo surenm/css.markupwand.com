@@ -368,11 +368,10 @@ module CssParser
         destination_file = File.join CssParser::get_assets_root, "img", image_file_name
         Store::save_to_store src_image_file, destination_file
       
-      
         shape_css[:'background-image'] = "url(#{File.join "..", "img", image_file_name})"
         shape_css[:'background-repeat'] = "no-repeat"
-        shape_css[:'min-height'] = "#{layer.bounds.height}px"
-        shape_css[:'min-width'] = "#{layer.bounds.width}px"
+        #shape_css[:'min-height'] = "#{layer.bounds.height}px"
+        #shape_css[:'min-width'] = "#{layer.bounds.width}px"
       end
     end
     shape_css = {} if shape_css.nil?
