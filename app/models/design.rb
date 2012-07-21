@@ -319,8 +319,8 @@ class Design
     Log.info "Grouping the grids..."
     Grid.group!
     Profiler.stop
-    design.flush_grouping_identifiers
-    Log.info "Successfully completed parsing #{self.name}" if design.status != Design::STATUS_FAILED
+    self.flush_grouping_identifiers
+    Log.info "Successfully completed parsing #{self.name}" if self.status != Design::STATUS_FAILED
   end
   
   def generate_markup(args={})
