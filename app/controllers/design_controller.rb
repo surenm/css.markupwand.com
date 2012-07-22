@@ -97,6 +97,7 @@ class DesignController < ApplicationController
       @design.selector_name_map[lookup_key]['name'] = value
     end
 
+    @design.class_edited = true
     @design.save!
     @design.write_html_job
     redirect_to :action => :show, :id => @design.safe_name

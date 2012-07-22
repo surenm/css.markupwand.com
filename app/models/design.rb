@@ -48,7 +48,7 @@ class Design
   field :selector_name_map, :type => Hash, :default => {}  
   field :hashed_selectors, :type => Hash, :default => {} 
   field :is_css_hashed,    :type => Boolean, :default => false
-
+  field :class_edited,     :type => Boolean, :default => false
   
   # Document properties
   field :height, :type => Integer
