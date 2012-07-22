@@ -188,7 +188,7 @@ class GridStyleSelector
   def set_min_dimensions
     width = self.unpadded_width
     height = self.unpadded_height
-    self.css_rules.update :'min-height' => height, :'min-width' => width
+    self.css_rules.update :'min-height' => "#{height}px", :'min-width' => "#{width}px"
   end
 
   # Selector names are usually generated,
