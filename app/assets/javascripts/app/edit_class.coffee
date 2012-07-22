@@ -27,6 +27,14 @@ addFocusListeners =->
       addFocusOverlay(node)
   )
 
+  })
+
+  $('#css_editor input').keypress((e)->
+    if e.which == 13 
+      false
+  )
+
+
 window.iframeLoaded =->
   iframe_dom   = $($("#editor-iframe").contents())
   cssLink      = document.createElement("link")
