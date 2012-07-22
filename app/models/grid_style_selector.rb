@@ -175,7 +175,8 @@ class GridStyleSelector
     width = self.unpadded_width
     if not width.nil? and width != 0
       grouping_box = BoundingBox.depickle self.grid.grouping_box
-      has_trailing_offset = (self.grid.bounds != grouping_box)
+      has_trailing_offset = false
+      has_trailing_offset = (self.grid.bounds != grouping_box) unless grouping_box.nil? or self.grid.bounds.nil?
       if self.is_single_line_text and not has_trailing_offset
         return width
       else
