@@ -25,7 +25,7 @@
       <ul>
         <% @selector_name_map.each do |selector, modified_selector| %>
         <li>
-          <input tabindex="1"  type="text" name="class_map['<%= selector %>']" data-original="<%= modified_selector['name'] %>" value="<%= modified_selector['name'] %>">
+          <input autocomplete="off"  tabindex="1"  type="text" name="class_map['<%= selector %>']" data-original="<%= modified_selector['name'] %>" value="<%= modified_selector['name'] %>">
           <pre>  <%= CssParser::to_style_string(modified_selector['css']) %></pre>
         </li>
         <% end %>
@@ -44,4 +44,5 @@
 
 <%= content_for :javascript do %>
 <%= javascript_include_tag "app/edit_class" %>
+<%= javascript_include_tag "bootstrap-typeahead" %>
 <% end %>
