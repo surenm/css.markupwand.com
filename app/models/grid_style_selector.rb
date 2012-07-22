@@ -150,7 +150,8 @@ class GridStyleSelector
       grouping_box = BoundingBox.depickle self.grid.grouping_box
       if not grouping_box.nil?
         initial_offset = self.grid.bounds.left - grouping_box.left
-        width += initial_offset
+        right_offset = grouping_box.right - self.grid.bounds.right
+        width += initial_offset + right_offset
       end
     end
     return width
@@ -172,7 +173,7 @@ class GridStyleSelector
   # If the width has already not been set, set the width
   def set_width
     width = self.unpadded_width
-    if not self.is_single_line_text and not width.nil? and width != 0
+    if not (self.is_single_line_text and self.grid.bounds==BoundingBox.depickle(self.grid.grouping_box)) and not width.nil? and width != 0
       status = self.css_rules.update :width => width.to_s + 'px'
     end
   end

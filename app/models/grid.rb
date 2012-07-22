@@ -148,6 +148,17 @@ class Grid
       []
     end
   end
+
+  def siblings
+    grid.parent.children.sort{|child1, child2| child1.grouping_box <=> child2.grouping_box} unless self.root
+  end
+
+  def last_processed_child
+    if self.children.empty?
+      return nil
+    end
+    self.children.sort {|a,b| a.id.to_s <=> b.id.to_s}.last
+  end
   
   # Bounds for a grid.
   # TODO: cache this grids
@@ -159,18 +170,6 @@ class Grid
       bounds = BoundingBox.get_super_bounds node_bounds
     end
     return bounds
-  end
-
-  def siblings
-    grid.parent.children.sort{|child1, child2| child1.grouping_box <=> child2.grouping_box} unless self.root
-  end
-
-  def previous_sibling
-    #Pickup spacing that the previous box allocated.
-    previous_sibling = nil
-    siblings = self.siblings
-    self_index = siblings.index(grid) unless siblings.nil?
-    previous_sibling = siblings[self_index - 1] if not self_index.nil? and  self_index > 0
   end
   
   # Its a Leaf grid if it has no children and has one render layer
@@ -351,7 +350,13 @@ class Grid
     
     if raw_grouping_box_layers.empty?
       Log.info "No layers in #{grouping_box}. Marking this grouping box as margin..."
-      self.design.add_offset_box grouping_box.clone
+      previous_grid = row_grid.last_processed_child
+      previous_grid_layer = previous_grid.layers.first if !previous_grid.nil? and !previous_grid.layers.nil? and previous_grid.layers.size == 1
+      if previous_grid_layer.kind == Layer::LAYER_TEXT and previous_grid_layer.text_type == "TextType.POINTTEXT"
+        previous_grid.grouping_box = BoundingBox.pickle BoundingBox.get_super_bounds([previous_grid.bounds, grouping_box])
+      else
+        self.design.add_offset_box grouping_box.clone
+      end
     else
       Log.info "Layers in #{grouping_box} are #{raw_grouping_box_layers}. Creating a new grid..."
 
@@ -382,13 +387,7 @@ class Grid
       grid.set all_grouping_box_layers, row_grid
             
       if not self.design.offset_box.nil?
-
-        if !self.previous_sibling.nil? and previous_sibling.layers.first.kind == Layer::LAYER_TEXT and previous_sibling.layers.first.text_type == "TextType.POINTTEXT"
-          previous_sibling.offset_box_buffer = BoundingBox.pickle previous_sibling.design.add_offset_box self.design.offset_box.clone
-          previous_sibling.save!
-        else
           grid.offset_box_buffer = BoundingBox.pickle self.design.offset_box
-        end
 
         Log.info "Setting #{self.design.offset_box} margin offset box for the above grid..."
         grid.save!
