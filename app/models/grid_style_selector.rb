@@ -174,6 +174,11 @@ class GridStyleSelector
     width = self.unpadded_width
     if not self.is_single_line_text and not width.nil? and width != 0
       status = self.css_rules.update :width => width.to_s + 'px'
+  def set_height
+    height = self.unpadded_height
+    
+    if not height.nil? and height != 0
+      self.css_rules.update :height => height.to_s + "px"
     end
   end
   
@@ -229,8 +234,11 @@ class GridStyleSelector
     # Margin and padding
     self.set_white_space
     
-    # Update width
+    # set width for the grid
     self.set_width
+    
+    # set height only if there are positioned children
+    self.set_height if self.grid.has_positioned_children?
     
     # minimum height and width for shapes in style layers
     self.set_min_dimensions if set_shape_dimensions_flag
