@@ -388,7 +388,7 @@ class Grid
       Log.info "No layers in #{grouping_box}. Marking this grouping box as margin..."
       previous_grid = row_grid.last_processed_child
       previous_grid_layer = previous_grid.layers.first if !previous_grid.nil? and !previous_grid.layers.nil? and previous_grid.layers.size == 1
-      if !previous_grid_layer.nil? ands previous_grid_layer.kind == Layer::LAYER_TEXT and previous_grid_layer.text_type == "TextType.POINTTEXT"
+      if not previous_grid_layer.nil? and previous_grid_layer.kind == Layer::LAYER_TEXT and previous_grid_layer.text_type == "TextType.POINTTEXT"
         previous_grid.grouping_box = BoundingBox.pickle BoundingBox.get_super_bounds([previous_grid.bounds, grouping_box])
       else
         self.design.add_offset_box grouping_box.clone
