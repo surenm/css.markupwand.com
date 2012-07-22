@@ -369,8 +369,8 @@ module CssParser
       
         shape_css[:'background-image']  = "url(#{File.join "..", "img", image_file_name})"
         shape_css[:'background-repeat'] = "no-repeat"
-        #shape_css[:'min-height'] = "#{layer.bounds.height}px"
-        #shape_css[:'min-width'] = "#{layer.bounds.width}px"
+        shape_css[:'min-height'] = "#{layer.bounds.height}px"
+        shape_css[:'min-width'] = "#{layer.bounds.width}px"
       end
     end
     shape_css = {} if shape_css.nil?
