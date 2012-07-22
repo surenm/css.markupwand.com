@@ -177,6 +177,12 @@ class GridStyleSelector
       status = self.css_rules.update :width => width.to_s + 'px'
     end
   end
+  
+  def set_min_dimensions
+    width = self.unpadded_width
+    height = self.unpadded_height
+    self.css_rules.update :'min-height' => height, :'min-width' => width
+  end
 
   # Selector names are usually generated,
   # but when the user edits the selector name (aka class name)
@@ -195,6 +201,15 @@ class GridStyleSelector
     self.grid.style_layers.each do |layer_id|
       layer = Layer.find layer_id
       self.css_rules.update layer.get_style_rules(self)
+    end
+
+    set_shape_dimensions_flag = false
+
+    # Checking if the style layers had a shape.
+    if self.css_rules.has_key? :'min-width' or self.css_rules.has_key? :'min-height'
+      self.css_rules.delete :'min-width'
+      self.css_rules.delete :'min-height'
+      set_shape_dimensions_flag = true
     end
     
     # Positioning - absolute is handled separately. Just find out if a grid has to be relatively positioned
@@ -217,9 +232,12 @@ class GridStyleSelector
     
     # Update width
     self.set_width
+    
+    # minimum height and width for shapes in style layers
+    self.set_min_dimensions if set_shape_dimensions_flag
 
     self.generated_selector = CssParser::create_incremental_selector if not self.css_rules.empty?
-    
+        
     CssParser::add_to_inverted_properties(self.css_rules, self.grid)
 
     self.save!
