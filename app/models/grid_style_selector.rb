@@ -27,10 +27,10 @@ class GridStyleSelector
   
   def is_single_line_text
     if not self.grid.render_layer.nil? and
-      (Layer.find self.grid.render_layer).kind == Layer::LAYER_TEXT and
-      not (Layer.find self.grid.render_layer).has_newline? and
-     (Layer.find self.grid.render_layer).text_type != "TextType.PARAGRAPHTEXT"
-        return true
+        (Layer.find self.grid.render_layer).kind == Layer::LAYER_TEXT and
+        not (Layer.find self.grid.render_layer).has_newline? and
+        (Layer.find self.grid.render_layer).text_type != "TextType.PARAGRAPHTEXT"
+      return true
     else
       return false
     end
@@ -150,7 +150,8 @@ class GridStyleSelector
       grouping_box = BoundingBox.depickle self.grid.grouping_box
       if not grouping_box.nil?
         initial_offset = self.grid.bounds.left - grouping_box.left
-        width += initial_offset
+        right_offset = grouping_box.right - self.grid.bounds.right
+        width += initial_offset + right_offset
       end
     end
     return width
@@ -168,12 +169,23 @@ class GridStyleSelector
     end
     return height
   end
-  
+
   # If the width has already not been set, set the width
   def set_width
     width = self.unpadded_width
-    if not self.is_single_line_text and not width.nil? and width != 0
-      status = self.css_rules.update :width => width.to_s + 'px'
+
+    if not width.nil? and width != 0
+      grouping_box = BoundingBox.depickle self.grid.grouping_box
+      has_trailing_offset = false
+      has_trailing_offset = (self.grid.bounds != grouping_box) unless grouping_box.nil? or self.grid.bounds.nil?
+      if self.is_single_line_text and not has_trailing_offset
+        return width
+      else
+        self.css_rules.update :width => width.to_s + 'px'
+      end
+    end
+  end
+  
   def set_height
     height = self.unpadded_height
     
