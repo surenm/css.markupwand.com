@@ -14,7 +14,9 @@ class HtmlWriterJob
       # mark editing complete
       design.set_status Design::STATUS_COMPLETED
     rescue Exception => error
-      Utils::pager_duty_alert("391c2640ab64012f2bf422000afc419f", File.basename(design.processed_file_path), error, design.user.email) if Rails.env.production?
+      error_description = "HTML Writer failed for #{design.user.email} on design #{design.safe_name}"
+      Utils::pager_duty_alert error_description, :error => error, :user => design.user.email
+      
       design.set_status Design::STATUS_FAILED
       raise error
     end

@@ -271,7 +271,7 @@ class GridStyleSelector
       if repeats > (child_grids.length * 0.6)
         if (Constants::css_properties.has_key? rule_key.to_sym and Constants::css_properties[rule_key.to_sym][:inherit])
           bubbleable_rules.push rule
-          Log.info "Bubbling up #{rule}"
+          Log.debug "Bubbling up #{rule}"
         end   
       end 
     end
@@ -311,7 +311,7 @@ class GridStyleSelector
         DesignGlobals.instance.css_properties_inverted.delete rule
       end
 
-      Log.info "Deleted #{rule_key} from #{grid.to_short_s}"
+      Log.debug "Deleted #{rule_key} from #{grid.to_short_s}"
     end
 
     bubbleable_rules.each do |rule|

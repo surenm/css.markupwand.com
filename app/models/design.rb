@@ -82,6 +82,18 @@ class Design
     File.join self.store_key_prefix, "published"
   end
   
+  def offset_box_key
+    "#{self.id}-offset_box"
+  end
+  
+  def row_offset_box_key
+    "#{self.id}-row_offset_box"
+  end
+  
+  def grouping_identifiers_key
+    "#{self.id}-grouping-identifiers"
+  end
+  
   def get_root_grid
     root_grids = self.grids.where(:root => true)
     #Log.error "Root grid = #{root_grids.last.id.to_s}, #{root_grids.length}"
@@ -147,9 +159,19 @@ class Design
     }
   end
   
+    
   def set_status(status)
     self.status = status
     self.save!
+    
+    if self.status == Design::STATUS_COMPLETED
+      if not self.user.admin
+        to      = "#{self.user.name} <#{self.user.email}>"
+        subject = "#{self.name} generated"
+        text    = "Your HTML & CSS has been generated, click http://#{ENV['APP_URL']}/design/#{self.safe_name}/preview to download"
+        ApplicationHelper.post_simple_message to, subject, text
+      end
+    end
   end
 
   # Offset box is a box, that is an empty grid that appears before
@@ -165,30 +187,48 @@ class Design
     else 
       new_offset_box = BoundingBox.get_super_bounds [bounding_box, self.offset_box]
     end
-    Rails.cache.write "#{self.id}-offset_box", BoundingBox.pickle(new_offset_box)
-    return new_offset_box
+    Rails.cache.write self.offset_box_key, BoundingBox.pickle(new_offset_box)
   end
   
   # Accessor for offset bounding box
   # De-serializes the offset box from mongo data.
   def offset_box
-    BoundingBox.depickle Rails.cache.read "#{self.id}-offset_box"
+    BoundingBox.depickle Rails.cache.read self.offset_box_key
   end
   
   def reset_offset_box
-    Rails.cache.delete "#{self.id}-offset_box"
+    Rails.cache.delete self.offset_box_key
   end
   
   def row_offset_box=(bounding_box)
-    Rails.cache.write "#{self.id}-row_offset_box", BoundingBox.pickle(bounding_box)
+    Rails.cache.write self.row_offset_box_key, BoundingBox.pickle(bounding_box)
   end
   
   def row_offset_box
-    BoundingBox.depickle Rails.cache.read "#{self.id}-row_offset_box"
+    BoundingBox.depickle Rails.cache.read self.row_offset_box_key
   end
   
   def reset_row_offset_box
-    Rails.cache.delete "#{self.id}-row_offset_box"
+    Rails.cache.delete self.row_offset_box_key
+  end
+  
+  def add_grouping_identifier(identifier)
+    grouping_identifiers = self.get_grouping_identifiers
+    grouping_identifiers.push identifier
+    Rails.cache.write self.grouping_identifiers_key, grouping_identifiers.to_json.to_s
+  end
+  
+  def get_grouping_identifiers
+    raw_grouping_identifiers = Rails.cache.read self.grouping_identifiers_key
+    raw_grouping_identifiers = "[]" if raw_grouping_identifiers.nil?
+    grouping_identifiers = JSON.parse raw_grouping_identifiers
+    return grouping_identifiers
+  end
+  
+  def flush_grouping_identifiers
+    grouping_identifiers = self.get_grouping_identifiers
+    grouping_identifiers.each { |identifier| Rails.cache.delete identifier }
+    Rails.cache.delete self.grouping_identifiers_key
   end
   
   def reprocess
@@ -289,7 +329,8 @@ class Design
     Log.info "Grouping the grids..."
     Grid.group!
     Profiler.stop
-    Log.info "Successfully completed parsing #{self.name}"
+    self.flush_grouping_identifiers
+    Log.info "Successfully completed parsing #{self.name}" if self.status != Design::STATUS_FAILED
   end
   
   def generate_markup(args={})
