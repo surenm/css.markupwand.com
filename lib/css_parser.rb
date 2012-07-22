@@ -356,19 +356,18 @@ module CssParser
         shape_css = css_shape.parse layer, grid
       end
       
-
       if shape_css.nil?
         shape_css = {}
 
         image_file_basename = Store::get_safe_name(layer.name)
-        image_file_name = "#{image_file_basename}_#{layer.uid}.png"
+        image_file_name     = "#{image_file_basename}_#{layer.uid}.png"
       
         design = layer.design
         src_image_file   = Rails.root.join("tmp", "store", design.store_processed_key, image_file_name).to_s
         destination_file = File.join CssParser::get_assets_root, "img", image_file_name
         Store::save_to_store src_image_file, destination_file
       
-        shape_css[:'background-image'] = "url(#{File.join "..", "img", image_file_name})"
+        shape_css[:'background-image']  = "url(#{File.join "..", "img", image_file_name})"
         shape_css[:'background-repeat'] = "no-repeat"
         #shape_css[:'min-height'] = "#{layer.bounds.height}px"
         #shape_css[:'min-width'] = "#{layer.bounds.width}px"
