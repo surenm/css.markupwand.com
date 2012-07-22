@@ -418,10 +418,14 @@ module CssParser
 
   def CssParser::to_style_string(css, spaces = ' ')
     css_string = ""
+    i = 0
     css.each do |key,value|
-      css_string += "#{key}: #{value}; "
+      css_string += "#{spaces}#{key}: #{value};"
+      i = i+1
+      css_string += "\n" if i != css.length
     end
-    return css_string.gsub(";",";\n#{spaces}")
+    
+    css_string
   end
 
   def CssParser::get_image_path(layer)

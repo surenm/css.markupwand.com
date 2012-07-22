@@ -531,29 +531,33 @@ class GridStyleSelector
 
     spaces = ""
     for tab in 0..tabs
-      spaces = spaces + " "
+      spaces = spaces + ""
     end
 
     if self.css_rules.empty? or self.generated_selector.nil?
-      sass = "#{spaces}#{child_scss_trees}"
+      sass = "#{child_scss_trees}"
     else
-      css_rules_string = CssParser::to_style_string(self.css_rules, spaces)
+      css_rules_string = CssParser::to_style_string(self.css_rules)
+      child_css_string = ""
+      if not child_scss_trees.empty?
+         child_css_string = "\n" + child_scss_trees.strip
+      end
+
       sass = <<sass
-#{spaces}.#{self.modified_generated_selector} {
-#{spaces} #{css_rules_string}
-#{spaces} #{child_scss_trees}
-#{spaces}}
+.#{self.modified_generated_selector} {
+#{css_rules_string}#{child_css_string}
+}
 sass
     end
 
     if not self.grid.render_layer.nil?
       layer = (Layer.find self.grid.render_layer)
       if (not layer.css_rules.empty?) and (not layer.generated_selector.nil?)
-        css_rules_string = CssParser::to_style_string(layer.css_rules, spaces)
+        css_rules_string = CssParser::to_style_string(layer.css_rules)
         sass += <<sass
-#{spaces}.#{layer.modified_generated_selector(self.grid)} {
-#{spaces} #{css_rules_string}
-#{spaces}}
+.#{layer.modified_generated_selector(self.grid)} {
+#{css_rules_string}
+}
 sass
       end
     end
