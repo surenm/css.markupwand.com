@@ -416,7 +416,7 @@ module CssParser
     css
   end
 
-  def CssParser::to_style_string(css, spaces = ' ')
+  def CssParser::to_style_string(css, spaces = " ")
     css_string = ""
     i = 0
     css.each do |key,value|
