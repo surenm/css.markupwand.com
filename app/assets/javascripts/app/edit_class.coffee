@@ -21,12 +21,26 @@ clearFocusOverlays =->
 addFocusListeners =->
   $('#css_editor input').focus( ->
     showStyles(this)
+    $(this).select()
     selector_nodes = $(iframe_doc()).find('body').find('.' + $(this).data('original'))
     clearFocusOverlays()
     for node in selector_nodes
       addFocusOverlay(node)
   )
 
+  helper_terms = ['nav','navbar','header','footer',
+  '-inner','-wrap','-outer','profile','banner','carousel',
+  'menubar', '-header', '-footer', '-body', 'container', 
+  'modal', 'tab']
+
+  helper_terms_typeahead = []
+
+  for term in helper_terms
+    helper_terms_typeahead.push({value : term})
+
+
+  $('#css_editor input').typeahead({
+    source: helper_terms_typeahead,
   })
 
   $('#css_editor input').keypress((e)->
