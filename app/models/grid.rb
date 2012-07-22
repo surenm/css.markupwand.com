@@ -176,10 +176,6 @@ class Grid
     end
   end
 
-  def siblings
-    grid.parent.children.sort{|child1, child2| child1.grouping_box <=> child2.grouping_box} unless self.root
-  end
-
   def last_processed_child
     if self.children.empty?
       return nil
