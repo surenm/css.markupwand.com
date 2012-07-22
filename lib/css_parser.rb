@@ -351,7 +351,7 @@ module CssParser
     if not path_points.empty?
       path = Shape::Path.new path_points
 
-      css_shape = Shape::Shape.css_shape path
+      css_shape = Shape.get_css_shape path
       unless css_shape.nil? or layer_json[:path_items][:num_subpaths] > 1
         shape_css = css_shape.parse layer, grid
       end
