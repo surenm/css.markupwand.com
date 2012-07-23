@@ -173,6 +173,7 @@ class GridStyleSelector
   # If the width has already not been set, set the width
   def set_width
     width = self.unpadded_width
+
     if not width.nil? and width != 0
       grouping_box = BoundingBox.depickle self.grid.grouping_box
       has_trailing_offset = false
@@ -180,15 +181,23 @@ class GridStyleSelector
       if self.is_single_line_text and not has_trailing_offset
         return width
       else
-        status = self.css_rules.update :width => width.to_s + 'px'
+        self.css_rules.update :width => width.to_s + 'px'
       end
+    end
+  end
+  
+  def set_height
+    height = self.unpadded_height
+    
+    if not height.nil? and height != 0
+      self.css_rules.update :height => height.to_s + "px"
     end
   end
   
   def set_min_dimensions
     width = self.unpadded_width
     height = self.unpadded_height
-    self.css_rules.update :'min-height' => height, :'min-width' => width
+    self.css_rules.update :'min-height' => "#{height}px", :'min-width' => "#{width}px"
   end
 
   # Selector names are usually generated,
@@ -220,7 +229,7 @@ class GridStyleSelector
     end
     
     # Positioning - absolute is handled separately. Just find out if a grid has to be relatively positioned
-    if self.grid.positioned_children.size > 0 or self.grid.positioned_siblings.size > 0
+    if self.grid.has_positioned_children? or self.grid.has_positioned_siblings?
       self.css_rules.update  :position => 'relative', :'z-index' => self.grid.zindex
     end
     
@@ -237,8 +246,11 @@ class GridStyleSelector
     # Margin and padding
     self.set_white_space
     
-    # Update width
+    # set width for the grid
     self.set_width
+    
+    # set height only if there are positioned children
+    self.set_height if self.grid.has_positioned_children?
     
     # minimum height and width for shapes in style layers
     self.set_min_dimensions if set_shape_dimensions_flag
@@ -530,30 +542,38 @@ class GridStyleSelector
     end
 
     spaces = ""
-    for tab in 0..tabs
+    for tab in 0..(tabs-1)
       spaces = spaces + " "
     end
 
     if self.css_rules.empty? or self.generated_selector.nil?
-      sass = "#{spaces}#{child_scss_trees}"
+      sass = "#{child_scss_trees}"
     else
-      css_rules_string = CssParser::to_style_string(self.css_rules, spaces)
+      css_rules_string = CssParser::to_style_string(self.css_rules, spaces + "  ")
+      child_css_string = ""
+      if not child_scss_trees.empty?
+         child_css_string = "\n#{spaces}" + child_scss_trees.rstrip
+      end
+
+      initial_space = "  "
+      initial_space = "" if self.grid.root == true
+
       sass = <<sass
-#{spaces}.#{self.modified_generated_selector} {
-#{spaces} #{css_rules_string}
-#{spaces} #{child_scss_trees}
+#{initial_space}.#{self.modified_generated_selector} {
+#{css_rules_string}#{child_css_string}
 #{spaces}}
 sass
     end
 
     if not self.grid.render_layer.nil?
       layer = (Layer.find self.grid.render_layer)
+      chunk_text_rules = layer.chunk_text_rules
       if (not layer.css_rules.empty?) and (not layer.generated_selector.nil?)
-        css_rules_string = CssParser::to_style_string(layer.css_rules, spaces)
+        css_rules_string = CssParser::to_style_string(layer.css_rules, spaces + '  ')
         sass += <<sass
-#{spaces}.#{layer.modified_generated_selector(self.grid)} {
-#{spaces} #{css_rules_string}
-#{spaces}}
+ .#{layer.modified_generated_selector(self.grid)} {
+#{css_rules_string}
+#{spaces}}#{chunk_text_rules}
 sass
       end
     end

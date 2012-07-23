@@ -167,7 +167,7 @@ class Grid
   def positioned_children
     self.children.select { |child_grid| child_grid.is_positioned }
   end
-  
+
   def positioned_siblings
     if not self.root
       self.parent.children.select { |sibling_grid| sibling_grid.is_positioned }
@@ -181,6 +181,14 @@ class Grid
       return nil
     end
     self.children.sort {|a,b| a.id.to_s <=> b.id.to_s}.last
+  end
+  
+  def has_positioned_children?
+    return self.positioned_children.size > 0
+  end
+
+  def has_positioned_siblings?
+    return self.positioned_siblings.size > 0
   end
   
   # Bounds for a grid.

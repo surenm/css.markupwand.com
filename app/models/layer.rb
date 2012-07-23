@@ -37,8 +37,13 @@ class Layer
   # CSS Rules
   field :css_rules, :type => Hash, :default => {}
   field :chunk_text_css_rule, :type => Array, :default => []
+  field :chunk_text_css_selector, :type => Array, :default => []
   field :extra_selectors, :type => Array, :default => []
   field :generated_selector, :type => String
+
+  # Decided that it is not multifont not based on photoshop,
+  # but based on the repeating hash values.
+  field :is_multifont, :type => Boolean, :default => false
 
   # The bounds of the layer before any changes are made to it.
   # 
@@ -105,10 +110,11 @@ class Layer
   def has_multifont?
     multifont = false
     if self.kind == Layer::LAYER_TEXT
+      # Sum of all positions is > 0
       multifont = (multifont_positions.inject(:+) > 0)
     end
 
-    multifont
+    multifont || self.is_multifont
   end
 
   def multifont_positions
@@ -264,8 +270,11 @@ class Layer
     if has_multifont?
       positions = multifont_positions
       positions.each_with_index do |position, index|
-        self.chunk_text_css_rule[index] = CssParser::get_text_chunk_style(self, index)
+        self.chunk_text_css_rule[index]     = CssParser::get_text_chunk_style(self, index)
+        self.chunk_text_css_selector[index] = CssParser::create_incremental_selector
       end
+
+      css.update multifont_style_uniq
       self.save!
     end
 
@@ -274,6 +283,37 @@ class Layer
 
     self.css_rules = css
     self.save!
+  end
+
+  def chunk_text_rules
+    chunk_text_rules = ''
+    self.chunk_text_css_rule.each_with_index do |value, index|
+      if not value.empty?
+        rule_list = CssParser::to_style_string(value)
+        current_rule =  <<sass
+.#{self.chunk_text_css_selector[index]} {
+#{rule_list}
+}
+sass
+        chunk_text_rules += current_rule
+      end
+    end
+
+    chunk_text_rules
+  end
+
+  # Finds out if the same style is repeating for multifont,
+  # i.e it is not really a multifont, and makes it unique, adds it to css_rules.
+  def multifont_style_uniq
+    multifont_array = self.chunk_text_css_rule.clone.uniq
+    uniqued_multifont_data = {}
+    
+    if multifont_array.length == 1
+      self.chunk_text_css_rule = []
+      uniqued_multifont_data = multifont_array.first 
+    end
+
+    uniqued_multifont_data
   end
 
   def get_style_rules(grid_style_selector)
@@ -320,14 +360,14 @@ class Layer
     font_name = nil
 
     if self.kind == Layer::LAYER_TEXT and not is_empty_text_layer?
-      font_name = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[0].extract_value(:value, :textStyle, :value, :fontName, :value)
+      font_name = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[position].extract_value(:value, :textStyle, :value, :fontName, :value)
     end
 
     font_name
   end
 
   def get_font_name(position)
-    raw_font_name = self.get_raw_font_name
+    raw_font_name = self.get_raw_font_name(position)
     return nil if raw_font_name.nil?
 
     design = self.grids.first.design
@@ -342,13 +382,6 @@ class Layer
     end
 
     is_empty
-  end
-
-  # FIXME CSSTREE
-  def text_chunk_class(index)
-    css = CssParser::get_text_chunk_style(self, index)
-
-    StylesHash.add_and_get_class CssParser::to_style_string(css)
   end
 
   def text_type
@@ -379,7 +412,7 @@ class Layer
 
         chunks.each_with_index do |chunk, index|
           next if chunk.length == 0
-          attributes = { :style => CssParser::to_style_string(self.chunk_text_css_rule[index]) }
+          attributes = { :class => self.chunk_text_css_selector[index] }
           multifont_text +=  content_tag :span, chunk, attributes
         end
 
@@ -444,7 +477,6 @@ class Layer
   end
 
   def to_html(args = {}, is_leaf, grid)
-
     Log.info "[HTML] Layer #{self.to_s}"
     
     generated_tag = tag_name(is_leaf)
