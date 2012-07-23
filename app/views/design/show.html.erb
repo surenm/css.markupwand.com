@@ -9,6 +9,13 @@
         <div style="font-size: 18px; margin: 20px;"> 
           Uploaded on <%= @design.created_at.to_formatted_s(:short) %> <br>
           Status: Completed
+          
+          <% if @design.pre_processed %>
+          <div class="design-thumbnail">
+            <img src="/processed/<%= @design.safe_name %>/<%= File.basename @design.psd_file_path, '.psd' %>-thumbnail.png"/>
+          </div>
+          <% end %>
+          
         </div>
     
         <div style="text-align: center; font-size: 18px; margin: 20px"> 
@@ -17,11 +24,15 @@
         </div>
       </div>
 
-      <div class="status-box <%= 'hide' if @completed %>">
+      <div class="status-box">
+        <% if not @completed %>
         <h3 id="design-status"> <%=  @design.status %>...</h3>
         <img class="loading" src="/assets/loading-ninja.gif">
         <div>You can close this page, we'll send an email to <%= @user.email %> once your page is ready</div>
+        <% end %>
       </div>
+      
+      
     
     </div>
 
