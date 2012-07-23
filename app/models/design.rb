@@ -275,6 +275,7 @@ class Design
     message[:user]   = self.user.email
     message[:design] = self.safe_name
     
+    Resque.enqueue PreProcessorJob, self.id
     Resque.enqueue ProcessorJob, message
   end
   
