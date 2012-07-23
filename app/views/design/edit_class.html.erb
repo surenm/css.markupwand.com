@@ -45,9 +45,10 @@
 <% if @design.class_edited == false %>
 <div class="modal" data-backdrop="true" id="widget-class-name">
   <%= form_tag "/design/#{@design.safe_name}/save_widget_name" do %>
+  <div class="modal-header">Name this widget</div>
   <div class="modal-body">
-    <p>Name your widget (this will be used as the class name for the widget)</p>
-    <input type="text" name="widget_name" id="widget_name">
+    <input type="text" name="widget_name" id="widget_name" placeholder="signup-block">
+    <p> This will be used as the class name for the widget</p>
   </div>
   <div class="modal-footer">
     <input type="submit" class="btn btn-primary" value="Save" />
