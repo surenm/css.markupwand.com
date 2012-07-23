@@ -1,18 +1,18 @@
 <div class="new-user-message container center">
-<div class="heading">
-  You seem to be new here!
-</div>
-<div class="message center">
-  Why don't you take a minute to read through the guidelines to get good quality code from Markupwand?
-</div>
-<a href="#" id="view-guidelines" class="btn-large btn-primary">View Guidelines!</a>
-  <%=  render 'shared/tutorial' %>
-<script type="text/javascript">
-  $('#view-guidelines').click(function() {
-    $('#tutorial-wrap').modal();
-  });
+  <div class="heading">
+    You seem to be new here!
+  </div>
+  <div class="message center">
+    Why don't you take a minute to read through the guidelines to get good quality code from Markupwand?
+  </div>
+  <a href="#" id="view-guidelines" class="btn-large btn-primary">View Guidelines!</a>
+  <%= render 'shared/tutorial' %>
+  <script type="text/javascript">
+    $('#view-guidelines').click(function () {
+      $('#tutorial-wrap').modal();
+    });
     <% if @first_visit %>
-      $('#view-guidelines').click();
+    $('#view-guidelines').click();
     <% end %>
-</script>
+  </script>
 </div>
