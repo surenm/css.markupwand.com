@@ -11,5 +11,8 @@
   $('#view-guidelines').click(function() {
     $('#tutorial-wrap').modal();
   });
+    <% if @first_visit %>
+      $('#view-guidelines').click();
+    <% end %>
 </script>
 </div>

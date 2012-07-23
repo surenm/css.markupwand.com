@@ -3,13 +3,6 @@
   <%= render 'design/upload' %>
   <% if @designs.empty? %>
     <%= render 'design/widgets/view_tutorial_new_user' %>
-    <% if @first_visit %>
-      <script type="text/javascript">
-        $(function() {
-            $('#tutorial-wrap').modal();
-        });
-      </script>
-    <% end %>
   <% else %>
     <%= render 'design/gallery' %>
   <% end %>
