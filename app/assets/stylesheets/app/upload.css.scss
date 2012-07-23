@@ -20,7 +20,7 @@
         background: white;
         color: #333;
         font-size: 36px;
-        padding: 100px 0px;
+        padding: 83px 0px 25px 0;
         vertical-align: middle;
         text-align: center;
         border: 3px dashed #888;
@@ -55,6 +55,7 @@
       vertical-align: middle;
       font-size: 30px;
       color: white;
+      border-color: #F8AA03;
       @include background-image(linear-gradient(#F2A54D, #F27521));
       @include box-shadow(rgba(gray, 0.8) 0 0 1px, rgba(gray, 0.8) 0 0 1px, rgba(gray, 0.8) 0 1px 0, orange 1px 1px 1px inset);
       border-radius: 4px;
