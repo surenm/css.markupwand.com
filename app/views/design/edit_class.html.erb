@@ -47,7 +47,7 @@
   <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html' onload="parent.iframeLoaded();"></iframe>
 </div>
 <% if @design.class_edited == false %>
-<div class="modal" data-backdrop="true" id="widget-class-name">
+<div class="modal hide" data-backdrop="true" id="widget-class-name">
   <%= form_tag "/design/#{@design.safe_name}/save_widget_name" do %>
   <div class="modal-header">Name this widget</div>
   <div class="modal-body">
