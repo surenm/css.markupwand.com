@@ -147,6 +147,15 @@ h2 {
   border-top: 3px solid #231D1A;
   height: 50px;
   color: #C9B994;
+  
+  a {
+    color: #C9B994;
+    text-decoration: underline;
+    padding: 10px;
+    &:hover {
+      text-decoration: underline;
+    };
+  }
 }
 
 #admin-content {
