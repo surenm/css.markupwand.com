@@ -75,6 +75,8 @@ class DesignController < ApplicationController
       b.created_at <=> a.created_at
     end
 
+    @first_visit = (!params['fv'].nil? and params['fv'].to_i == 1)
+
     #In case the user wants to upload a new design...
     @new_design = Design.new
   end
