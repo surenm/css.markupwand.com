@@ -12,7 +12,7 @@
         </div>
         
         <div style="text-align: center; font-size: 18px; margin: 20px">
-          <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/edit/#/dom"> 
+          <a class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/edit/#/dom"> 
             <i class="icon-pencil"> &nbsp;</i> Edit 
           </a>
         </div>
@@ -21,7 +21,9 @@
           <a class="btn btn-large" href="/design/<%= @design.safe_name %>/preview"> 
             <i class="icon-zoom-in"> &nbsp;</i> Preview 
           </a>
-          <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large"> ↓ Download Markup</a>
+          <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large">
+            <i class="icon-download"> &nbsp;</i> Download Markup
+          </a>
         </div>
         <br>
       </div>
