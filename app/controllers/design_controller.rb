@@ -14,7 +14,7 @@ class DesignController < ApplicationController
   
   public
   def new
-    @design = Design.new
+    @new_design = Design.new
   end
 
   def upload_danger
@@ -73,7 +73,10 @@ class DesignController < ApplicationController
     @status_class = Design::STATUS_CLASS
     @designs = @user.designs.sort do |a, b|
       b.created_at <=> a.created_at
-    end   
+    end
+
+    #In case the user wants to upload a new design...
+    @new_design = Design.new
   end
   
   def show

@@ -1,6 +1,7 @@
 <%= content_for :content do %>
   <%= render 'shared/header' %>
   <div id="designs-list-page" class="container">
+    <%= render 'design/upload' %>
     <h2> Your photoshop designs </h2>
     <ul>
       <% @designs.each do |design| %>

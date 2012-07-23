@@ -1,8 +1,6 @@
-<%= content_for :content do %>
-  <%= render 'shared/header' %>
   <div id="design-upload-page" class="container">
     <div id="file-upload-form">
-      <%= form_for @design, :url => :uploaded_callback, :html => {:multipart => true} do |f| %>
+      <%= form_for @new_design, :url => :uploaded_callback, :html => {:multipart => true} do |f| %>
         <div id="file-select-zone">
           <div id="file-selector">
             <div class="chosen-file hide">
@@ -21,4 +19,3 @@
   </div>
   <%= javascript_include_tag "http://api.filepicker.io/v0/filepicker.js" %>
   <%= javascript_include_tag "app/upload" %>
-<% end %>

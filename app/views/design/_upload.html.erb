@@ -1,0 +1,5 @@
+<% if Constants::store_remote? %>
+  <%=  render 'design/widgets/remote_upload' %>
+<% else %>
+  <%=  render 'design/widgets/local_upload' %>
+<% end %>
