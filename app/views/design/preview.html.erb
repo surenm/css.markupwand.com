@@ -2,10 +2,10 @@
 <div id="editor-header" class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="action row center">
-      <div class="left">
+      <div class="right">
         <div class="name"><small> Design: </small><%= @design.name %> </div>
       </div>
-      <div class="right">
+      <div class="left">
         <a href="/designs" class="btn btn-large"><i class="icon-home"></i></a>
         <a class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/edit">  ← Edit </a>
         <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large btn-success"> 
