@@ -22,6 +22,9 @@ class PreProcessorJob
     Store.save_to_store screenshot_file, File.join(design.store_processed_key, "#{psd_file_root}.png")
     Store.save_to_store thumbnail_file, File.join(design.store_processed_key, "#{psd_file_root}-thumbnail.png")
     
+    design.pre_processed = true
+    design.save!
+    
     Log.info "Sucessfully completed pre processing of #{design.name}."
   end
 end
