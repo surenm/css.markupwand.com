@@ -1,3 +1,8 @@
+@import "compass/css3";
+@import "compass/css3/images";
+@import "compass/css3/opacity";
+@import "compass/css3/box-shadow";
+@import "compass/utilities";
 
 #design-upload-page {
 
@@ -50,11 +55,18 @@
       vertical-align: middle;
       font-size: 30px;
       color: white;
-      background: #ff4500 url("/assets/noise.png") repeat;      
+      @include background-image(linear-gradient(#F2A54D, #F27521));
+      @include box-shadow(rgba(gray, 0.8) 0 0 1px, rgba(gray, 0.8) 0 0 1px, rgba(gray, 0.8) 0 1px 0, orange 1px 1px 1px inset);
       border-radius: 4px;
 
       &:disabled {
         background: #dddddd url("/assets/noise.png") repeat;
+      }
+
+      &:hover {
+        @include background-image(linear-gradient(#F27521, #F2A54D));
+        @include box-shadow(yellow 1px 1px 1px inset);
+        text-decoration: none;
       }
     }
   }
