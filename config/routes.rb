@@ -6,7 +6,8 @@ TransformersWeb::Application.routes.draw do
   match 'grids/update' => 'grids#generate_markup', :via => :post
   
   # Landing page controller views
-  match '/getinvite'       => "landing_page#getinvite"
+  match '/getinvite' => "landing_page#getinvite"
+  match '/about'     => "landing_page#about"
   
   # Switch user
   match 'su' => 'main#su'
