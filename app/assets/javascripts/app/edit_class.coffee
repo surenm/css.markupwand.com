@@ -49,7 +49,6 @@ addListeners =->
   )
 
 
-
 window.iframeLoaded =->
   iframe_dom   = $($("#editor-iframe").contents())
   cssLink      = document.createElement("link")
@@ -60,7 +59,11 @@ window.iframeLoaded =->
   $(iframe_doc()).find('head').append cssLink
   if $('#widget-class-name')
     $('#widget-class-name').modal({backdrop: true})
-    $('#widget_name')[0].focus()
+    $('#widget-name')[0].focus()
+    viewport_width = $('body').innerWidth()
+    hmargin        = (viewport_width)/2;
+    $('#widget-class-name').css('left', hmargin + 'px')
+
 
 $(document).ready ->
   addListeners()
