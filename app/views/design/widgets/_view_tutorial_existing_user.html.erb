@@ -1,0 +1,15 @@
+<div class="existing-user-message container center">
+  <span class="message">
+    Full page PSDs don't work well yet. Upload pieces of a page! &nbsp;&nbsp;
+  </span>
+  <a href="#" id="view-guidelines" class="">More Info &#187;</a>
+  <%= render 'shared/tutorial' %>
+  <script type="text/javascript">
+    $('#view-guidelines').click(function () {
+      $('#tutorial-wrap').modal();
+    });
+    <% if @first_visit %>
+    $('#view-guidelines').click();
+    <% end %>
+  </script>
+</div>

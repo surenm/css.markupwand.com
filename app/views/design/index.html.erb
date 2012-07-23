@@ -4,6 +4,7 @@
   <% if @designs.empty? %>
     <%= render 'design/widgets/view_tutorial_new_user' %>
   <% else %>
+    <%= render 'design/widgets/view_tutorial_existing_user' %>
     <%= render 'design/gallery' %>
   <% end %>
   <%= render 'shared/footer' %>
