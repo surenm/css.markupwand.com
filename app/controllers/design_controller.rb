@@ -105,6 +105,23 @@ class DesignController < ApplicationController
     @design.write_html_job
     redirect_to :action => :show, :id => @design.safe_name
   end
+
+  def save_widget_name
+
+    if not params['widget_name'].empty?
+      widget_name = params['widget_name'].downcase.gsub(" ", "-")
+      @design.class_edited = true
+      root_grid  = @design.get_root_grid
+      class_name = root_grid.style_selector.generated_selector
+      @design.selector_name_map[class_name] = {} if @design.selector_name_map[class_name].nil? 
+      @design.selector_name_map[class_name]['name'] = widget_name
+      @design.class_edited = true
+      @design.save!
+    end
+
+
+    redirect_to :action => :edit_class, :id => @design.safe_name
+  end
   
   def preview
     if @design.status != Design::STATUS_COMPLETED

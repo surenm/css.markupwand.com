@@ -49,6 +49,7 @@ class Design
   field :hashed_selectors, :type => Hash, :default => {} 
   field :is_css_hashed,    :type => Boolean, :default => false
   field :class_edited,     :type => Boolean, :default => false
+  field :pre_processed,    :type => Boolean, :default => false
   
   # Document properties
   field :height, :type => Integer
@@ -275,6 +276,7 @@ class Design
     message[:user]   = self.user.email
     message[:design] = self.safe_name
     
+    Resque.enqueue PreProcessorJob, self.id
     Resque.enqueue ProcessorJob, message
   end
   

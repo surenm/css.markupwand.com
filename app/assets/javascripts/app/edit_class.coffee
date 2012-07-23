@@ -48,30 +48,6 @@ addListeners =->
       false
   )
 
-  $('#prefix_button').click( (e) ->
-    prefix = $('#css_prefix input').val()
-    if prefix[prefix.length-1] != '-'
-      $('#css_prefix input').val(prefix + '-')
-      prefix = prefix + '-'
-
-    class_nodes = $('.editable_class')
-    $('#undo_button').show()
-    for node in class_nodes
-      current_val = $(node).val()
-      $(node).val(prefix+current_val)
-  )
-
-  $('#undo_button').click( (e) ->
-    prefix = $('#css_prefix input').val()
-    class_nodes = $('.editable_class')
-    for node in class_nodes
-      current_val = $(node).val()
-      new_val = current_val.replace(prefix, '')
-      $(node).val(new_val) 
-  )
-
-
-
 
 
 window.iframeLoaded =->
@@ -82,6 +58,9 @@ window.iframeLoaded =->
   cssLink.rel  = "stylesheet"
   cssLink.type = "text/css"
   $(iframe_doc()).find('head').append cssLink
+  if $('#widget-class-name')
+    $('#widget-class-name').modal({backdrop: true})
+    $('#widget_name')[0].focus()
 
 $(document).ready ->
   addListeners()

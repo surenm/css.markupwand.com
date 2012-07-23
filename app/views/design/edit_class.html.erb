@@ -6,10 +6,12 @@
 <div id="editor-header" class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="action row center">
-      <div class="forward right"> 
-        <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/preview/"> Preview → </a> 
-      </div>
-      <div class="back left"> <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/">  ← Back to Design Page </a></div>
+      <div class="back left">
+        <a href="/designs" class="btn btn-large"><i class="icon-home"></i></a>
+        <a class="btn btn-large" href="/design/<%= @design.safe_name %>/">  ← Back to Design Page </a>
+        <a class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/preview/"> Preview → </a>
+      </div> 
+      
       <div class="name"><small> Design: </small><%= @design.name %> </div>
     </div>
   </div>
@@ -35,18 +37,25 @@
       </div>
       <% end %>
     </div>
-    <div id="css_prefix">
-      <h3><i class="icon-edit"></i> Class name prefix</h3>
-      <div class="alert">Type your widget's name to prefix all classes.</div>
-      <input type="text" class="prefix_text" placeholder="Type prefix here">
-      <button class="btn" id="prefix_button">Apply</button>
-      <button class="btn btn-warning hide" id="undo_button">Undo</button>
-    </div>
   </div>
 </div>
 <div class='ide'>
   <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html' onload="parent.iframeLoaded();"></iframe>
 </div>
+<% if @design.class_edited == false %>
+<div class="modal" data-backdrop="true" id="widget-class-name">
+  <%= form_tag "/design/#{@design.safe_name}/save_widget_name" do %>
+  <div class="modal-header">Name this widget</div>
+  <div class="modal-body">
+    <input type="text" name="widget_name" id="widget_name" placeholder="signup-block">
+    <p> This will be used as the class name for the widget</p>
+  </div>
+  <div class="modal-footer">
+    <input type="submit" class="btn btn-primary" value="Save" />
+  </div>
+  <% end %>
+</div>
+<% end %>
 <% end %>
 
 <%= content_for :javascript do %>
