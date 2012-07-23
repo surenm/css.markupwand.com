@@ -3,20 +3,6 @@
   <div class="navbar-inner">
     <div class="container">
       <a class="brand" href="/"> <img src="/assets/logo-small-monocolor.png"></a>
-
-      <div class="nav-collapse collapse">
-        <ul class="nav">
-          <li>
-            <a class="upload" href="/design/new"> +Upload design  </a>
-          </li>
-
-          <% if user_logged_in %>
-          <li>
-            <a href="/designs"> My designs </a>
-          </li>
-          <% end %>
-        </ul>
-      </div>
       <% if user_logged_in %>
       <div class="nav-collapse collapse right">
         <ul class="nav">
