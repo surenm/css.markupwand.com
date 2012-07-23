@@ -7,7 +7,9 @@
       </div>
       <div class="left">
         <a href="/designs" class="btn btn-large"><i class="icon-home"></i></a>
-        <a class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/edit">  ← Edit </a>
+        <a class="btn btn-large" href="/design/<%= @design.safe_name %>/edit">
+          <i class="icon-pencil"> &nbsp;</i> Edit  
+        </a>
         <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large btn-success"> 
           ↓ Download Markup
         </a>
