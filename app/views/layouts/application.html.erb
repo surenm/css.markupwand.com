@@ -11,7 +11,7 @@
   <%= yield :javascript %>
   <link rel="shortcut icon" href="/favicon.ico"/>
 </head>
-<body>
+<body onload="prettyPrint()">
 
 <% if not Rails.env.production? %>
   <%= render 'shared/env' %>

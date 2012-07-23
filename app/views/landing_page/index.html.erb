@@ -1,7 +1,4 @@
 <%= content_for :content do %>
-<%= stylesheet_link_tag "prettify" %>
-
-<%= javascript_include_tag "prettify" %>
 
 <div id="landing-page">
   <div id="beta-ribbon"></div>
@@ -24,7 +21,7 @@
       </div>
       <div class="span3 try-block">
         <a href="/designs?fv=1" class="start-using-button">Try now</a>
-        <em> We use Google auth to notify your uploads. We won't spam you. </em>
+        <em> We use Google auth to notify about your uploads. We won't spam you! </em>
       </div>
     </div>
     <div class="row sample-block">
@@ -40,7 +37,7 @@
       <div class="row code-block">
         <div class="html-code span4">
         <h4> HTML Code </h4>
-        <pre class="prettyprint linenums lang-html">
+        <pre class="prettyprint lang-html">
         <html>
 &lt;div&gt;
   &lt;div class="asdf"&gt;
@@ -50,7 +47,7 @@
         </div>
         <div class="css-code span4">
         <h4> CSS Code </h4>
-        <pre class="prettyprint linenums">
+        <pre class="prettyprint lang-css">
 .jack {
   font-size: 12px;
 }
@@ -79,6 +76,9 @@
 </div>
 
 <%= content_for :javascript do %>
+<%= stylesheet_link_tag "lib/prettify" %>
+<%= javascript_include_tag "lib/prettify" %>
+
 <script>
 $(document).ready(function() {
 validateEmail = function(email) {
