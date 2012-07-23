@@ -43,9 +43,13 @@
       border-radius: 4px;
       position: relative;
       margin-bottom: 10px;
+      background-image: url('/assets/transparent.png');
 
       .preview-thumbnail {
         height: 200px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
       }
 
       .label {
