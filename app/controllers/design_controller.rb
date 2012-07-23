@@ -106,10 +106,12 @@ class DesignController < ApplicationController
   def save_widget_name
 
     if not params['widget_name'].empty?
+      widget_name = params['widget_name'].downcase.gsub(" ", "-")
       @design.class_edited = true
       root_grid  = @design.get_root_grid
       class_name = root_grid.style_selector.generated_selector
-      @design.selector_name_map[class_name]['name'] = params['widget_name']
+      @design.selector_name_map[class_name] = {} if @design.selector_name_map[class_name].nil? 
+      @design.selector_name_map[class_name]['name'] = widget_name
       @design.class_edited = true
       @design.save!
     end
