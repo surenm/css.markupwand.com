@@ -1,7 +1,6 @@
 class LandingPageController < ApplicationController
   def index
-    if get_user
-      # Redirect if logged in
+    if user_signed_in?
       redirect_to '/designs'
     end
   end

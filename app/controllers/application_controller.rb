@@ -27,4 +27,8 @@ class ApplicationController < ActionController::Base
     user = User.where(:email => "bot@goyaka.com").first
     sign_in_and_redirect user, :event => :authentication
   end
+
+  def after_sign_in_path_for(resource)
+    (session[:"user.return_to"].nil?) ? "/" : session[:"user.return_to"].to_s
+  end
 end

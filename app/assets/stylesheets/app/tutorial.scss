@@ -1,3 +1,4 @@
+//Start of Markupwand generated CSS
 @import "compass/css3";
 @import "compass/css3/images";
 @import "compass/css3/opacity";
@@ -6,38 +7,22 @@
 
 .instruction {
   width: 821px;
-  margin-top: 64px;
-  margin-left: 36px;
-  margin-bottom: 50px;
   font-family: Asap;
 
   .instruction-heading {
     width: 820px;
     font-weight: bold;
     font-size: 24px;
-
-    .instruction-number {
-      background-image: url(../instruction-number-circle.png);
-      background-repeat: no-repeat;
-      width: 11px;
-      padding-top: 6px;
-      padding-left: 13px;
-      padding-bottom: 11px;
-      padding-right: 14px;
-      color: #ffffff;
-
-
-    }
+    margin-top: 20px;
 
     .class7 {
       margin-top: 7px;
       margin-left: 16px;
 
-
     }
     .instruction-title {
       margin-top: 7px;
-      margin-left: 16px;
+      margin-left: 54px;
       color: #c475e3;
 
     }
@@ -75,7 +60,6 @@
         .class4 {
           width: 465px;
 
-
         }
         .illustration-row-image {
           width: 465px;
@@ -85,7 +69,6 @@
           width: 62px;
           margin-top: 150px;
           margin-left: 36px;
-
 
         }
         .illustration-right-wrong {
@@ -108,7 +91,6 @@
         .class4 {
           width: 607px;
 
-
         }
         .illustration-row-image {
           width: 607px;
@@ -118,7 +100,6 @@
           width: 62px;
           margin-top: 90px;
           margin-left: 41px;
-
 
         }
         .illustration-right-wrong {
@@ -153,7 +134,6 @@ a.start-using-button {
   font-size: 36px;
   color: #ffffff;
 
-
 }
 
 a.start-using-button:hover {
@@ -181,3 +161,5 @@ a.start-using-button:hover {
   margin-left: 285px;
   text-align: center;
 }
+
+//End of Markupwand generated CSS

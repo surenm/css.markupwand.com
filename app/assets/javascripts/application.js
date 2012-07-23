@@ -22,6 +22,7 @@
 //= require lib/utils
 //= require lib/tree.jquery
 //= require lib/jquery.jeditable
+//= require lib/bootstrap-modal
 
 //= require twitter/bootstrap
 //= require models
@@ -29,3 +30,4 @@
 //= require views
 //= require routers
 //= require app/landing_page
+//= require app/tutorial
