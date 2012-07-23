@@ -35,17 +35,18 @@ TransformersWeb::Application.routes.draw do
   end
   
   # get, put and edit designs
-  match 'design/:id'          => 'design#show'
-  match 'design/:id/edit'     => 'design#edit_class'
-  match 'design/:id/save_class' => 'design#save_class', :via => :post
+  match 'design/:id'                  => 'design#show'
+  match 'design/:id/edit'             => 'design#edit_class'
+  match 'design/:id/edit-advanced'    => 'design#edit'
+  match 'design/:id/save_class'       => 'design#save_class', :via => :post
   match 'design/:id/save_widget_name' => 'design#save_widget_name', :via => :post
-  match 'design/:id/preview'  => 'design#preview'
-  match 'design/:id/gallery'  => 'design#gallery'
-  match 'design/:id/download' => 'design#download'
-  match 'design/:id/update'   => 'design#update'
-  match 'design/:id/fonts'    => 'design#fonts'
-  match 'design/:id/fonts_upload'   => 'design#fonts_upload'
-  match 'design/:id/delete'   => 'design#delete'
+  match 'design/:id/preview'          => 'design#preview'
+  match 'design/:id/gallery'          => 'design#gallery'
+  match 'design/:id/download'         => 'design#download'
+  match 'design/:id/update'           => 'design#update'
+  match 'design/:id/fonts'            => 'design#fonts'
+  match 'design/:id/fonts_upload'     => 'design#fonts_upload'
+  match 'design/:id/delete'           => 'design#delete'
   
   # admin actions to regenerate stuff
   match 'design/:id/reprocess'  => 'design#reprocess'
