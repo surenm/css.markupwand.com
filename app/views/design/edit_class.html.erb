@@ -6,13 +6,15 @@
 <div id="editor-header" class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="action row center">
-      <div class="back left">
+      <div class="right">
+        <div class="name"><small> Design: </small><%= @design.name %> </div>
+      </div>
+
+      <div class="left">
         <a href="/designs" class="btn btn-large"><i class="icon-home"></i></a>
         <a class="btn btn-large" href="/design/<%= @design.safe_name %>/">  ← Back to Design Page </a>
-        <a class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/preview/"> Preview → </a>
+        <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/preview/"> Preview → </a>
       </div> 
-      
-      <div class="name"><small> Design: </small><%= @design.name %> </div>
     </div>
   </div>
   <div class = "clearfix"> </div>
