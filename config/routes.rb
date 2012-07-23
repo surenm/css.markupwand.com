@@ -38,6 +38,7 @@ TransformersWeb::Application.routes.draw do
   match 'design/:id'          => 'design#show'
   match 'design/:id/edit'     => 'design#edit_class'
   match 'design/:id/save_class' => 'design#save_class', :via => :post
+  match 'design/:id/save_widget_name' => 'design#save_widget_name', :via => :post
   match 'design/:id/preview'  => 'design#preview'
   match 'design/:id/gallery'  => 'design#gallery'
   match 'design/:id/download' => 'design#download'
