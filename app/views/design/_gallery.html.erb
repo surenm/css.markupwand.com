@@ -10,7 +10,7 @@
             </div>
           </div>
           <div class="image center">
-            <a href="/design/<%= design.safe_name %>"><img src="" class="preview-thumbnail"/></a>
+            <a href="/design/<%= design.safe_name %>"><img src="/processed/<%= design.safe_name %>/<%= File.basename design.psd_file_path, '.psd' %>-thumbnail.png" class="preview-thumbnail"/></a>
             <div class="<%= @status_class[design.status.to_sym] %>">
               <%= DesignsHelper::status_display_name  design.status %>
             </div>
