@@ -567,12 +567,13 @@ sass
 
     if not self.grid.render_layer.nil?
       layer = (Layer.find self.grid.render_layer)
+      chunk_text_rules = layer.chunk_text_rules
       if (not layer.css_rules.empty?) and (not layer.generated_selector.nil?)
         css_rules_string = CssParser::to_style_string(layer.css_rules, spaces + '  ')
         sass += <<sass
  .#{layer.modified_generated_selector(self.grid)} {
 #{css_rules_string}
-#{spaces}}
+#{spaces}}#{chunk_text_rules}
 sass
       end
     end
