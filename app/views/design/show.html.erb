@@ -38,7 +38,7 @@
         <% if not @completed %>
         <h3 id="design-status"> <%=  @design.status %>...</h3>
         <img class="loading" src="/assets/loading-ninja.gif">
-        <div>You can close this page, we'll send an email to <%= @user.email %> once your page is ready</div>
+        <div>It could take 10-15 minutes. We'll send an email to <%= @user.email %> once your page is ready. Closing this page won't affect anything.</div>
         <% end %>
       </div>
     </div>
