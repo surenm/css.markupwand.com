@@ -8,13 +8,14 @@
    
 .header {
  min-height: 37px;
- width: 100%;
- background-color: #5f2f71;
- padding-top: 12px;
- padding-bottom: 0;
+ width: 940px;
+ background: #5f2f72 url("/assets/noise.png") repeat;
+ padding: 12px 10px 0px 10px;
+ @include border-bottom-left-radius(10px);
+ @include border-bottom-right-radius(10px);
 
  .header-logo-wrap {
-   width: 960px;
+   width: 940px;
    margin: 0 auto;
    text-align: left;  
  }
@@ -167,6 +168,7 @@ a.start-using-button:hover {
     margin-top:10px;
     padding:10px 20px;
     font-family: 'Droid Serif', serif;
+    width: 920px;
 
 
     h1 {
