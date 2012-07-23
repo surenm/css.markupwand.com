@@ -54,12 +54,16 @@
       margin-bottom: 30px;
     }
 
+    .sample-image-block {
+    }
+
     .features-block {
       padding-bottom: 20px;
       .features {
         margin-top: 10px;
         border-right: 1px solid #999;
         padding-right: 10px;
+
         ul {
           list-style: none;
 
@@ -101,11 +105,12 @@
     }
   }
 
-  .email-response {
-    font-size: 17px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  .sample-block {
+    margin: 0 159px;
+    pre {
+      text-align: left;
+    }
   }
-
 
 
   .viral {

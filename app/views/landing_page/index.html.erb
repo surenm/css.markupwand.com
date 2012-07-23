@@ -1,15 +1,17 @@
 <%= content_for :content do %>
+<%= stylesheet_link_tag "prettify" %>
+
+<%= javascript_include_tag "prettify" %>
 
 <div id="landing-page">
   <div id="beta-ribbon"></div>
 
   <div class="container homepage-box">
-    <%= image_tag "logo.png" %>
+    <h1><%= image_tag "logo.png",:alt => 'Markupwand', :title => 'Markupwand'  %></h1>
 
     <div class="statement">
-      Magically convert your photoshop files to HTML <span class="ampersand">&</span> CSS.
+      <h2>Magically convert your photoshop files to HTML <span class="ampersand">&</span> CSS</h2>
     </div>
-
 
     <div class="row features-block">
       <div class="span6 features"> 
@@ -23,6 +25,41 @@
       <div class="span3 try-block">
         <a href="/designs?fv=1" class="start-using-button">Try now</a>
         <em> We use Google auth to notify your uploads. We won't spam you. </em>
+      </div>
+    </div>
+    <div class="row sample-block">
+      <h3>Sample HTML & CSS</h3>
+      <div class="row">
+        <div class="span8 sample-image-block">
+        <h4>Input Image</h4>
+        <div style="width:620px; height:260px; background-color: #ccc;"></div>
+        </div>
+      </div>
+
+      <div class="row code-block">
+        <div class="html-code span4">
+        <h4> HTML Code </h4>
+        <pre class="prettyprint linenums lang-html">
+        <html>
+&lt;div&gt;
+  &lt;div class="asdf"&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+        </pre>
+        </div>
+        <div class="css-code span4">
+        <h4> CSS Code </h4>
+        <pre class="prettyprint linenums">
+.jack {
+  font-size: 12px;
+}
+
+.jack-wrapper {
+  font-family: helvetica nueue;
+}
+
+        </pre>
+        </div>
       </div>
     </div>
   </div>
