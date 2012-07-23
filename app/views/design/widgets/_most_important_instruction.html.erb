@@ -1,0 +1,21 @@
+<div class="important-instruction">
+  <div>
+    <img src="/assets/highlight-arrow.png" id="highlight-arrow"/>
+  </div>
+  <div>
+    <span>
+      Upload pieces of a page to get good quality code!
+    </span>
+    <span>
+      <a href="#" id="view-guidelines">Know more &#187;</a>
+    </span>
+  </div>
+  <script type="text/javascript">
+    $('#view-guidelines').click(function () {
+      $('#tutorial-wrap').modal();
+    });
+    <% if @first_visit %>
+    $('#view-guidelines').click();
+    <% end %>
+  </script>
+</div>
