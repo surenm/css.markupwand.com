@@ -22,6 +22,16 @@
 }
 
 #landing-page {
+  
+  #beta-ribbon {
+    background: url("/assets/beta-ribbon.png");
+    position: fixed;
+    height: 149px;
+    width: 149px;
+    top: 0;
+    right: 0;
+    
+  }
 
   .homepage-box {
     text-align: center;
@@ -32,7 +42,8 @@
     @include box-shadow(rgba(black, 0.05) 0 0 8px, rgba(black, 0.1) 0 0 1px, rgba(black, 0.1) 0 1px 0, white 0 1px 0 inset);
 
     img {
-      margin: 30px 0;
+      margin: 30px 0 10px 0;
+      width: 400px;
     }
 
     .statement {
@@ -40,24 +51,51 @@
       font-family: 'Average', serif;
       font-weight: bold;
       color: #3F474C;
+      margin-bottom: 30px;
     }
 
-    .features {
-      margin-top: 10px;
-      ul {
-        list-style: none;
+    .features-block {
+      padding-bottom: 20px;
+      .features {
+        margin-top: 10px;
+        border-right: 1px solid #999;
+        padding-right: 10px;
+        ul {
+          list-style: none;
 
-        li {
-          display: inline-block;
-          margin-left: 5px;
-          margin-right: 5px;
-          font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-          color: #939799;
-          font-size: 12px;
+          li {
+            display: block;
+            text-align: right;
+            margin-left: 5px;
+            margin-right: 5px;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            line-height: 24px;
+          }
+
+          li.first {
+            font-weight: bold;
+          }
+
+          li:last {
+            clear:both;
+          }
         }
+      }
 
-        li:last {
-          clear:both;
+      .try-block {
+        margin-top: 40px;
+
+        em {
+          display:block;
+          text-align: center;
+          margin-top: 20px;
+          text-decoration: none;
+          font-style: normal;
+          font-size: 10px;
+          color:#555;
+          line-height:12px;
+          margin-left: 30px;
         }
       }
     }
@@ -107,9 +145,7 @@
       min-height: 25px;
     }
   }
-
 }
-
 
 .prefilled-field {
   color: #aaa;
