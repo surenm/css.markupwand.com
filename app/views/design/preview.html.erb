@@ -38,7 +38,7 @@
 <% end %>
 
 <%= content_for :admin_content do %>
-  <div id="design-preview-dialog">
-    <img src="/processed/<%=@design.safe_name%>/<%=@design.safe_name_prefix.gsub(/_psd$/,'')%>.psd.png"/>
-  </div>
+<div id="design-preview-dialog">
+  <img src="/processed/<%= @design.safe_name %>/<%= File.basename @design.psd_file_path, '.psd' %>.png"/>
+</div>
 <% end %>
