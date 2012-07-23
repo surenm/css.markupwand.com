@@ -1,7 +1,11 @@
 <%= content_for :content do %>
   <%= render 'shared/header' %>
   <%= render 'design/upload' %>
-  <%= render 'design/gallery' %>
+  <% if @designs.empty? %>
+    <%= render 'design/widgets/view_tutorial_new_user' %>
+  <% else %>
+    <%= render 'design/gallery' %>
+  <% end %>
   <%= render 'shared/footer' %>
 <% end %>
 
