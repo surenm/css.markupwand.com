@@ -14,15 +14,16 @@
             });
           </script>
         <% end %>
-        <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large btn-success forward"> 
-          ↓ Download Markup
-        </a>
         <a href='<%= "/published/#{@design.safe_name}/index.html" %>' class="btn btn-large btn-primary forward">
           ➚ Popout 
         </a>
       </div>
       <div class="left back">
-        <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/edit">  ← Edit some more! </a>
+        <a href="/designs" class="btn btn-large"><i class="icon-home"></i></a>
+        <a class="btn btn-large" href="/design/<%= @design.safe_name %>/edit">  ← Edit some more! </a>
+        <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large btn-success forward"> 
+          ↓ Download Markup
+        </a>
       </div>
       <div class="name"><small> Design: </small><%= @design.name %> </div>
     </div>
