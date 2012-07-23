@@ -50,6 +50,18 @@
       }
     }
 
+    #file-upload-submit[disabled=disabled] {
+      border-color: #eee;
+      @include box-shadow(none);
+    }
+
+    #file-upload-submit[disabled=disabled]:hover {
+      border-color: #eee;
+      @include box-shadow(none);
+      @include background-image(none);
+    }
+
+
     #file-upload-submit {
       width: 640px;
       text-align: center;
