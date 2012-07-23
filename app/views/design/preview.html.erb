@@ -2,7 +2,18 @@
 <div id="editor-header" class="navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="action row center">
-      <div class="forward right">
+      <div class="left">
+        <div class="name"><small> Design: </small><%= @design.name %> </div>
+      </div>
+      <div class="right">
+        <a href="/designs" class="btn btn-large"><i class="icon-home"></i></a>
+        <a class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/edit">  ← Edit </a>
+        <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large btn-success"> 
+          ↓ Download Markup
+        </a>
+        <a href='<%= "/published/#{@design.safe_name}/index.html" %>' class="btn btn-large" target="_blank">
+          ➚ View as Separate Page
+        </a>
         <% if current_user.admin? %>
           <a href="#" id="design-preview-button" class="btn btn-large btn-secondary forward">
             View Design
@@ -14,18 +25,7 @@
             });
           </script>
         <% end %>
-        <a href='<%= "/published/#{@design.safe_name}/index.html" %>' class="btn btn-large btn-primary forward">
-          ➚ Popout 
-        </a>
       </div>
-      <div class="left back">
-        <a href="/designs" class="btn btn-large"><i class="icon-home"></i></a>
-        <a class="btn btn-large" href="/design/<%= @design.safe_name %>/edit">  ← Edit some more! </a>
-        <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large btn-success forward"> 
-          ↓ Download Markup
-        </a>
-      </div>
-      <div class="name"><small> Design: </small><%= @design.name %> </div>
     </div>
   </div>
   <div class = "clearfix"> </div>
