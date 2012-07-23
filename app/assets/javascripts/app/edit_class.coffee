@@ -58,6 +58,9 @@ window.iframeLoaded =->
   cssLink.rel  = "stylesheet"
   cssLink.type = "text/css"
   $(iframe_doc()).find('head').append cssLink
+  if $('#widget-class-name')
+    $('#widget-class-name').modal({backdrop: true})
+    $('#widget_name')[0].focus()
 
 $(document).ready ->
   addListeners()
