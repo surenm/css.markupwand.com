@@ -19,12 +19,11 @@
             <%= design.status %>
           </span>
           <div class="right">
-            <a class="btn btn-success" href="/design/<%= design.safe_name %>/edit"> Edit </a>
-            <a class="btn btn-primary" href="/design/<%= design.safe_name %>/preview"> Preview </a>
+            <a class="btn btn-primary" href="/design/<%= design.safe_name %>/edit"> Edit </a>
+            <a class="btn btn-warning" href="/design/<%= design.safe_name %>/preview"> Preview </a>
+            <a class="btn btn-success" href="/design/<%= design.safe_name %>/download"> Download </a>
             <% if current_user.admin %>
-            <a class="btn btn-warning" href="/published/<%= design.safe_name %>/index.html"> Popout  </a>
             <a class="btn btn-danger" href="/design/<%= design.safe_name %>/delete"> Delete  </a>
-            
             <% end %>
           </div>
           <div class="clearfix"> </div>
