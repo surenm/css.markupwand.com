@@ -22,6 +22,16 @@
 }
 
 #landing-page {
+  
+  #beta-ribbon {
+    background: url("/assets/beta-ribbon.png");
+    position: fixed;
+    height: 149px;
+    width: 149px;
+    top: 0;
+    right: 0;
+    
+  }
 
   .homepage-box {
     text-align: center;
@@ -107,9 +117,7 @@
       min-height: 25px;
     }
   }
-
 }
-
 
 .prefilled-field {
   color: #aaa;
