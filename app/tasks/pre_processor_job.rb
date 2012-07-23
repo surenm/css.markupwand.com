@@ -14,8 +14,8 @@ class PreProcessorJob
     
     
     screenshot_cmd  = "convert #{photoshop_file} -flatten #{screenshot_file}"
-    fixed_width_cmd = "convert #{screenshot_file} -thumbnail 600x450 -unsharp 0x.8 #{fixed_width_file}"
-    thumbnail_cmd   = "convert #{screenshot_file} -thumbnail 240x180 -unsharp 0x.8 #{thumbnail_file}"
+    fixed_width_cmd = "convert #{screenshot_file} -thumbnail '600x480>' -unsharp 0x.8 #{fixed_width_file}"
+    thumbnail_cmd   = "convert #{screenshot_file} -thumbnail '180x240>' -unsharp 0x.8 #{thumbnail_file}"
     
     Log.info screenshot_cmd
     system screenshot_cmd
