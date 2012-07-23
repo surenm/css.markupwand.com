@@ -21,6 +21,9 @@ body {
   }
 
   #widget-class-name {
+    .modal-header {
+      font-size: 19px;
+    }
     width: 200px;
     input#widget_name {
       width: 150px;
