@@ -360,14 +360,14 @@ sass
     font_name = nil
 
     if self.kind == Layer::LAYER_TEXT and not is_empty_text_layer?
-      font_name = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[0].extract_value(:value, :textStyle, :value, :fontName, :value)
+      font_name = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[position].extract_value(:value, :textStyle, :value, :fontName, :value)
     end
 
     font_name
   end
 
   def get_font_name(position)
-    raw_font_name = self.get_raw_font_name
+    raw_font_name = self.get_raw_font_name(position)
     return nil if raw_font_name.nil?
 
     design = self.grids.first.design
