@@ -24,10 +24,18 @@ body {
     .modal-header {
       font-size: 19px;
     }
-    width: 200px;
-    input#widget_name {
+    width: 195px;
+    input#widget-name {
       width: 150px;
     }
+
+    .btn-primary {
+      width:160px;
+    }
+  }
+
+  .modal-backdrop {
+    opacity: 0.4;
   }
 
   h3 {

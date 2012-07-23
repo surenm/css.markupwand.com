@@ -8,13 +8,14 @@
    
 .header {
  min-height: 37px;
- width: 100%;
- background-color: #5f2f71;
- padding-top: 12px;
- padding-bottom: 0;
+ width: 940px;
+ background: #5f2f72 url("/assets/noise.png") repeat;
+ padding: 12px 10px 0px 10px;
+ @include border-bottom-left-radius(10px);
+ @include border-bottom-right-radius(10px);
 
  .header-logo-wrap {
-   width: 960px;
+   width: 940px;
    margin: 0 auto;
    text-align: left;  
  }
@@ -98,14 +99,11 @@
     font-weight: lighter;
   }
 
-
-
   .email-invite-box {
-    margin: 60px auto 60px auto;
+    margin: 60px auto 20px auto;
     text-align: center;
-
+    
     #invite-email {
-      margin-bottom: 0;
       min-height: 25px;
     }
   }
@@ -160,4 +158,45 @@ a.start-using-button {
 a.start-using-button:hover {
   @include box-shadow(yellow 1px 1px 1px inset);
   text-decoration: none;
+}
+
+#about {
+  article {
+    @include border-radius(4px);
+    background-color:#fff;
+    @include box-shadow(#a7a7a7 2px 2px 10px);
+    margin-top:10px;
+    padding:10px 20px;
+    font-family: 'Droid Serif', serif;
+    width: 920px;
+
+
+    h1 {
+      font-size: 28px;
+      font-weight:normal;
+    }
+
+    p {
+      font-family: 'helvetica neue', helvetica, arial, sans-serif;
+      font-size: 14px; 
+    }
+
+    .aboutus, .pet-projects {
+      margin-bottom:20px;
+      p {
+        padding: 20px;
+      }
+
+      strong {
+        display:block;
+        font-size: 14px;
+        font-weight: bold;
+        padding-right:5px;
+      }
+    }
+
+    .networks {
+      font-size:12px;
+    }
+  }
 }

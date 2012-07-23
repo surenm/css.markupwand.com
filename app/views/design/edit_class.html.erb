@@ -13,7 +13,9 @@
       <div class="left">
         <a href="/designs" class="btn btn-large"><i class="icon-home"></i></a>
         <a class="btn btn-large" href="/design/<%= @design.safe_name %>/">  ← Back to Design Page </a>
-        <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/preview/"> Preview → </a>
+        <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/preview/"> 
+          <i class="icon-zoom-in"> &nbsp;</i> Preview 
+        </a>
       </div> 
     </div>
   </div>
@@ -35,7 +37,7 @@
         <% end %>
       </ul>
       <div class="save-wrapper">
-        <input type="submit" class="saveclasses btn btn-success" name="save_classes"  value="Save classes">
+        <input type="submit" class="saveclasses btn btn-primary" name="save_classes"  value="Save classes">
       </div>
       <% end %>
     </div>
@@ -45,14 +47,12 @@
   <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html' onload="parent.iframeLoaded();"></iframe>
 </div>
 <% if @design.class_edited == false %>
-<div class="modal" data-backdrop="true" id="widget-class-name">
+<div class="modal hide" data-backdrop="true" id="widget-class-name">
   <%= form_tag "/design/#{@design.safe_name}/save_widget_name" do %>
   <div class="modal-header">Name this widget</div>
   <div class="modal-body">
-    <input type="text" name="widget_name" id="widget_name" placeholder="signup-block">
+    <input type="text" name="widget_name" id="widget-name" placeholder="signup-block">
     <p> This will be used as the class name for the widget</p>
-  </div>
-  <div class="modal-footer">
     <input type="submit" class="btn btn-primary" value="Save" />
   </div>
   <% end %>

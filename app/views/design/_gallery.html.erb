@@ -16,7 +16,11 @@
             </div>
           </div>
           <div class="center">
-            <small> Uploaded <%= design.created_at.to_formatted_s(:short) %> </small>
+            <% if (Time.now - design.created_at) < (3600*24) %>
+            <small> Uploaded <%= time_ago_in_words(design.created_at) %> ago </small>
+            <% else %>
+            <small> Uploaded on <%= design.created_at.to_formatted_s(:short) %> </small>
+            <% end %>
           </div>
           <div class="clearfix"></div>
         </div>

@@ -6,6 +6,10 @@
 
 #design-upload-page {
 
+  #chosen-file {
+    margin-top: -40px;
+  }
+
   #file-upload-form {
     width: 640px;
     padding-top: 30px;
@@ -20,7 +24,7 @@
         background: white;
         color: #333;
         font-size: 36px;
-        padding: 100px 0px;
+        padding: 83px 0px 25px 0;
         vertical-align: middle;
         text-align: center;
         border: 3px dashed #888;
@@ -38,7 +42,7 @@
       }
 
       #file-input-enclosure {
-        height: 300px;
+        height: 215px;
         width: 640px;
         position: absolute;
         display: inline-block;
@@ -46,7 +50,19 @@
       }
     }
 
-    input#file-upload-submit {
+    #file-upload-submit[disabled=disabled] {
+      border-color: #eee;
+      @include box-shadow(none);
+    }
+
+    #file-upload-submit[disabled=disabled]:hover {
+      border-color: #eee;
+      @include box-shadow(none);
+      @include background-image(none);
+    }
+
+
+    #file-upload-submit {
       width: 640px;
       text-align: center;
       margin-top: 10px;
@@ -55,6 +71,8 @@
       vertical-align: middle;
       font-size: 30px;
       color: white;
+      border-color: #F8AA03;
+      @include text-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
       @include background-image(linear-gradient(#F2A54D, #F27521));
       @include box-shadow(rgba(gray, 0.8) 0 0 1px, rgba(gray, 0.8) 0 0 1px, rgba(gray, 0.8) 0 1px 0, orange 1px 1px 1px inset);
       border-radius: 4px;

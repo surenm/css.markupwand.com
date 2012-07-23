@@ -4,6 +4,10 @@ class AuthController < Devise::OmniauthCallbacksController
   def after_omniauth_failure_path_for(scope)
     root_path
   end
+  
+  def after_sign_in_path_for(resource)
+    return request.env['omniauth.origin'] || stored_location_for(resource) || root_path
+  end
 
   def admin
     omniauth = request.env["omniauth.auth"]

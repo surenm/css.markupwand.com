@@ -12,10 +12,20 @@
         </div>
         
         <div style="text-align: center; font-size: 18px; margin: 20px">
-          <a class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/edit/#/dom"> Edit </a>
-          <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/preview"> Preview </a>
-          <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large btn-success"> ↓ Download Markup</a>
+          <a class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/edit/#/dom"> 
+            <i class="icon-pencil"> &nbsp;</i> Edit 
+          </a>
         </div>
+        <center> <strong> or </strong> </center>
+        <div>
+          <a class="btn btn-large" href="/design/<%= @design.safe_name %>/preview"> 
+            <i class="icon-zoom-in"> &nbsp;</i> Preview 
+          </a>
+          <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large">
+            <i class="icon-download"> &nbsp;</i> Download Markup
+          </a>
+        </div>
+        <br>
       </div>
         
 
@@ -23,13 +33,14 @@
       <div class="design-thumbnail">
         <img src="/processed/<%= @design.safe_name %>/<%= File.basename @design.psd_file_path, '.psd' %>-fixed.png"/>
       </div>
+      
       <% end %>
     
       <div class="status-box">
         <% if not @completed %>
         <h3 id="design-status"> <%=  @design.status %>...</h3>
         <img class="loading" src="/assets/loading-ninja.gif">
-        <div>You can close this page, we'll send an email to <%= @user.email %> once your page is ready</div>
+        <div>It could take 10-15 minutes. We'll send an email to <%= @user.email %> once your page is ready. Closing this page won't affect anything.</div>
         <% end %>
       </div>
     </div>
