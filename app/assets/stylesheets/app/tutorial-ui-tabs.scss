@@ -65,7 +65,7 @@ li.ui-state-processing a {
   padding: 20px;
   display: block;
   border-width: 0;
-  background: none;
+  background: #ffffff;
   position: relative;
   min-height: 200px;
 }
@@ -75,8 +75,9 @@ li.ui-state-processing a {
 }
 
 a.mover {
-  background: #900;
+  background: #919191;
   padding: 6px 12px;
+  height: 27px;
   position: absolute;
   color: white;
   font-weight: bold;
@@ -84,26 +85,33 @@ a.mover {
 }
 
 .next-tab {
-  top: 0;
+  top: -40px;
   right: 0;
-  -moz-border-radius-topleft: 10px;
-  -webkit-border-bottom-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .prev-tab {
-  top: 0;
+  top: -40px;
   left: 0;
-  -moz-border-radius-topright: 10px;
-  -webkit-border-bottom-right-radius: 10px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 .ui-widget-header {
   background: #5F2F72;
   height: 40px;
   width: 100%;
+  border: none;
 }
 
 .modal {
   top: 50px;
   max-height: 650px;
+}
+
+#tutorial-wrap .heading {
+  font-size: 24px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
