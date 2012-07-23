@@ -144,7 +144,7 @@ h2 {
 }
 
 #admin-content {
-  position: absolute;
+  position: fixed;
   top: 30%;
   left: 0;
   background: #fff;
@@ -166,7 +166,7 @@ h2 {
 }
 
 #stack-environment {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   right: 0;
   background: darkRed;
