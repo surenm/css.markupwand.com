@@ -25,14 +25,14 @@ class Design
   Design::STATUS_FAILED       = :failed
 
   Design::STATUS_CLASS = {
-    Design::STATUS_QUEUED       => 'label label-inverse',
+    Design::STATUS_QUEUED       => 'label label-warning',
     Design::STATUS_UPLOADING    => 'label',
     Design::STATUS_UPLOADED     => 'label',
-    Design::STATUS_PROCESSING   => 'label label-important',
+    Design::STATUS_PROCESSING   => 'label label-warning',
     Design::STATUS_PARSING      => 'label label-warning',
-    Design::STATUS_PARSED       => 'label label-info',
-    Design::STATUS_GENERATING   => 'label label-info',
-    Design::STATUS_REGENERATING => 'label label-info',
+    Design::STATUS_PARSED       => 'label label-warning',
+    Design::STATUS_GENERATING   => 'label label-warning',
+    Design::STATUS_REGENERATING => 'label label-warning',
     Design::STATUS_COMPLETED    => 'label label-success',
     Design::STATUS_FAILED       => 'label label-important'
   }

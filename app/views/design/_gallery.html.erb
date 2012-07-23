@@ -3,28 +3,29 @@
   <ul>
     <% @designs.each do |design| %>
       <li>
-        <div class="design row">
-          <div class="left">
+        <div class="design">
+          <div class="center">
             <div class="name">
-              <a href="/design/<%= design.safe_name %>">  <%= design.name %> </a> <br>
+              <a href="/design/<%= design.safe_name %>" title="<%= design.name %>">  <%= DesignsHelper::short_form(design.name, 20) %> </a> <br>
             </div>
           </div>
-          <div class="left">
-            <small> Uploaded <%= design.created_at.to_formatted_s(:short) %> </small>
+          <div class="image center">
+            <a href="/design/<%= design.safe_name %>"><img src="" class="preview-thumbnail"/></a>
+            <div class="<%= @status_class[design.status.to_sym] %>">
+              <%= DesignsHelper::status_display_name  design.status %>
+            </div>
           </div>
 
-          <span class="left span1 <%= @status_class[design.status.to_sym] %>">
-            <%= design.status %>
-          </span>
-
-          <div class="right">
+          <div class="center">
             <a class="btn btn-success" href="/design/<%= design.safe_name %>/edit"> Edit </a>
             <a class="btn btn-primary" href="/design/<%= design.safe_name %>/preview"> Preview </a>
             <% if current_user.admin %>
               <a class="btn btn-warning" href="/published/<%= design.safe_name %>/index.html"> Popout </a>
               <a class="btn btn-danger" href="/design/<%= design.safe_name %>/delete"> Delete </a>
-
             <% end %>
+          </div>
+          <div class="center">
+            <small> Uploaded <%= design.created_at.to_formatted_s(:short) %> </small>
           </div>
           <div class="clearfix"></div>
         </div>
