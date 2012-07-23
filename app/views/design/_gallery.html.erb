@@ -1,0 +1,34 @@
+<div id="designs-list-page" class="container">
+  <h2> Your photoshop designs </h2>
+  <ul>
+    <% @designs.each do |design| %>
+      <li>
+        <div class="design row">
+          <div class="left">
+            <div class="name">
+              <a href="/design/<%= design.safe_name %>">  <%= design.name %> </a> <br>
+            </div>
+          </div>
+          <div class="left">
+            <small> Uploaded <%= design.created_at.to_formatted_s(:short) %> </small>
+          </div>
+
+          <span class="left span1 <%= @status_class[design.status.to_sym] %>">
+            <%= design.status %>
+          </span>
+
+          <div class="right">
+            <a class="btn btn-success" href="/design/<%= design.safe_name %>/edit"> Edit </a>
+            <a class="btn btn-primary" href="/design/<%= design.safe_name %>/preview"> Preview </a>
+            <% if current_user.admin %>
+              <a class="btn btn-warning" href="/published/<%= design.safe_name %>/index.html"> Popout </a>
+              <a class="btn btn-danger" href="/design/<%= design.safe_name %>/delete"> Delete </a>
+
+            <% end %>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+    <% end %>
+    </li>
+  </ul>
+</div>

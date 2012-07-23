@@ -1,48 +1,16 @@
 <%= content_for :content do %>
   <%= render 'shared/header' %>
-  <div id="designs-list-page" class="container">
-    <%= render 'design/upload' %>
-    <h2> Your photoshop designs </h2>
-    <ul>
-      <% @designs.each do |design| %>
-      <li>
-        <div class="design row"> 
-          <div class="left">
-            <div class="name">
-              <a href="/design/<%= design.safe_name %>">  <%= design.name %> </a> <br>
-            </div> 
-          </div>
-          <div class="left">
-            <small> Uploaded <%= design.created_at.to_formatted_s(:short) %> </small>
-          </div>
-          
-          <span class="left span1 <%= @status_class[design.status.to_sym] %>">            
-            <%= design.status %>
-          </span>
-          <div class="right">
-            <a class="btn btn-success" href="/design/<%= design.safe_name %>/edit"> Edit </a>
-            <a class="btn btn-primary" href="/design/<%= design.safe_name %>/preview"> Preview </a>
-            <% if current_user.admin %>
-            <a class="btn btn-warning" href="/published/<%= design.safe_name %>/index.html"> Popout  </a>
-            <a class="btn btn-danger" href="/design/<%= design.safe_name %>/delete"> Delete  </a>
-            
-            <% end %>
-          </div>
-          <div class="clearfix"> </div>
-        </div>
-        <% end %>
-      </li>
-    </ul>
-  </div>
-  
+  <%= render 'design/upload' %>
+  <%= render 'design/gallery' %>
+
   <%= render 'shared/footer' %>
 <% end %>
 
 <%= content_for :admin_content do %>
-<div id="admin-content">
-  <small> These buttons will rerun stuff for all your designs </small>
-  <a class="btn btn-large btn-danger" href="/user/reprocess"> Reprocess PSD</a>
-  <a class="btn btn-large btn-danger" href="/user/reparse"> Reparse Grids</a>
-  <a class="btn btn-large btn-danger" href="/user/regenerate"> Regenerate HTML </a>
-</div>
+  <div id="admin-content">
+    <small> These buttons will rerun stuff for all your designs</small>
+    <a class="btn btn-large btn-danger" href="/user/reprocess"> Reprocess PSD</a>
+    <a class="btn btn-large btn-danger" href="/user/reparse"> Reparse Grids</a>
+    <a class="btn btn-large btn-danger" href="/user/regenerate"> Regenerate HTML </a>
+  </div>
 <% end %>
