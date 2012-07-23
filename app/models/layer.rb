@@ -412,8 +412,9 @@ sass
 
         chunks.each_with_index do |chunk, index|
           next if chunk.length == 0
+          newlined_chunk = ActiveSupport::SafeBuffer.new(chunk.gsub("\n", "<br>").gsub("\r\r", "<br>").gsub("\r", "<br>"))
           attributes = { :class => self.chunk_text_css_selector[index] }
-          multifont_text +=  content_tag :span, chunk, attributes
+          multifont_text +=  content_tag :span, newlined_chunk, attributes
         end
 
         multifont_text
