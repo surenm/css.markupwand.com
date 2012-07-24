@@ -145,6 +145,7 @@ module Store
     bucket = Store::get_remote_store
     
     tmp_folder  = Rails.root.join 'tmp', 'store'
+    actual_folder = Rails.root.join 'tmp', 'store', remote_folder
     Log.debug "Fetching #{remote_folder} from Remote store #{bucket.name} to #{tmp_folder}..."
 
     files = bucket.objects.with_prefix remote_folder
@@ -156,7 +157,7 @@ module Store
       Log.debug "Fetching #{file.key} from Remote store to #{destination_path}"
       Store::write_contents_to_local_file destination_path, contents
     end
-    return tmp_folder
+    return actual_folder
   end
   
   def Store::fetch_from_local_store(remote_folder)
