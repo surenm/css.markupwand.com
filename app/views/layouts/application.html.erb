@@ -12,6 +12,7 @@
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
   <%= yield :javascript %>
+  <%= render 'shared/google_analytics' %>
   <link rel="shortcut icon" href="/favicon.ico"/>
 </head>
 <body onload="prettyPrint()">
@@ -27,6 +28,5 @@
 <%= yield :content %>
 
 <%= render 'shared/luckyorange' %>
-<%= render 'shared/google_analytics' %>
 </body>
 </html>
