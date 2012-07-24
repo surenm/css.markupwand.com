@@ -7,6 +7,7 @@
   <script type="text/javascript">
     $('#view-guidelines').click(function () {
       $('#tutorial-wrap').modal();
+      _gaq.push(["_trackEvent","view_tutorial", "familiar_user_widget"]);
     });
     <% if @first_visit %>
     $('#view-guidelines').click();
