@@ -1,6 +1,7 @@
 <%= content_for :content do %>
 
 <div id="landing-page">
+
   <div id="beta-ribbon"></div>
 
   <div class="container homepage-box">
@@ -327,12 +328,19 @@
   
 
   <div class="viral container">
-    <div class="viral-inner">
+    <div class="viral-inner">   
       <%= render 'shared/snippets/gplusone' %>
       <%= render 'shared/snippets/tweet' %>
       <%= render 'shared/snippets/fbshare' %>
+      <a href="/about" class="aboutus-link">About</a>
     </div>
   </div>
+
+
+<div class="nav-links row">
+  <div class="pull-right">
+   /div>
+</div>
 </div>
 
 <%= content_for :javascript do %>
