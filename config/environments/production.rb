@@ -67,5 +67,5 @@ TransformersWeb::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
-  config.middleware.use "Rack::GoogleAnalytics", :web_property_id => "UA-33091393-1"
+  #config.middleware.use "Rack::GoogleAnalytics", :web_property_id => "UA-33091393-1"
 end

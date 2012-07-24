@@ -32,5 +32,5 @@ TransformersWeb::Application.configure do
 
   config.cache_store = :redis_store
 
-  config.middleware.use "Rack::GoogleAnalytics", :web_property_id => "UA-33091393-2"
+  #config.middleware.use "Rack::GoogleAnalytics", :web_property_id => "UA-33091393-2"
 end
