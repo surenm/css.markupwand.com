@@ -28,32 +28,292 @@
       <h3>Sample HTML & CSS</h3>
       <div class="row">
         <div class="span8 sample-image-block">
-        <h4>Input Image <a href="" class="download-image">(download)</a></h4>
+        <h4>Input PSD <a href="http://markupwand-web.s3.amazonaws.com/firsttweet/assets/img/first-tweet.psd" class="download-image">(download)</a></h4>
           <div class="sample-image-embed">
+          <img src="http://markupwand-web.s3.amazonaws.com/firsttweet/assets/img/first-tweet.png">
           </div>
         </div>
       </div>
 
       <div class="row code-block">
-        <div class="html-code span4">
+        <div class="html-code span8">
         <h4> HTML Code </h4>
-        <pre class="prettyprint lang-html">
-        <html>
-&lt;div&gt;
-  &lt;div class="asdf"&gt;
-  &lt;/div&gt;
+        <pre class="prettyprint lang-html">&lt;div class="tweet-super-container"&gt;
+    &lt;div class="tweet-container"&gt;
+        &lt;div class="row profile"&gt;
+            &lt;img class="pull-left profile-pic" src="./assets/img/jack.png"&gt;
+            &lt;div class="pull-left user-details"&gt;
+                &lt;div class="realname"&gt;
+                    Jack Dorsey
+                &lt;/div&gt;
+
+                &lt;div class="handle"&gt;
+                    @jack
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class="pull-left btn-following"&gt;
+                &lt;div class="btn-text"&gt;
+                    Following
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class="pull-left btn-pulldown"&gt;
+                &lt;img class="pulldown-icon" src="./assets/img/profile_icon.png"&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class="row status-message"&gt;
+            &lt;div class="pull-left"&gt;
+                just setting up my twttr
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class="row social-actions"&gt;
+            &lt;img class="pull-left reply-icon" src="./assets/img/Layer_3.png"&gt;
+
+            &lt;div class="pull-left reply-action"&gt;
+                Reply
+            &lt;/div&gt;&lt;img class="pull-left retweet-icon" src="./assets/img/Layer_5.png"&gt;
+
+            &lt;div class="pull-left retweet-action"&gt;
+                Retweet
+            &lt;/div&gt;&lt;img class="pull-left fav-icon" src="./assets/img/Layer_4.png"&gt;
+
+            &lt;div class="pull-left fav-action"&gt;
+                Favorite
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class="row meta-info"&gt;
+            &lt;div class="pull-left timestamp"&gt;
+                2:20 AM
+            &lt;/div&gt;
+
+            &lt;div class="pull-left separator"&gt;
+                -
+            &lt;/div&gt;
+
+            &lt;div class="pull-left datestamp"&gt;
+                22 Mar 06
+            &lt;/div&gt;
+
+            &lt;div class="pull-left mediastamp"&gt;
+                via web
+            &lt;/div&gt;
+
+            &lt;div class="pull-left"&gt;
+                Embed this Tweet
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class="reply"&gt;
+        &lt;div&gt;
+            Reply to @jack
+        &lt;/div&gt;
+    &lt;/div&gt;
 &lt;/div&gt;
         </pre>
         </div>
-        <div class="css-code span4">
-        <h4> CSS Code </h4>
+        <div class="css-code span8">
+        <h4> SASS/CSS Code </h4>
         <pre class="prettyprint lang-css">
-.jack {
-  font-size: 12px;
-}
+@import "compass/css3";
 
-.jack-wrapper {
-  font-family: helvetica nueue;
+.first-tweet {
+  width: 540px;
+  font-family: Helvetica Neue;
+
+  .tweet-super-container {
+   width: 540px;
+   background-color: #dddddd;
+   border-radius: 4px;
+   padding-left: 1px;
+   padding-bottom: 9px;
+   min-height: 250px;
+   min-width: 540px;
+
+   .tweet-container {
+    width: 438px;
+    background-color: #ffffff;
+    border: 1px solid #dddddd;
+    border-radius: 7px;
+    padding-top: 17px;
+    padding-left: 50px;
+    padding-bottom: 30px;
+    padding-right: 50px;
+    min-height: 149px;
+    min-width: 438px;
+    
+    .profile {
+     margin-left: 1px;
+     width: 436px;
+    
+    .profile-pic {
+      margin-top: 4px;
+      width: 48px;
+    }
+    
+    .user-details {
+      margin-top: 14px;
+      margin-left: 11px;
+      width: 99px;
+      letter-spacing: -1px;
+ 
+     .realname {
+       width: 99px;
+       font-weight: bold;
+       font-size: 18px;
+       color: #000333;
+     }
+     
+     
+     .handle {
+       width: 99px;
+       font-size: 14px;
+       color: #bbbbbb;
+     }
+    }
+    
+    .btn-following {
+      width: 62px;
+      background-color: #33bbef;
+      background-image: -webkit-linear-gradient(90deg, #0199d1 0%, #33bbef 100%);
+      border: 1px solid #057dcf;
+      border-radius: 4px;
+      margin-top: 1px;
+      padding-top: 8px;
+      margin-left: 147px;
+      padding-left: 13px;
+      padding-bottom: 4px;
+      padding-right: 12px;
+      min-height: 17px;
+      min-width: 62px;
+      font-weight: bold;
+      font-size: 14px;
+      color: #ffffff;
+      letter-spacing: -1px;
+     
+     .btn-text {
+       width: 60px;
+       text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.75) ;
+     }
+    }
+    
+    .btn-pulldown {
+      width: 24px;
+      background-color: #ffffff;
+      background-image: -webkit-linear-gradient(90deg, #dfdfdf 0%, #ffffff 100%);
+      border: 1px solid #cbcbcb;
+      border-radius: 4px;
+      padding-top: 8px;
+      margin-left: 3px;
+      padding-left: 8px;
+      padding-bottom: 10px;
+      padding-right: 8px;
+      min-height: 14px;
+      min-width: 24px;
+     
+     .pulldown-icon {
+       width: 22px;
+     }
+    }
+   }
+   
+   .meta-info {
+     margin-top: 21px;
+     margin-left: 1px;
+     width: 436px;
+     font-size: 12px;
+     color: #999999;
+    
+    .separator {
+      margin-top: 5px;
+      width: 7px;
+    }
+        
+    .datestamp {
+      width: 57px;
+    }
+    
+    .mediastamp {
+      width: 50px;
+    }
+    
+    .timestamp {
+      width: 49px;
+    }
+   }
+   
+   .status-message {
+     margin-top: 14px;
+     width: 436px;
+     font-family: Georgia;
+     font-size: 22px;
+     color: #000000;
+   }
+   
+   .social-actions {
+     margin-top: 12px;
+     margin-left: 1px;
+     width: 436px;
+     font-size: 12px;
+    
+    .reply-action {
+      margin-top: 4px;
+      margin-left: 4px;
+      width: 41px;
+      color: #990000;
+    }
+    
+    .retweet-action {
+      margin-top: 4px;
+      margin-left: 4px;
+      width: 54px;
+      color: #990000;
+    }
+    
+    .fav-action {
+      margin-top: 4px;
+      margin-left: 4px;
+      width: 43px;
+      color: #990000;
+    }
+        
+    .reply-icon {
+      margin-top: 2px;
+      width: 18px;
+    }
+          
+    .retweet-icon {
+      margin-top: 2px;
+      width: 22px;
+    }
+    
+    .fav-icon {
+      width: 16px;
+    }
+   }
+  }
+  
+  .reply {
+    width: 179px;
+    background-color: #ffffff;
+    border: 1px solid #999999;
+    border-radius: 3px;
+    margin-top: 14px;
+    padding-top: 15px;
+    margin-left: 44px;
+    padding-left: 11px;
+    padding-bottom: 11px;
+    padding-right: 348px;
+    min-height: 14px;
+    min-width: 179px;
+    font-size: 12px;
+    color: #999999;
+  }
+ }
 }
 
         </pre>
@@ -61,7 +321,7 @@
       </div>
     </div>
     <div class="row jsbin">
-      <a href="#" class="btn">View in JSBin</a>
+      <a href="http://markupwand-web.s3.amazonaws.com/firsttweet/index.html" class="btn" target="_new">View full page </a>
     </div>
   </div>
   
