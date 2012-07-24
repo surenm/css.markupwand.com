@@ -10,6 +10,9 @@
         <a class="btn btn-large" href="/design/<%= @design.safe_name %>/edit">
           <i class="icon-pencil"> &nbsp;</i> Edit  
         </a>
+        <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large btn-primary"> 
+          ↓ Download Markup
+        </a>
         <a href='<%= "/published/#{@design.safe_name}/index.html" %>' class="btn btn-large" target="_blank">
           ➚ View as Separate Page
         </a>
