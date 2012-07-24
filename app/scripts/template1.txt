@@ -1,0 +1,6 @@
+Hi %recipient_fname%,
+
+This is Suren from Markupwand. Sorry for blah blah etc.
+
+Thanks,
+Suren
