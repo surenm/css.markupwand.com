@@ -295,7 +295,8 @@ class Design
   def parse
     if self.processed_file_path.nil? or self.processed_file_path.empty?
       Log.fatal "Processed file not specified"
-      exit
+      self.set_status Design::STATUS_FAILED
+      return
     end
 
     Profiler.start    
