@@ -1,0 +1,10 @@
+Hi %recipient_fname%,
+
+We are sorry, your page generation failed. It seems like the file you uploaded didn't fit our guidelines. 
+
+The files have to be (1) Split into pieces (2) Use one text layer per logical text piece (3) one layer per image/icon.
+
+Thanks,
+Raj
+
+PS: If your work involves lot of PSD to HTML&CSS conversion, we'd be glad to work closely with you. Please drop an email to hackers@markupwand.com.
