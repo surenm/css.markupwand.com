@@ -53,8 +53,13 @@
 
     .sample-image-embed {
       width:620px;
-      height:260px;
+      height:280px;
       background-image: url('/assets/transparent.png');
+
+      img {
+        width: auto;
+        padding: 10px 0;
+      }
     }
 
     .jsbin {
@@ -132,13 +137,14 @@
   }
 
   .sample-block {
-    margin: 0px 159px;
+    margin: 20px 159px;
     pre {
       text-align: left;
     }
     .code-block {
       pre {
         height: 200px;
+        overflow-y: scroll;
       }
       margin-top: 20px;
     }
