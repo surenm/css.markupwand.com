@@ -13,7 +13,7 @@
             <%= f.hidden_field :name %>
           </div>
         </div>
-        <button id="file-upload-submit" disabled="disabled">Get HTML <span class="ampersand">&</span> CSS »</button>
+        <button id="file-upload-submit" disabled="disabled" onclick="_gaq.push(["_trackEvent","file_upload", "submitted"])">Get HTML <span class="ampersand">&</span> CSS »</button>
       <% end %>
       <%=  render 'design/widgets/most_important_instruction' %>
     </div>
