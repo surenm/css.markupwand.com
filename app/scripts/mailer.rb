@@ -5,12 +5,13 @@ require "pp"
 
 def mailgun_send 
   data = Multimap.new
-  data[:from] = "Suren <suren@markupwand.com>"
+  data[:from] = "Raj <raj@markupwand.com>"
   data[:'reply-to'] = "Hackers <hackers@markupwand.com>"
 # Replace this with required id and DO NOT commit
   data[:to] =  "test@markupwand.mailgun.org"
-  data[:subject] = "Hello from Markupwand"
-  data[:text]  = File.open('template1.txt').read
+  data[:'h:Reply-To'] = "Hackers <hackers@markupwand.com>"
+  data[:subject] = "Status of your upload at Markupwand"
+  data[:text]  = File.open('progress.txt').read
   puts "Sending to test@markupwand.mailgun.org"
   begin
    response = RestClient.post "https://api:key-3k01b6wme8-hzvhyowno9r0gccep7e17"\
