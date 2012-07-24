@@ -1,10 +1,13 @@
 Hi %recipient_fname%,
 
-We are sorry, your page generation failed. It seems like the file you uploaded didn't fit our guidelines. 
+We are sorry, your page generation didn't go well. We are in early beta and we have some trouble understanding your PSD. We are working hard to make Markupwand handle all PSDs.
 
-The files have to be (1) Split into pieces (2) Use one text layer per logical text piece (3) one layer per image/icon.
+Meanwhile, here are some tricks to get it right:
+(1) Split a page into pieces 
+(2) Use one text layer per logical text piece 
+(3) Have one layer per image/icon. 
 
 Thanks,
 Raj
 
-PS: If your work involves lot of PSD to HTML&CSS conversion, we'd be glad to work closely with you. Please drop an email to hackers@markupwand.com.
+PS: If your work involves lot of PSD to HTML&CSS conversion, we'd love to talk to you.

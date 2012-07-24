@@ -11,7 +11,7 @@ def mailgun_send
   data[:to] =  "test@markupwand.mailgun.org"
   data[:'h:Reply-To'] = "Hackers <hackers@markupwand.com>"
   data[:subject] = "Status of your upload at Markupwand"
-  data[:text]  = File.open('progress.txt').read
+  data[:text]  = File.open('failed.txt').read
   puts "Sending to test@markupwand.mailgun.org"
   begin
    response = RestClient.post "https://api:key-3k01b6wme8-hzvhyowno9r0gccep7e17"\
