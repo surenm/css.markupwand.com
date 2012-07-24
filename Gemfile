@@ -62,9 +62,6 @@ group :assets do
   gem 'yui-compressor'
 end
 
-#Analytics
-gem 'rack-google_analytics'
-
 group :development do
   gem 'pry-rails'
   gem 'pry-stack_explorer'
