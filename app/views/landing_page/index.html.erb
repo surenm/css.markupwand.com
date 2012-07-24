@@ -20,9 +20,14 @@
           <li>Uses Compass+SASS for maintainable CSS</li>
         </ul>
       </div>
-      <div class="span3 try-block">
-        <a href="/designs?fv=1" class="start-using-button">Try now</a>
-        <em> We use Google auth to notify about your uploads. We won't spam you! </em>
+      <div class="span3 request-invite-block">
+        <div>We are in a closed beta now.</div>
+        <div style="font-weight: bold">Leave your email to get an invite!</div>
+        <form id="getinvite" action="getinvite" method="POST">
+          <input name="email" class="prefilled-field default-value" id="invite-email" value="email@address.com"/>
+          <input type="submit" class="action-button" value="Request Invite Now!"/>
+          <div id="validation-result" class="error"></div>
+        </form>
       </div>
     </div>
     <div class="row sample-block">
