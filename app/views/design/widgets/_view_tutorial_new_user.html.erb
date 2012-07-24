@@ -5,14 +5,14 @@
   <div class="message center">
     Take a minute to read through the guidelines to get good quality code
   </div>
-  <a href="#" id="view-guidelines" class="btn-large btn-primary">View Guidelines!</a>
+  <a href="#" class="btn-large btn-primary view-guidelines">View Guidelines!</a>
   <%= render 'shared/tutorial' %>
   <script type="text/javascript">
-    $('#view-guidelines').click(function () {
+    $('.view-guidelines').click(function () {
       $('#tutorial-wrap').modal();
     });
     <% if @first_visit %>
-    $('#view-guidelines').click();
+    $('.view-guidelines').click();
     <% end %>
   </script>
 </div>
