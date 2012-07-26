@@ -1,0 +1,22 @@
+.login-area {
+  min-height: 650px;
+  padding-top: 50px;
+
+  .col1 {
+    width: 460px;
+    min-height: 200px;
+    border-right: 2px solid #aaa;
+    float: left;
+  }
+
+  .col2 {
+    width: 460px;
+    float: right;
+  }
+
+  .section-heading {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+}
