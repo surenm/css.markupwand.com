@@ -342,32 +342,7 @@
   </div>
 
 </div>
-
 <%= content_for :javascript do %>
-<script>
-$(document).ready(function() {
-validateEmail = function(email) {
-  var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-  if(emailReg.test(email))
-    return true;
-  else
-    return false;
-  };
-  
-$(".default-value").formDefaults();
-$("#getinvite").submit(function(e) {
-  var valid = validateEmail($("#invite-email").val())
-  if(valid) {
-    return true;
-  }
-  else {
-    e.preventDefault();
-    $("#validation-result").text("Enter a valid E-mail address")
-    return false;
-  }
-  });
-});
-</script>
 <%= render 'shared/luckyorange' %>
 <%= render 'shared/olark' %>
 <% end %>
