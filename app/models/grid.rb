@@ -218,7 +218,7 @@ class Grid
       else
         Log.fatal "Infinite loop detected..."
         grid.design.set_status Design::STATUS_FAILED
-        raise "Infinite loop detected on layers - #{grid.layers}"
+        raise "Infinite loop detected on layers - #{grid.layers.to_a}"
       end
       
       Log.info "Grouping #{grid.layers.to_a}..."
