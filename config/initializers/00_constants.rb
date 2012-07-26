@@ -22,6 +22,14 @@ module Constants
     return true if Rails.env.production? or Rails.env.staging? or ENV['REMOTE'] == "true"
     return false if Rails.env.development?
   end
+
+  def Constants::invite_gated?
+    if ENV['GATE_CLOSED'] == "true"
+      return true
+    else
+      return false
+    end
+  end
   
   def Constants::store_local?
     !Constants::store_remote?

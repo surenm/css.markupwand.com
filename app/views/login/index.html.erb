@@ -2,18 +2,26 @@
   <%= render 'shared/header' %>
   <%= stylesheet_link_tag "app/login", :media => "all" %>
   <div class="container login-area">
-    <div class="col2 center">
-      <div class="section-heading">Need an account?</div>
-      <div>We are currently in private beta.</div>
-      <div style="font-weight: bold">
-        Leave your email to get an invite!
+    <% if @signup_enabled %>
+      <div class="center">
+        <div class="section-heading">Login / Signup</div>
+        <%= render 'login/widgets/google_login' %>
+        <div>We won't spam you. We take your email address to notify you once the conversion is done</div>
       </div>
-      <%=  render 'login/widgets/request_invite' %>
-    </div>
-    <div class="col1 center">
-      <div class="section-heading">Already have an account?</div>
-      <%= render 'login/widgets/google_login' %>
-    </div>
+    <% else %>
+      <div class="col2 center">
+        <div class="section-heading">Need an account?</div>
+        <div>We are currently in private beta.</div>
+        <div style="font-weight: bold">
+          Leave your email to get an invite!
+        </div>
+        <%= render 'login/widgets/request_invite' %>
+      </div>
+      <div class="col1 center">
+        <div class="section-heading">Already have an account?</div>
+        <%= render 'login/widgets/google_login' %>
+      </div>
+    <% end %>
   </div>
   <%= render 'shared/footer' %>
 <% end %>
