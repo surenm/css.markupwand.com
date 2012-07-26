@@ -12,6 +12,12 @@ module Constants
   # Max retry with grouping
   Constants::GROUPING_MAX_RETRIES = 3
   
+  # Disable mails if env variable is set
+  Constants::DISABLE_MAILS = false
+  if ENV['DISABLE_MAILS'] == "true"
+    Constants::DISABLE_MAILS = true
+  end
+  
   # Round to nearest 5
   def Constants::round_to_nearest_five(num)
     (((num + 5 )/5)-1)*5
