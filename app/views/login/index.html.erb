@@ -1,0 +1,19 @@
+<%= content_for :content do %>
+  <%= render 'shared/header' %>
+  <%= stylesheet_link_tag "app/login", :media => "all" %>
+  <div class="container login-area">
+    <div class="col2 center">
+      <div class="section-heading">Need an account?</div>
+      <div>We are currently in private beta.</div>
+      <div style="font-weight: bold">
+        Leave your email to get an invite!
+      </div>
+      <%=  render 'login/widgets/request_invite' %>
+    </div>
+    <div class="col1 center">
+      <div class="section-heading">Already have an account?</div>
+      <%= render 'login/widgets/google_login' %>
+    </div>
+  </div>
+  <%= render 'shared/footer' %>
+<% end %>
