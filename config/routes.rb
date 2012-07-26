@@ -18,8 +18,6 @@ TransformersWeb::Application.routes.draw do
   match 'login' => 'login#index'
   match 'unauthorized' => 'login#unauthorized'
   
-  # main controller views
-  
   # Dangerous controller route.
   if not Rails.env.production?
     match 'alaguisadude' => 'application#backdoor'
@@ -67,11 +65,11 @@ TransformersWeb::Application.routes.draw do
   match ':type/:id/*uri.*ext' => 'design#generated'
 
   # admin actions for setting up testing
-  match 'user/reprocess'  => 'user#reprocess'
-  match 'user/reparse'    => 'user#reparse'
-  match 'user/regenerate' => 'user#regenerate'
+  match 'admin'            => 'admin#index'
+  match 'admin/reprocess'  => 'admin#reprocess'
+  match 'admin/reparse'    => 'admin#reparse'
+  match 'admin/regenerate' => 'admin#regenerate'
 
-    
   # TODO: add admin authentication for Admin URL's 
   mount Resque::Server.new, :at => "/resque"
 
