@@ -16,6 +16,7 @@ TransformersWeb::Application.routes.draw do
   end
 
   match 'login' => 'login#index'
+  match 'unauthorized' => 'login#unauthorized'
   
   # main controller views
   
