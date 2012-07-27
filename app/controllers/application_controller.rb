@@ -6,15 +6,11 @@ class ApplicationController < ActionController::Base
   end
 
   def require_login
-    Log.info "Trying to get user"
     @user = get_user
-    Log.info "Got user"
     if @user.nil?
       # TODO: Not relocating to proper url. Fix that. Not sure if its a bug.
       redirect_to user_omniauth_authorize_path :google_openid, :origin => request.fullpath
     elsif not @user.enabled
-      Log.info "User is #{@user}"
-      Log.info "User enabled = #{@user.enabled}"
       @user = nil
       redirect_to '/unauthorized'
     end
