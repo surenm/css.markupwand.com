@@ -46,7 +46,7 @@ class User
     data = access_token.info
     email_domain = User.get_email_domain data['email']
     
-    if email_domain != "goyaka.com"
+    if email_domain != "markupwand.com"
       raise "Forbidden. You are not an admin."
     end
     
@@ -64,7 +64,7 @@ class User
     data = access_token.info
     email_domain = User.get_email_domain data['email']
     
-    if email_domain == "goyaka.com"
+    if email_domain == "markupwand.com"
       return User.find_or_create_admin_user(access_token)
     end
 
