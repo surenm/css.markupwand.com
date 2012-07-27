@@ -7,6 +7,10 @@ class UploaderJob
     design = Design.find design_id
     design.set_status Design::STATUS_UPLOADING
     Log.info "Uploading design file for #{design.id}..."
+
+    user = design.user
+
+    ApplicationHelper.post_to_grove "#{user.email.to_s} uploaded #{design.safe_name.to_s}"
     
     safe_basename = Store::get_safe_name File.basename(design_data[:name], ".psd")
   

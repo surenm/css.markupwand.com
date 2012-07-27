@@ -21,4 +21,10 @@ module ApplicationHelper
       :subject => subject,
       :text => text
   end
+
+  def ApplicationHelper::post_to_grove(message)
+    grove = Grove.new(ENV['GROVE_CHANNEL_KEY'], :service => 'Markupwand', :icon_url => 'http://www.markupwand.com/favicon.ico')
+    grove.post message
+  end
+
 end

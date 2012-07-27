@@ -1,0 +1,10 @@
+Hi %recipient_fname%,
+
+Sorry for the delay in generating your page. Our servers are flooded and we are scaling up our systems. 
+
+Rest assured, we will get back to you at the earliest possible. Feel free to reach out to us just in case you need anything.
+
+Thanks,
+Raj
+
+PS: If your work involves lot of PSD to HTML&CSS conversion, we'd love to talk to you.
