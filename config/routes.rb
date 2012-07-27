@@ -69,7 +69,9 @@ TransformersWeb::Application.routes.draw do
   match 'admin/reparse'    => 'admin#reparse'
   match 'admin/regenerate' => 'admin#regenerate'
   match 'admin/su' => 'admin#su'
+  match 'admin/download-psd-direct' => 'admin#download_psd_direct'
   match 'admin/download-psd' => 'admin#download_psd'
+
 
 
   # TODO: add admin authentication for Admin URL's 
