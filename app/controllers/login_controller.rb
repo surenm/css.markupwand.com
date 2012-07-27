@@ -1,6 +1,6 @@
 class LoginController < ApplicationController
   def index
-    require_login
+    @user = get_user
     if @user != nil
       redirect_to '/designs'
     end
