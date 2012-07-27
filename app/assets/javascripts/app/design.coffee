@@ -5,7 +5,6 @@ update_process_status = ->
         $('.status-box').addClass('hide')
         $('.completed-box').removeClass('hide')
       else
-        $('#design-status').html(data.status)
         update_process_status()
       )
 
