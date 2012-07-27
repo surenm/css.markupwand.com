@@ -10,7 +10,6 @@ TransformersWeb::Application.routes.draw do
   match '/about'     => "landing_page#about"
   
   # Switch user
-  match 'su' => 'main#su'
   devise_scope :user do
     get "logout", :to => "devise/sessions#destroy"
   end
@@ -69,6 +68,9 @@ TransformersWeb::Application.routes.draw do
   match 'admin/reprocess'  => 'admin#reprocess'
   match 'admin/reparse'    => 'admin#reparse'
   match 'admin/regenerate' => 'admin#regenerate'
+  match 'admin/su' => 'admin#su'
+  match 'admin/download-psd' => 'admin#download_psd'
+
 
   # TODO: add admin authentication for Admin URL's 
   mount Resque::Server.new, :at => "/resque"

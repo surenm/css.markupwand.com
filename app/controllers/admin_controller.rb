@@ -29,4 +29,12 @@ class AdminController < ApplicationController
     end
     redirect_to dashboard_path
   end
+
+  def download_psd
+    if params[:id] and not Rails.env.development?
+      design = Design.find params[:id]
+      store  = Store::get_remote_store
+      @link   = store.objects[design.psd_file_path].url_for(:expires_in => 3600).to_s
+    end
+  end
 end
