@@ -12,6 +12,12 @@ module Constants
   # Max retry with grouping
   Constants::GROUPING_MAX_RETRIES = 3
   
+  # Disable mails if env variable is set
+  Constants::DISABLE_MAILS = false
+  if ENV['DISABLE_MAILS'] == "true"
+    Constants::DISABLE_MAILS = true
+  end
+  
   # Round to nearest 5
   def Constants::round_to_nearest_five(num)
     (((num + 5 )/5)-1)*5
@@ -21,6 +27,14 @@ module Constants
   def Constants::store_remote?
     return true if Rails.env.production? or Rails.env.staging? or ENV['REMOTE'] == "true"
     return false if Rails.env.development?
+  end
+
+  def Constants::invite_gated?
+    if ENV['GATE_CLOSED'] == "true"
+      return true
+    else
+      return false
+    end
   end
   
   def Constants::store_local?

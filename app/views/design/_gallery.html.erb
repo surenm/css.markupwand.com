@@ -12,7 +12,7 @@
           <div class="image center">
             <a href="/design/<%= design.safe_name %>"><div style="background-image: url('/processed/<%= design.safe_name %>/<%= File.basename design.psd_file_path, '.psd' %>-thumbnail.png')" class="preview-thumbnail"></div></a>
             <div class="<%= @status_class[design.status.to_sym] %>">
-              <%= DesignsHelper::status_display_name  design.status %>
+              <%= DesignsHelper::status_display_name  design.status.to_sym %>
             </div>
           </div>
           <div class="center">

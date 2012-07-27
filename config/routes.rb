@@ -14,8 +14,9 @@ TransformersWeb::Application.routes.draw do
   devise_scope :user do
     get "logout", :to => "devise/sessions#destroy"
   end
-  
-  # main controller views
+
+  match 'login' => 'login#index'
+  match 'unauthorized' => 'login#unauthorized'
   
   # Dangerous controller route.
   if not Rails.env.production?
@@ -64,11 +65,11 @@ TransformersWeb::Application.routes.draw do
   match ':type/:id/*uri.*ext' => 'design#generated'
 
   # admin actions for setting up testing
-  match 'user/reprocess'  => 'user#reprocess'
-  match 'user/reparse'    => 'user#reparse'
-  match 'user/regenerate' => 'user#regenerate'
-  
-    
+  match 'admin'            => 'admin#index'
+  match 'admin/reprocess'  => 'admin#reprocess'
+  match 'admin/reparse'    => 'admin#reparse'
+  match 'admin/regenerate' => 'admin#regenerate'
+
   # TODO: add admin authentication for Admin URL's 
   mount Resque::Server.new, :at => "/resque"
 
