@@ -1,7 +1,8 @@
 <%= content_for :content do %>
 <%= render 'shared/header' %>
-<div id="designs-list-page" class="container">
-  <%= form_tag('/su', :class=> 'form-horizontal') do %>
+<%= render 'admin/header' %>
+<div id="designs-list-page" class="container admin-container">
+  <%= form_tag('/admin/su', :class=> 'form-horizontal') do %>
     <fieldset>
       <legend>$ su <span class="cursor">|</span></legend>
       <div class="control-group">
@@ -9,7 +10,7 @@
         <div class="controls">
           <input type="text" class="input-xlarge" name="email">
           <p class="help-block">This will log you out</p>
-          <button class="btn btn-danger" > <i class="icon-user"></i> Do not press </button>
+          <button class="btn btn-danger" > <i class="icon-user"></i> Transmogrify </button>
         </div>
         
       </div>
