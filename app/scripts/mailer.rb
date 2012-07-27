@@ -1,3 +1,4 @@
+'''
 require "rubygems"
 require "multimap"
 require "rest-client"
@@ -23,3 +24,4 @@ def mailgun_send
 end
 
 mailgun_send
+'''
