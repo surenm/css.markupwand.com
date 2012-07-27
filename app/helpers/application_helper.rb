@@ -21,4 +21,10 @@ module ApplicationHelper
       :subject => subject,
       :text => text
   end
+
+  def ApplicationHelper::post_to_grove(message)
+    grove = Grove.new(ENV['GROVE_CHANNEL_KEY'], :service => 'myGroveClient', :icon_url => 'http://example.com/icon.png')
+    grove.post message
+  end
+
 end

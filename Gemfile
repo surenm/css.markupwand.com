@@ -31,6 +31,9 @@ end
 # Deployment related gems
 gem 'unicorn'
 
+# Chat notification
+gem 'grove-rb'
+
 #File upload related gems
 gem 'carrierwave'
 gem 'carrierwave-mongoid'
