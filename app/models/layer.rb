@@ -51,7 +51,7 @@ class Layer
 
   # TOD: Do not store layer_object, but have in memory
 
-  attr_accessor :layer_object, :intersect_count, :overlays
+  attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
 
   def self.create_from_raw_data(layer_json, design)
     layer = Layer.new
@@ -87,8 +87,13 @@ class Layer
     design_bounds = BoundingBox.new 0, 0, self.design.height, self.design.width
     layer_bounds = BoundingBox.new(top, left, bottom, right).inner_crop(design_bounds)
 
-    self.layer_bounds = BoundingBox.pickle layer_bounds
-    self.save!
+    if layer_bounds.nil?
+      self.invalid_layer = true
+    else
+      self.invalid_layer = false
+      self.layer_bounds = BoundingBox.pickle layer_bounds
+      self.save!
+    end
   end
 
   # TODO Change object property and initialize when we are making properties inside.

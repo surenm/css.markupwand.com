@@ -320,8 +320,12 @@ class Design
     layers = []
     psd_data[:art_layers].each do |layer_id, node_json|
       layer = Layer.create_from_raw_data node_json, self
-      layers.push layer
-      Log.info "Added Layer #{layer} (#{layer.zindex})"
+      if not layer.invalid_layer
+        layers.push layer
+        Log.info "Added Layer #{layer} (#{layer.zindex})"
+      else
+        Log.info "#{layer} is out of design bounds (#{layer.zindex})"
+      end
     end
     
     Log.info "Creating root grid..."
