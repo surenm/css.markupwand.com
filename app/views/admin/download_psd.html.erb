@@ -1,0 +1,24 @@
+<%= content_for :content do %>
+<%= render 'shared/header' %>
+<%= render 'admin/header' %>
+  <%= form_tag "/admin/download_psd" do %>
+  <div id="designs-list-page" class="container admin-container">
+  <%= form_tag('/admin/download_psds', :class=> 'form-horizontal') do %>
+    <fieldset>
+      <legend>Download PSD</legend>
+      <div class="control-group">
+        <label class="control-label" for="input01">Design ID</label>
+        <div class="controls">
+          <input type="text" class="input-xlarge" name="id">
+          <button class="btn btn-primary" > <i class="icon-download"></i> Get Download Link </button>
+        </div>
+        
+        <% if not @link.nil? %>
+          <a href="<%= @link %>"><button class="btn btn-success" > <i class="icon-download"></i> S3 Download link</button></a>
+        <% end %>
+       </div>
+    </fieldset>
+  <% end %>
+  </div>
+  <% end %>
+<% end %>
