@@ -50,6 +50,7 @@ TransformersWeb::Application.routes.draw do
   match 'design/:id/fonts'            => 'design#fonts'
   match 'design/:id/fonts_upload'     => 'design#fonts_upload'
   match 'design/:id/delete'           => 'design#delete'
+  match 'design/:id/download-psd'     => 'design#download_psd'
   
   # admin actions to regenerate stuff
   match 'design/:id/reprocess'  => 'design#reprocess'
@@ -71,9 +72,6 @@ TransformersWeb::Application.routes.draw do
   match 'admin/reparse'    => 'admin#reparse'
   match 'admin/regenerate' => 'admin#regenerate'
   match 'admin/su'         => 'admin#su'
-  match 'admin/download-psd' => 'admin#download_psd'
-
-
 
   # TODO: add admin authentication for Admin URL's 
   mount Resque::Server.new, :at => "/resque"

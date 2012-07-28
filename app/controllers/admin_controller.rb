@@ -65,15 +65,4 @@ class AdminController < ApplicationController
     end
     redirect_to dashboard_path
   end
-
-  # Returns the entire 
-  def download_psd
-    if params[:id] and not Rails.env.development?
-      design = Design.find params[:id]
-      file = Store::fetch_object_from_store(design.psd_file_path)
-      send_file file, :disposition => 'inline'
-    else
-      render :status => :forbidden, :text => "Forbidden"
-    end
-  end
 end
