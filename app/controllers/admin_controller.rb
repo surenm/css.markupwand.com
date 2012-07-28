@@ -2,11 +2,26 @@ class AdminController < ApplicationController
   before_filter :require_admin_login
   
   def index
-    @start_date = params.fetch "start_date",  Time.now - 100.days
-    @end_date = params.fetch "end_date", Time.now
-    @page = params.fetch "page", 0
+    Log.info params
+    start_date = params.fetch "start_date",  Time.now - 20.days
+    end_date = params.fetch "end_date", Time.now
+    page = params.fetch "page", 0
 
-    @designs = Design.all.where(:created_at.gt => @start_date, :created_at.lt => @end_date).page(@page)
+    status = params.fetch "status", nil
+    user_email = params.fetch "user", nil
+
+    all_designs = Design.all
+    if not user_email.nil?
+      user = User.find_by_email user_email
+      if not user.nil? 
+        all_designs = user.designs
+      end
+    end
+
+    @query_args = {:created_at.gt => start_date, :created_at.lt => end_date}
+    @query_args[:status] = status.to_sym if not status.nil?
+    
+    @designs = all_designs.where(@query_args).page(page)
   end
   
   def reprocess
