@@ -265,7 +265,7 @@ class Grid
   
   # Helper method: Extract style layers out of a grid.
   # Usually any layer that matches the grouping box's bounds is a style layer
-  def self.extract_style_layers(grid, available_layers, parent_box = nil)
+  def extract_style_layers(available_layers, parent_box = nil)
     return available_layers if (parent_box.nil? or available_layers.size == 1)
     
     # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
@@ -290,8 +290,8 @@ class Grid
     if grid_style_layers.size > 0
       Log.info "Extracting out the style layers #{grid_style_layers}..." 
       grid_style_layers.flatten!
-      grid_style_layers.each { |style_layer| grid.style_layers.push style_layer.id.to_s }
-      grid.style_layers.uniq!
+      grid_style_layers.each { |style_layer| self.style_layers.push style_layer.id.to_s }
+      self..style_layers.uniq!
 
       Log.debug "Deleting #{grid_style_layers} from grid..."
       grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
@@ -315,7 +315,7 @@ class Grid
     
     # extract out style layers and parse with remaining        
     Log.debug "Extracting style layers from root grid #{self}..."
-    available_nodes = Grid.extract_style_layers self, available_nodes, parent_box
+    available_nodes = self.extract_style_layers available_nodes, parent_box
     
     # Some root grouping of nodes to recursive add as children
     root_grouping_box = BoundingBox.get_grouping_boxes available_nodes.values
@@ -361,7 +361,7 @@ class Grid
       row_grid.set nodes_in_row_region, self
       
       Log.debug "Extracting style layers out of the row grid #{row_grid}"
-      available_nodes = Grid.extract_style_layers row_grid, available_nodes, row_grouping_box
+      available_nodes = row_grid.extract_style_layers available_nodes, row_grouping_box
     
       row_grouping_box.children.each do |grouping_box|
         available_nodes = process_grouping_box row_grid, grouping_box, available_nodes
@@ -414,7 +414,7 @@ class Grid
       
       # Reduce the set of nodes, remove style layers.
       Log.debug "Extract style layers for this grid #{grid}..."
-      grouping_box_layers = Grid.extract_style_layers grid, grouping_box_layers, grouping_box
+      grouping_box_layers = grid.extract_style_layers grouping_box_layers, grouping_box
 
       # If where are still intersecting layers, make them positioned layers and remove them
       bounding_boxes = grouping_box_layers.values.collect { |node| node.bounds }
