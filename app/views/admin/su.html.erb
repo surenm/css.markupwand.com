@@ -1,16 +1,13 @@
 <%= content_for :content do %>
 <%= render 'shared/header' %>
-<%= render 'admin/header' %>
 <div id="designs-list-page" class="container admin-container">
   <%= form_tag('/admin/su', :class=> 'form-horizontal') do %>
     <fieldset>
       <legend>$ su <span class="cursor">|</span></legend>
       <div class="control-group">
-        <label class="control-label" for="input01">Email address</label>
         <div class="controls">
           <input type="text" class="input-xlarge" name="email">
-          <p class="help-block">This will log you out</p>
-          <button class="btn btn-danger" > <i class="icon-user"></i> Transmogrify </button>
+          <button class="btn btn-danger" > <i class="icon-user"></i> Change user</button>
         </div>
         
       </div>

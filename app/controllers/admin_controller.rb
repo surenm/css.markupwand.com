@@ -51,7 +51,7 @@ class AdminController < ApplicationController
   end
 
   # Returns the entire 
-  def download_psd_direct
+  def download_psd
     if params[:id] and not Rails.env.development?
       design = Design.find params[:id]
       file = Store::fetch_object_from_store(design.psd_file_path)
@@ -59,9 +59,5 @@ class AdminController < ApplicationController
     else
       render :status => :forbidden, :text => "Forbidden"
     end
-  end
-
-  # controller for downloading UI
-  def download_psd
   end
 end
