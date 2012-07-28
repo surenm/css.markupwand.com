@@ -2,15 +2,13 @@
 <%= render 'shared/header' %>
 <%= render 'admin/header' %>
 <div class="admin designs-list-page container">
+  <% @results_data.each do |key, value| %>
+  <%= key %>: <b> <%= value %> </b> <br>
+  <% end %>
+  <%= paginate @designs %>
   <ul>
-    <% if @design_by_id %>
-      lala
-      <%=  render :partial => "design_item", :locals => {:design => @design_by_id} %>
-    <% else %>    
-      <%= paginate @designs %>
-      <% @designs.each do |design| %>
-        <%=  render :partial => "design_item", :locals => {:design => design} %>
-      <% end %>
+    <% @designs.each do |design| %>
+      <%=  render :partial => "design_item", :locals => {:design => design} %>
     <% end %>
   </ul>
 </div>

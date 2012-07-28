@@ -9,24 +9,35 @@ class AdminController < ApplicationController
 
     status = params.fetch "status", nil 
     user_email = params.fetch "user", nil
-    design_id  = params.fetch "design_id", nil
+    design = params.fetch "design", ""
+    design_id = design.split("-").last
 
-    all_designs = Design.all
-    if not user_email.nil?
-      user = User.find_by_email user_email
-      if not user.nil? 
-        all_designs = user.designs
-      end
-    end
+    @query_args = {:created_at.gt => start_date, :created_at.lt => end_date}
+    @query_args[:status] = status.to_sym if not status.nil? and not status == "all"
+
+    all_designs = []
 
     @query_args = {:created_at.gt => start_date, :created_at.lt => end_date}
     @query_args[:status] = status.to_sym if not status.nil? and not status == "all"
     
-    if not design_id.nil?
-      @design_by_id = (all_designs.where(@query_args).find(design_id))
+    if not design_id.nil? and design_id != ""
+      @designs = Design.where(:_id => design_id).page(page)
+      all_designs = @designs
     else
+      all_designs = Design.all
+      if not user_email.nil?
+        all_designs = Design.all
+        user = User.find_by_email user_email
+        all_designs = user.designs if not user.nil?
+      end
       @designs = all_designs.where(@query_args).page(page)
     end
+
+    @results_data = {}
+    @results_data[:total_count] = all_designs.count
+    @results_data[:status] = status if not status.nil?
+    @results_data[:user] = user_email if not user_email.nil?
+    @results_data[:design] = design if not design.empty?
   end
   
   def reprocess
@@ -53,16 +64,5 @@ class AdminController < ApplicationController
       design.regenerate
     end
     redirect_to dashboard_path
-  end
-
-  # Returns the entire 
-  def download_psd
-    if params[:id] and not Rails.env.development?
-      design = Design.find params[:id]
-      file = Store::fetch_object_from_store(design.psd_file_path)
-      send_file file, :disposition => 'inline'
-    else
-      render :status => :forbidden, :text => "Forbidden"
-    end
   end
 end
