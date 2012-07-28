@@ -1,4 +1,5 @@
 require 'resque/server'
+Resque::Server.use(AdminRack)
 
 ENV["REDISTOGO_URL"] ||= "redis://localhost:6379"
 
