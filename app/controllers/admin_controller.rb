@@ -2,6 +2,11 @@ class AdminController < ApplicationController
   before_filter :require_admin_login
   
   def index
+    @start_date = params.fetch "start_date",  Time.now - 100.days
+    @end_date = params.fetch "end_date", Time.now
+    @page = params.fetch "page", 0
+
+    @designs = Design.all.where(:created_at.gt => @start_date, :created_at.lt => @end_date).page(@page)
   end
   
   def reprocess

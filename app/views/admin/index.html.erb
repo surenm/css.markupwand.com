@@ -1,4 +1,40 @@
 <%= content_for :content do %>
 <%= render 'shared/header' %>
 <%= render 'admin/header' %>
+<div class="admin designs-list-page container">
+  <%= paginate @designs %>
+  <ul>
+    <% @designs.each do |design| %>
+    <li class="design">
+      <div class="row">
+        <div class="span1 status <%= Design::STATUS_CLASS[design.status] %>"> <%= design.status %> </div> 
+        <div class="span4 name"> <a href="/design/<%= design.safe_name %>"> <%= design.name %> </a></div> 
+        <div class="right span2"> <%= design.user.email %> </div> 
+        <div class="right span3"> <%= design.created_at %> </div>
+      </div>
+      <div class="row">
+        <div class="left btn-toolbar" style="margin-left: 20px">
+          <div class="btn-group">
+            <a class="btn btn-primary" target="_new" href="/design/<%= design.safe_name %>/preview"> Preview </a>
+            <a class="btn" target="_new" href="/design/<%= design.safe_name %>/download"> Download PSD</a>
+          </div>
+          <div class="btn-group">
+            <a class="btn" target="_new" href="/design/<%= design.safe_name %>/reprocess"> Reprocess</a>
+            <a class="btn" target="_new" href="/design/<%= design.safe_name %>/reparse"> Reparse </a>
+          </div>
+
+          <div class="btn-group">
+            <a class="btn" target="_new" href="/design/<%= design.safe_name %>/pq"> Increase priority </a>
+          </div>
+            <div class="btn-group">
+            <a class="btn" target="_new" href="/design/<%= design.safe_name %>/view-logs"> View logs </a>
+            <a class="btn" target="_new" href="/design/<%= design.safe_name %>/view-json"> View JSON </a>
+          </div>
+        </div>
+      </div>
+      
+    </li>
+    <% end %>
+  </ul>
+</div>
 <% end %>
