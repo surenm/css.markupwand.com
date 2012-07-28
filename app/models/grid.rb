@@ -290,8 +290,9 @@ class Grid
       layer.bounds == max_bounds and layer.kind == Layer::LAYER_TEXT
     end
 
-    if text_style_layers.length > 0 
-      return [text_style_layers.first]
+    if text_style_layers.length > 0
+      chosen_layer = text_style_layers.first
+      return {"#{chosen_layer.uid}" => chosen_layer}
     end
 
     grid_style_layers.each do |layer|
@@ -308,6 +309,7 @@ class Grid
       Log.debug "Deleting #{grid_style_layers} from grid..."
       grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
     end
+    
     return available_layers
   end
   
