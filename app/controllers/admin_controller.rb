@@ -9,6 +9,7 @@ class AdminController < ApplicationController
 
     status = params.fetch "status", nil 
     user_email = params.fetch "user", nil
+    design_id  = params.fetch "design_id", nil
 
     all_designs = Design.all
     if not user_email.nil?
@@ -21,7 +22,11 @@ class AdminController < ApplicationController
     @query_args = {:created_at.gt => start_date, :created_at.lt => end_date}
     @query_args[:status] = status.to_sym if not status.nil? and not status == "all"
     
-    @designs = all_designs.where(@query_args).page(page)
+    if not design_id.nil?
+      @design_by_id = (all_designs.where(@query_args).find(design_id))
+    else
+      @designs = all_designs.where(@query_args).page(page)
+    end
   end
   
   def reprocess

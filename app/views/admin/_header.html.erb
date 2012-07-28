@@ -9,7 +9,9 @@
     <%= form_tag("/admin", :method => :get) do %>
       <%= label_tag(:user, "Email:") %>
       <%= text_field_tag(:user, "#{params[:user]}") %>
-      <%= submit_tag("Search by User", :class => "btn btn-primary") %>
+      <%= label_tag(:design_id, "Design ID:") %>
+      <%= text_field_tag(:design_id, "#{params[:design_id]}") %>
+      <%= submit_tag("Search", :class => "btn btn-primary") %>
     <% end %>
   </div>
   
