@@ -7,7 +7,7 @@ class AdminController < ApplicationController
     end_date = params.fetch "end_date", Time.now
     page = params.fetch "page", 0
 
-    status = params.fetch "status", nil
+    status = params.fetch "status", nil 
     user_email = params.fetch "user", nil
 
     all_designs = Design.all
@@ -19,7 +19,7 @@ class AdminController < ApplicationController
     end
 
     @query_args = {:created_at.gt => start_date, :created_at.lt => end_date}
-    @query_args[:status] = status.to_sym if not status.nil?
+    @query_args[:status] = status.to_sym if not status.nil? and not status == "all"
     
     @designs = all_designs.where(@query_args).page(page)
   end
