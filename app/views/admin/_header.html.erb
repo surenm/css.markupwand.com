@@ -1,8 +1,17 @@
 <%= stylesheet_link_tag "app/admin", :media => "all" %>
-<div id="admin-header" class="tabbable">
-  <ul class="nav nav-pills">
-    <li><a href="/admin/"> Admin home </a> </li>
-  	<li><a href="/admin/su">Switch User</a></li>
-  	<li><a href="/admin/download-psd">Download PSD</a></li>
-  </ul>
+<div class="container">
+  <div id="admin-header" class="tabbable">
+    <ul class="nav nav-pills">
+      <li><a href="/admin/"> Admin home </a> </li>
+    	<li><a href="/admin/su">Switch User</a></li>
+    	<li><a href="/admin/download-psd">Download PSD</a></li>
+    </ul>
+  </div>
+  <div>
+    <%= form_tag("/admin", :method => :get) do %>
+      <%= label_tag(:user, "Email:") %>
+      <%= text_field_tag(:user, "#{params[:user]}") %>
+      <%= submit_tag("Search by User", :class => "btn btn-primary") %>
+    <% end %>
+  </div>
 </div>
