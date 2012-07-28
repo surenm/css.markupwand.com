@@ -64,7 +64,7 @@ TransformersWeb::Application.routes.draw do
   match ':type/:id/*uri.*ext' => 'design#generated'
 
   # admin actions for setting up testing
-  match 'admin'            => 'admin#index'
+  match 'admin'            => 'admin#index', :as => :admin_path
   match 'admin/reprocess'  => 'admin#reprocess'
   match 'admin/reparse'    => 'admin#reparse'
   match 'admin/regenerate' => 'admin#regenerate'
