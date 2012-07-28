@@ -1,4 +1,5 @@
 class GeneratorJob
+  extend Resque::Plugins::History
   @queue = :generator
 
   def self.perform(design_id)

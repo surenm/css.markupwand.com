@@ -1,4 +1,5 @@
 class ParserJob
+  extend Resque::Plugins::History
   @queue = :parser
 
   def self.perform(readable_design_id)

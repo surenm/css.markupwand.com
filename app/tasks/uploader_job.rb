@@ -1,4 +1,5 @@
 class UploaderJob
+  extend Resque::Plugins::History
   @queue = :uploader
   
   def self.perform(design_id, design_data)
