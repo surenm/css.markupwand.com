@@ -23,6 +23,7 @@ gem 'redis-store', '~> 1.0.0'
 gem 'rest-client'
 gem 'tidy_ffi'
 gem 'multimap'
+gem 'kaminari'
 
 # monitoring and profiling
 group :production do
