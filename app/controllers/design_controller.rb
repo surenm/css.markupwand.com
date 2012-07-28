@@ -7,8 +7,8 @@ class DesignController < ApplicationController
     design_id = params[:id].split('-').last
     @design = Design.find design_id
       
-    if (@design.nil? or @user != @design.user) and (@design.user.email != 'gallery@markupwand.com')
-      redirect_to :action => index 
+    if @user != @design.user and not @user.admin
+      redirect_to dashboard_path
     end
   end
   
