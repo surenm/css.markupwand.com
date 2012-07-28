@@ -5,14 +5,21 @@
       <li><a href="/admin/"> Admin home </a> </li>
     </ul>
   </div>
-  <div>
-    <%= form_tag("/admin", :method => :get) do %>
-      <%= label_tag(:user, "Email:") %>
-      <%= text_field_tag(:user, "#{params[:user]}") %>
-      <%= label_tag(:design_id, "Design ID:") %>
-      <%= text_field_tag(:design_id, "#{params[:design_id]}") %>
-      <%= submit_tag("Search", :class => "btn btn-primary") %>
-    <% end %>
+  <div class="row">
+    <div class="span5">
+      <%= form_tag("/admin", :method => :get) do %>
+        <%= label_tag(:user, "Email:") %>
+        <%= text_field_tag(:user, "#{params[:user]}") %>
+        <%= submit_tag("Search by User", :class => "btn btn-success") %>
+      <% end %>
+    </div>
+    <div class="span5">
+      <%= form_tag("/admin", :method => :get) do %>
+        <%= label_tag(:design, "Design:") %>
+        <%= text_field_tag(:design, "#{params[:design]}") %>
+        <%= submit_tag("Search by design", :class => "btn btn-success") %>
+      <% end %>
+    </div>
   </div>
   
   <div class="btn-group">
