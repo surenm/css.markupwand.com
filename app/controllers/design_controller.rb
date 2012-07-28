@@ -17,24 +17,6 @@ class DesignController < ApplicationController
     @new_design = Design.new
   end
 
-  def upload_danger
-    # Stupid security for now.
-    if params[:secret] == '02b0c8ad8a141b04693e923b3d56a918'
-      design_data = params[:design]
-      design      = Design.new :name => design_data[:name], :store => Store::get_S3_bucket_name
-      design.user = User.find_by_email(params[:email])
-      design.save!
-      
-      Resque.enqueue UploaderJob, design.id, design_data
-
-      render :json => {:status => 'OK'}
-    else
-      render :json => {:status => 'ERROR'}
-    end
-
-  end
-
-  
   def uploaded
     design_data = params[:design]
     design      = Design.new :name => design_data[:name], :store => Store::get_S3_bucket_name
@@ -247,5 +229,21 @@ class DesignController < ApplicationController
 
     send_file processed_file, :disposition => 'inline'
   end
-  
+
+  def upload_danger
+    # Stupid security for now.
+    if params[:secret] == '02b0c8ad8a141b04693e923b3d56a918'
+      design_data = params[:design]
+      design      = Design.new :name => design_data[:name], :store => Store::get_S3_bucket_name
+      design.user = User.find_by_email(params[:email])
+      design.save!
+      
+      Resque.enqueue UploaderJob, design.id, design_data
+
+      render :json => {:status => 'OK'}
+    else
+      render :json => {:status => 'ERROR'}
+    end
+
+  end  
 end
