@@ -282,6 +282,18 @@ class Grid
       layer.bounds == max_bounds and layer.styleable_layer?
     end
 
+    # If a text layer is a style layer, remove 
+    # all the other layers, just return the 
+    # text layer as the only layer and render the 
+    # file.
+    text_style_layers = layers.values.select do |layer|
+      layer.bounds == max_bounds and layer.kind == Layer::LAYER_TEXT
+    end
+
+    if text_style_layers.length > 0 
+      return [text_style_layers.first]
+    end
+
     grid_style_layers.each do |layer|
       layer.is_style_layer = true
       layer.save!
@@ -291,7 +303,7 @@ class Grid
       Log.info "Extracting out the style layers #{grid_style_layers}..." 
       grid_style_layers.flatten!
       grid_style_layers.each { |style_layer| self.style_layers.push style_layer.id.to_s }
-      self..style_layers.uniq!
+      self.style_layers.uniq!
 
       Log.debug "Deleting #{grid_style_layers} from grid..."
       grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
