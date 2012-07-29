@@ -26,7 +26,6 @@ gem 'rest-client'
 gem 'tidy_ffi'
 gem 'multimap'
 gem 'kaminari'
-gem 'heroku-resque-auto-scale', :git => 'git://github.com/StartupWeekend/heroku-resque-auto-scale.git'
 
 # monitoring and profiling
 group :production do
