@@ -227,6 +227,10 @@ class Layer
     self.kind == Layer::LAYER_HUESATURATION
   end
 
+  def zero_area?
+    self.bounds.nil? or self.bounds.area == 0 or self.bounds.area.nil?
+  end
+
   def image_path
     CssParser::get_image_path(self) if self.kind == LAYER_SMARTOBJECT or self.kind == LAYER_NORMAL
   end
