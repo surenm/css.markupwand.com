@@ -25,8 +25,9 @@
   <div class="btn-group">
     <%= link_to 'All', params.merge(:status => 'all'), :class => "btn" %>
     <%= link_to 'Queued', params.merge( :status => Design::STATUS_QUEUED), :class => "btn" %>
-    <%= link_to 'Uploaded', params.merge( :status => Design::STATUS_UPLOADING), :class => "btn" %>
-    <%= link_to 'Processing', params.merge( :status => Design::STATUS_UPLOADED), :class => "btn" %>
+    <%= link_to 'Uploading', params.merge( :status => Design::STATUS_UPLOADING), :class => "btn" %>
+    <%= link_to 'Uploaded', params.merge( :status => Design::STATUS_UPLOADED), :class => "btn" %>
+    <%= link_to 'Processing', params.merge( :status => Design::STATUS_PROCESSING), :class => "btn" %>
     <%= link_to 'Parsing', params.merge( :status => Design::STATUS_PARSING), :class => "btn" %>
     <%= link_to 'Parsed', params.merge( :status => Design::STATUS_PARSED), :class => "btn" %>
     <%= link_to 'Generating', params.merge( :status => Design::STATUS_GENERATING), :class => "btn" %>

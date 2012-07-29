@@ -30,7 +30,7 @@ class AdminController < ApplicationController
         user = User.find_by_email user_email
         all_designs = user.designs if not user.nil?
       end
-      @designs = all_designs.where(@query_args).page(page)
+      @designs = all_designs.where(@query_args).order_by([[:created_at, :desc]]).page(page)
     end
 
     @results_data = {}
