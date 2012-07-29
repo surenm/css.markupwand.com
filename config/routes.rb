@@ -74,7 +74,6 @@ TransformersWeb::Application.routes.draw do
   match 'admin/regenerate' => 'admin#regenerate'
   match 'admin/su'         => 'admin#su'
 
-  # TODO: add admin authentication for Admin URL's 
   mount Resque::Server.new, :at => "/resque"
 
   # tutorial page
