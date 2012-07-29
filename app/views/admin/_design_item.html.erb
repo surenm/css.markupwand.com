@@ -8,20 +8,22 @@
   <div class="row">
     <div class="left btn-toolbar" style="margin-left: 20px">
       <div class="btn-group">
-        <a class="btn btn-primary" target="_new" href="/design/<%= design.safe_name %>/preview"> Preview </a>
-        <a class="btn" target="_new" href="/design/<%= design.safe_name %>/download-psd"> Download PSD</a>
+        <a class="btn btn-primary" target="_blank" href="/design/<%= design.safe_name %>/preview"> Preview </a>
+        <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/download-psd"> Download PSD</a>
       </div>
       <div class="btn-group">
-        <a class="btn" target="_new" href="/design/<%= design.safe_name %>/reprocess"> Reprocess</a>
-        <a class="btn" target="_new" href="/design/<%= design.safe_name %>/reparse"> Reparse </a>
+        <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/reprocess"> Reprocess</a>
+        <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/reparse"> Reparse </a>
       </div>
 
-      <div class="btn-group">
-        <a class="btn" target="_new" href="/design/<%= design.safe_name %>/pq"> Increase priority </a>
+      <% if design.queue == Design::PRIORITY_NORMAL %>
+      <div class="btn-group">  
+        <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/pq"> Increase priority </a>
       </div>
+      <% end %>
         <div class="btn-group">
-        <a class="btn" target="_new" href="/design/<%= design.safe_name %>/view-logs"> View logs </a>
-        <a class="btn" target="_new" href="/design/<%= design.safe_name %>/view-json"> View JSON </a>
+        <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/view-logs"> View logs </a>
+        <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/view-json"> View JSON </a>
       </div>
     </div>
   </div>
