@@ -1,5 +1,6 @@
 class ParserJob
-  extend Resque::Plugins::History
+  extend HerokuResqueAutoScale if Rails.env.production? # only extend in production
+
   @queue = :parser
 
   def self.perform(readable_design_id)
