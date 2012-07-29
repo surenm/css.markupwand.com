@@ -36,6 +36,9 @@ class Design
     Design::STATUS_COMPLETED    => 'label label-success',
     Design::STATUS_FAILED       => 'label label-important'
   }
+  
+  Design::PRIORITY_NORMAL = :normal
+  Design::PRIORITY_HIGH   = :high
 
   # File meta data
   field :name, :type => String
@@ -43,6 +46,7 @@ class Design
   field :processed_file_path, :type => String, :default => nil
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
   field :storage, :type => String, :default => "local"
+  field :queue, :type => Symbol, :default => Design::PRIORITY_NORMAL
   
   # CSS Related
   field :selector_name_map, :type => Hash, :default => {}  
@@ -261,9 +265,7 @@ class Design
     Resque.enqueue GeneratorJob, self.id
   end
   
-  def push_to_processing_queue
-    self.set_status Design::STATUS_PROCESSING
-    
+  def get_processing_queue_message
     message = Hash.new
     if Constants::store_remote?
       message[:location] = "remote"
@@ -276,8 +278,21 @@ class Design
     message[:user]   = self.user.email
     message[:design] = self.safe_name
     
-    Resque.enqueue PreProcessorJob, self.id
+    return message
+  end
+  
+  def push_to_processing_queue
+    self.set_status Design::STATUS_PROCESSING
+    message = self.get_processing_queue_message
     Resque.enqueue ProcessorJob, message
+  end
+  
+  def move_to_priority_queue
+    message = self.get_processing_queue_message
+    Resque.dequeue ProcessorJob, message
+    Resque.enqueue PriorityProcessorJob, message
+    self.queue = Design::PRIORITY_HIGH
+    self.save!
   end
   
   def parse_fonts(layers)
