@@ -178,6 +178,11 @@ class Design
       end
     end
   end
+  
+  def set_queue_priority(queue_priority)
+    self.queue = queue_priority
+    self.save!
+  end
 
   # Offset box is a box, that is an empty grid that appears before
   # this current grid. The previous sibling being a empty box, it adds itself
@@ -283,6 +288,7 @@ class Design
   
   def push_to_processing_queue
     self.set_status Design::STATUS_PROCESSING
+    self.set_queue_priority Design::PRIORITY_NORMAL
     message = self.get_processing_queue_message
     Resque.enqueue ProcessorJob, message
   end
@@ -291,8 +297,7 @@ class Design
     message = self.get_processing_queue_message
     Resque.dequeue ProcessorJob, message
     Resque.enqueue PriorityProcessorJob, message
-    self.queue = Design::PRIORITY_HIGH
-    self.save!
+    self.set_queue_priority Design::PRIORITY_HIGH
   end
   
   def parse_fonts(layers)
