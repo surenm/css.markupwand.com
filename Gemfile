@@ -17,7 +17,7 @@ gem 'log4r'
 gem 'awesome_print'
 gem 'rmagick'
 gem 'aws-sdk'
-gem 'resque'
+gem 'resque', '1.21.0'
 gem 'resque-history'
 gem 'resque-cleaner'
 gem 'redis'
@@ -26,6 +26,7 @@ gem 'rest-client'
 gem 'tidy_ffi'
 gem 'multimap'
 gem 'kaminari'
+gem 'heroku-resque-auto-scale', :git => 'git://github.com/StartupWeekend/heroku-resque-auto-scale.git'
 
 # monitoring and profiling
 group :production do
