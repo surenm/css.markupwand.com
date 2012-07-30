@@ -13,9 +13,19 @@ module Constants
   Constants::GROUPING_MAX_RETRIES = 3
   
   # Disable mails if env variable is set
-  Constants::DISABLE_MAILS = false
+  
   if ENV['DISABLE_MAILS'] == "true"
     Constants::DISABLE_MAILS = true
+  else
+    Constants::DISABLE_MAILS = false
+  end
+  
+  # Set local environment variables from constants.yml. In production, if needed, set this once at heroku
+  if Rails.env.development? 
+    yaml_data = YAML.load_file Rails.root.join("config", "local_constants.yml")
+    yaml_data.each do |key, value|
+      ENV[key] = value
+    end
   end
   
   # Round to nearest 5

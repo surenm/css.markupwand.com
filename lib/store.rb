@@ -4,7 +4,7 @@ module Store
     Store::S3 = AWS::S3.new
   end
   
-  Store::LOCAL_STORE = File.join Dir.home, "store_local"
+  Store::LOCAL_STORE = ENV["LOCAL_STORE"]
   
   def Store::get_safe_name(name)
     name.gsub(/[^0-9a-zA-Z]/,'_')

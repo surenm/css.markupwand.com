@@ -24,5 +24,8 @@ public/assets/*
 public/uploads/*
 
 /store/*
+/store_local/*
 
 dump.rdb
+
+/config/local_constants.yml

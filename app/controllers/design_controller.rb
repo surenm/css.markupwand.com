@@ -1,7 +1,7 @@
 class DesignController < ApplicationController
   before_filter :require_login, :except => [:upload_danger]
   before_filter :is_user_design, :except => [:new, :uploaded, :local_new, :local_uploaded, :index, :upload_danger]
-  before_filter :require_admin_login, :only => [:download_psd]
+  before_filter :require_admin_login, :only => [:download_psd, :increase_priority]
 
   private
   def is_user_design
@@ -251,5 +251,10 @@ class DesignController < ApplicationController
   def download_psd
     file = Store::fetch_object_from_store(@design.psd_file_path)
     send_file file, :disposition => 'inline'
-  end 
+  end
+  
+  def increase_priority
+    @design.move_to_priority_queue
+    redirect_to :action => :show, :id => @design.safe_name
+  end
 end
