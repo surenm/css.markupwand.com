@@ -12,6 +12,7 @@ class Layer
   LAYER_SOLIDFILL = "LayerKind.SOLIDFILL"
   LAYER_NORMAL = "LayerKind.NORMAL"
   LAYER_HUESATURATION = "LayerKind.HUESATURATION"
+  LAYER_COLORBALANCE = "LayerKind.LAYER_COLORBALANCE"
 
   BOUND_MODES = {
     :NORMAL_BOUNDS  => :bounds,
@@ -517,6 +518,7 @@ sass
   def styleable_layer?
     (self.kind == Layer::LAYER_SOLIDFILL or
         self.kind == Layer::LAYER_HUESATURATION or
+        self.kind == Layer::LAYER_COLORBALANCE or 
         self.kind == Layer::LAYER_NORMAL or
         self.renderable_image?)
   end
