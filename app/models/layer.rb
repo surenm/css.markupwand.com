@@ -6,13 +6,31 @@ class Layer
   include Mongoid::Timestamps::Created
   include Mongoid::Timestamps::Updated
   include ActionView::Helpers::TagHelper
-
-  LAYER_TEXT = "LayerKind.TEXT"
-  LAYER_SMARTOBJECT = "LayerKind.SMARTOBJECT"
-  LAYER_SOLIDFILL = "LayerKind.SOLIDFILL"
-  LAYER_NORMAL = "LayerKind.NORMAL"
-  LAYER_HUESATURATION = "LayerKind.HUESATURATION"
-  LAYER_COLORBALANCE = "LayerKind.LAYER_COLORBALANCE"
+  
+  LAYER_BLACKANDWHITE      = "LayerKind.BLACKANDWHITE"
+  LAYER_BRIGHTNESSCONTRAST = "LayerKind.BRIGHTNESSCONTRAST"
+  LAYER_CHANNELMIXER       = "LayerKind.CHANNELMIXER"
+  LAYER_COLORBALANCE       = "LayerKind.COLORBALANCE"
+  LAYER_CURVES             = "LayerKind.CURVES"
+  LAYER_EXPOSURE           = "LayerKind.EXPOSURE"
+  LAYER_GRADIENTFILL       = "LayerKind.GRADIENTFILL"
+  LAYER_GRADIENTMAP        = "LayerKind.GRADIENTMAP"
+  LAYER_HUESATURATION      = "LayerKind.HUESATURATION"
+  LAYER_INVERSION          = "LayerKind.INVERSION"
+  LAYER_LEVELS             = "LayerKind.LEVELS"
+  LAYER_NORMAL             = "LayerKind.NORMAL"
+  LAYER_PATTERNFILL        = "LayerKind.PATTERNFILL"
+  LAYER_PHOTOFILTER        = "LayerKind.PHOTOFILTER"
+  LAYER_POSTERIZE          = "LayerKind.POSTERIZE"
+  LAYER_SELECTIVECOLOR     = "LayerKind.SELECTIVECOLOR"
+  LAYER_SMARTOBJECT        = "LayerKind.SMARTOBJECT"
+  LAYER_SOLIDFILL          = "LayerKind.SOLIDFILL"
+  LAYER_TEXT               = "LayerKind.TEXT"
+  LAYER_THRESHOLD          = "LayerKind.THRESHOLD"
+  LAYER_LAYER3D            = "LayerKind.LAYER3D"
+  LAYER_VIBRANCE           = "LayerKind.VIBRANCE"
+  LAYER_VIDEO              = "LayerKind.VIDEO"
+  
 
   BOUND_MODES = {
     :NORMAL_BOUNDS  => :bounds,
