@@ -31,11 +31,12 @@ module Utils
     req.body = payload
     response = Net::HTTP.new("events.pagerduty.com", '80').start { |http| http.request(req) }
     Log.debug "Response #{response.code} #{response.message}:#{response.body}"
+    Utils::post_to_grove("[Pagerduty] " + error_description)
   end
 
   def Utils::post_to_grove(message)
     grove = Grove.new(ENV['GROVE_CHANNEL_KEY'], :service => 'Markupwand', :icon_url => 'http://www.markupwand.com/favicon.ico')
     grove.post message
   end
-  
+
 end
