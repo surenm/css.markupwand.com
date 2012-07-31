@@ -534,11 +534,7 @@ sass
   end
 
   def styleable_layer?
-    (self.kind == Layer::LAYER_SOLIDFILL or
-        self.kind == Layer::LAYER_HUESATURATION or
-        self.kind == Layer::LAYER_COLORBALANCE or 
-        self.kind == Layer::LAYER_NORMAL or
-        self.renderable_image?)
+    (self.kind != Layer::LAYER_TEXT)
   end
 
   def to_s
