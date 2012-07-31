@@ -11,7 +11,7 @@ class UploaderJob
 
     user = design.user
 
-    ApplicationHelper.post_to_grove "#{user.name.to_s} #{user.email.to_s} uploaded #{design.safe_name.to_s}"
+    Utils::post_to_grove "#{user.name.to_s} #{user.email.to_s} uploaded #{design.safe_name.to_s}"
     
     safe_basename = Store::get_safe_name File.basename(design_data[:name], ".psd")
   
