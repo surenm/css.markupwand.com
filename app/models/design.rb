@@ -114,7 +114,9 @@ class Design
     
   def fetch_processed_folder
     processed_folder = Rails.root.join "tmp", "store", self.store_processed_key
-    Store::fetch_from_store self.store_processed_key if not Dir.exists? processed_folder.to_s
+    if not Dir.exists? processed_folder.to_s
+      Store::fetch_from_store self.store_processed_key 
+    end
   end
   
   def get_processed_data
@@ -321,7 +323,7 @@ class Design
     Log.info "Beginning to process #{self.name}..."
 
     # Parse the JSON
-    psd_data = self.get_design_processed_data
+    psd_data = self.get_processed_data
 
     self.height = psd_data[:properties][:height]
     self.width  = psd_data[:properties][:width]
