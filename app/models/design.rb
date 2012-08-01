@@ -62,7 +62,6 @@ class Design
 
   mount_uploader :file, DesignUploader
 
-
   def safe_name_prefix
     Store::get_safe_name self.name
   end
@@ -93,10 +92,6 @@ class Design
   
   def row_offset_box_key
     "#{self.id}-row_offset_box"
-  end
-  
-  def grouping_identifiers_key
-    "#{self.id}-grouping-identifiers"
   end
   
   def get_root_grid
@@ -220,25 +215,6 @@ class Design
   
   def reset_row_offset_box
     Rails.cache.delete self.row_offset_box_key
-  end
-  
-  def add_grouping_identifier(identifier)
-    grouping_identifiers = self.get_grouping_identifiers
-    grouping_identifiers.push identifier
-    Rails.cache.write self.grouping_identifiers_key, grouping_identifiers.to_json.to_s
-  end
-  
-  def get_grouping_identifiers
-    raw_grouping_identifiers = Rails.cache.read self.grouping_identifiers_key
-    raw_grouping_identifiers = "[]" if raw_grouping_identifiers.nil?
-    grouping_identifiers = JSON.parse raw_grouping_identifiers
-    return grouping_identifiers
-  end
-  
-  def flush_grouping_identifiers
-    grouping_identifiers = self.get_grouping_identifiers
-    grouping_identifiers.each { |identifier| Rails.cache.delete identifier }
-    Rails.cache.delete self.grouping_identifiers_key
   end
   
   def reprocess
