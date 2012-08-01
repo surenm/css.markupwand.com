@@ -1,1 +1,1 @@
-LOCAL_STORE=#Put your local store directory
+LOCAL_STORE: #Put your local store directory
