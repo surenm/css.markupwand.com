@@ -39,6 +39,9 @@ class Grid
   # Grouping queue is the order in which grids are processed
   @@grouping_queue = Queue.new
   
+  # Grouping identifiers to detect infinite loop
+  @@grouping_identifiers = Hash.new
+  
   def self.reset_grouping_queue
     @@grouping_queue.clear
   end
@@ -76,21 +79,19 @@ class Grid
   end
   
   def get_grouping_count
-    count = Rails.cache.read self.unique_identifier
-    if count.nil?
-      design.add_grouping_identifier self.unique_identifier
-      count = 0
+    identifier = self.unique_identifier
+    if not @@grouping_identifiers.has_key? identifier
+      @@grouping_identifiers[identifier] = 0
     end
-    return count
+    return @@grouping_identifiers.fetch identifier
   end
 
   def increment_grouping_count
-    count = self.get_grouping_count
-    Rails.cache.write self.unique_identifier, (count + 1)
+    @@grouping_identifiers[self.unique_identifier] = self.get_grouping_count + 1
   end
 
   def reset_grouping_count
-    Rails.cache.delete self.unique_identifier
+    @@grouping_identifiers = Hash.new
   end
   
   def print(indent_level=0)
