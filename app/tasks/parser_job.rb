@@ -8,8 +8,6 @@ class ParserJob
       design_id = readable_design_id.split('-').last
       design = Design.find design_id
 
-      design.flush_grouping_identifiers
-
       design.set_status Design::STATUS_PARSING
 
       Store::fetch_from_store design.store_processed_key
