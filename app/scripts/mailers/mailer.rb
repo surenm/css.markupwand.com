@@ -7,12 +7,12 @@ class Mailer
   # Template would be absolute path of the .txt file /Users/alagu/Code/Goyaka/web/<somemore>/campaign.txt
   def self.mailgun_send(template)
     data = Multimap.new
-    data[:from] = "Raj <raj@markupwand.com>"
-    data[:'reply-to'] = "Hackers <hackers@markupwand.com>"
+    data[:from] = "Raj Natarajan<raj@markupwand.com>"
+    data[:'reply-to'] = "Raj Natarajan<support@markupwand.com>"
   # Replace this for testing with required id and DO NOT commit
-    data[:to] =  "test@markupwand.mailgun.org"
-    data[:'h:Reply-To'] = "Hackers <hackers@markupwand.com>"
-    data[:subject] = "Status of your upload at Markupwand"
+    data[:to] =  "users_with_morethan_1_design@markupwand.mailgun.org"
+    data[:'h:Reply-To'] = "Raj Natarajan<support@markupwand.com>"
+    data[:subject] = "Could we have a chat about Markupwand?"
     data[:text]  = File.open(template).read
     puts "Sending to test@markupwand.mailgun.org"
     begin
