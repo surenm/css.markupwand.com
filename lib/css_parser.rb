@@ -359,7 +359,8 @@ module CssParser
       if shape_css.nil?
         shape_css = {}
 
-        image_file_basename = Store::get_safe_name(layer.name)
+        # Ideally, this should come from the psd file itself.
+        image_file_basename = (Store::get_safe_name(layer.name)).downcase
         image_file_name     = "#{image_file_basename}_#{layer.uid}.png"
       
         design = layer.design
