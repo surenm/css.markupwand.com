@@ -15,9 +15,9 @@
     </div>
     <div class="span5">
       <%= form_tag("/admin", :method => :get) do %>
-        <%= label_tag(:design, "Design:") %>
-        <%= text_field_tag(:design, "#{params[:design]}") %>
-        <%= submit_tag("Search by design", :class => "btn btn-success") %>
+        <%= label_tag(:design, "Designs (comma separated):") %>
+        <%= text_area_tag(:designs, "#{params[:designs]}") %>
+        <%= submit_tag("Search by designs", :class => "btn btn-success") %>
       <% end %>
     </div>
   </div>
