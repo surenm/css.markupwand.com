@@ -71,4 +71,13 @@ class AdminController < ApplicationController
     end
     redirect_to dashboard_path
   end
+
+  def su
+    redirect_to '/' if not current_user.admin
+    if current_user.admin and params.has_key? 'email'
+      user = User.where(:email => params['email']).first
+      sign_in_and_redirect user, :event => :authentication if user
+    end
+  end
+
 end
