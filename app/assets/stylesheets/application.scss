@@ -112,7 +112,6 @@ h2 {
   .nav {
     .active {
       a {
-        @include box-shadow(rgba(41, 23, 37, 0.75) 6px 6px 6px inset, rgba(41, 23, 37, 0.75) -6px -6px 6px inset);
         background: none;
         padding: 16px 25px;
       }
