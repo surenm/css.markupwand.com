@@ -13,6 +13,7 @@ module ApplicationHelper
   end
 
   def ApplicationHelper::post_simple_message(to, subject, text)
+    return
     return if Rails.env.development? or Constants::DISABLE_MAILS
     RestClient.post "https://api:key-3k01b6wme8-hzvhyowno9r0gccep7e17"\
       "@api.mailgun.net/v2/markupwand.mailgun.org/messages",
