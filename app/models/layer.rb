@@ -281,14 +281,16 @@ class Layer
 
   def set_style_rules(grid_style_selector)
     crop_objects_for_cropped_bounds
-    css      = {}
-    css.update grid_style_selector.css_rules if not self.is_style_layer
+    is_leaf = grid_style_selector.grid.is_leaf?
 
-    is_leaf  = grid_style_selector.grid.is_leaf?
+    css = {}
+    if not self.is_style_layer and not self.tag_name(is_leaf) == :img
+      css.update grid_style_selector.css_rules
+    end
+  
     self.extra_selectors = grid_style_selector.extra_selectors
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
-    
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
       css.update CssParser::parse_background_image(self, grid_style_selector.grid)
     elsif self.kind == LAYER_SOLIDFILL
@@ -525,7 +527,7 @@ sass
 
     if tag == :img
       attributes[:src] = image_path
-      html = tag "img", attributes
+      html = tag "img", attributes, false
     else
       html = content_tag tag, inner_html, attributes, false
     end

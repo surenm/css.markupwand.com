@@ -33,5 +33,31 @@ h1 {
       margin-bottom: 5px;
       padding-bottom: 5px;     
     }
+
+    .tag_editor {
+      margin-left: 0;
+
+      label {
+        display: inline-block;
+      }
+      
+      .tag_form {
+        margin: 0;
+        padding: 0;
+
+
+        .tag_list {
+          width: 100px;
+          margin: 0;
+        }
+
+        .update_tag {
+          margin: 0;
+
+          display: inline-block;
+        }
+    }
+    }
+
   }
 }
