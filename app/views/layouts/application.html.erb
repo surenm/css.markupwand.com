@@ -12,7 +12,7 @@
   <meta name="description" content="Convert your Photoshop designs to clean and maintainable HTML and CSS"/>
   <meta name="keywords" content="photoshop,design,psd to html,psd2html,psd,html,css"/>
   <link rel="shortcut icon" href="/favicon.ico"/>
-  <% analytical.identify(current_user.id, :email=>current_user.email) if current_user %>
+  <% analytical.identify(current_user.email, :email=>current_user.email) if current_user %>
   <%= raw analytical.head_append_javascript %>
 </head>
 <body>
