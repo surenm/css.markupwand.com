@@ -292,6 +292,7 @@ class Design
     self.set_queue_priority Design::PRIORITY_NORMAL
     message = self.get_processing_queue_message
     Resque.enqueue ProcessorJob, message
+    Resque.enqueue PsdjsProcessorJob, message
   end
   
   def move_to_priority_queue
