@@ -52,6 +52,7 @@ TransformersWeb::Application.routes.draw do
   match 'design/:id/delete'           => 'design#delete'
   
   # admin actions to regenerate stuff
+  match 'design/:id/screenshot'   => 'design#create_screenshot'
   match 'design/:id/reprocess'    => 'design#reprocess'
   match 'design/:id/reparse'      => 'design#reparse'
   match 'design/:id/regenerate'   => 'design#regenerate'
