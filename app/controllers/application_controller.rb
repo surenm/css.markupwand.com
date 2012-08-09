@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
-  analytical
+  analytical :use_session_store=>true
 
   def get_user
     current_user if user_signed_in?
