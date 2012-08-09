@@ -54,6 +54,9 @@ gem 'sass-rails', '~> 3.2.4'
 gem 'twitter-bootstrap-rails'
 gem 'asset_sync'
 
+#Analytics
+gem 'analytical'
+
 #Testing
 gem 'rspec-rails'
 group :test do
