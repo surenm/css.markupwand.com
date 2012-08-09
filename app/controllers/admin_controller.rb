@@ -9,6 +9,7 @@ class AdminController < ApplicationController
     status     = params.fetch "status", nil 
     user_email = params.fetch "user", nil
     designs    = params.fetch "designs", ""
+    tag        = params.fetch "tag", nil
     design_splits = designs.split(",")
     design_ids    = []
     design_splits.each do |design_item|
@@ -21,14 +22,12 @@ class AdminController < ApplicationController
     @query_args = {:created_at.gt => start_date, :created_at.lt => end_date}
     @query_args[:status] = status.to_sym if not status.nil? and not status == "all"
 
-    all_designs = []
 
     @query_args = {:created_at.gt => start_date, :created_at.lt => end_date}
     @query_args[:status] = status.to_sym if not status.nil? and not status == "all"
     
     if not design_ids.empty? and not design_ids.length == 0
-      @designs = Design.where(:_id.in => design_ids).page(page)
-      all_designs = @designs
+      all_designs = Design.where(:_id.in => design_ids)
     else
       all_designs = Design.all
       if not user_email.nil?
@@ -36,14 +35,28 @@ class AdminController < ApplicationController
         user = User.find_by_email user_email
         all_designs = user.designs if not user.nil?
       end
-      @designs = all_designs.where(@query_args).order_by([[:created_at, :desc]]).page(page)
+      all_designs = all_designs.where(@query_args).order_by([[:created_at, :desc]])
     end
+
+    if not tag.nil?
+      all_designs = all_designs.tagged_with(tag)
+    end
+
+    @designs = all_designs.page(page)
 
     @results_data = {}
     @results_data[:total_count] = all_designs.count
     @results_data[:status] = status if not status.nil?
     @results_data[:user] = user_email if not user_email.nil?
     @results_data[:design] = designs if not designs.empty?
+  end
+
+  def save_tag
+    d = Design.find params[:design_id]
+    d.tag_list = params[:tag_list]
+    d.save!
+
+    redirect_to params[:redirect_url]
   end
   
   def reprocess
