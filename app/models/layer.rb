@@ -171,21 +171,9 @@ class Layer
     @bound_mode = bound_mode
   end
 
-  def ensure_processed_folder_exists!
-    processed_folder = Rails.root.join "tmp", "store", design.store_processed_key
-    Store::fetch_from_store design.store_processed_key if not Dir.exists? processed_folder.to_s
-  end
-
   def layer_json
-    # Store layer object in memory.
-    # TODO: memcache this
     if not @layer_object
-      design = self.design
-      ensure_processed_folder_exists!
-
-      fptr = File.read design.processed_file_path
-      psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
-
+      psd_data = self.design.get_processed_data
       @layer_object = psd_data[:art_layers].fetch :"#{self.uid}"
     end
 
@@ -281,7 +269,7 @@ class Layer
 
   def set_style_rules(grid_style_selector)
     crop_objects_for_cropped_bounds
-    css      = {}
+    css = {}
     css.update grid_style_selector.css_rules if not self.is_style_layer
 
     is_leaf  = grid_style_selector.grid.is_leaf?
@@ -466,7 +454,7 @@ sass
 
     image_name = File.basename image_file
 
-    ensure_processed_folder_exists!
+    self.design.fetch_processed_folder
 
     processed_folder = File.dirname design.processed_file_path
     current_image_path = File.join processed_folder, image_name
