@@ -281,10 +281,13 @@ class Layer
 
   def set_style_rules(grid_style_selector)
     crop_objects_for_cropped_bounds
-    css      = {}
-    css.update grid_style_selector.css_rules if not self.is_style_layer
+    is_leaf = grid_style_selector.grid.is_leaf?
 
-    is_leaf  = grid_style_selector.grid.is_leaf?
+    css = {}
+    if not self.is_style_layer and not self.tag_name(is_leaf) == :img
+      css.update grid_style_selector.css_rules
+    end
+  
     self.extra_selectors = grid_style_selector.extra_selectors
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
