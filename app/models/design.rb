@@ -278,7 +278,7 @@ class Design
       message[:bucket] = Store::get_S3_bucket_name
     else 
       message[:location] = "local"
-      message[:bucket]   = "store"
+      message[:bucket]   = "store_local"
     end
     
     message[:user]   = self.user.email
