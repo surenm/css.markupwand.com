@@ -73,7 +73,8 @@ TransformersWeb::Application.routes.draw do
   match 'admin/reparse'    => 'admin#reparse'
   match 'admin/regenerate' => 'admin#regenerate'
   match 'admin/su'         => 'admin#su'
-
+  match 'admin/save_tag'   => 'admin#save_tag', :via => :post
+ 
   mount Resque::Server.new, :at => "/resque"
 
   # tutorial page

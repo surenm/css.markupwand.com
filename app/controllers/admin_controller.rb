@@ -50,6 +50,14 @@ class AdminController < ApplicationController
     @results_data[:user] = user_email if not user_email.nil?
     @results_data[:design] = designs if not designs.empty?
   end
+
+  def save_tag
+    d = Design.find params[:design_id]
+    d.tag_list = params[:tag_list]
+    d.save!
+
+    redirect_to params[:redirect_url]
+  end
   
   def reprocess
     designs = current_user.designs

@@ -27,5 +27,15 @@
       </div>
     </div>
   </div>
+
+    <div class="row tag_editor">
+    
+        <%= form_tag "/admin/save_tag", :class => 'tag_form' do %>
+         <%= label_tag "Change tags:" %>
+         <%= hidden_field_tag 'redirect_url', url_for(params) %>
+         <%= hidden_field_tag 'design_id',design.id %> 
+         <%= text_field_tag "tag_list", design.tag_list, :class => 'tag_list' %> <%= submit_tag "Update tag", :class => 'update_tag btn' %>
+        <% end %>
+    </div>
   
 </li>
