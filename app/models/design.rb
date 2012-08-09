@@ -5,6 +5,7 @@ class Design
   include Mongoid::Timestamps::Created
   include Mongoid::Timestamps::Updated
   include Mongoid::Versioning
+  include Mongoid::Document::Taggable
 
   belongs_to :user
   has_many :grids
