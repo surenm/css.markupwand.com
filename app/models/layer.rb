@@ -291,7 +291,6 @@ class Layer
     self.extra_selectors = grid_style_selector.extra_selectors
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
-    
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
       css.update CssParser::parse_background_image(self, grid_style_selector.grid)
     elsif self.kind == LAYER_SOLIDFILL
@@ -528,7 +527,7 @@ sass
 
     if tag == :img
       attributes[:src] = image_path
-      html = tag "img", attributes
+      html = tag "img", attributes, false
     else
       html = content_tag tag, inner_html, attributes, false
     end
