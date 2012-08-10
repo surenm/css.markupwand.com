@@ -194,7 +194,7 @@ class DesignController < ApplicationController
   end
   
   def create_screenshot
-    Resque.enqueue ScreenshotJob, @design.safe_name
+    Resque.enqueue ScreenshotJob, @design.id
     redirect_to :action => :show, :id => @design.safe_name
   end
   
