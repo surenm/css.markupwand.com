@@ -62,7 +62,12 @@ class Design
   field :resolution, :type => Integer
 
   mount_uploader :file, DesignUploader
-
+  
+  @@design_processed_data = nil
+  
+  def reset_processed_data
+    @@design_processed_data = nil
+  end
 
   def safe_name_prefix
     Store::get_safe_name self.name
@@ -100,10 +105,6 @@ class Design
     "#{self.id}-row_offset_box"
   end
   
-  def grouping_identifiers_key
-    "#{self.id}-grouping-identifiers"
-  end
-  
   def get_root_grid
     root_grids = self.grids.where(:root => true)
     #Log.error "Root grid = #{root_grids.last.id.to_s}, #{root_grids.length}"
@@ -114,6 +115,24 @@ class Design
   
   def bounds 
     BoundingBox.new 0, 0, self.height, self.width
+  end
+    
+  def fetch_processed_folder
+    processed_folder = Rails.root.join "tmp", "store", self.store_processed_key
+    if not Dir.exists? processed_folder.to_s
+      Store::fetch_from_store self.store_processed_key 
+    end
+  end
+  
+  def get_processed_data
+    self.fetch_processed_folder
+    if @@design_processed_data.nil?
+      fptr     = File.read self.processed_file_path
+      psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
+      @@design_processed_data = psd_data
+    end
+
+    @@design_processed_data
   end
   
   def attribute_data(minimal=false)
@@ -227,25 +246,6 @@ class Design
     Rails.cache.delete self.row_offset_box_key
   end
   
-  def add_grouping_identifier(identifier)
-    grouping_identifiers = self.get_grouping_identifiers
-    grouping_identifiers.push identifier
-    Rails.cache.write self.grouping_identifiers_key, grouping_identifiers.to_json.to_s
-  end
-  
-  def get_grouping_identifiers
-    raw_grouping_identifiers = Rails.cache.read self.grouping_identifiers_key
-    raw_grouping_identifiers = "[]" if raw_grouping_identifiers.nil?
-    grouping_identifiers = JSON.parse raw_grouping_identifiers
-    return grouping_identifiers
-  end
-  
-  def flush_grouping_identifiers
-    grouping_identifiers = self.get_grouping_identifiers
-    grouping_identifiers.each { |identifier| Rails.cache.delete identifier }
-    Rails.cache.delete self.grouping_identifiers_key
-  end
-  
   def reprocess
     self.reset
     self.push_to_processing_queue
@@ -329,8 +329,7 @@ class Design
     Log.info "Beginning to process #{self.name}..."
 
     # Parse the JSON
-    fptr     = File.read self.processed_file_path
-    psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
+    psd_data = self.get_processed_data
 
     self.height = psd_data[:properties][:height]
     self.width  = psd_data[:properties][:width]
@@ -364,7 +363,7 @@ class Design
     Log.info "Grouping the grids..."
     Grid.group!
     Profiler.stop
-    self.flush_grouping_identifiers
+
     Log.info "Successfully completed parsing #{self.name}" if self.status != Design::STATUS_FAILED
   end
   
