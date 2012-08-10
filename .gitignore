@@ -29,3 +29,5 @@ public/uploads/*
 dump.rdb
 
 /config/local_constants.yml
+
+.npm
