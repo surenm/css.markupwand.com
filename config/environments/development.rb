@@ -32,5 +32,7 @@ TransformersWeb::Application.configure do
 
   config.cache_store = :redis_store
 
+  config.action_mailer.default_url_options = { :host => 'localhost' }
+
   #config.middleware.use "Rack::GoogleAnalytics", :web_property_id => "UA-33091393-2"
 end
