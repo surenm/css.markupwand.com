@@ -90,6 +90,10 @@ module TransformersWeb
       # Fail silently.  Useful for environments such as Heroku
       # config.fail_silently = true
 
+      # Forces application not to access the DB or load models when precompiling assets.
+      # Needed for heroku deployment
+      # config.assets.initialize_on_precompile = false
+
     end
   end
 end
