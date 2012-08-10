@@ -1,0 +1,29 @@
+  <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+    <%= devise_error_messages! %>
+
+    <div>
+      <%= f.label :name, :class => 'left right-align' %>
+      <%= f.text_field :name, :class => 'left left-align' %>
+      <div class="clearfix"></div>
+    </div>
+
+    <div>
+      <%= f.label :email, :class => 'left right-align' %>
+      <%= f.email_field :email, :class => 'left left-align' %>
+      <div class="clearfix"></div>
+    </div>
+
+    <div>
+      <%= f.label :password, :class => 'left right-align' %>
+      <%= f.password_field :password, :class => 'left left-align' %>
+      <div class="clearfix"></div>
+    </div>
+
+    <div>
+      <%= f.label :password_confirmation, :class => 'left right-align' %>
+      <%= f.password_field :password_confirmation, :class => 'left left-align' %>
+      <div class="clearfix"></div>
+    </div>
+
+    <div><%= f.submit "Create account", :class => 'action-button' %></div>
+  <% end %>
