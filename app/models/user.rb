@@ -4,7 +4,7 @@ class User
   include Mongoid::Timestamps::Created
   include Mongoid::Timestamps::Updated
 
-  devise :database_authenticatable, :registerable, :confirmable, :validatable, :rememberable, :trackable, :omniauthable, :timeoutable
+  devise :database_authenticatable, :registerable, :validatable, :rememberable, :trackable, :omniauthable, :timeoutable#, :confirmable
 
   ## Rememberable
   field :remember_created_at, :type => Time
