@@ -1,5 +1,4 @@
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-  <div class="center" style="margin:0 auto;padding:0;display:inline">
   <div>
     <%= f.label :email, :class => 'left right-align' %>
     <%= f.email_field :email, :class => 'left left-align' %>
@@ -20,5 +19,4 @@
   <% end -%>
 
   <div><%= f.submit "Sign in", :class => 'action-button' %></div>
-  </div>
 <% end %>
