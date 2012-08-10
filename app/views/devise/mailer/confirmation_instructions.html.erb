@@ -1,0 +1,5 @@
+<p>Hi <%= @resource.name %>!</p>
+
+<p>Thanks for signing up for Markupwand. Please click on the link below to activate your account.</p>
+
+<p><%= link_to 'Confirm my account', confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></p>
