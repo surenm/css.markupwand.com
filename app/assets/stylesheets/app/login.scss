@@ -23,4 +23,32 @@
   #alt-login-block {
     padding-top: 50px;
   }
+
+  form{
+    label{
+      text-align: right;
+      display: inline;
+    }
+
+    .left {
+      float: left;
+    }
+
+    .right {
+      float: right;
+    }
+
+    .left-align {
+      padding-left: 5px;
+      text-align: left;
+      width: 200px
+    }
+
+    .right-align {
+      padding-right: 5px;
+      text-align: right;
+      width: 120px;
+    }
+
+  }
 }
