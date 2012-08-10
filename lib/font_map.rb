@@ -46,7 +46,8 @@ class FontMap
       self.missing_fonts.delete font_name
     end
 
-    copy_from_userfonts(fonts_list)
+    copy_from_localfonts(fonts_list, SystemFont.all)
+    copy_from_localfonts(fonts_list, self.design.user.user_fonts)
 
     self.google_webfonts_snippet = google_fonts[:snippet]
     self.typekit_snippet = ''
@@ -165,21 +166,21 @@ HTML
     {:snippet => webfont_code, :map => font_map }
   end
 
-  def copy_from_userfonts(fonts_list)
+  def copy_from_localfonts(fonts_list, source_fonts)
     font_map = {}
-    user_fonts = self.design.user.user_fonts
-    user_fonts_obtained = []
-    user_fonts.each do |font|
+
+    source_fonts_obtained = []
+    source_fonts.each do |font|
       if not fonts_list.find_index(font.fontname).nil?
         src  = font.file_path
         dest = File.join self.design.store_published_key, "assets", "fonts", font.filename
         Log.info "Copying from #{src} to #{dest}"
         Store::copy_within_store src, dest
-        user_fonts_obtained.push({ :name => font.fontname, :file => font.filename })
+        source_fonts_obtained.push({ :name => font.fontname, :file => font.filename })
       end
     end
 
-    user_fonts_obtained.each do |font|
+    source_fonts_obtained.each do |font|
       self.missing_fonts.delete font[:name]
       self.uploaded_fonts.update({ font[:name] => font[:file] })
       self.save!
