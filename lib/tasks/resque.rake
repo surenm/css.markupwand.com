@@ -5,10 +5,15 @@ task "resque:setup" => :environment
 Rake::Task["resque:work"].enhance ["install:psdjs"]
 
 task "install:psdjs" do
-  psdjs_dir = Rails.root.join 'tmp', 'psdjs'
+  psdjs_lib_dir = Rails.root.join 'lib', 'psdjs'
+  psdjs_tmp_dir = Rails.root.join 'tmp', 'psdjs'
   
-  FileUtils.mkdir_p psdjs_dir if not Dir.exists? psdjs_dir
-  FileUtils.cp Rails.root.join('lib', 'psdjs', 'package.json'), File.join(psdjs_dir, 'package.json')
+  FileUtils.mkdir_p psdjs_tmp_dir if not Dir.exists? psdjs_tmp_dir
   
-  system "cd #{psdjs_dir}; npm install -d"
+  Dir["#{psdjs_lib_dir}/**"].each do |file| 
+    basename = File.basename file
+    FileUtils.cp file, File.join(psdjs_tmp_dir, basename)
+  end
+  
+  system "cd #{psdjs_tmp_dir}; npm install -d"
 end
