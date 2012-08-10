@@ -11,7 +11,7 @@ class LandingPageController < ApplicationController
     users = User.where(:email => @email)
       if(users.size==0)
         name = @email.split("@")[0]
-        user = User.create!({:email=>@email, :name=>name})
+        user = User.create!({:email=>@email, :name=>name, :password => Devise.friendly_token[0,20]})
         user.save
       end
     end
