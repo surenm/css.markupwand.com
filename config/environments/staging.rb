@@ -31,7 +31,9 @@ TransformersWeb::Application.configure do
   config.assets.compile = true
 
   # Use a different cache store in production
-  config.cache_store = :redis_store, ENV['REDISTOGO_URL'] 
+  config.cache_store = :redis_store, ENV['REDISTOGO_URL']
+
+  config.action_mailer.default_url_options = { :host => 'markupwand-beta.herokuapp.com' }
   
 
   #config.middleware.use "Rack::GoogleAnalytics", :web_property_id => "UA-33091393-3"
