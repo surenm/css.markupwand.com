@@ -4,17 +4,20 @@ class User
   include Mongoid::Timestamps::Created
   include Mongoid::Timestamps::Updated
 
-  devise :database_authenticatable, :registerable, :validatable, :rememberable, :trackable, :omniauthable, :timeoutable
+  devise :database_authenticatable, :registerable, :confirmable, :validatable, :rememberable, :trackable, :omniauthable, :timeoutable
 
   ## Rememberable
   field :remember_created_at, :type => Time
 
   ## Trackable
-  field :sign_in_count,      :type => Integer, :default => 0
-  field :current_sign_in_at, :type => Time
-  field :last_sign_in_at,    :type => Time
-  field :current_sign_in_ip, :type => String
-  field :last_sign_in_ip,    :type => String
+  field :sign_in_count,         :type => Integer, :default => 0
+  field :current_sign_in_at,    :type => Time
+  field :last_sign_in_at,       :type => Time
+  field :current_sign_in_ip,    :type => String
+  field :last_sign_in_ip,       :type => String
+  field :confirmed_at,          :type => Time
+  field :confirmation_sent_at,  :type => Time
+  field :confirmation_token,    :type => String
 
   field :email, :type => String
   field :name, :type => String
@@ -55,7 +58,7 @@ class User
       user = User.find_by_email data["email"]
       user.update_attributes! :admin => true
     else
-      user = User.create! :email => data["email"], :name => data["name"], :first_name => data["first_name"], :last_name => data["last_name"], :admin => true
+      user = User.create! :email => data["email"], :name => data["name"], :first_name => data["first_name"], :last_name => data["last_name"], :admin => true, :password => Devise.friendly_token[0,20]
     end
     
     return user    
@@ -74,7 +77,7 @@ class User
     else
       subject = "New User #{data['name']} (#{data['email']}) signed up"
 
-      user = User.create! :email => data["email"], :name => data["name"], :first_name => data["first_name"], :last_name => data["last_name"]
+      user = User.create! :email => data["email"], :name => data["name"], :first_name => data["first_name"], :last_name => data["last_name"], :password => Devise.friendly_token[0,20]
     end
 
     return user
