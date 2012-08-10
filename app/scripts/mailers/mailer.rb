@@ -10,9 +10,9 @@ class Mailer
     data[:from] = "Raj Natarajan<raj@markupwand.com>"
     data[:'reply-to'] = "Raj Natarajan<support@markupwand.com>"
   # Replace this for testing with required id and DO NOT commit
-    data[:to] =  "users_with_morethan_1_design@markupwand.mailgun.org"
+    data[:to] =  "test@markupwand.mailgun.org"
     data[:'h:Reply-To'] = "Raj Natarajan<support@markupwand.com>"
-    data[:subject] = "Could we have a chat about Markupwand?"
+    data[:subject] = "Beta Invite for Markupwand - the PSD to HTML & CSS tool"
     data[:text]  = File.open(template).read
     puts "Sending to test@markupwand.mailgun.org"
     begin
