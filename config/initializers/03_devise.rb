@@ -32,4 +32,8 @@ Devise.setup do |config|
   config.timeout_in = 64.hours
   
   config.reset_password_within = 6.hours
+
+  config.warden do |manager|
+    manager.failure_app = CustomFailure
+  end
 end
