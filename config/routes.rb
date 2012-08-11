@@ -1,7 +1,7 @@
 require 'resque-history/server'
 
 TransformersWeb::Application.routes.draw do
-  devise_for :users, :controllers => { :omniauth_callbacks => 'auth' }
+  devise_for :users, :controllers => { :omniauth_callbacks => 'auth', :registrations => "registrations" }
 
   resources :grids
   # grid controllers
