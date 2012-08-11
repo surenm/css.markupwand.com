@@ -6,6 +6,7 @@
   <%= stylesheet_link_tag "application", :media => "all" %>
   <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Condensed|Average|Asap:400,400italic,700,700italic|Merienda+One"    %>
   <%= yield :css %>
+  <%= raw analytical.head_append_javascript %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
   <%= yield :javascript %>
@@ -13,7 +14,6 @@
   <meta name="keywords" content="photoshop,design,psd to html,psd2html,psd,html,css"/>
   <link rel="shortcut icon" href="/favicon.ico"/>
   <% analytical.identify(current_user.email, :email=>current_user.email) if current_user %>
-  <%= raw analytical.head_append_javascript %>
 </head>
 <body>
 <%= raw analytical.body_prepend_javascript %>
