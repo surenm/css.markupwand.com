@@ -11,9 +11,9 @@
       </div>
 
       <div class="left">
-        <a href="/designs" class="btn btn-large"><i class="icon-home"></i></a>
-        <a class="btn btn-large" href="/design/<%= @design.safe_name %>/">  ← Back to Design Page </a>
-        <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/preview/"> 
+        <a onclick="Analytical.event('edit_page', 'home_page')" href="/designs" class="btn btn-large"><i class="icon-home"></i></a>
+        <a onclick="Analytical.event('edit_page', 'design_page')"  class="btn btn-large" href="/design/<%= @design.safe_name %>/">  ← Back to Design Page </a>
+        <a onclick="Analytical.event('edit_page', 'preview')"  class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/preview/"> 
           <i class="icon-zoom-in"> &nbsp;</i> Preview 
         </a>
       </div> 
