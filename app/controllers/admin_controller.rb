@@ -2,7 +2,7 @@ class AdminController < ApplicationController
   before_filter :require_admin_login
   
   def index
-    start_date = params.fetch "start_date",  Time.now - 20.days
+    start_date = params.fetch "start_date",  Time.now - 100.days
     end_date = params.fetch "end_date", Time.now
     page = params.fetch "page", 0
 
