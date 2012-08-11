@@ -290,10 +290,20 @@ module CssParser
   def CssParser::parse_box_background_color(layer)
     css = {}
     if layer.has_key? :adjustment and layer.has_key? :fillOpacity
-      fillOpacity = layer.extract_value(:fillOpacity, :value)
-      if fillOpacity != 0
-        opacity = fillOpacity == 255 ?  nil : Float(fillOpacity)/256.0 
-        css[:'background-color']   = parse_color(layer.extract_value(:adjustment, :value).first.extract_value(:value, :color), opacity)
+      fillOpacityInt  = layer.extract_value(:fillOpacity, :value)
+      layerOpacityInt = layer.extract_value(:opacity, :value)
+      fillOpacity     = (fillOpacityInt == 255) ?  nil : Float(fillOpacityInt)/256.0
+      layerOpacity    = (layerOpacityInt == 255) ?  nil : Float(layerOpacityInt)/256.0
+
+      opacity = 1
+      if not fillOpacity.nil? and fillOpacity < 1
+        opacity = fillOpacity
+      elsif not layerOpacity.nil? and layerOpacity < 1
+        opacity = layerOpacity
+      end
+      
+      if not (layerOpacityInt == 0 and fillOpacityInt == 0) 
+        css[:'background-color'] = parse_color(layer.extract_value(:adjustment, :value).first.extract_value(:value, :color), opacity)
       end
     end
     
