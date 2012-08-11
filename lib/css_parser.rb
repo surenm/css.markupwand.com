@@ -423,9 +423,7 @@ module CssParser
     end
 
     # If color overlay is not set, consider gradient
-    if color_overlay.empty?
-      css.update(color_gradient)
-    end
+    css.update(color_gradient)
 
     # Box border
     css.update parse_box_border(layer.layer_json)
