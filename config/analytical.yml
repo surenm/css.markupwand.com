@@ -2,20 +2,20 @@ production:
   google:
     key: UA-33091393-1
   kiss_metrics:
-    key: 754a61e2c60bca0f62f3f746e578480dd25f7d70
+    js_url_key: //doug1izaerwt3.cloudfront.net/754a61e2c60bca0f62f3f746e578480dd25f7d70.1.js
   mixpanel:
     key: 4d7102e159e1b6260893cec4e036a3df
 development:
   google:
     key: UA-33091393-2
   kiss_metrics:
-    key: 793bddd5080a06745782214432b7d6820a1e3db5
+    js_url_key: //doug1izaerwt3.cloudfront.net/754a61e2c60bca0f62f3f746e578480dd25f7d70.1.js
   mixpanel:
     key: cec5db9a8fcb8cda9f6c938990c5ca9b
 staging:
   google:
     key: UA-33091393-2
   kiss_metrics:
-    key: 793bddd5080a06745782214432b7d6820a1e3db5
+    js_url_key: //doug1izaerwt3.cloudfront.net/754a61e2c60bca0f62f3f746e578480dd25f7d70.1.js
   mixpanel:
     key: cec5db9a8fcb8cda9f6c938990c5ca9b

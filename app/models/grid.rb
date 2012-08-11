@@ -704,8 +704,12 @@ class Grid
       render_layer_obj   = Layer.find self.render_layer
       inner_html        += render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
       
-      grid_style_classes = self.style_selector.selector_names.join(" ") if not self.style_selector.selector_names.empty?
-      html = content_tag :div, inner_html, {:class => grid_style_classes}, false
+      if render_layer_obj.tag_name(true) == :img
+        grid_style_classes = self.style_selector.selector_names.join(" ") if not self.style_selector.selector_names.empty?
+        html = content_tag :div, inner_html, {:class => grid_style_classes}, false
+      else 
+        html = inner_html
+      end
     end
     
     return html

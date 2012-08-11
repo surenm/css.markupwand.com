@@ -17,6 +17,9 @@
           ➚ View as Separate Page
         </a>
         <% if current_user.admin? %>
+          <a href="/design/<%= @design.safe_name %>/download-psd" id="" class="btn btn-large btn-secondary">
+            Download PSD
+          </a>
           <a href="#" id="design-preview-button" class="btn btn-large btn-secondary forward">
             View Design
           </a>
@@ -39,7 +42,11 @@
 </div>
 <iframe id="preview-iframe" src='<%= "/published/#{@design.safe_name}/index.html" %>'></iframe>
 <% end %>
-
+<%= content_for :javascript do %>
+<script type="text/javascript">
+Analytical.track("design_preview_page");
+</script>
+<% end %>
 <%= content_for :admin_content do %>
 <div id="design-preview-dialog">
   <img src="/processed/<%= @design.safe_name %>/<%= File.basename @design.psd_file_path, '.psd' %>.png"/>

@@ -83,10 +83,14 @@ class DesignController < ApplicationController
   end
 
   def save_class
+    edit_count = 0
     params['class_map'].each do |lookup, value|
       lookup_key = lookup.gsub("'",'')
       @design.selector_name_map[lookup_key]['name'] = value
+      edit_count = edit_count + 1
     end
+
+    analytical.event "class_rename_count", edit_count
 
     @design.class_edited = true
     @design.save!
@@ -104,6 +108,7 @@ class DesignController < ApplicationController
       @design.selector_name_map[class_name] = {} if @design.selector_name_map[class_name].nil? 
       @design.selector_name_map[class_name]['name'] = widget_name
       @design.class_edited = true
+      analytical.event "edit_name_widget", "named"
       @design.save!
     end
 
@@ -163,6 +168,7 @@ class DesignController < ApplicationController
   def download
     tmp_folder = Store::fetch_from_store @design.store_published_key
     tar_file   = Rails.root.join("tmp", "#{@design.safe_name}.tar.gz")
+    analytical.track "design_download"
 
     system "cd #{tmp_folder} && tar -czvf #{tar_file} ."
     send_file tar_file, :disposition => 'inline'

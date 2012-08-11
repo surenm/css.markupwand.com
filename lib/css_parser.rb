@@ -69,19 +69,21 @@ module CssParser
   
   def CssParser::parse_box_shadow(layer)
     css = {}
+    layer_json = layer.layer_json
+    return css if not CssParser::layer_effects_visible(layer)
     
     shadow_value = []
-    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
-      outer_shadow = CssParser::is_effect_enabled(layer, :dropShadow)
+    if layer_json.has_key? :layerEffects and layer_json[:layerEffects][:value].has_key? :dropShadow
+      outer_shadow = CssParser::is_effect_enabled(layer_json, :dropShadow)
       if outer_shadow
-        shadow_value.push parse_shadow(layer[:layerEffects][:value][:dropShadow])
+        shadow_value.push parse_shadow(layer_json[:layerEffects][:value][:dropShadow])
       end
     end
 
-    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :innerShadow
-      inner_shadow_enabled = CssParser::is_effect_enabled(layer, :innerShadow)
+    if layer_json.has_key? :layerEffects and layer_json[:layerEffects][:value].has_key? :innerShadow
+      inner_shadow_enabled = CssParser::is_effect_enabled(layer_json, :innerShadow)
       if inner_shadow_enabled
-        shadow_value.push parse_shadow(layer[:layerEffects][:value][:innerShadow], 'inner')
+        shadow_value.push parse_shadow(layer_json[:layerEffects][:value][:innerShadow], 'inner')
       end
     end
 
@@ -104,8 +106,18 @@ module CssParser
     end
   end
 
+  def CssParser::layer_effects_visible(layer)
+    if layer.layer_json.has_key? :layerFXVisible 
+      layer.layer_json.extract_value :layerFXVisible, :value
+    else
+      false
+    end
+  end
+
   def CssParser::parse_color_overlay(layer)
     css = {}
+    return css if not CssParser::layer_effects_visible(layer)
+
     layer_json = layer.layer_json
     if layer_json.has_key? :layerEffects and layer_json[:layerEffects][:value].has_key? :solidFill
       enabled = CssParser::is_effect_enabled(layer_json, :solidFill)
@@ -275,15 +287,23 @@ module CssParser
     end
   end
   
-  
-  
   def CssParser::parse_box_background_color(layer)
     css = {}
     if layer.has_key? :adjustment and layer.has_key? :fillOpacity
-      fillOpacity = layer.extract_value(:fillOpacity, :value)
-      if fillOpacity != 0
-        opacity = fillOpacity == 255 ?  nil : Float(fillOpacity)/256.0 
-        css[:'background-color']   = parse_color(layer.extract_value(:adjustment, :value).first.extract_value(:value, :color), opacity)
+      fillOpacityInt  = layer.extract_value(:fillOpacity, :value)
+      layerOpacityInt = layer.extract_value(:opacity, :value)
+      fillOpacity     = (fillOpacityInt == 255) ?  nil : Float(fillOpacityInt)/256.0
+      layerOpacity    = (layerOpacityInt == 255) ?  nil : Float(layerOpacityInt)/256.0
+
+      opacity = 1
+      if not fillOpacity.nil? and fillOpacity < 1
+        opacity = fillOpacity
+      elsif not layerOpacity.nil? and layerOpacity < 1
+        opacity = layerOpacity
+      end
+      
+      if not (layerOpacityInt == 0 and fillOpacityInt == 0) 
+        css[:'background-color'] = parse_color(layer.extract_value(:adjustment, :value).first.extract_value(:value, :color), opacity)
       end
     end
     
@@ -297,6 +317,8 @@ module CssParser
   def CssParser::parse_gradient(layer)
     layer_json = layer.layer_json
     css = {}
+
+    return css if not CssParser::layer_effects_visible(layer)
     
     if layer_json.has_key? :layerEffects and layer_json[:layerEffects][:value].has_key? :gradientFill
       colors = layer_json[:layerEffects][:value][:gradientFill][:value][:gradient][:value][:colors][:value]
@@ -409,7 +431,7 @@ module CssParser
     css.update parse_box_border(layer.layer_json)
     
     # Box shadow
-    css.update(parse_box_shadow(layer.layer_json))
+    css.update(parse_box_shadow(layer))
     
     # parse shape
     css.update(parse_box_rounded_corners(layer.layer_json))

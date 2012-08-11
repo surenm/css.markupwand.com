@@ -25,29 +25,25 @@ class BatchUpload
 
     files.each do |file|
       contents = open(file, "rb") {|io| io.read }
-      begin
-        data = RestClient.post url.to_s, {:fileUpload => File.new(file)}, {"Content-Type" => "application/octet-stream"}
-        data_obj = JSON.parse(data)
-        file_url = data_obj['data']['url']
-        file_name = data_obj['data']['filename']
+      data = RestClient.post url.to_s, {:fileUpload => File.new(file)}, {"Content-Type" => "application/octet-stream"}
+      data_obj = JSON.parse(data)
+      file_url  = data_obj['data'][0]['url']
+      file_name = data_obj['data'][0]['data']['filename']
 
-        puts "Uploaded #{file_name} to filepicker"
+      puts "Uploaded #{file_name} to filepicker"
 
-        markupwand_post_data =  {
-          :"design[file_url]" => file_url,
-          :"design[name]" => file_name,
-          :email  => email,
-          :secret => secret
-        }
+      markupwand_post_data =  {
+        :"design[file_url]" => file_url,
+        :"design[name]" => file_name,
+        :email  => email,
+        :secret => secret
+      }
 
-        puts "Uploading to markupwand"
+      puts "Uploading to markupwand"
 
-        markupwand_response_data = RestClient.post markupwand_url, markupwand_post_data
+      markupwand_response_data = RestClient.post markupwand_url, markupwand_post_data
 
-        puts markupwand_response_data
-      rescue Exception => e
-        puts e
-      end
+      puts markupwand_response_data
     end
   end
 end

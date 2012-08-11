@@ -2,6 +2,14 @@
   <%= render 'shared/header' %>
   <%= stylesheet_link_tag "app/login", :media => "all" %>
 <h2>Sign in</h2>
+<% if flash.to_a.length > 0 %>
+  <div class="alert alert-danger auth-alerts">
+  <% flash.each do |name, msg| %>
+    <%= content_tag :div, msg, :id => "flash_#{name}" %>
+  <% end %>
+  </div>
+<% end %>
+
 
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
     <%= devise_error_messages! %>

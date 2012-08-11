@@ -55,7 +55,7 @@ gem 'twitter-bootstrap-rails'
 gem 'asset_sync'
 
 #Analytics
-gem 'analytical'
+gem 'analytical', :git => 'git://github.com/Goyaka/analytical.git'
 
 #Testing
 gem 'rspec-rails'

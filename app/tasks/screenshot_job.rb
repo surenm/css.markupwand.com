@@ -1,4 +1,6 @@
 class ScreenshotJob
+  extend Resque::Plugins::History
+  
   @queue = :screenshot
   
   def self.perform(design_id)
