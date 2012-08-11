@@ -1,5 +1,11 @@
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-  <%= devise_error_messages! %>
+  <% if flash.to_a.length > 0 %>
+    <div class="alert alert-danger auth-alerts">
+      <% flash.each do |name, msg| %>
+        <%= content_tag :div, msg, :id => "flash_#{name}" %>
+      <% end %>
+    </div>
+  <% end %>
   <div>
     <%= f.label :email, :class => 'left right-align' %>
     <%= f.email_field :email, :class => 'left left-align' %>

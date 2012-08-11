@@ -14,7 +14,7 @@ class RegistrationsController < Devise::RegistrationsController
       end
     else
       clean_up_passwords resource
-      redirect_to 'login'
+      respond_with resource
     end
   end
 end
