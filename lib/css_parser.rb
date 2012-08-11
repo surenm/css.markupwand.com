@@ -69,19 +69,21 @@ module CssParser
   
   def CssParser::parse_box_shadow(layer)
     css = {}
+    layer_json = layer.layer_json
+    return css if not CssParser::layer_effects_visible(layer)
     
     shadow_value = []
-    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :dropShadow
-      outer_shadow = CssParser::is_effect_enabled(layer, :dropShadow)
+    if layer_json.has_key? :layerEffects and layer_json[:layerEffects][:value].has_key? :dropShadow
+      outer_shadow = CssParser::is_effect_enabled(layer_json, :dropShadow)
       if outer_shadow
-        shadow_value.push parse_shadow(layer[:layerEffects][:value][:dropShadow])
+        shadow_value.push parse_shadow(layer_json[:layerEffects][:value][:dropShadow])
       end
     end
 
-    if layer.has_key? :layerEffects and layer[:layerEffects][:value].has_key? :innerShadow
-      inner_shadow_enabled = CssParser::is_effect_enabled(layer, :innerShadow)
+    if layer_json.has_key? :layerEffects and layer_json[:layerEffects][:value].has_key? :innerShadow
+      inner_shadow_enabled = CssParser::is_effect_enabled(layer_json, :innerShadow)
       if inner_shadow_enabled
-        shadow_value.push parse_shadow(layer[:layerEffects][:value][:innerShadow], 'inner')
+        shadow_value.push parse_shadow(layer_json[:layerEffects][:value][:innerShadow], 'inner')
       end
     end
 
@@ -419,7 +421,7 @@ module CssParser
     css.update parse_box_border(layer.layer_json)
     
     # Box shadow
-    css.update(parse_box_shadow(layer.layer_json))
+    css.update(parse_box_shadow(layer))
     
     # parse shape
     css.update(parse_box_rounded_corners(layer.layer_json))
