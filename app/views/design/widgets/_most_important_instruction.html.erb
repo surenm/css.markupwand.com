@@ -13,7 +13,7 @@
   <script type="text/javascript">
     $('.view-guidelines').click(function () {
       $('#tutorial-wrap').modal();
-      Analytical.track("view_tutorial", "highlight_widget");
+      Analytical.event("view_tutorial", "highlight_widget");
     });
     <% if @first_visit %>
     $('.view-guidelines').click();
