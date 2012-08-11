@@ -59,10 +59,14 @@ window.iframeLoaded =->
   $(iframe_doc()).find('head').append cssLink
   if $('#widget-class-name')
     $('#widget-class-name').modal({backdrop: true})
+    Analytical.event "edit_name_widget", "shown"
     $('#widget-name')[0].focus()
     viewport_width = $('body').innerWidth()
     hmargin        = (viewport_width)/2;
     $('#widget-class-name').css('left', hmargin + 'px')
+    $('#widget-class-name').bind 'hide', (e)->
+      Analytical.event "edit_name_widget", "skipped"
+
 
 
 $(document).ready ->

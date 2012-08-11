@@ -104,6 +104,7 @@ class DesignController < ApplicationController
       @design.selector_name_map[class_name] = {} if @design.selector_name_map[class_name].nil? 
       @design.selector_name_map[class_name]['name'] = widget_name
       @design.class_edited = true
+      analytical.event "edit_name_widget", "named"
       @design.save!
     end
 
