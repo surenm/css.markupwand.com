@@ -10,7 +10,7 @@
   <script type="text/javascript">
     $('.view-guidelines').click(function () {
       $('#tutorial-wrap').modal();
-      _gaq.push(["_trackEvent","view_tutorial", "new_user_widget"]);
+      Analytical.track("view_tutorial", "new_user_widget");
     });
     <% if @first_visit %>
     $('.view-guidelines').click();
