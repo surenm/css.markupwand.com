@@ -27,6 +27,7 @@
 <%= content_for :javascript do %>
 <script type="text/javascript">
 var design = <%= raw(@design.attribute_data.to_json) %>;
+Analytical.event("design_page", "edit");
 </script>
 <%= javascript_include_tag "app/editor" %>
 <% end %>
