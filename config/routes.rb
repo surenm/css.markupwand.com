@@ -27,43 +27,51 @@ TransformersWeb::Application.routes.draw do
   # design controller routes
   match 'designs'         => 'design#index', :as => :dashboard
 
-  if Constants::store_remote?
-    match 'design/new'       => 'design#new'
-    match 'design/uploaded'  => 'design#uploaded', :as => :uploaded_callback
-    match 'design/upload_danger'  => 'design#upload_danger'
-  else
-    match 'design/new'       => 'design#local_new'
-    match 'design/uploaded'  => 'design#local_uploaded', :as => :uploaded_callback
-    match 'design/upload_danger'  => 'design#upload_danger'
+  
+  scope 'design' do 
+
+    if Constants::store_remote?
+      match 'new'       => 'design#new'
+      match 'uploaded'  => 'design#uploaded', :as => :uploaded_callback
+      match 'upload_danger'  => 'design#upload_danger'
+    else
+      match 'new'       => 'design#local_new'
+      match 'uploaded'  => 'design#local_uploaded', :as => :uploaded_callback
+      match 'upload_danger'  => 'design#upload_danger'
+    end
+
+    scope ':id' do
+      # get, put and edit designs
+      match ''                 => 'design#show'
+      match 'edit'             => 'design#edit_class'
+      match 'edit-advanced'    => 'design#edit'
+      match 'save_class'       => 'design#save_class', :via => :post
+      match 'save_widget_name' => 'design#save_widget_name', :via => :post
+      match 'preview'          => 'design#preview'
+      match 'gallery'          => 'design#gallery'
+      match 'download'         => 'design#download'
+      match 'update'           => 'design#update'
+      match 'fonts'            => 'design#fonts'
+      match 'fonts_upload'     => 'design#fonts_upload'
+      match 'delete'           => 'design#delete'
+      
+      # admin actions to regenerate stuff
+      match 'screenshot'   => 'design#create_screenshot'
+      match 'reprocess'    => 'design#reprocess'
+      match 'reparse'      => 'design#reparse'
+      match 'regenerate'   => 'design#regenerate'
+      match 'write_html'   => 'design#write_html'
+      match 'download-psd' => 'design#download_psd'
+      match 'pq'           => 'design#increase_priority'
+      
+      # convinience methods to view logs, dom
+      match 'view-logs'  => 'design#view_logs'
+      match 'view-dom'   => 'design#view_dom'
+      match 'view-json'  => 'design#view_json'
+    end
+
   end
-  
-  # get, put and edit designs
-  match 'design/:id'                  => 'design#show'
-  match 'design/:id/edit'             => 'design#edit_class'
-  match 'design/:id/edit-advanced'    => 'design#edit'
-  match 'design/:id/save_class'       => 'design#save_class', :via => :post
-  match 'design/:id/save_widget_name' => 'design#save_widget_name', :via => :post
-  match 'design/:id/preview'          => 'design#preview'
-  match 'design/:id/gallery'          => 'design#gallery'
-  match 'design/:id/download'         => 'design#download'
-  match 'design/:id/update'           => 'design#update'
-  match 'design/:id/fonts'            => 'design#fonts'
-  match 'design/:id/fonts_upload'     => 'design#fonts_upload'
-  match 'design/:id/delete'           => 'design#delete'
-  
-  # admin actions to regenerate stuff
-  match 'design/:id/screenshot'   => 'design#create_screenshot'
-  match 'design/:id/reprocess'    => 'design#reprocess'
-  match 'design/:id/reparse'      => 'design#reparse'
-  match 'design/:id/regenerate'   => 'design#regenerate'
-  match 'design/:id/write_html'   => 'design#write_html'
-  match 'design/:id/download-psd' => 'design#download_psd'
-  match 'design/:id/pq'           => 'design#increase_priority'
-  
-  # convinience methods to view logs, dom
-  match 'design/:id/view-logs'  => 'design#view_logs'
-  match 'design/:id/view-dom'   => 'design#view_dom'
-  match 'design/:id/view-json'  => 'design#view_json'
+
   
   # Proxy method to view generated files
   match ':type/:id/*uri.*ext' => 'design#generated'
