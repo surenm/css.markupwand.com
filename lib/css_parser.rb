@@ -104,6 +104,14 @@ module CssParser
     end
   end
 
+  def CssParser::layer_effects_visible(layer)
+    if layer.layer_json.has_key? :layerFXVisible 
+      layer.layer_json.extract_value :layerFXVisible, :value
+    else
+      false
+    end
+  end
+
   def CssParser::parse_color_overlay(layer)
     css = {}
     layer_json = layer.layer_json
