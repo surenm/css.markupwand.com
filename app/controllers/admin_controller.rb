@@ -25,7 +25,15 @@ class AdminController < ApplicationController
 
     @query_args = {:created_at.gt => start_date, :created_at.lt => end_date}
     @query_args[:status] = status.to_sym if not status.nil? and not status == "all"
-    
+
+    if params[:rating] == 'true'
+      @query_args[:rating] = true
+    elsif params[:rating] == 'false'
+      @query_args[:rating] = false
+    else
+      @query_args[:rating] = nil
+    end
+     
     if not design_ids.empty? and not design_ids.length == 0
       all_designs = Design.where(:_id.in => design_ids)
     else
@@ -41,6 +49,7 @@ class AdminController < ApplicationController
     if not tag.nil?
       all_designs = all_designs.tagged_with(tag)
     end
+
 
     @designs = all_designs.page(page)
 

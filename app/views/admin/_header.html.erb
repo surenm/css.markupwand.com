@@ -35,4 +35,14 @@
     <%= link_to 'Completed', params.merge( :status => Design::STATUS_COMPLETED), :class => "btn" %>
     <%= link_to 'Failed', params.merge( :status => Design::STATUS_FAILED), :class => "btn" %>
   </div>
+
+  <div class="rating">
+
+    <h4>Rating</h4>
+    <div class="btn-group">
+      <%= link_to 'Good', params.merge( :rating => 'true'), :class => "btn btn-success" %>
+      <%= link_to 'Bad', params.merge( :rating => 'false'), :class => "btn btn-danger" %>
+      <%= link_to 'Empty', params.merge( :rating => 'nil'), :class => "btn" %>
+    </div>
+  </div>
 </div>
