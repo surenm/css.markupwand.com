@@ -17,6 +17,9 @@
           ➚ View as Separate Page
         </a>
         <% if current_user.admin? %>
+          <a href="/design/<%= @design.safe_name %>/download-psd" id="" class="btn btn-large btn-secondary">
+            Download PSD
+          </a>
           <a href="#" id="design-preview-button" class="btn btn-large btn-secondary forward">
             View Design
           </a>
