@@ -114,6 +114,8 @@ module CssParser
 
   def CssParser::parse_color_overlay(layer)
     css = {}
+    return css if not CssParser::layer_effects_visible(layer)
+
     layer_json = layer.layer_json
     if layer_json.has_key? :layerEffects and layer_json[:layerEffects][:value].has_key? :solidFill
       enabled = CssParser::is_effect_enabled(layer_json, :solidFill)
@@ -283,8 +285,6 @@ module CssParser
     end
   end
   
-  
-  
   def CssParser::parse_box_background_color(layer)
     css = {}
     if layer.has_key? :adjustment and layer.has_key? :fillOpacity
@@ -305,6 +305,8 @@ module CssParser
   def CssParser::parse_gradient(layer)
     layer_json = layer.layer_json
     css = {}
+
+    return css if not CssParser::layer_effects_visible(layer)
     
     if layer_json.has_key? :layerEffects and layer_json[:layerEffects][:value].has_key? :gradientFill
       colors = layer_json[:layerEffects][:value][:gradientFill][:value][:gradient][:value][:colors][:value]
