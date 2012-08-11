@@ -28,10 +28,27 @@ class DesignController < ApplicationController
     redirect_to :action => :show, :id => design.safe_name
   end
   
+  def set_rating
+    if params[:rate] == "true"
+      @design.rating = true
+      @design.save!
+    elsif params[:rate] == "false"
+      @design.rating = false
+      @design.save!
+    end
+
+    if params[:redirect_url]
+      redirect_to params[:redirect_url]
+    else
+      redirect_to :action => :preview, :id => @design.safe_name
+    end
+    
+  end
+
   def local_new
     @design = Design.new
   end
-  
+
   def local_uploaded
     file_name   = params[:design]["file"].original_filename
     design      = Design.new :name => file_name

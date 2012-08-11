@@ -54,6 +54,7 @@ TransformersWeb::Application.routes.draw do
       match 'fonts'            => 'design#fonts'
       match 'fonts_upload'     => 'design#fonts_upload'
       match 'delete'           => 'design#delete'
+      match 'set-rating'       => 'design#set_rating'
       
       # admin actions to regenerate stuff
       match 'screenshot'   => 'design#create_screenshot'

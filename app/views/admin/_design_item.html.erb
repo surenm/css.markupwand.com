@@ -1,6 +1,6 @@
-<li class="design">
+<li class="design <%= design.vote_class %> ">
   <div class="row">
-    <div class="span1 status <%= Design::STATUS_CLASS[design.status] %>"> <%= design.status %> </div> 
+    <div class="span1 status <%= Design::STATUS_CLASS[design.status] %>"> <%= design.status %> </div>
     <div class="span4 name"> <a href="/design/<%= design.safe_name %>"> <%= design.name %> </a></div> 
     <div class="right span2"> <%= design.user.email %> </div> 
     <div class="right span3"> <%= time_ago_in_words(design.created_at) %> ago </div>
@@ -28,7 +28,7 @@
     </div>
   </div>
 
-    <div class="row tag_editor">
+    <div class="row change-meta">
     
         <%= form_tag "/admin/save_tag", :class => 'tag_form' do %>
          <%= label_tag "Change tags (comma separated):" %>
@@ -36,6 +36,15 @@
          <%= hidden_field_tag 'design_id',design.id %> 
          <%= text_field_tag "tag_list", design.tag_list, :class => 'tag_list' %> <%= submit_tag "Update tag", :class => 'update_tag btn' %>
         <% end %>
+          <span class="btn-group vote-actions pull-right">
+              <button class="btn btn-success"><a href="/design/<%= design.safe_name %>/set-rating?rate=true&redirect_url=<%= url_for(params) %>">
+                <i class="icon-thumbs-up"></i>        
+              </a></button>
+    
+              <button class="btn btn-danger"><a href="/design/<%= design.safe_name %>/set-rating?rate=false&redirect_url=<%= url_for(params) %>">
+                <i class="icon-thumbs-down"></i>
+              </a></button>
+          </span>
+
     </div>
-  
 </li>

@@ -48,6 +48,9 @@ class Design
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
   field :storage, :type => String, :default => "local"
   field :queue, :type => Symbol, :default => Design::PRIORITY_NORMAL
+
+  # Rating is Yes or No
+  field :rating, :type => Boolean
   
   # CSS Related
   field :selector_name_map, :type => Hash, :default => {}  
@@ -65,6 +68,17 @@ class Design
   
   @@design_processed_data = nil
   
+  def vote_class
+    case self.rating
+    when true
+      return 'good'
+    when false
+      return 'bad'
+    when nil
+      return 'none'
+    end
+  end
+
   def reset_processed_data
     @@design_processed_data = nil
   end
