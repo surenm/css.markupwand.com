@@ -87,7 +87,7 @@ class DesignController < ApplicationController
     params['class_map'].each do |lookup, value|
       lookup_key = lookup.gsub("'",'')
       @design.selector_name_map[lookup_key]['name'] = value
-      edit_count ++
+      edit_count = edit_count + 1
     end
 
     analytical.event "class_rename_count", edit_count
