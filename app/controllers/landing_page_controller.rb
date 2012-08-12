@@ -12,13 +12,13 @@ class LandingPageController < ApplicationController
     @already_requested_invite = false
     unless @email.nil?
       user = User.where(:email => @email)
-      invite = InviteRequest.where(:email => @email)
+      invites = InviteRequest.where(:email => @email)
       if user.size > 0
         @user_exists = true
         @user_enabled = user.first.enabled
-      elsif invite.size > 0
+      elsif invites.size > 0
         @already_requested_invite = true
-      elsif (invite.size == 0 && user.size == 0)
+      elsif (invites.size == 0 && user.size == 0)
         invite = InviteRequest.create({:email => @email})
         invite.save!
       end
