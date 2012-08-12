@@ -19,7 +19,7 @@ class LandingPageController < ApplicationController
       elsif invites.size > 0
         @already_requested_invite = true
       elsif (invites.size == 0 && user.size == 0)
-        invite = InviteRequest.create({:email => @email})
+        invite = InviteRequest.create({:email => @email, :requestor_ip => request.remote_ip})
         invite.save!
       end
     end
