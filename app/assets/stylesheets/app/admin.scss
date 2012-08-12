@@ -25,6 +25,16 @@ h1 {
     box-shadow: inset 2px 2px 2px 2px #B2C7D5;
     padding: 5px 10px;
     margin: 10px;
+
+    &.good {
+      background-color: #A5E993;
+      box-shadow: inset 2px 2px 2px 2px #A5E993;
+    }
+
+    &.bad {
+      background-color: #DAA5A5;
+      box-shadow: inset 2px 2px 2px 2px #DAA5A5;
+    }
   
 
     .name {
@@ -34,7 +44,7 @@ h1 {
       padding-bottom: 5px;     
     }
 
-    .tag_editor {
+    .change-meta {
       margin-left: 0;
 
       label {
@@ -60,4 +70,8 @@ h1 {
     }
 
   }
+}
+
+.rating {
+  margin-top: 10px;
 }

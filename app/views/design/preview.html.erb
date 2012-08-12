@@ -23,6 +23,28 @@
           <a href="#" id="design-preview-button" class="btn btn-large btn-secondary forward">
             View Design
           </a>
+          
+          <span class="btn-group vote-actions">
+              <button class="btn btn-success"><a href="/design/<%= @design.safe_name %>/set-rating?rate=true">
+                <i class="icon-thumbs-up"></i>        
+              </a></button>
+    
+              <button class="btn btn-danger"><a href="/design/<%= @design.safe_name %>/set-rating?rate=false">
+                <i class="icon-thumbs-down"></i>
+              </a></button>
+          </span>
+
+
+            <span>Current:
+            <% if @design.rating == true %>
+              <span class="label label-success">Good conversion</span>
+            <% elsif @design.rating == false %>  
+              <span class="label label-important">Bad conversion</span>
+            <% end %>
+
+            </span>
+          </span>
+
           <script>
             $('#design-preview-dialog').dialog({ autoOpen: false, position: [960, 70],  width: "960"})
             $('#design-preview-button').click(function(){
