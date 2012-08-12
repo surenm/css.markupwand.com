@@ -12,8 +12,14 @@ class ApplicationController < ActionController::Base
       # TODO: Not relocating to proper url. Fix that. Not sure if its a bug.
       redirect_to user_omniauth_authorize_path :google_openid, :origin => request.fullpath
     elsif not @user.enabled
-      @user = nil
-      redirect_to '/unauthorized'
+      invite_request = InviteRequest.where("email" => @user.email)
+      if not Constants::invite_gated? or invite_request.first.status == InviteRequest::APPROVED
+        @user.enabled = true
+        @user.save!
+      elsif invite_request.size == 0 or invite_request.first.status != InviteRequest::APPROVED
+        @user = nil
+        redirect_to '/unauthorized'
+      end
     end
   end
 
