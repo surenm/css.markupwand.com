@@ -5,6 +5,11 @@
   padding-top: 50px;
   text-align: center;
 
+  .field_with_errors {
+    height: 30px;
+    display: inline-block;
+  }
+
   .section-heading {
     font-weight: bold;
     font-size: 18px;

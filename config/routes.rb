@@ -20,6 +20,7 @@ TransformersWeb::Application.routes.draw do
 
   match "/users/sign_in" => redirect("/login")
   match "/users/sign_up" => redirect("/signup")
+  match "/users" => redirect("/signup")
 
   match 'unauthorized' => 'login#unauthorized'
   
