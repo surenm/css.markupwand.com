@@ -9,4 +9,5 @@ class InviteRequest
 
   field :email, :type => String
   field :status, :type => Symbol, :default => InviteRequest::REQUESTED
+  field :requestor_ip, :type => String
 end
