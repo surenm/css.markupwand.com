@@ -4,15 +4,23 @@ class LandingPageController < ApplicationController
       redirect_to '/designs'
     end
   end
-  
+
   def getinvite
     @email = params[:email]
+    @user_exists = false
+    @user_enabled = false
+    @already_requested_invite = false
     unless @email.nil?
-    users = User.where(:email => @email)
-      if(users.size==0)
-        name = @email.split("@")[0]
-        user = User.create!({:email=>@email, :name=>name, :password => Devise.friendly_token[0,20]})
-        user.save
+      user = User.where(:email => @email)
+      invite = InviteRequest.where(:email => @email)
+      if user.size > 0
+        @user_exists = true
+        @user_enabled = user.first.enabled
+      elsif invite.size > 0
+        @already_requested_invite = true
+      elsif (invite.size == 0 && user.size == 0)
+        invite = InviteRequest.create({:email => @email})
+        invite.save!
       end
     end
   end
