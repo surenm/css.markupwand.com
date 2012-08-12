@@ -1,13 +1,11 @@
-<div class="container login-area">
   <div class="request-invite-block">
     <form id="getinvite" action="getinvite" method="POST">
-      <input name="email" class="prefilled-field default-value" id="invite-email" value="email@address.com"/><br/>
+      <input name="email" class="prefilled-field default-value" id="invite-email" value="email@address.com"/><br/><br/>
       <input type="submit" class="action-button" value="Request Invite Now!"/>
 
       <div id="validation-result" class="error"></div>
     </form>
   </div>
-</div>
 
 <%= content_for :javascript do %>
   <script>
@@ -34,3 +32,4 @@
       });
     });
   </script>
+<% end %>
