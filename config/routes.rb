@@ -1,7 +1,7 @@
 require 'resque-history/server'
 
 TransformersWeb::Application.routes.draw do
-  devise_for :users, :controllers => { :omniauth_callbacks => 'auth', :registrations => "registrations" }
+  devise_for :users, :controllers => { :omniauth_callbacks => 'auth' }
 
   resources :grids
   # grid controllers
@@ -13,10 +13,14 @@ TransformersWeb::Application.routes.draw do
   
   # Switch user
   devise_scope :user do
+    get "login", :to => "devise/sessions#new"
     get "logout", :to => "devise/sessions#destroy"
+    get "signup", :to => "devise/registrations#new"
   end
 
-  match 'login' => 'login#index'
+  match "/users/sign_in" => redirect("/login")
+  match "/users/sign_up" => redirect("/signup")
+
   match 'unauthorized' => 'login#unauthorized'
   
   # Dangerous controller route.

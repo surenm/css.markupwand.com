@@ -1,29 +1,17 @@
 <%= content_for :content do %>
   <%= render 'shared/header' %>
   <%= stylesheet_link_tag "app/login", :media => "all" %>
-<h2>Sign in</h2>
-<% if flash.to_a.length > 0 %>
-  <div class="alert alert-danger auth-alerts">
-  <% flash.each do |name, msg| %>
-    <%= content_tag :div, msg, :id => "flash_#{name}" %>
-  <% end %>
+  <div class="container login-area">
+    <div class="section-heading">
+      Log In
+    </div>
+    <div class="main-form">
+      <%= render 'devise/shared/signin' %>
+    </div>
+    <div class="alt-separator">OR</div>
+    <div class="secondary-form">
+      <%= render 'devise/shared/google_connect' %>
+    </div>
   </div>
-<% end %>
-
-
-<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-    <%= devise_error_messages! %>
-  <div><%= f.label :email %><br />
-  <%= f.email_field :email %></div>
-
-  <div><%= f.label :password %><br />
-  <%= f.password_field :password %></div>
-
-  <% if devise_mapping.rememberable? -%>
-    <div><%= f.check_box :remember_me %> <%= f.label :remember_me %></div>
-  <% end -%>
-
-  <div><%= f.submit "Sign in" %></div>
-<% end %>
   <%= render 'shared/footer' %>
 <% end %>

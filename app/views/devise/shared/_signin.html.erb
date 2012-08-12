@@ -1,0 +1,29 @@
+  <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+    <% if flash.to_a.length > 0 %>
+      <div class="alert alert-danger auth-alerts">
+        <% flash.each do |name, msg| %>
+          <%= content_tag :div, msg, :id => "flash_#{name}" %>
+        <% end %>
+      </div>
+    <% end %>
+    <div>
+      <%= f.label :email, :class => 'left right-align' %>
+      <%= f.email_field :email, :class => 'left left-align' %>
+      <div class="clearfix"></div>
+    </div>
+
+    <div>
+      <%= f.label :password, :class => 'left right-align' %>
+      <%= f.password_field :password, :class => 'left left-align' %>
+      <div class="clearfix"></div>
+    </div>
+
+    <% if devise_mapping.rememberable? -%>
+      <div>
+        <%= f.check_box :remember_me %> <%= f.label :remember_me %>
+        <div class="clearfix"></div>
+      </div>
+    <% end -%>
+
+    <div><%= f.submit "Sign in", :class => 'action-button' %></div>
+  <% end %>
