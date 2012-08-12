@@ -38,6 +38,7 @@
   }
 
   .homepage-box {
+    position: relative;
     text-align: center;
     background-color: #fff;
     margin-top: 40px;
@@ -71,6 +72,20 @@
 
     h1 {
       margin: 10px 0;
+    }
+
+    .login-signup {
+      float: right;
+      position: absolute;
+      top: 10px;
+      right: 25px;
+
+      .btn-small {
+        font-weight: bold;
+        border-radius: 0px;
+        margin-right: 2px;
+        margin-left: 2px;
+      }
     }
 
     img {
