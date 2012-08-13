@@ -1,20 +1,6 @@
 <%= content_for :content do %>
-<div id="about" class="container homepage-box">
-  <div class="header">
-    <div class="right">
-      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-
-	    <a href="https://twitter.com/markupwand" class="twitter-follow-button" data-show-count="false" data-size="large">
-	      Follow @markupwand
-	    </a>
-	  </div>
-	  
-	  <div class="left">
-	    <a class="brand" href="/"> <img src="/assets/logo-small-monocolor.png"></a>
-    </div>
-    <div class="clearfix"></div>
-  </div>
-
+<%= render 'shared/header' %>
+<div id="about" class="container homepage-box"> 
 <article>
   <section class="main-box">
   	<div class="aboutus">

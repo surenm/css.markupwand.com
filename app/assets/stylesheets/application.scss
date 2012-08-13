@@ -38,6 +38,33 @@ body {
   overflow: auto;
 }
 
+#header {
+  @include background-image(url('/assets/low_contrast_linen.png')); 
+  margin-bottom:0;
+
+  .container {
+    width: 940px;
+    padding: 5px 0;
+    margin: 0 auto;
+       
+    .nav-item {
+      margin-top: 4px;
+    }
+  
+    .login-signup {
+      margin-top: 5px;
+    }
+
+    .brand:hover {
+      border-bottom: 0 none;
+    }
+
+
+
+  }
+} 
+
+
 .ampersand {
   font-family: Baskerville,'Goudy Old Style',Palatino,'Book Antiqua',serif;
   font-style: italic;

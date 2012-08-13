@@ -5,37 +5,30 @@
 @import "compass/utilities";
 
 
-#header {
-  @include background-image(url('/assets/low_contrast_linen.png')); 
-  margin-bottom:0;
-
-  .container {
-    width: 940px;
-    padding: 5px 0;
-    margin: 0 auto;
-       
-    .nav-item {
-      margin-top: 4px;
-    }
-
-    .login-signup {
-      margin-top: 5px;
-    }
-
-    .brand:hover {
-      border-bottom: 0 none;
-    }
-
-
-
-  }
-} 
 
 #landing-page {
   h2, h3, h4 {
     font-family: "ff-tisa-web-pro",serif;
     font-weight: normal;
   }
+
+  .try-block {
+    margin-top: 40px;
+    display: inline-block;
+
+    em {
+      display:block;
+      text-align: center;
+      margin-top: 20px;
+      text-decoration: none;
+      font-style: normal;
+      font-size: 10px;
+      color:#555;
+      line-height:12px;
+      margin-left: 30px;
+    }
+  }
+
 
   #beta-ribbon {
     background: url("/assets/beta-ribbon.png");
@@ -44,12 +37,11 @@
     width: 149px;
     top: 0;
     right: 0;
-    
   }
 
 
   .statement {
-    padding: 40px 0;
+    padding: 75px 0 135px 0;
     @include background-image(url('/assets/digital-banner2.png'));
 
     h2 {
@@ -57,18 +49,22 @@
       color: #fff;
       line-height: 80px;
       @include text-shadow(rgba(black, 0.2) 3px 3px 0);
+    }
 
-      em {        
-        display: block;
-        font-style: normal;
-        font-size: 50px;
-        color: #43a191;
-      }
+    em {        
+      display: inline-block;
+      font-style: normal;
+      font-size: 30px;
+      color: #0FBAF3;
     }
 
     font-weight: normal;
     color: #3F474C;
     margin-bottom: 30px;
+
+    .taglines {
+      margin-left: 20%;
+    }
   }
 
   .homepage-box {
@@ -156,22 +152,6 @@
           li:last {
             clear:both;
           }
-        }
-      }
-
-      .try-block {
-        margin-top: 40px;
-
-        em {
-          display:block;
-          text-align: center;
-          margin-top: 20px;
-          text-decoration: none;
-          font-style: normal;
-          font-size: 10px;
-          color:#555;
-          line-height:12px;
-          margin-left: 30px;
         }
       }
     }
