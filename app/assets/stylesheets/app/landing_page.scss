@@ -7,6 +7,7 @@
 
 #header {
   @include background-image(url('/assets/low_contrast_linen.png')); 
+  margin-bottom:0;
 
   .container {
     width: 940px;
@@ -46,8 +47,33 @@
     
   }
 
+
+  .statement {
+    padding: 40px 0;
+    @include background-image(url('/assets/digital-banner2.png'));
+
+    h2 {
+      font-size: 70px;
+      color: #fff;
+      line-height: 80px;
+      @include text-shadow(rgba(black, 0.2) 3px 3px 0);
+
+      em {        
+        display: block;
+        font-style: normal;
+        font-size: 50px;
+        color: #43a191;
+      }
+    }
+
+    font-weight: normal;
+    color: #3F474C;
+    margin-bottom: 30px;
+  }
+
   .homepage-box {
     position: relative;
+    top: -65px;
     text-align: center;
     background-color: #fff;
     margin-top: 10px;
@@ -100,26 +126,6 @@
       width: 400px;
     }
 
-    .statement {
-      margin-top: 40px;
-
-      h2 {
-        font-size: 70px;
-        color: purple;
-        line-height: 80px;
-        @include single-text-shadow;
-
-        em {        
-          display: block;
-          font-style: normal;
-          font-size: 50px;
-        }
-      }
-
-      font-weight: normal;
-      color: #3F474C;
-      margin-bottom: 30px;
-    }
 
     .sample-image-block {
     }
