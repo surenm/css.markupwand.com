@@ -1,15 +1,10 @@
 <%= content_for :content do %>
-
+<%= render 'shared/landing_header' %>
 <div id="landing-page">
 
   <div id="beta-ribbon"></div>
 
   <div class="container homepage-box">
-    <h1><%= image_tag "logo.png",:alt => 'Markupwand', :title => 'Markupwand'  %></h1>
-    <div class="login-signup">
-      <a href="/login" class="btn btn-small btn-primary">Login</a>
-      <a href="/signup" class="btn btn-small btn-secondary">Sign Up</a>
-    </div>
 
     <div class="statement">
       <h2>Magically convert your photoshop files to HTML <span class="ampersand">&</span> CSS</h2>

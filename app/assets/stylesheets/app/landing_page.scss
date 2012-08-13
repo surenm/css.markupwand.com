@@ -5,7 +5,10 @@
 @import "compass/utilities";
 
 
-   
+#landing-header {
+
+} 
+
 .header {
  min-height: 37px;
  width: 940px;
@@ -94,7 +97,12 @@
     }
 
     .statement {
-      font-size: 20px;
+
+      h2 {
+        font-size: 50px;
+        font-weight: bold;
+      }
+
       font-family: 'Average', serif;
       font-weight: normal;
       color: #3F474C;
