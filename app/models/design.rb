@@ -40,6 +40,10 @@ class Design
   
   Design::PRIORITY_NORMAL = :normal
   Design::PRIORITY_HIGH   = :high
+  
+  Design::ERROR_FILE_ABSENT        = "file_absent"
+  Design::ERROR_NOT_PHOTOSHOP_FILE = "not_photoshop_file"
+  Design::ERROR_SCREENSHOT_FAILED  = "screenshot_failed"
 
   # File meta data
   field :name, :type => String
