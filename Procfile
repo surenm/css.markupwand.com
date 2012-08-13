@@ -6,3 +6,4 @@ parser:        bundle exec rake resque:work QUEUE=parser
 generator:     bundle exec rake resque:work QUEUE=generator
 html_writer:   bundle exec rake resque:work QUEUE=html_writer
 screenshot:    bundle exec rake resque:work QUEUE=screenshot
+misc_tasks:    bundle exec rake resque:work QUEUE=misc_tasks
