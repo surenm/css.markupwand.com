@@ -5,7 +5,7 @@ class ScreenshotJob
   
   def self.perform(design_id)
     design = Design.find design_id
-    
+      
     Log.info "Generating screenshots and thumbnails for #{design.name}..."
     
     design_folder  = Store.fetch_from_store design.store_key_prefix
@@ -29,6 +29,12 @@ class ScreenshotJob
     Log.info screenshot_cmd
     system screenshot_cmd
     
+    if not File.exists? screenshot_file
+      design.add_tag Design::ERROR_SCREENSHOT_FAILED
+      design.save!
+      return
+    end
+    
     Log.info fixed_width_cmd
     system fixed_width_cmd
     
@@ -43,6 +49,5 @@ class ScreenshotJob
     design.save!
   
     Log.info "Sucessfully completed pre processing of #{design.name}."
-
   end
 end
