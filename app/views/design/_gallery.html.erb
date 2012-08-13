@@ -23,6 +23,9 @@
             <% end %>
           </div>
           <div class="clearfix"></div>
+          <% if @user.admin %>
+            <a class="btn" href="/design/<%= design.safe_name %>/preview"> Preview </a>
+          <% end %>
         </div>
     <% end %>
     </li>
