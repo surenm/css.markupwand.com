@@ -41,6 +41,10 @@ body {
 #header {
   @include background-image(url('/assets/low_contrast_linen.png')); 
   margin-bottom:0;
+  border-bottom:1px solid #333; 
+  @include box-shadow(#1A1313 0px 3px 10px);
+  position: relative;
+  z-index: 10;
 
   .container {
     width: 940px;
