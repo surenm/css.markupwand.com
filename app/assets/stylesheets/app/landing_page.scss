@@ -166,9 +166,11 @@
     pre {
       text-align: left;
     }
+    
     .code-block {
       pre {
-        height: 200px;
+        background: #fff;
+        height: 400px;
         overflow-y: scroll;
       }
       margin-top: 20px;

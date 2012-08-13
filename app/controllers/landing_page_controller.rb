@@ -3,6 +3,7 @@ class LandingPageController < ApplicationController
     if user_signed_in?
       redirect_to '/designs'
     end
+    @pretty_print = true
   end
 
   def getinvite
