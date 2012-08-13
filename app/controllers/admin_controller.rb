@@ -43,8 +43,15 @@ class AdminController < ApplicationController
         user = User.find_by_email user_email
         all_designs = user.designs if not user.nil?
       end
-      all_designs = all_designs.where(@query_args).order_by([[:created_at, :desc]])
+      all_designs = all_designs.where(@query_args)
     end
+
+    if params[:'order_by'] == 'updated'
+      all_designs = all_designs.order_by([[:updated_at, :desc]])
+    else
+      all_designs = all_designs.order_by([[:created_at, :desc]])
+    end
+
 
     if not tag.nil?
       all_designs = all_designs.tagged_with(tag)

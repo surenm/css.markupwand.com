@@ -12,4 +12,11 @@
     <% end %>
   </ul>
 </div>
+<script type="text/javascript">
+$('.history-trigger').click(function(e) {
+	var table = $(this).attr('id').replace('-history-trigger', '-history');
+	$('#' + table).toggle()
+	return false;
+})
+</script>
 <% end %>
