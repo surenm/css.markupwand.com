@@ -1,18 +1,20 @@
 <% user_logged_in = !current_user.nil? %>
-<div id="header" class="navbar navbar-fixed-top">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="brand" href="/"> <img src="/assets/logo-small-monocolor.png"></a>
-      <% if user_logged_in %>
-      <div class="nav-collapse collapse right">
-        <ul class="nav">
-          <li class="active">
-            <a href="#"> Hello <%= current_user.first_name %>! </a>
-          </li>  
+<div id="header" class="navbar">
+      <div class="row container">
+        <a class="brand" href="/" alt="Markupwand"> <%= image_tag "logo-small-monocolor.png", {:alt => "Markupwand", :title => "Markupwand"} %></a>
+
+        <div class="pull-right nav-item">
+          <div class="login-signup btn-group">
+            <a href="/login" class="btn btn-secondary">Login</a>
+            <a href="/signup" class="btn btn-primary ">Sign Up</a>
+          </div>
+        </div>
+
+
+        <ul class="pull-right nav nav-item">
+          <li><a href="/about">About</a></li>
+          <li><a href="/faq">FAQ</a> </li>
         </ul>
+
       </div>
-      <% end %>
-    </div>
-  </div>
-  <div class="clearfix"></div>
 </div>

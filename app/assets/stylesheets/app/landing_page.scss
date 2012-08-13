@@ -5,28 +5,34 @@
 @import "compass/utilities";
 
 
-#landing-header {
+#header {
+  @include background-image(url('/assets/low_contrast_linen.png')); 
 
+  .container {
+    width: 940px;
+    padding: 5px 0;
+    margin: 0 auto;
+       
+    .nav-item {
+      margin-top: 4px;
+    }
+
+    .login-signup {
+      margin-top: 5px;
+    }
+
+    .brand:hover {
+      border-bottom: 0 none;
+    }
+
+
+
+  }
 } 
-
-.header {
- min-height: 37px;
- width: 940px;
- background: #5f2f72 url("/assets/noise.png") repeat;
- padding: 12px 10px 0px 10px;
- @include border-bottom-left-radius(10px);
- @include border-bottom-right-radius(10px);
-
- .header-logo-wrap {
-   width: 940px;
-   margin: 0 auto;
-   text-align: left;  
- }
-}
 
 #landing-page {
   h2, h3, h4 {
-    font-family: Average, serif;
+    font-family: "ff-tisa-web-pro",serif;
     font-weight: normal;
   }
 
@@ -44,13 +50,12 @@
     position: relative;
     text-align: center;
     background-color: #fff;
-    margin-top: 40px;
-    border-radius: 4px;
+    margin-top: 10px;
+    border-radius: 20px;
     @include single-box-shadow;
-    @include box-shadow(rgba(black, 0.05) 0 0 8px, rgba(black, 0.1) 0 0 1px, rgba(black, 0.1) 0 1px 0, white 0 1px 0 inset);
+    @include box-shadow(0 18px 50px rgba(0, 0, 0, 0.2));
 
     .download-image {
-      font-family: Helvetica Neue;
       font-size: 10px;
       font-weight: normal;
       color: #aaa;
@@ -68,7 +73,6 @@
     }
 
     .jsbin {
-      font-family: Helvetica Neue;
       margin-bottom: 20px;
       margin-left: 10px;
     }
@@ -97,13 +101,21 @@
     }
 
     .statement {
+      margin-top: 40px;
 
       h2 {
-        font-size: 50px;
-        font-weight: bold;
+        font-size: 70px;
+        color: purple;
+        line-height: 80px;
+        @include single-text-shadow;
+
+        em {        
+          display: block;
+          font-style: normal;
+          font-size: 50px;
+        }
       }
 
-      font-family: 'Average', serif;
       font-weight: normal;
       color: #3F474C;
       margin-bottom: 30px;
@@ -127,7 +139,6 @@
             text-align: right;
             margin-left: 5px;
             margin-right: 5px;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             font-size: 13px;
             line-height: 24px;
           }
