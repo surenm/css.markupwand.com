@@ -147,12 +147,6 @@ class GridStyleSelector
       width += self.grid.bounds.width
       width -= padding[:left] + padding[:right]
       
-      grouping_box = BoundingBox.depickle self.grid.grouping_box
-      if not grouping_box.nil?
-        initial_offset = self.grid.bounds.left - grouping_box.left
-        right_offset = grouping_box.right - self.grid.bounds.right
-        width += initial_offset + right_offset
-      end
     end
     return width
   end
