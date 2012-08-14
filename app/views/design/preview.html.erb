@@ -1,6 +1,5 @@
 <%= content_for :content do %>
-<%= render 'shared/header' %>
-<div id="editor-header" class="navbar navbar-fixed-top">
+<div id="preview-header" class="small-header navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="action row center">
       <div class="right">
@@ -15,7 +14,7 @@
           ↓ Download Markup
         </a>
         <a href='<%= "/published/#{@design.safe_name}/index.html" %>' class="btn btn-large" target="_blank">
-          ➚ View as Separate Page
+          ➚ Popout
         </a>
         <% if current_user.admin? %>
           <a href="/design/<%= @design.safe_name %>/download-psd" id="" class="btn btn-large btn-secondary">

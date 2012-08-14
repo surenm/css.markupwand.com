@@ -116,15 +116,16 @@ body {
 
   #editor-controls {
     position: absolute;
-    top: 53px;
+    top: 44px;
     right: 0;
     bottom: 0;
     height: 100%;
     overflow: auto;
     z-index: 100;
     
-    background: #CEDEEB url("/assets/noise.png") repeat;
+    background: white url("/assets/noise.png") repeat;
     color: #333;
+    border-left: 1px solid #999;
 
     width: 300px;
     font-family: "Ubuntu";

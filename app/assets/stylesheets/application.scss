@@ -65,6 +65,7 @@ body {
     .user-name {
       margin-top: 16px;
       margin-right: 8px;
+      color: #eee;
     }
 
   }
@@ -108,32 +109,27 @@ h1, h2, h3, h4, h5 {
   clear: both;
 }
 
-#editor-header.navbar {
-  font-family: 'Ubuntu Condensed', serif;
+.small-header.navbar {
   font-size: 18px;
-  position: static;
-  top: 0;
-  left: 0;
   width: 100%;
   overflow: hidden;
 
   .action {
-    margin: 0px 5px;
-    padding: 10px;
 
     .name {
       margin: 2px;
       font-size: 20px;
-      text-transform: uppercase;
       color: #eee;
     }
   }
 
   .navbar-inner {
-    height: 50px;
-    background: #5f2f72 url("/assets/noise.png") repeat;
-    border-bottom: 3px solid #431555;
+    position: relative;
+    padding: 2px 50px 2px 10px;
+    @include background-image(url('/assets/low_contrast_linen.png'));
+    @include box-shadow(#1A1313 0px 3px 10px); 
     @include border-radius(0px);
+    border-bottom:1px solid #333; 
   }
 
   .brand {
@@ -244,3 +240,8 @@ h1, h2, h3, h4, h5 {
   margin-top: 20px;
 }
 
+
+
+.modal {
+  color: #fff;
+}

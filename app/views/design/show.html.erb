@@ -1,11 +1,13 @@
 <%= content_for :content do %>
   <%= render 'shared/header' %>
   <div id="design-page" class="container">
-    <h2> Design: <%= @design.name %></h2>
     
-    <div class="design">
+    <div class="design content-area-box">
 
       <div class="completed-box <%= 'hide' if not @completed %>">
+
+        <h2> Design: <%= @design.name %></h2>
+    
         <div style="font-size: 18px; margin: 20px;"> 
           Uploaded on <%= @design.created_at.to_formatted_s(:short) %> <br>
           Status: Completed

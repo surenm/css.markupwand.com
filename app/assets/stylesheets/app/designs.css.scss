@@ -11,23 +11,16 @@
 
 #designs-list-page {
   ul {
-    margin-top: 20px;
+    margin: 20px 60px;
     list-style-type: none;
     padding: 0 15px 0 0;
   }
 
   .design {
-    background: transparent url("/assets/linen.png") repeat;
-    @include border-radius(4px);
-    border: 1px solid #F0F0F0;
-    box-shadow: inset 2px 2px 2px 2px #F5F3F3;
-    padding: 10px 10px;
     width: 180px;
     margin: 20px 10px 20px 10px;
-    float: left;
 
     .name {
-      text-transform: uppercase;
       margin-bottom: 5px;
       padding-bottom: 5px;
       
@@ -85,9 +78,6 @@
   }
   
   .design {
-    border: 5px solid #aaa;
-    background: #eeeeee url("/assets/noise.png") repeat;
-    @include border-radius(4px);
     min-height: 100px;
     padding: 25px;
     margin-top: 10px;

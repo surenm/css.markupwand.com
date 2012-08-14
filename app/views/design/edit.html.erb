@@ -1,5 +1,7 @@
 <%= content_for :css do %>
   <%= stylesheet_link_tag "app/editor", :media => "all" %>
+  <%= render 'shared/header' %>
+
   <%= render "shared/templates" %>
 <% end %>
 <%= content_for :content do %>
