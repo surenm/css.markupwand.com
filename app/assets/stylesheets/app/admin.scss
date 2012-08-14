@@ -69,6 +69,17 @@ h1 {
     }
     }
 
+    .history-block {
+      margin-left: 0;
+
+      .table-history {
+        border: 1px solid #555;
+
+        width:50%;
+        margin: 0 auto;
+      }      
+    }
+
   }
 }
 
