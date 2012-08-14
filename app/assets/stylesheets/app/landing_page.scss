@@ -41,7 +41,7 @@
 
 
   .statement {
-    padding: 75px 0 135px 0;
+    padding: 75px 0 115px 0;
     @include background-image(url('/assets/digital-banner2.png'));
 
     h2 {
@@ -64,6 +64,10 @@
 
     .taglines {
       margin-left: 20%;
+
+      h2 {
+        display: inline-block;
+      }
     }
   }
 
@@ -74,7 +78,6 @@
     background-color: #fff;
     margin-top: 10px;
     border-radius: 20px;
-    @include single-box-shadow;
     @include box-shadow(0 18px 50px rgba(0, 0, 0, 0.2));
 
     .download-image {
@@ -84,13 +87,19 @@
     }
 
     .sample-image-embed {
-      width:620px;
-      height:280px;
+      width: 700px;
+      margin: 0 auto;
+      min-height:320px;
       background-image: url('/assets/transparent.png');
+      text-align: center;
+      border:1px solid #aaa;
+      border-radius: 4px;
+      @include box-shadow(rgba(128, 128, 128, 0.5) 2px 2px 20px 6px inset);
 
       img {
         width: auto;
         padding: 10px 0;
+        margin-top: 20px;
       }
     }
 
@@ -99,35 +108,16 @@
       margin-left: 10px;
     }
 
-    h1 {
-      margin: 10px 0;
-    }
-
-    .login-signup {
-      float: right;
-      position: absolute;
-      top: 10px;
-      right: 25px;
-
-      .btn-small {
-        font-weight: bold;
-        border-radius: 0px;
-        margin-right: 2px;
-        margin-left: 2px;
-      }
-    }
-
     img {
       margin: 0 0 5px 0;
       width: 400px;
     }
 
-
-    .sample-image-block {
-    }
-
     .features-block {
-      padding-bottom: 20px;
+      padding-bottom: 50px;
+
+      background: transparent url('/assets/separator-down.png') no-repeat bottom center;
+
       .features {
         margin-top: 10px;
         border-right: 1px solid #999;
@@ -162,16 +152,24 @@
   }
 
   .sample-block {
-    margin: 20px 159px;
+
+    h2 {
+      font-size: 30px;
+    }
+
     pre {
       text-align: left;
     }
     
     .code-block {
+      margin-left: 75px;
+
       pre {
         background: #fff;
         height: 400px;
         overflow-y: scroll;
+        border-radius: 3px;
+        border:1px solid #bbb;
       }
       margin-top: 20px;
     }
@@ -261,7 +259,7 @@ a.start-using-button {
 }
 
 .features-block {
-  margin-top: 20px;
+  margin-top: 40px;
   ul {
     list-style: none;
     margin-left: 75px;
