@@ -19,7 +19,7 @@
     .important-instruction {
       font-family: 'Merienda One', cursive;
       position: absolute;
-      right: -205px;
+      right: -150px;
       top: 135px;
       width: 230px;
       color: #a02929;
@@ -42,7 +42,9 @@
         vertical-align: middle;
         text-align: center;
         border: 3px dashed #888;
-        background: #eee;
+        background: url(http://subtlepatterns.com/patterns/corrugation.png) ;
+        text-shadow: #A3A3A3 1px 1px 2px;
+
         
         &:hover {
           border: 3px dashed #000;
