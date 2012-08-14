@@ -17,10 +17,10 @@
   }
 
   .design {
-    background: #CEDEEB url("/assets/noise.png") repeat;
+    background: transparent url("/assets/linen.png") repeat;
     @include border-radius(4px);
-    border: 1px solid #106AA3;
-    box-shadow: inset 2px 2px 2px 2px #B2C7D5;
+    border: 1px solid #F0F0F0;
+    box-shadow: inset 2px 2px 2px 2px #F5F3F3;
     padding: 10px 10px;
     width: 180px;
     margin: 20px 10px 20px 10px;
