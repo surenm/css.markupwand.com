@@ -8,7 +8,7 @@
   
     <div class="row container">
       <div class="span9 taglines">
-        <em>Automatic · In Minutes</em></h2>  
+        <em>Generates automatically in Minutes</em></h2>  
 
         <div class="try-block">
             <a href="/signup" class="start-using-button">Get started</a>
@@ -23,12 +23,16 @@
     <div class="row features-block">
       <ul class="row container">
         <li class="pull-left">
-          <div class="imageholder"></div>
+          <div class="imageholder">
+          <%= image_tag "clean-code.png", {:alt => "Clean Code", :title => "Clean Code"} %>
+          </div>
           <h3>Clean Code</h3>
           <div class="feature-desc">No absolute positioning. Minimal Markup. Uses Compass/SASS.</div>
         </li>
         <li class="pull-left">
-          <div class="imageholder"></div>
+          <div class="imageholder">
+          <%= image_tag "iterate.png", {:alt => "Iterate", :title => "Iterate"} %>
+          </div>
           <h3>Iterate faster</h3>
           <div class="feature-desc">UI facelift in minutes, not days. Execute more A/B tests per week.</div>
         </li>
@@ -41,6 +45,7 @@
         </li>
       </ul>
     </div>
+
     <div class="row sample-block">
       <h3>Sample HTML & CSS</h3>
       <div class="row">
