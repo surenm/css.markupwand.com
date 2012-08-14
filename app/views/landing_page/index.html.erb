@@ -21,21 +21,23 @@
   <div class="container homepage-box">
 
     <div class="row features-block">
-      <ul>
-        <li>
+      <ul class="row container">
+        <li class="pull-left">
           <div class="imageholder"></div>
           <h3>Clean Code</h3>
-          <div class="feature-desc">Some super shit to explain some other shit. And we do that as well.</div>
+          <div class="feature-desc">No absolute positioning. Minimal Markup. Uses Compass/SASS.</div>
         </li>
-        <li>
+        <li class="pull-left">
           <div class="imageholder"></div>
-          <h3>Clean Code</h3>
-          <div class="feature-desc">Some super shit to explain some other shit. And we do that as well.</div>
+          <h3>Iterate faster</h3>
+          <div class="feature-desc">UI facelift in minutes, not days. Execute more A/B tests per week.</div>
         </li>
-        <li>
-          <div class="imageholder"></div>
-          <h3>Clean Code</h3>
-          <div class="feature-desc">Some super shit to explain some other shit. And we do that as well.</div>
+        <li class="pull-left">
+          <div class="imageholder">
+          <%= image_tag "clock.png", {:alt => "Save dev time", :title => "Save dev time"} %>
+          </div>
+          <h3>Save dev time</h3>
+          <div class="feature-desc">Engineers work only logic, not trying to make their right brain work. Marketing wouldn't need dev time</div>
         </li>
       </ul>
     </div>

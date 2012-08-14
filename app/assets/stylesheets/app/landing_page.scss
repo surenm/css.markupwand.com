@@ -264,20 +264,21 @@ a.start-using-button {
   margin-top: 20px;
   ul {
     list-style: none;
+    margin-left: 75px;
 
     li {
       display: inline-block;
-      border: 1px solid rgba(238, 238, 238, 0.2); 
+      border: 1px solid rgba(238, 238, 238, 1); 
       width: 25%;
       margin: 10px;
       padding: 10px;
       border-radius: 3px;
+      min-height: 250px;
 
       .imageholder {
         width:100px;
         height:100px;
         border-radius:4px;
-        background-color:#ccc;
         border-color:#000;
         display:inline-block;
         margin:0 auto;
@@ -286,6 +287,13 @@ a.start-using-button {
       h3 {
         margin-top: 10px;
         font-size: 160%;
+      }
+
+      .feature-desc {
+        color: #666;
+        font-size: 110%;
+        margin-top: 10px;
+        line-height: 22px;
       }
     }
   }
