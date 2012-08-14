@@ -153,6 +153,9 @@
 
   .sample-block {
 
+    padding-bottom: 40px;
+    background: transparent url('/assets/separator-down.png') no-repeat bottom center;
+
     h2 {
       font-size: 30px;
     }
@@ -296,6 +299,19 @@ a.start-using-button {
       }
     }
   }
+}
+
+.quote {
+
+  p {
+    font-size: 85%;    
+    margin: 0;
+    padding: 0;
+    margin-bottom: -5px;
+  }
+
+  padding-bottom: 30px;
+
 }
 
 a.start-using-button:hover {
