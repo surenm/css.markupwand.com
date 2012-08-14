@@ -260,6 +260,45 @@ a.start-using-button {
   color: #ffffff;
 }
 
+.features-block {
+  margin-top: 20px;
+  ul {
+    list-style: none;
+    margin-left: 75px;
+
+    li {
+      display: inline-block;
+      border: 1px solid rgba(238, 238, 238, 1); 
+      width: 25%;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 3px;
+      min-height: 250px;
+
+      .imageholder {
+        width:100px;
+        height:100px;
+        border-radius:4px;
+        border-color:#000;
+        display:inline-block;
+        margin:0 auto;
+      }
+
+      h3 {
+        margin-top: 10px;
+        font-size: 160%;
+      }
+
+      .feature-desc {
+        color: #666;
+        font-size: 110%;
+        margin-top: 10px;
+        line-height: 22px;
+      }
+    }
+  }
+}
+
 a.start-using-button:hover {
   @include box-shadow(yellow 1px 1px 1px inset);
   text-decoration: none;

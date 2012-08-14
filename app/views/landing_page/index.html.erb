@@ -8,7 +8,7 @@
   
     <div class="row container">
       <div class="span9 taglines">
-        <em>Automatic · In Minutes</em></h2>  
+        <em>Generates automatically in Minutes</em></h2>  
 
         <div class="try-block">
             <a href="/signup" class="start-using-button">Get started</a>
@@ -21,7 +21,31 @@
   <div class="container homepage-box">
 
     <div class="row features-block">
+      <ul class="row container">
+        <li class="pull-left">
+          <div class="imageholder">
+          <%= image_tag "clean-code.png", {:alt => "Clean Code", :title => "Clean Code"} %>
+          </div>
+          <h3>Clean Code</h3>
+          <div class="feature-desc">No absolute positioning. Minimal Markup. Uses Compass/SASS.</div>
+        </li>
+        <li class="pull-left">
+          <div class="imageholder">
+          <%= image_tag "iterate.png", {:alt => "Iterate", :title => "Iterate"} %>
+          </div>
+          <h3>Iterate faster</h3>
+          <div class="feature-desc">UI facelift in minutes, not days. Execute more A/B tests per week.</div>
+        </li>
+        <li class="pull-left">
+          <div class="imageholder">
+          <%= image_tag "clock.png", {:alt => "Save dev time", :title => "Save dev time"} %>
+          </div>
+          <h3>Save dev time</h3>
+          <div class="feature-desc">Engineers work only logic, not trying to make their right brain work. Marketing wouldn't need dev time</div>
+        </li>
+      </ul>
     </div>
+
     <div class="row sample-block">
       <h3>Sample HTML & CSS</h3>
       <div class="row">
@@ -36,7 +60,7 @@
       <div class="row code-block">
         <div class="html-code span8">
         <h4> HTML Code </h4>
-        <pre class="prettyprint lang-html linenums">&lt;div class="tweet-super-container"&gt;
+        <pre class="prettyprint lang-html">&lt;div class="tweet-super-container"&gt;
     &lt;div class="tweet-container"&gt;
         &lt;div class="row profile"&gt;
             &lt;img class="pull-left profile-pic" src="./assets/img/jack.png"&gt;
@@ -116,7 +140,7 @@
         </div>
         <div class="css-code span8">
         <h4> SASS/CSS Code </h4>
-        <pre class="prettyprint lang-css linenums">
+        <pre class="prettyprint lang-css">
 @import "compass/css3";
 
 .first-tweet {
