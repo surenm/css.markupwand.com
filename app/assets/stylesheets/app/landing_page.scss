@@ -260,6 +260,37 @@ a.start-using-button {
   color: #ffffff;
 }
 
+.features-block {
+  margin-top: 20px;
+  ul {
+    list-style: none;
+
+    li {
+      display: inline-block;
+      border: 1px solid rgba(238, 238, 238, 0.2); 
+      width: 25%;
+      margin: 10px;
+      padding: 10px;
+      border-radius: 3px;
+
+      .imageholder {
+        width:100px;
+        height:100px;
+        border-radius:4px;
+        background-color:#ccc;
+        border-color:#000;
+        display:inline-block;
+        margin:0 auto;
+      }
+
+      h3 {
+        margin-top: 10px;
+        font-size: 160%;
+      }
+    }
+  }
+}
+
 a.start-using-button:hover {
   @include box-shadow(yellow 1px 1px 1px inset);
   text-decoration: none;
