@@ -13,12 +13,20 @@
   <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
   
   <%= yield :javascript %>
+  <% if @pretty_print %>
+  <%= stylesheet_link_tag "lib/prettify", :media => "all" %>
+  <%= javascript_include_tag "lib/prettify" %>
+  <% end %>
   <meta name="description" content="Convert your Photoshop designs to clean and maintainable HTML and CSS"/>
   <meta name="keywords" content="photoshop,design,psd to html,psd2html,psd,html,css"/>
   <link rel="shortcut icon" href="/favicon.ico"/>
   <% analytical.identify(current_user.email, :email=>current_user.email) if current_user %>
 </head>
+<% if @pretty_print %>
+<body onload="prettyPrint()">
+<% else %>
 <body>
+<% end %>
 <%= raw analytical.body_prepend_javascript %>
 
 <% if not Rails.env.production? %>
