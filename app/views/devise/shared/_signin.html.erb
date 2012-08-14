@@ -2,7 +2,11 @@
     <% if flash.to_a.length > 0 %>
       <div class="alert alert-danger auth-alerts">
         <% flash.each do |name, msg| %>
-          <%= content_tag :div, msg, :id => "flash_#{name}" %>
+          <%= content_tag :div, :id => "flash_#{name}" do %>
+            <% content_tag(:div, msg) + %>
+            <% content_tag(:span, 'Try again or ') + %>
+            <% link_to('Sign in with Google', '/users/auth/google_openid') %>
+          <% end %>
         <% end %>
       </div>
     <% end %>
@@ -25,5 +29,5 @@
       </div>
     <% end -%>
 
-    <div><%= f.submit "Sign in", :class => 'action-button' %></div>
+    <div><%= f.submit "Sign in", :class => 'btn btn-large btn-secondary' %></div>
   <% end %>
