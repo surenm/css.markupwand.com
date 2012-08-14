@@ -75,11 +75,6 @@ class DesignController < ApplicationController
       b.created_at <=> a.created_at
     end
 
-    @first_visit = (!params['fv'].nil? and params['fv'].to_i == 1 and cookies[:already_visited].nil?)
-    if @first_visit
-      cookies[:already_visited] = { :value => "true", :expires => 1.week.from_now }
-    end
-
     #In case the user wants to upload a new design...
     @new_design = Design.new
   end
