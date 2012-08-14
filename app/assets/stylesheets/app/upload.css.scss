@@ -99,7 +99,7 @@
 
       &:hover {
         @include background-image(linear-gradient(#F27521, #F2A54D));
-        @include box-shadow(yellow 1px 1px 1px inset);
+        @include box-shadow(#F2A54D 1px 1px 1px inset);
         text-decoration: none;
       }
     }
