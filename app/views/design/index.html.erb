@@ -1,12 +1,14 @@
 <%= content_for :content do %>
   <%= render 'shared/header' %>
-  <%= render 'design/upload' %>
-  <% if @designs.empty? %>
-    <%= render 'design/widgets/view_tutorial_new_user' %>
-  <% else %>
-    <%= render 'design/widgets/view_tutorial_existing_user' %>
-    <%= render 'design/gallery' %>
-  <% end %>
+  <div class="container content-area-box">
+    <%= render 'design/upload' %>
+    <% if @designs.empty? %>
+      <%= render 'design/widgets/view_tutorial_new_user' %>
+    <% else %>
+      <%= render 'design/widgets/view_tutorial_existing_user' %>
+      <%= render 'design/gallery' %>
+    <% end %>
+  </div>
   <%= render 'shared/footer' %>
 <% end %>
 
