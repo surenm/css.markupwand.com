@@ -7,9 +7,9 @@
         <div class="name"><small> Design: </small><%= @design.name %> </div>
       </div>
       <div class="left">
-        <a href="/designs" class="btn btn-large"><i class="icon-home"></i></a>
+        <a href="/designs" class="btn btn-large"><i class="icon-home icon-white"></i></a>
         <a class="btn btn-large" href="/design/<%= @design.safe_name %>/edit">
-          <i class="icon-pencil"> &nbsp;</i> Edit  
+          <i class="icon-pencil icon-white"> &nbsp;</i> Edit
         </a>
         <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large btn-primary"> 
           ↓ Download Markup
@@ -27,11 +27,11 @@
           
           <span class="btn-group vote-actions">
               <button class="btn btn-success"><a href="/design/<%= @design.safe_name %>/set-rating?rate=true">
-                <i class="icon-thumbs-up"></i>        
+                <i class="icon-thumbs-up icon-white"></i>
               </a></button>
     
               <button class="btn btn-danger"><a href="/design/<%= @design.safe_name %>/set-rating?rate=false">
-                <i class="icon-thumbs-down"></i>
+                <i class="icon-thumbs-down icon-down"></i>
               </a></button>
           </span>
 
