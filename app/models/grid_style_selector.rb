@@ -223,7 +223,19 @@ class GridStyleSelector
     end
     
     # Positioning - absolute is handled separately. Just find out if a grid has to be relatively positioned
+    position_relatively = false
     if self.grid.has_positioned_children? or self.grid.has_positioned_siblings?
+      position_relatively = true
+    end
+    
+    if not self.grid.parent.nil?
+      parent_selector = self.grid.parent.style_selector
+      if parent_selector.css_rules.has_key? 'position' and parent_selector.css_rules.fetch('position') == "relative"
+        position_relatively = true
+      end
+    end
+
+    if position_relatively
       self.css_rules.update  :position => 'relative', :'z-index' => self.grid.zindex
     end
     

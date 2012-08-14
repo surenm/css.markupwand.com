@@ -9,16 +9,30 @@ class ApplicationController < ActionController::Base
   def require_login
     @user = get_user
     if @user.nil?
-      # TODO: Not relocating to proper url. Fix that. Not sure if its a bug.
-      redirect_to user_omniauth_authorize_path :google_openid, :origin => request.fullpath
-    elsif not @user.enabled
-      invite_request = InviteRequest.where("email" => @user.email)
-      if not Constants::invite_gated? or invite_request.first.status == InviteRequest::APPROVED
-        @user.enabled = true
-        @user.save!
-      elsif invite_request.size == 0 or invite_request.first.status != InviteRequest::APPROVED
-        @user = nil
-        redirect_to '/unauthorized'
+      # No such user. Redirect to login page.
+      redirect_to '/login'
+    else 
+      if not @user.enabled
+        # User found but not yet enabled
+        invite_request = InviteRequest.where :email => @user
+        if invite_request.size == 0
+          # No invite record yet. 
+          redirect_to '/unauthorized'
+        elsif invite_request.first.status != InviteRequest::APPROVED
+          # Not approved yet
+          redirect_to '/unauthorized'
+        elsif Constants::invite_gated?
+          # Invites are closed
+          redirect_to '/unauthorized'
+        end
+      
+        user_invite = InviteRequest.where("email" => @user.email).first
+      
+        if not user_invite.nil? and user_invite.status == InviteRequest::APPROVED
+          # User is approved for invite request. Enable him/her.
+          @user.enabled = true
+          @user.save!
+        end
       end
     end
   end
