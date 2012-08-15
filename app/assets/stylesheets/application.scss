@@ -218,7 +218,8 @@ h1, h2, h3, h4, h5 {
 }
 
 .ui-dialog-titlebar {
-  background: #5F2F72;
+  @include background-image(url('/assets/low_contrast_linen.png'));
+  padding: 1px !important;
 }
 
 #stack-environment {

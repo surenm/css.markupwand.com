@@ -132,6 +132,12 @@ class DesignController < ApplicationController
     if @design.status != Design::STATUS_COMPLETED
       redirect_to :action => :show, :id => @design.safe_name
     end
+
+    if @user.admin?
+      @next = Design.where(:created_at.lt => @design.created_at, :status=> 'completed').order_by([[:created_at, :desc]]).first
+      @prev = Design.where(:created_at.gt => @design.created_at, :status=> 'completed').order_by([[:created_at, :asc]]).first
+    end
+
   end
 
   def fonts_upload
