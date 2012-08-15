@@ -10,6 +10,7 @@ TransformersWeb::Application.routes.draw do
   # Landing page controller views
   match '/getinvite' => "landing_page#getinvite"
   match '/about'     => "landing_page#about"
+  match '/faq'       => "landing_page#faq"
   
   # Switch user
   devise_scope :user do
