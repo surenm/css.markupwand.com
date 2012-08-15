@@ -50,7 +50,17 @@
                 <i class="icon-arrow-right icon-white"></i>              
               </a>
               <% end %>
+          </span>
 
+          <span class="left btn-group">
+              <%= form_tag "/admin/save_tag", :class => 'tag_form' do %>
+              <span class="input-append">
+                <%= hidden_field_tag 'redirect_url', url_for(params) %>
+                <%= hidden_field_tag 'design_id', @design.id %> 
+                <%= text_field_tag "tag_list", @design.tag_list, :class => 'tag_list span2' %>
+                <%= submit_tag "Update tag", :class => 'update_tag btn' %>
+              </span>
+              <% end %>
           </span>
 
 
