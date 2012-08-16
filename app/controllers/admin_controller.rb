@@ -30,7 +30,7 @@ class AdminController < ApplicationController
       @query_args[:rating] = true
     elsif params[:rating] == 'false'
       @query_args[:rating] = false
-    else
+    elsif params[:rating] == 'unrated'
       @query_args[:rating] = nil
     end
      

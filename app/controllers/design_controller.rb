@@ -75,11 +75,6 @@ class DesignController < ApplicationController
       b.created_at <=> a.created_at
     end
 
-    @first_visit = (!params['fv'].nil? and params['fv'].to_i == 1 and cookies[:already_visited].nil?)
-    if @first_visit
-      cookies[:already_visited] = { :value => "true", :expires => 1.week.from_now }
-    end
-
     #In case the user wants to upload a new design...
     @new_design = Design.new
   end
@@ -137,6 +132,12 @@ class DesignController < ApplicationController
     if @design.status != Design::STATUS_COMPLETED
       redirect_to :action => :show, :id => @design.safe_name
     end
+
+    if @user.admin?
+      @next = Design.where(:created_at.lt => @design.created_at, :status=> 'completed').order_by([[:created_at, :desc]]).first
+      @prev = Design.where(:created_at.gt => @design.created_at, :status=> 'completed').order_by([[:created_at, :asc]]).first
+    end
+
   end
 
   def fonts_upload

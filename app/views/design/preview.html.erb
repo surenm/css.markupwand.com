@@ -6,50 +6,84 @@
         <div class="name"><small> Design: </small><%= @design.name %> </div>
       </div>
       <div class="left">
-        <a href="/designs" class="btn btn-large"><i class="icon-home icon-white"></i></a>
-        <a class="btn btn-large" href="/design/<%= @design.safe_name %>/edit">
-          <i class="icon-pencil icon-white"> &nbsp;</i> Edit
-        </a>
-        <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large btn-primary"> 
-          ↓ Download Markup
-        </a>
-        <a href='<%= "/published/#{@design.safe_name}/index.html" %>' class="btn btn-large" target="_blank">
-          ➚ Popout
-        </a>
+        <span class="left btn-group">
+          <a href="/designs" class="btn btn-large"><i class="icon-home icon-white"></i></a>
+          <a class="btn btn-large" href="/design/<%= @design.safe_name %>/edit">
+            <i class="icon-pencil icon-white"> &nbsp;</i> Edit
+          </a>
+          <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large btn-primary"> 
+            ↓ Download Markup
+          </a>
+          <a href='<%= "/published/#{@design.safe_name}/index.html" %>' class="btn btn-large" target="_blank">
+            ➚ Popout
+          </a>
+        </span>
+
         <% if current_user.admin? %>
-          <a href="/design/<%= @design.safe_name %>/download-psd" id="" class="btn btn-large btn-secondary">
-            Download PSD
-          </a>
-          <a href="#" id="design-preview-button" class="btn btn-large btn-secondary forward">
-            View Design
-          </a>
-          
-          <span class="btn-group vote-actions">
-              <button class="btn btn-success"><a href="/design/<%= @design.safe_name %>/set-rating?rate=true">
+          <span class="left btn-group">
+            <a href="/design/<%= @design.safe_name %>/download-psd" id="" class="btn btn-large btn-secondary">
+              Download PSD
+            </a>
+            <a href="#" id="design-preview-button" class="btn btn-large btn-secondary forward">
+              View Design
+            </a>
+          </span>
+
+          <span class="left btn-group vote-actions">
+
+              <% if not @prev.nil? %>
+              <a class="btn" href="/design/<%= @prev.safe_name %>/preview" >
+                <i class="icon-arrow-left icon-white"></i>              
+              </a>
+              <% end %>
+              
+              <a class="btn btn-success" href="/design/<%= @design.safe_name %>/set-rating?rate=true">
                 <i class="icon-thumbs-up icon-white"></i>
-              </a></button>
-    
-              <button class="btn btn-danger"><a href="/design/<%= @design.safe_name %>/set-rating?rate=false">
-                <i class="icon-thumbs-down icon-down"></i>
-              </a></button>
+              </a>
+              
+              <a class="btn btn-danger" href="/design/<%= @design.safe_name %>/set-rating?rate=false">
+                <i class="icon-thumbs-down icon-white"></i>
+              </a>
+
+              <% if not @next.nil? %>
+              <a class="btn" href="/design/<%= @next.safe_name %>/preview" >
+                <i class="icon-arrow-right icon-white"></i>              
+              </a>
+              <% end %>
+          </span>
+
+          <span class="left btn-group">
+              <%= form_tag "/admin/save_tag", :class => 'tag_form' do %>
+              <span class="input-append">
+                <%= hidden_field_tag 'redirect_url', url_for(params) %>
+                <%= hidden_field_tag 'design_id', @design.id %> 
+                <%= text_field_tag "tag_list", @design.tag_list, :class => 'tag_list span2' %>
+                <%= submit_tag "Update tag", :class => 'update_tag btn' %>
+              </span>
+              <% end %>
           </span>
 
 
-            <span>Current:
+            <span>
             <% if @design.rating == true %>
               <span class="label label-success">Good conversion</span>
             <% elsif @design.rating == false %>  
               <span class="label label-important">Bad conversion</span>
             <% end %>
-
             </span>
           </span>
 
           <script>
             $('#design-preview-dialog').dialog({ autoOpen: false, position: [960, 70],  width: "960"})
             $('#design-preview-button').click(function(){
-              $("#design-preview-dialog").dialog("open");
+              if($("#design-preview-dialog").dialog("isOpen"))
+                $("#design-preview-dialog").dialog("close");
+              else
+                $("#design-preview-dialog").dialog("open");
             });
+            $(document).ready(function() {
+                $("#design-preview-dialog").dialog("open");
+              })
           </script>
         <% end %>
       </div>
