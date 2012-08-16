@@ -1,0 +1,50 @@
+<%= content_for :content do %>
+<%= render 'shared/header' %>
+<div id="about" class="container content-area-box faq-type-page"> 
+
+<h2>Current Limitations</h2>
+<p>
+	We are still not cool enough to convert all the photoshop files perfectly. We understand this is horrible, we are working how to not let you go through this pain, till then please bear with us ☺
+</p>
+
+<p>
+Here are some quick tricks for help us give you really good markup:
+</p>
+
+<ol>
+
+<li> <strong>Avoid overlapping layers:</strong> We make certain assumptions for overlapping layers, which may not be always correct. We are improving on it. We are also building an editor which could help you fix this easier. Till then, please move out overlapping layers.
+Example:
+
+<%= image_tag "overlaps.png", {:alt => "No overlaps", :class => 'illustration'} %>
+
+In case we see overlapping layers which cannot be resolved, we try relatively position it (it is horrible, we know)
+
+<li> <strong>Avoid separating text blocks by spaces:</strong> Please, do not separate pieces of text in a navigation bar/ menu bar using spaces or enter. Try to create individual text layers. That helps to create individual DOM elements for each text layer.
+
+Example:
+
+<%= image_tag "text-types.png", {:alt => "Individual text items", :class => 'illustration'} %>
+
+Split out these space separated text items, make them individual pieces.
+
+</li>
+
+<li> <strong>Avoid multi-layered single-image:</strong> But we aren’t able to merge pieces of images together. So please help us by merging individual layers of a single image together.
+
+Example:
+
+<%= image_tag "multilayered.png", {:alt => "No multi-layered images", :class => 'illustration'} %>
+
+
+</li>
+<li> <strong>Use Fill Layers instead of Normal Layers:</strong>
+
+<%= image_tag "normal-layers.png", {:alt => "No Fill layers instead of normal layers", :class => 'illustration'} %>
+
+Normal layers don’t have color/gradient information. They just store pixel by pixel data. We don’t understand them (yet). Instead use Fill layers from which we can easily extract the colors/gradient information
+</li>
+</ol>
+
+</div>
+<% end %>
