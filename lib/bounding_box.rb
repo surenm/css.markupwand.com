@@ -157,6 +157,11 @@ class BoundingBox
   def encloses?(other_box)
     self.top <= other_box.top and self.bottom >= other_box.bottom and self.left <= other_box.left and self.right >= other_box.right
   end
+  
+  def completely_encloses?(other_box)
+    (self.top < other_box.top and self.bottom > other_box.bottom and self.left <= other_box.left and self.right <= other_box.right) or 
+    (self.top <= other_box.top and self.bottom >= other_box.bottom and self.left < other_box.left and self.right < other_box.right)
+  end
 
   def overlaps?(other_box)
     left_distance = (self.left-other_box.left).abs
