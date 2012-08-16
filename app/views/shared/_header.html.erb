@@ -20,6 +20,9 @@
     <% else %>
       <ul class="pull-right navbar-buttons nav-item btn-group">
         <a href="/designs" class="btn btn-primary">Dashboard</a>
+        <% if current_user.admin %>
+          <a href="/admin" class="btn btn-success">Admin</a>
+        <% end %>
         <a href="/designs" class="btn"><%= current_user.email %></a>
         <a href="/logout" class="btn">
           <%= image_tag "logout.png", {:alt => "Logout"} %>
