@@ -11,7 +11,11 @@
         <em>Generates automatically in minutes</em>
 
         <div class="try-block">
+          <% if current_user.nil? %>
             <a href="/signup" class="start-using-button">Get started</a>
+          <% else %>
+            <a href="/designs" class="start-using-button">Dashboard</a>
+          <% end %>
         </div>
       </div>
     </div>
