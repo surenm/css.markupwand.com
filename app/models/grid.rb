@@ -521,25 +521,25 @@ class Grid
   end
   
   def self.crop_inner_intersect(intersecting_nodes)
-    smaller_node = intersecting_nodes[0]
-    bigger_node  = intersecting_nodes[1]
+    smaller_node = Layer.find intersecting_nodes[0].id.to_s
+    bigger_node  = Layer.find intersecting_nodes[1].id.to_s
     if intersecting_nodes[0].bounds.area > intersecting_nodes[1].bounds.area
-      smaller_node = intersecting_nodes[1]
-      bigger_node  = intersecting_nodes[0]
+      smaller_node = Layer.find intersecting_nodes[1].id.to_s
+      bigger_node  = Layer.find intersecting_nodes[0].id.to_s
     end
 
-    new_bound = smaller_node.bounds.clone.inner_crop(bigger_node.bounds)  
+    new_bound = smaller_node.bounds.clone.inner_crop(bigger_node.bounds)
     smaller_node.bounds = new_bound
     
     [smaller_node, bigger_node]
   end
   
   def self.crop_outer_intersect(intersecting_nodes)
-    smaller_node = intersecting_nodes[0]
-    bigger_node  = intersecting_nodes[1]
+    smaller_node = Layer.find intersecting_nodes[0].id.to_s
+    bigger_node  = Layer.find intersecting_nodes[1].id.to_s
     if intersecting_nodes[0].bounds.area > intersecting_nodes[1].bounds.area
-      smaller_node = intersecting_nodes[1]
-      bigger_node  = intersecting_nodes[0]
+      smaller_node = Layer.find intersecting_nodes[1].id.to_s
+      bigger_node  = Layer.find intersecting_nodes[0].id.to_s
     end
 
     new_bound = smaller_node.bounds.clone.outer_crop(bigger_node.bounds)  
