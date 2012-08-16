@@ -505,11 +505,13 @@ class Grid
       if intersect_percent_left > 95 or intersect_percent_right > 95
         corrected_layers = Grid.crop_inner_intersect intersecting_layers
       elsif intersect_percent_left < 15 and intersect_percent_right < 15
-        #corrected_layers = Grid.crop_outer_intersect intersecting_layers
+        corrected_layers = Grid.crop_outer_intersect intersecting_layers
       end
       
       if not corrected_layers.nil?
         Log.info "Correcting an error intersection #{intersecting_layers} to #{corrected_layers}..."
+        Log.info "intersecting_layers: #{Utils.debug_intersecting_layers intersecting_layers}"
+        Log.info "corrected_layers: #{Utils.debug_intersecting_layers corrected_layers}"
         layers_in_region.delete intersecting_layers.first
         layers_in_region.delete intersecting_layers.second
         
