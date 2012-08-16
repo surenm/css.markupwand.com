@@ -38,5 +38,14 @@ module Utils
     grove = Grove.new(ENV['GROVE_CHANNEL_KEY'], :service => 'Markupwand', :icon_url => 'http://www.markupwand.com/favicon.ico')
     grove.post message
   end
+  
+  def Utils::debug_intersecting_layers(layers)
+    url = "http://markupwand-utils.herokuapp.com/index.html?points="
+    layers.each do |layer|
+      bounds_string = "(#{layer.bounds.top},#{layer.bounds.left},#{layer.bounds.bottom},#{layer.bounds.right})-"
+      url += bounds_string
+    end
+    return url
+  end
 
 end
