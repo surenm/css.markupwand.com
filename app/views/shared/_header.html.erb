@@ -1,22 +1,30 @@
 <% user_logged_in = !current_user.nil? %>
 <div id="header" class="navbar">
   <div class="row container">
+
     <a class="brand" href="/" alt="Markupwand"> <%= image_tag "logo-small-monocolor.png", {:alt => "Markupwand", :title => "Markupwand"} %></a>
 
     <% if current_user.nil? %>
       <div class="pull-right nav-item">
-        <div class="login-signup btn-group">
+        <div class="navbar-buttons btn-group">
           <a href="/login" class="btn btn-secondary">Login</a>
           <a href="/signup" class="btn btn-primary ">Sign Up</a>
         </div>
       </div>
-      <ul class="pull-right nav nav-item">
-        <li><a href="/about">About</a></li>
-        <li><a href="/faq">FAQ</a></li>
-      </ul>
     <% else %>
-      <div class="pull-right user-name">Hello <%= current_user.first_name %>!</div>
+      <ul class="pull-right navbar-buttons nav-item btn-group">
+        <a href="/designs" class="btn btn-primary">Dashboard</a>
+        <a href="/designs" class="btn"><%= current_user.email %></a>
+        <a href="/logout" class="btn">
+          <%= image_tag "logout.png", {:alt => "Logout"} %>
+        </a>
+      </ul>
     <% end %>
+    <ul class="pull-right nav nav-item">
+      <li><a href="/about">About</a></li>
+      <li><a href="/faq">FAQ</a></li>
+      <li><a href="/limitations">Limitations</a></li>
+    </ul>
 
   </div>
 </div>
