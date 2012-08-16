@@ -2,7 +2,13 @@
 <div id="header" class="navbar">
   <div class="row container">
 
-    <a class="brand" href="/" alt="Markupwand"> <%= image_tag "logo-small-monocolor.png", {:alt => "Markupwand", :title => "Markupwand"} %></a>
+    <% if current_user.nil? %>
+      <a class="brand" href="/" alt="Markupwand">
+    <% else %>
+      <a class="brand" href="/designs" alt="Markupwand">
+    <% end %>
+      <%= image_tag "logo-small-monocolor.png", {:alt => "Markupwand", :title => "Markupwand"} %>
+    </a>
 
     <% if current_user.nil? %>
       <div class="pull-right nav-item">
