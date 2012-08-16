@@ -484,21 +484,28 @@ class Grid
   end
   
   def self.fix_error_intersections(layers_in_region)
+    return layers_in_region if layers_in_region.size <= 1
+    
     # TODO: edge case - a same layer could be intersecting with multiple layers. In this case that is not being handled.
     intersecting_pairs = Grid.get_intersecting_nodes layers_in_region
     
     intersecting_pairs.each do |intersecting_layers|
-      intersect_area = intersecting_layers.first.intersect_area(intersecting_layers.second)
-      intersect_percent_left = (intersect_area * 100.0) / Float(intersecting_layers.first.bounds.area)
-      intersect_percent_right = (intersect_area * 100.0) / Float(intersecting_layers.second.bounds.area)
+      layer_one = intersecting_layers.first
+      layer_two = intersecting_layers.second
+      
+      intersect_bounds = layer_one.bounds.intersect_bounds layer_two.bounds
+      
+      next if layer_one.bounds.completely_encloses? intersect_bounds and layer_two.bounds.completely_encloses? intersect_bounds
+      
+      intersect_area = layer_one.intersect_area layer_two
+      intersect_percent_left = (intersect_area * 100.0) / Float(layer_one.bounds.area)
+      intersect_percent_right = (intersect_area * 100.0) / Float(layer_two.bounds.area)
       
       corrected_layers = nil
-      if intersect_percent_left > 90 or intersect_percent_right > 90
-        is_error_intersection = true
+      if intersect_percent_left > 95 or intersect_percent_right > 95
         corrected_layers = Grid.crop_inner_intersect intersecting_layers
-      elsif intersect_percent_left < 10 and intersect_percent_right < 10
-        is_error_intersection = true
-        corrected_layers = Grid.crop_outer_intersect intersecting_layers
+      elsif intersect_percent_left < 15 and intersect_percent_right < 15
+        #corrected_layers = Grid.crop_outer_intersect intersecting_layers
       end
       
       if not corrected_layers.nil?
