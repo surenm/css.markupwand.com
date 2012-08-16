@@ -54,7 +54,7 @@ body {
       margin-top: 4px;
     }
 
-    .login-signup {
+    .navbar-buttons {
       margin-top: 5px;
     }
 
@@ -251,4 +251,63 @@ h1, h2, h3, h4, h5 {
 
 .modal {
   color: #fff;
+}
+
+.faq-type-page {
+  font-size: 110%;
+  padding: 20px;
+  text-align: left;  
+
+  .alert {
+    padding: 8px 35px 8px 14px;
+    margin-bottom: 18px;
+    color: #333;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    background-color: #FCF8E3;
+    border: 1px solid #FBEED5;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    margin-left: 25px;
+    font-family: Helvetica Neue, sans-serif;
+
+    a:hover {
+      color: #3381E5;
+      text-decoration: none;
+    }
+  }
+
+  h2 {
+    margin: 10px 0;
+  }
+
+  &>p {
+    font-size: 110%;
+    margin-left: 25px;
+    margin-top: 20px;
+  }
+
+  li {
+
+    font-size: 16px;
+
+    p {      
+      font-size: 16px;
+    }
+    strong {
+      font-size: 20px;
+      font-weight: normal;
+      display: block;
+      margin-bottom:4px;
+    }
+    margin-bottom: 30px;
+
+    img.illustration {
+      display: block;
+      border:1px solid #ccc;
+      padding: 2px;
+      border-radius: 2px;
+      margin: 20px auto;
+    }
+  }
 }

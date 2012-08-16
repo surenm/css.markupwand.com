@@ -1,8 +1,5 @@
 class LandingPageController < ApplicationController
   def index
-    if user_signed_in?
-      redirect_to '/designs'
-    end
     @pretty_print = true
   end
 
@@ -24,5 +21,8 @@ class LandingPageController < ApplicationController
         invite.save!
       end
     end
+  end
+
+  def faq
   end
 end
