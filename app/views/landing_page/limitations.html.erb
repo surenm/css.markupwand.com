@@ -4,24 +4,24 @@
 
 <h2>Current Limitations</h2>
 <p>
-	We are still not cool enough to convert all the photoshop files perfectly. We understand this is horrible, we are working how to not let you go through this pain, till then please bear with us ☺
+	We are still not cool enough to convert all the photoshop files perfectly. We are working to make it better. Till then please bear with us ☺
 </p>
 
 <p>
-Here are some quick tricks for help us give you really good markup:
+Here are some quick tricks to make your design work well with Markupwand:
 </p>
 
 <ol>
 
-<li> <strong>Avoid overlapping layers:</strong> We make certain assumptions for overlapping layers, which may not be always correct. We are improving on it. We are also building an editor which could help you fix this easier. Till then, please move out overlapping layers.
-Example:
+<li> <strong>Avoid overlapping layers:</strong> When we find overlapping layers, we try to make a few guesses on whether the designer intentionally made the layers overlap or not. This guess might not always be right. We are improving on it. Please bear with us till we get there.
+<br/><br/>Example:
 
 <%= image_tag "overlaps.png", {:alt => "No overlaps", :class => 'illustration'} %>
 
-In case we see overlapping layers which cannot be resolved, we try relatively position it (it is horrible, we know)
+In case we see overlapping layers which cannot be resolved, we try to relatively position it (it is horrible, we know)
 
-<li> <strong>Avoid separating text blocks by spaces:</strong> Please, do not separate pieces of text in a navigation bar/ menu bar using spaces or enter. Try to create individual text layers. That helps to create individual DOM elements for each text layer.
-
+<li> <strong>Avoid separating text blocks by spaces:</strong> Please, do not separate pieces of text in a navigation bar/ menu bar using spaces or enter. Try to create individual text layers. Each text layer that you create would result in one DOM element. In the navigation bars, you would want each link to be an individual DOM element, right?
+<br/><br/>
 Example:
 
 <%= image_tag "text-types.png", {:alt => "Individual text items", :class => 'illustration'} %>
@@ -30,8 +30,8 @@ Split out these space separated text items, make them individual pieces.
 
 </li>
 
-<li> <strong>Avoid multi-layered single-image:</strong> But we aren’t able to merge pieces of images together. So please help us by merging individual layers of a single image together.
-
+<li> <strong>Avoid multiple layers for a single-image:</strong> Each layer you give us would result in one DOM element. If you intend multiple layers to form one image, please merge the layers together.
+<br/><br/>
 Example:
 
 <%= image_tag "multilayered.png", {:alt => "No multi-layered images", :class => 'illustration'} %>
