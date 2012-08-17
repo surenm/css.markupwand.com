@@ -133,7 +133,7 @@ class GridStyleSelector
       end  
     end
     
-    self.css_rules.update spacing
+    return spacing
   end
   
   
@@ -173,25 +173,28 @@ class GridStyleSelector
       has_trailing_offset = false
       has_trailing_offset = (self.grid.bounds != grouping_box) unless grouping_box.nil? or self.grid.bounds.nil?
       if self.is_single_line_text and not has_trailing_offset
-        return width
+        return { :width => width.to_s + 'px' }
       else
-        self.css_rules.update :width => width.to_s + 'px'
+        return { :width => width.to_s + 'px' }
       end
     end
+    return {}
   end
   
   def set_height
     height = self.unpadded_height
     
     if not height.nil? and height != 0
-      self.css_rules.update :height => height.to_s + "px"
+      return :height => height.to_s + "px"
     end
+    
+    return {}
   end
   
   def set_min_dimensions
     width = self.unpadded_width
     height = self.unpadded_height
-    self.css_rules.update :'min-height' => "#{height}px", :'min-width' => "#{width}px"
+    return { :'min-height' => "#{height}px", :'min-width' => "#{width}px" }
   end
 
   # Selector names are usually generated,
@@ -208,17 +211,18 @@ class GridStyleSelector
   end
 
   def set_style_rules
+    style_rules = {}
     self.grid.style_layers.each do |layer_id|
       layer = Layer.find layer_id
-      self.css_rules.update layer.get_style_rules(self)
+      style_rules.update layer.get_style_rules(self)
     end
 
     set_shape_dimensions_flag = false
 
     # Checking if the style layers had a shape.
     if self.css_rules.has_key? :'min-width' or self.css_rules.has_key? :'min-height'
-      self.css_rules.delete :'min-width'
-      self.css_rules.delete :'min-height'
+      style_rules.delete :'min-width'
+      style_rules.delete :'min-height'
       set_shape_dimensions_flag = true
     end
     
@@ -239,7 +243,7 @@ class GridStyleSelector
     end
 
     if position_relatively
-      self.css_rules.update  :position => 'relative', :'z-index' => self.grid.zindex
+      style_rules.update  :position => 'relative', :'z-index' => self.grid.zindex
     end
     
     # float left class if parent is set to GRID_ORIENT_LEFT
@@ -248,27 +252,28 @@ class GridStyleSelector
     end
     
     # Handle absolute positioning now
-    self.css_rules.update CssParser::position_absolutely(grid) if grid.is_positioned
+    style_rules.update CssParser::position_absolutely(grid) if grid.is_positioned
 
     self.extra_selectors.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
     
     # Margin and padding
-    self.set_white_space
+    style_rules.update self.set_white_space
     
     # set width for the grid
-    self.set_width
+    style_rules.update self.set_width
     
     # set height only if there are positioned children
-    self.set_height if self.grid.has_positioned_children?
+    style_rules.update self.set_height if self.grid.has_positioned_children?
     
     # minimum height and width for shapes in style layers
-    self.set_min_dimensions if set_shape_dimensions_flag
+    style_rules.update self.set_min_dimensions if set_shape_dimensions_flag
+
+    self.css_rules.update style_rules
+    self.save!
 
     self.generated_selector = CssParser::create_incremental_selector if not self.css_rules.empty?
         
     CssParser::add_to_inverted_properties(self.css_rules, self.grid)
-
-    self.save!
   end
   
   # Walks recursively through the grids and creates
@@ -487,13 +492,13 @@ class GridStyleSelector
 
   def modified_hashed_selector
     design = Design.find self.grid.design.id
-    modified = hashed_selectors.map { |selector| design.selector_name_map[selector]['name'] }
+    modified = self.hashed_selectors.map { |selector| design.selector_name_map[selector]['name'] }
     modified
   end
 
   # Selector names array(includes default selector and extra selectors)
   def selector_names
-    all_selectors = extra_selectors + modified_hashed_selector
+    all_selectors = self.extra_selectors + self.modified_hashed_selector
 
     layer_has_css = false
     if self.grid.render_layer
@@ -515,7 +520,7 @@ class GridStyleSelector
   # Go through all the grids post order, with root node as the last node.
   # Bubble up. 
   def bubbleup_css_properties
-    grid.children.each { |kid| kid.style_selector.bubbleup_css_properties }
+    self.grid.children.each { |kid| kid.style_selector.bubbleup_css_properties }
 
     bubbleup_repeating_styles
   end
