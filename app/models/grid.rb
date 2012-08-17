@@ -504,8 +504,8 @@ class Grid
       corrected_layers = nil
       if intersect_percent_left > 95 or intersect_percent_right > 95
         corrected_layers = Grid.crop_inner_intersect intersecting_layers
-      elsif intersect_percent_left < 15 and intersect_percent_right < 15
-        corrected_layers = Grid.crop_outer_intersect intersecting_layers
+      elsif intersect_percent_left < 5 and intersect_percent_right < 5
+        #corrected_layers = Grid.crop_outer_intersect intersecting_layers
       end
       
       if not corrected_layers.nil?
