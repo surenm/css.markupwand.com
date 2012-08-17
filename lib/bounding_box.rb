@@ -58,7 +58,7 @@ class BoundingBox
   end
 
   def inner_crop(other_box)
-    cropped_bounds = self.class.new(self.top, self.left, self.bottom, self.right)
+    cropped_bounds = BoundingBox.new(self.top, self.left, self.bottom, self.right)
 
     if cropped_bounds.left > other_box.right or cropped_bounds.top > other_box.bottom
       return nil
@@ -114,15 +114,17 @@ class BoundingBox
   end
   
   def outer_crop(other_box)
-    intersect_bounds_value = intersect_bounds(other_box)
+    top    = self.top
+    bottom = self.bottom
+    left   = self.left
+    right  = self.right
     
-    if intersect_bounds_value.height < intersect_bounds_value.width
-      #Horizontal crop
-      return horizontal_crop(other_box)
-    else
-      #Vertical crop
-      return vertical_crop(other_box)
-    end
+    top    = other_box.bottom if self.top < other_box.bottom and self.bottom > other_box.bottom
+    bottom = other_box.top if self.bottom > other_box.top and self.top < other_box.top
+    left   = other_box.right if self.left < other_box.right and self.right > other_box.right
+    right  = other_box.left if self.right > other_box.left and self.left < other_box.left
+    
+    return BoundingBox.new top, left, bottom, right
   end
 
   def ==(other_box)
@@ -142,7 +144,7 @@ class BoundingBox
   end
   
   def intersect_area(other)
-    intersect_bounds(other).area
+    self.intersect_bounds(other).area
   end
   
   def intersect_bounds(other)
@@ -156,6 +158,11 @@ class BoundingBox
 
   def encloses?(other_box)
     self.top <= other_box.top and self.bottom >= other_box.bottom and self.left <= other_box.left and self.right >= other_box.right
+  end
+  
+  def completely_encloses?(other_box)
+    (self.top < other_box.top and self.bottom > other_box.bottom and self.left <= other_box.left and self.right <= other_box.right) or 
+    (self.top <= other_box.top and self.bottom >= other_box.bottom and self.left < other_box.left and self.right < other_box.right)
   end
 
   def overlaps?(other_box)

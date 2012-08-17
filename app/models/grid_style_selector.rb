@@ -229,8 +229,11 @@ class GridStyleSelector
     end
     
     if not self.grid.parent.nil?
-      parent_selector = self.grid.parent.style_selector
+      parent = self.grid.parent
+      parent_selector = parent.style_selector
       if parent_selector.css_rules.has_key? 'position' and parent_selector.css_rules.fetch('position') == "relative"
+        position_relatively = true
+      elsif parent.is_positioned
         position_relatively = true
       end
     end
