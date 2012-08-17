@@ -633,6 +633,10 @@ class Grid
     end
     grid_zindex = layers_z_indices.min
     
+    if grid_zindex.nil?
+      grid_zindex = all_layers_z_indices.min
+    end
+    
     return grid_zindex
   end
   
