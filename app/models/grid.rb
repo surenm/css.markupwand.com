@@ -484,25 +484,34 @@ class Grid
   end
   
   def self.fix_error_intersections(layers_in_region)
+    return layers_in_region if layers_in_region.size <= 1
+    
     # TODO: edge case - a same layer could be intersecting with multiple layers. In this case that is not being handled.
     intersecting_pairs = Grid.get_intersecting_nodes layers_in_region
     
     intersecting_pairs.each do |intersecting_layers|
-      intersect_area = intersecting_layers.first.intersect_area(intersecting_layers.second)
-      intersect_percent_left = (intersect_area * 100.0) / Float(intersecting_layers.first.bounds.area)
-      intersect_percent_right = (intersect_area * 100.0) / Float(intersecting_layers.second.bounds.area)
+      layer_one = intersecting_layers.first
+      layer_two = intersecting_layers.second
+      
+      intersect_bounds = layer_one.bounds.intersect_bounds layer_two.bounds
+      
+      next if layer_one.bounds.completely_encloses? intersect_bounds and layer_two.bounds.completely_encloses? intersect_bounds
+      
+      intersect_area = layer_one.intersect_area layer_two
+      intersect_percent_left = (intersect_area * 100.0) / Float(layer_one.bounds.area)
+      intersect_percent_right = (intersect_area * 100.0) / Float(layer_two.bounds.area)
       
       corrected_layers = nil
-      if intersect_percent_left > 90 or intersect_percent_right > 90
-        is_error_intersection = true
+      if intersect_percent_left > 95 or intersect_percent_right > 95
         corrected_layers = Grid.crop_inner_intersect intersecting_layers
-      elsif intersect_percent_left < 10 and intersect_percent_right < 10
-        is_error_intersection = true
+      elsif intersect_percent_left < 15 and intersect_percent_right < 15
         corrected_layers = Grid.crop_outer_intersect intersecting_layers
       end
       
       if not corrected_layers.nil?
         Log.info "Correcting an error intersection #{intersecting_layers} to #{corrected_layers}..."
+        Log.info "intersecting_layers: #{Utils.debug_intersecting_layers intersecting_layers}"
+        Log.info "corrected_layers: #{Utils.debug_intersecting_layers corrected_layers}"
         layers_in_region.delete intersecting_layers.first
         layers_in_region.delete intersecting_layers.second
         
@@ -514,25 +523,25 @@ class Grid
   end
   
   def self.crop_inner_intersect(intersecting_nodes)
-    smaller_node = intersecting_nodes[0]
-    bigger_node  = intersecting_nodes[1]
+    smaller_node = Layer.find intersecting_nodes[0].id.to_s
+    bigger_node  = Layer.find intersecting_nodes[1].id.to_s
     if intersecting_nodes[0].bounds.area > intersecting_nodes[1].bounds.area
-      smaller_node = intersecting_nodes[1]
-      bigger_node  = intersecting_nodes[0]
+      smaller_node = Layer.find intersecting_nodes[1].id.to_s
+      bigger_node  = Layer.find intersecting_nodes[0].id.to_s
     end
 
-    new_bound = smaller_node.bounds.clone.inner_crop(bigger_node.bounds)  
+    new_bound = smaller_node.bounds.clone.inner_crop(bigger_node.bounds)
     smaller_node.bounds = new_bound
     
     [smaller_node, bigger_node]
   end
   
   def self.crop_outer_intersect(intersecting_nodes)
-    smaller_node = intersecting_nodes[0]
-    bigger_node  = intersecting_nodes[1]
+    smaller_node = Layer.find intersecting_nodes[0].id.to_s
+    bigger_node  = Layer.find intersecting_nodes[1].id.to_s
     if intersecting_nodes[0].bounds.area > intersecting_nodes[1].bounds.area
-      smaller_node = intersecting_nodes[1]
-      bigger_node  = intersecting_nodes[0]
+      smaller_node = Layer.find intersecting_nodes[1].id.to_s
+      bigger_node  = Layer.find intersecting_nodes[0].id.to_s
     end
 
     new_bound = smaller_node.bounds.clone.outer_crop(bigger_node.bounds)  
@@ -613,7 +622,15 @@ class Grid
   # Finds out zindex of this grid
   def zindex
     zindex = 0
-    layers_z_indices = self.layers.collect { |layer| layer.zindex }
+    
+    layers_z_indices = []
+    all_layers_z_indices = []
+    self.layers.each do |layer|
+      if not self.style_layers.include? layer.id.to_s
+        layers_z_indices.push layer.zindex 
+      end
+      all_layers_z_indices.push layer.zindex
+    end
     grid_zindex = layers_z_indices.min
     
     return grid_zindex

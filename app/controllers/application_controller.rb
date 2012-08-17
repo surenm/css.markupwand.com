@@ -33,6 +33,12 @@ class ApplicationController < ActionController::Base
           @user.enabled = true
           @user.save!
         end
+        
+        if not @user.enabled and not Constants::invite_gated?
+          # Gate is open. Approve user
+          @user.enabled = true
+          @user.save!
+        end
       end
     end
   end

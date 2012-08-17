@@ -43,7 +43,6 @@ GEM
     asset_sync (0.4.2)
       activemodel
       fog
-    awesome_print (1.0.2)
     aws-sdk (1.6.3)
       httparty (~> 0.7)
       json (~> 1.4)
@@ -316,7 +315,6 @@ PLATFORMS
 DEPENDENCIES
   analytical!
   asset_sync
-  awesome_print
   aws-sdk
   bson
   bson_ext
