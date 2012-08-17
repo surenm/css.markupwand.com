@@ -4,6 +4,16 @@
 @import "compass/css3/box-shadow";
 @import "compass/utilities";
 
+#beta-ribbon {
+  background: url("/assets/beta-ribbon.png");
+  position: fixed;
+  height: 149px;
+  width: 149px;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+}
+
 
 
 #landing-page {
@@ -29,15 +39,6 @@
     }
   }
 
-
-  #beta-ribbon {
-    background: url("/assets/beta-ribbon.png");
-    position: fixed;
-    height: 149px;
-    width: 149px;
-    top: 0;
-    right: 0;
-  }
 
 
   .statement {
