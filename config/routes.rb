@@ -24,6 +24,7 @@ TransformersWeb::Application.routes.draw do
   match "/users/sign_in" => redirect("/login")
   match "/users/sign_up" => redirect("/signup")
   match "/users" => redirect("/signup")
+  match "/start" => redirect("/")
 
   match 'unauthorized' => 'login#unauthorized'
   
@@ -93,9 +94,6 @@ TransformersWeb::Application.routes.draw do
   match 'admin/save_tag'   => 'admin#save_tag', :via => :post
  
   mount Resque::Server.new, :at => "/resque"
-
-  # tutorial page
-  match 'start' => 'tutorials#index'
   
   # Main page redirects to index
   root :to => 'landing_page#index'

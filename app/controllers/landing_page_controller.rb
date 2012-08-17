@@ -4,6 +4,9 @@ class LandingPageController < ApplicationController
   end
 
   def getinvite
+    if !Constants.invite_gated? or !current_users.nil?
+      redirect_to "/"
+    end
     @email = params[:email]
     @user_exists = false
     @user_enabled = false
