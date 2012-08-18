@@ -111,7 +111,11 @@ module CssTextParser
     color = ""
     color_object = text_style.extract_value(:value, :textStyle, :value, :color) unless text_style.nil?
     color = CssParser::parse_color(color_object) if not color_object.nil?
-    { :color =>  color }
+    if color.nil? or color.empty?
+      return {}
+    else
+      return { :color =>  color }
+    end
   end
   
   def CssTextParser::parse_text_align(layer)
