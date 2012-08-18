@@ -405,8 +405,8 @@ class Design
     Log.info "Generating CSS Tree..."
     root_grid.style_selector.generate_css_tree
 
-    # Log.info "Bubble up CSS properties..."
-    # root_grid.style_selector.bubbleup_css_properties
+    Log.info "Bubble up CSS properties..."
+    root_grid.style_selector.bubbleup_css_properties
 
     if ENV['HASH_CSS'] == "true" or self.is_css_hashed 
       Log.info "Hashing up CSS Properties"
