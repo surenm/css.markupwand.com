@@ -1,0 +1,32 @@
+We are markupwand.
+We convert photoshop files to HTML And CSS
+>Behind every great website, there is a frustrated developer translating design to HTML.
+>This, is slow. It is painful.
+<replace-with-a-designer-picture-dev-picture>
+
+>As hackers, we try to automate anything that could be done by machine. 
+<correct-word-missing>
+
+So, we built markupwand. You could just throw a Photoshop file to Markupwand and get back HTML in minutes.
+
+It is over 500x faster. Because it is fast, you could do multiple iterations.
+><replacement>
+
+The day we launched, we were the top-story in Hacker News. 
+> Hackers loved the idea vs. Hackers loved the product.
+
+Since we launched, we have been growing in number of successful conversions at x% rate.
+
+What is best, we saved 10 Developer Years in just 3 weeks.
+
+So, with a painful problem and a working solution - what is the market size?
+
+(Math follows)
+More than x people do UI Development. And they pay $200 at least (indian chopshops). If they pay just $100 per month, just HTML conversion itself is a $1B market.
+
+To summarize,
+1 - We are working on a real pain problem
+2 - We have a working solution
+3 - This is a $1B Market.
+
+If this excites you, please come talk to us. 
