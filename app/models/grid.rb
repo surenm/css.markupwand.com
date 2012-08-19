@@ -623,19 +623,12 @@ class Grid
   def zindex
     zindex = 0
     
-    layers_z_indices = []
     all_layers_z_indices = []
     self.layers.each do |layer|
-      if not self.style_layers.include? layer.id.to_s
-        layers_z_indices.push layer.zindex 
-      end
       all_layers_z_indices.push layer.zindex
     end
-    grid_zindex = layers_z_indices.min
-    
-    if grid_zindex.nil?
-      grid_zindex = all_layers_z_indices.min
-    end
+
+    grid_zindex = all_layers_z_indices.min
     
     return grid_zindex
   end
