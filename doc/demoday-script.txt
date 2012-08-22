@@ -1,32 +1,24 @@
-We are markupwand.
-We convert photoshop files to HTML And CSS
->Behind every great website, there is a frustrated developer translating design to HTML.
->This, is slow. It is painful.
-<replace-with-a-designer-picture-dev-picture>
+Hi. We are Markupwand.
+Creating a website requires to convert a Design to HTML.
+A developer has to Manually do this.
 
->As hackers, we try to automate anything that could be done by machine. 
-<correct-word-missing>
+This is a problem. Because - it takes 2-3 days, you have to make it work across browsers, and honestly nobody likes doing this job.
 
-So, we built markupwand. You could just throw a Photoshop file to Markupwand and get back HTML in minutes.
+That is why we build Markupwand. With markupwand, you could just throw in a photoshop file and get back high quality HTML. 
 
-It is over 500x faster. Because it is fast, you could do multiple iterations.
-><replacement>
+Why is Markupwand better? It just takes 5 minutes which is over 500 times faster than manual. It takes care of cross browser issues and it delivers maintainable code.
 
-The day we launched, we were the top-story in Hacker News. 
-> Hackers loved the idea vs. Hackers loved the product.
+How do we know this works?
+When we launched on hacker news, we were the top story for 2 days. Developers love us.
 
-Since we launched, we have been growing in number of successful conversions at x% rate.
+The number of pages we deliver is growing at 83%, week over week.
 
-What is best, we saved 10 Developer Years in just 3 weeks.
+Infact, in last 3 weeks, we have saved 18 years of developer time.
 
-So, with a painful problem and a working solution - what is the market size?
+Lets look at the market size. There are atleast 750,000 Developers going through this pain every-single-day.
 
-(Math follows)
-More than x people do UI Development. And they pay $200 at least (indian chopshops). If they pay just $100 per month, just HTML conversion itself is a $1B market.
+Even at a conservative price of $100 per month, we are looking at a $1B market.
 
-To summarize,
-1 - We are working on a real pain problem
-2 - We have a working solution
-3 - This is a $1B Market.
+To summarize, we are solving, a painful problem, Our solution, is growing at 83%, and it is a 1 Billion dollar market.
 
-If this excites you, please come talk to us. 
+We are creating a world where people never have to write HTML by hand. We are markupwand.
