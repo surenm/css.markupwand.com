@@ -405,18 +405,6 @@ class Design
     Log.info "Generating CSS Tree..."
     root_grid.style_selector.generate_css_tree
 
-    Log.info "Bubble up CSS properties..."
-    root_grid.style_selector.bubbleup_css_properties
-
-    if ENV['HASH_CSS'] == "true" or self.is_css_hashed 
-      Log.info "Hashing up CSS Properties"
-      self.hashed_selectors = root_grid.style_selector.hash_css_properties
-      self.save!
-
-      Log.info "Reducing existing css rules to remove the hashed properties"
-      root_grid.style_selector.reduce_hashed_css_properties
-    end
-
     Log.info "Finding out selector name map..."
     self.selector_name_map = root_grid.style_selector.generate_initial_selector_name_map
     self.selector_name_map.update(get_hashed_selector_map)
@@ -427,6 +415,7 @@ class Design
 
     write_html_and_css
     
+    Log.info "Stopping profiler"
     Profiler::stop
   
     Log.info "Successfully completed generating #{self.name}"
