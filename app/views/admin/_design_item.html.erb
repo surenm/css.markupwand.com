@@ -2,7 +2,7 @@
   <div class="row">
     <div class="span1 status <%= Design::STATUS_CLASS[design.status] %>"> <%= design.status %> </div>
     <div class="span4 name"> <a href="/design/<%= design.safe_name %>"> <%= design.name %> </a></div> 
-    <div class="right span2"> <%= design.user.email %> </div> 
+    <div class="right span2"> <a href="/admin?user=<%= design.user.email %>"><%= design.user.email %></a></div> 
     <div class="right span3"> <%= time_ago_in_words(design.created_at) %> ago </div>
   </div>
   <div class="row">
