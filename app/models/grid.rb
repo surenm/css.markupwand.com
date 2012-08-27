@@ -717,12 +717,16 @@ class Grid
       
     else
       sub_grid_args      = attributes
+      #FIXME Sink 
       sub_grid_args[tag] = self.tag
+
+      #FIXME Sink
       sub_grid_args[:inner_html] = self.positioned_grids_html
 
       inner_html  += self.render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
       
-      if render_layer_obj.tag_name(true) == :img
+
+      if self.render_layer_obj.tag_name(true) == :img
         grid_style_classes = self.style_selector.selector_names.join(" ") if not self.style_selector.selector_names.empty?
         html = content_tag :div, inner_html, {:class => grid_style_classes}, false
       else 
