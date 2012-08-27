@@ -228,6 +228,7 @@ class GridStyleSelector
     
     # Positioning - absolute is handled separately. Just find out if a grid has to be relatively positioned
     position_relatively = false
+    #FIXME Sink
     if self.grid.has_positioned_children? or self.grid.has_positioned_siblings?
       position_relatively = true
     end
@@ -254,15 +255,18 @@ class GridStyleSelector
     # Handle absolute positioning now
     style_rules.update CssParser::position_absolutely(grid) if grid.is_positioned
 
+    #FIXME Sink
     self.extra_selectors.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
     
     # Margin and padding
     style_rules.update self.set_white_space
     
     # set width for the grid
+    #FIXME Sink
     style_rules.update self.set_width
     
     # set height only if there are positioned children
+    #FIXME Sink 
     style_rules.update self.set_height if self.grid.has_positioned_children?
     
     # minimum height and width for shapes in style layers
