@@ -405,6 +405,9 @@ class Design
     Log.info "Generating CSS Tree..."
     root_grid.style_selector.generate_css_tree
 
+    Log.info "Bubble up CSS properties..."
+    root_grid.style_selector.bubbleup_css_properties
+
     Log.info "Finding out selector name map..."
     self.selector_name_map = root_grid.style_selector.generate_initial_selector_name_map
     self.selector_name_map.update(get_hashed_selector_map)
