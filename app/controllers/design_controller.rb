@@ -252,12 +252,12 @@ class DesignController < ApplicationController
   end 
 
   def view_json
-    processed_filebasename = File.basename @design.processed_file_path
+    extracted_file_name = "#{@design.safe_name_prefix}.json"
 
-    remote_file_path = File.join @design.store_processed_key, processed_filebasename    
-    processed_file   = Store::fetch_object_from_store remote_file_path
+    remote_file_path = File.join @design.store_extracted_key, extracted_file_name    
+    extracted_file   = Store::fetch_object_from_store remote_file_path
 
-    send_file processed_file, :disposition => 'inline'
+    send_file extracted_file, :disposition => 'inline'
   end
 
   def upload_danger
