@@ -35,6 +35,8 @@ class Grid
   field :depth, :type => Integer, :default => -1
   
   field :grouping_box, :type => String, :default => nil
+
+  attr_accessor :render_layer_obj
   
   # Grouping queue is the order in which grids are processed
   @@grouping_queue = Queue.new
@@ -48,21 +50,27 @@ class Grid
   
   # Debug methods - inspect, to_s and print for a grid
   def inspect; to_s; end
+
+  def render_layer_obj
+    if self.render_layer.nil?
+      nil
+    else
+      @render_layer_obj = Layer.find self.render_layer if @render_layer_obj.nil?
+      @render_layer_obj
+    end
+  end
   
   def to_s
     style_layer_objs = self.style_layers.collect do |style_layer_id|
       Layer.find(style_layer_id)
     end
-    render_layer_obj = nil
-    render_layer_obj = Layer.find self.render_layer if not self.render_layer.nil? 
     "Tag: #{self.tag}, Layers: #{self.layers.to_a}, Style layer: #{style_layer_objs}, \
-    Render layer: #{render_layer_obj}"
+    Render layer: #{self.render_layer_obj}"
   end
 
   def to_short_s
     if self.render_layer
-      render_layer_obj = Layer.find self.render_layer
-      "Grid (render) #{render_layer_obj.name}"
+      "Grid (render) #{self.render_layer_obj.name}"
     else
       names = self.layers.map do |layer|
         layer.name
@@ -157,8 +165,7 @@ class Grid
         tree[:children].push child_node.get_tree
       end
     else 
-      render_layer_obj = Layer.find self.render_layer
-      render_layer_attr_data = render_layer_obj.attribute_data
+      render_layer_attr_data = self.render_layer_obj.attribute_data
       render_layer_attr_data[:id] = self.id
       tree[:children].push render_layer_attr_data
     end
@@ -647,8 +654,7 @@ class Grid
     if self.render_layer.nil?
       false
     else 
-      render_layer_obj = Layer.find self.render_layer
-      (render_layer_obj.tag_name(self.is_leaf?) == :img)
+      (self.render_layer_obj.tag_name(self.is_leaf?) == :img)
     end
   end
 
@@ -656,8 +662,7 @@ class Grid
     if self.render_layer.nil?
       false
     else
-      render_layer_obj = Layer.find self.render_layer
-      (render_layer_obj.kind == Layer::LAYER_TEXT)
+      (self.render_layer_obj.kind == Layer::LAYER_TEXT)
     end
   end
   
@@ -715,8 +720,7 @@ class Grid
       sub_grid_args[tag] = self.tag
       sub_grid_args[:inner_html] = self.positioned_grids_html
 
-      render_layer_obj   = Layer.find self.render_layer
-      inner_html        += render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
+      inner_html  += self.render_layer_obj.to_html sub_grid_args, self.is_leaf?, self
       
       if render_layer_obj.tag_name(true) == :img
         grid_style_classes = self.style_selector.selector_names.join(" ") if not self.style_selector.selector_names.empty?
