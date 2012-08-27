@@ -312,9 +312,7 @@ class Design
   def push_to_processing_queue
     self.set_status Design::STATUS_PROCESSING
     self.set_queue_priority Design::PRIORITY_NORMAL
-    message = self.get_processing_queue_message
-    Resque.enqueue ProcessorJob, message
-    Resque.enqueue ScreenshotJob, self.id
+    Resque.enqueue ExtractorJob, self.id
   end
   
   def move_to_priority_queue
