@@ -111,8 +111,8 @@ class Design
     File.join self.store_key_prefix, "published"
   end
   
-  def store_psdjsprocessed_key
-    File.join self.store_key_prefix, "psdjsprocessed"
+  def store_extracted_key
+    File.join self.store_key_prefix, "extracted"
   end
   
   def offset_box_key
