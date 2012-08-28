@@ -77,41 +77,27 @@ class Layer
     return layer
   end
 
-
   def set(layer)
-    self.name = layer[:name][:value]
-    self.kind = layer[:layerKind]
-    self.layer_type = layer[:layerType]
-    self.uid = layer[:layerID][:value]
+    self.name = layer[:name]
+    self.layer_type = layer[:layerType] 
+    self.kind = layer[:layerType] # TODO: fix this
+    self.uid = layer[:layerId]
+    self.zindex = layer[:zindex]
 
-    if self.layer_json[BOUND_MODES[:SMART_BOUNDS]] and not self.layer_json[BOUND_MODES[:SMART_BOUNDS]].empty?
-      self.set_bounds_mode(:SMART_BOUNDS)
-    end
-
-    bounds_key = self.bounds_key
-    value = self.layer_json[bounds_key][:value]
-    top = value[:top][:value]
-    bottom = value[:bottom][:value]
-    left = value[:left][:value]
-    right = value[:right][:value]
-
-    if self.initial_bounds.nil?
-      initial_bounds = BoundingBox.new(top, left, bottom, right)
-      self.initial_bounds = initial_bounds
-    end
+    raw_bounds = layer[:bounds]
+    bounds = BoundingBox.new raw_bounds[:top], raw_bounds[:left], raw_bounds[:bottom], raw_bounds[:right]
+    self.initial_bounds = bounds
 
     design_bounds = BoundingBox.new 0, 0, self.design.height, self.design.width
-    layer_bounds = BoundingBox.new(top, left, bottom, right).inner_crop(design_bounds)
+    layer_bounds = bounds.inner_crop(design_bounds)
 
     if layer_bounds.nil?
       self.invalid_layer = true
     else
       self.invalid_layer = false
       self.layer_bounds = BoundingBox.pickle layer_bounds
-      self.save!
     end
-  end
-
+      self.save!
   end
 
   def attribute_data
