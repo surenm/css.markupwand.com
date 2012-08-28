@@ -17,7 +17,8 @@ class Design
   Design::STATUS_QUEUED       = :queued
   Design::STATUS_UPLOADING    = :uploading
   Design::STATUS_UPLOADED     = :uploaded
-  Design::STATUS_PROCESSING   = :processing
+  Design::STATUS_EXTRACTING   = :extracting
+  Design::STATUS_EXTRACTED    = :extracted
   Design::STATUS_PARSING      = :parsing
   Design::STATUS_PARSED       = :parsed
   Design::STATUS_GENERATING   = :generating
@@ -26,14 +27,15 @@ class Design
   Design::STATUS_FAILED       = :failed
 
   Design::STATUS_CLASS = {
-    Design::STATUS_QUEUED       => 'label label-warning',
+    Design::STATUS_QUEUED       => 'label label-info',
     Design::STATUS_UPLOADING    => 'label',
     Design::STATUS_UPLOADED     => 'label',
-    Design::STATUS_PROCESSING   => 'label label-warning',
-    Design::STATUS_PARSING      => 'label label-warning',
-    Design::STATUS_PARSED       => 'label label-warning',
-    Design::STATUS_GENERATING   => 'label label-warning',
-    Design::STATUS_REGENERATING => 'label label-warning',
+    Design::STATUS_EXTRACTING   => 'label label-info',
+    Design::STATUS_EXTRACTED    => 'label label-info',
+    Design::STATUS_PARSING      => 'label label-info',
+    Design::STATUS_PARSED       => 'label label-info',
+    Design::STATUS_GENERATING   => 'label label-info',
+    Design::STATUS_REGENERATING => 'label label-info',
     Design::STATUS_COMPLETED    => 'label label-success',
     Design::STATUS_FAILED       => 'label label-important'
   }
@@ -44,6 +46,7 @@ class Design
   Design::ERROR_FILE_ABSENT        = "file_absent"
   Design::ERROR_NOT_PHOTOSHOP_FILE = "not_photoshop_file"
   Design::ERROR_SCREENSHOT_FAILED  = "screenshot_failed"
+  Design::ERROR_EXTRACTION_FAILED  = "extraction_failed"
 
   # File meta data
   field :name, :type => String
@@ -336,7 +339,7 @@ class Design
   # Parses the photoshop file json data and decomposes into grids
   def parse
     if self.processed_file_path.nil? or self.processed_file_path.empty?
-      Log.fatal "Processed file not specified"
+      Log.fatal "Extracted file not specified"
       self.set_status Design::STATUS_FAILED
       return
     end
@@ -513,7 +516,6 @@ config
     css_contents
   end
 
-  
   def write_css_files(scss_content, base_folder)
     Log.info "Writing css (compass) file..."    
 
