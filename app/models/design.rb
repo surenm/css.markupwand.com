@@ -313,8 +313,6 @@ class Design
   end
   
   def push_to_processing_queue
-    self.set_status Design::STATUS_PROCESSING
-    self.set_queue_priority Design::PRIORITY_NORMAL
     Resque.enqueue ExtractorJob, self.id
   end
   
