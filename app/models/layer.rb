@@ -46,6 +46,8 @@ class Layer
   field :name, :type => String
   field :kind, :type => String
   field :layer_type, :type => String, :default => nil
+  field :zindex, :type => Integer, :default => 0
+
   field :is_overlay, :type => Boolean
   field :is_style_layer, :type => Boolean, :default => false
 
@@ -114,9 +116,6 @@ class Layer
     end
   end
 
-  # TODO Change object property and initialize when we are making properties inside.
-  def zindex
-    layer_json.extract_value(:itemIndex, :value)
   end
 
   def attribute_data
