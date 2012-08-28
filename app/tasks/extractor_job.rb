@@ -5,7 +5,9 @@ class ExtractorJob
   
   def self.perform(design_id)
     design = Design.find design_id
-      
+
+    design.set_status Design::STATUS_EXTRACTING
+
     Log.info "Extracting design data from photoshop file #{design.name}..."
     
     design_folder  = Store.fetch_from_store design.store_key_prefix
@@ -48,10 +50,10 @@ class ExtractorJob
     Store.save_to_store screenshot_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}.png")
     Store.save_to_store fixed_width_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}-fixed.png")
     Store.save_to_store thumbnail_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}-thumbnail.png")
-    
-    design.pre_processed = true
-    design.save!
-  
+
+    design.set_status Design::STATUS_EXTRACTED
     Log.info "Sucessfully completed extracting from photoshop file #{design.name}."
+    
+    Resque.enqueue ParserJob, design.id
   end
 end
