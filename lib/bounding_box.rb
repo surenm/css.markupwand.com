@@ -214,7 +214,11 @@ class BoundingBox
     Log.debug "Checking if objects #{objects} are in region #{region}"
     objects_in_region = objects.select do |item|
       if item.kind_of? Layer
-        region.encloses? item.bounds and item.zindex >= zindex.to_i 
+        if not zindex.nil?
+          region.encloses? item.bounds and item.zindex >= zindex.to_i 
+        else 
+          region.encloses? item.bounds
+        end
       else 
         region.encloses? item
       end
