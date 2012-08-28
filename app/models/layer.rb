@@ -52,7 +52,9 @@ class Layer
   field :is_style_layer, :type => Boolean, :default => false
 
   field :override_tag, :type => String, :default => nil
+
   field :layer_bounds, :type => String, :default => nil
+  field :initial_layer_bounds, :type => String, :default => nil
 
   # CSS Rules
   field :css_rules, :type => Hash, :default => {}
@@ -64,12 +66,6 @@ class Layer
   # Decided that it is not multifont not based on photoshop,
   # but based on the repeating hash values.
   field :is_multifont, :type => Boolean, :default => false
-
-  # The bounds of the layer before any changes are made to it.
-  # 
-  field :initial_layer_bounds, :type => String, :default => nil
-
-  # TOD: Do not store layer_object, but have in memory
 
   attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
 
