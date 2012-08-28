@@ -209,6 +209,8 @@ class DesignController < ApplicationController
       base_folder = @design.store_processed_key
     elsif params[:type] == "generated"
       base_folder = @design.store_generated_key
+    elsif params[:type] == "extracted"
+      base_folder = @design.store_extracted_key
     end
 
     remote_file = File.join base_folder, "#{params[:uri]}.#{params[:ext]}"
