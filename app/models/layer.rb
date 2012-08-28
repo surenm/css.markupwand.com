@@ -45,7 +45,6 @@ class Layer
   field :uid, :type => String
   field :name, :type => String
   field :kind, :type => String
-  field :raw, :type => String
   field :layer_type, :type => String, :default => nil
   field :is_overlay, :type => Boolean
   field :is_style_layer, :type => Boolean, :default => false
