@@ -48,4 +48,26 @@ module Utils
     return url
   end
 
+  def Utils::process_all_designs(folder_name)
+    user = User.find_by_email "bot@goyaka.com"
+
+    Dir["#{folder_name}/**/*.psd"].each do |psd_file|
+      file_name   = File.basename psd_file
+
+      design      = Design.new :name => file_name
+      design.user = user    
+      design.save!
+
+      safe_basename = Store::get_safe_name File.basename(file_name, ".psd")
+      safe_filename = "#{safe_basename}.psd"
+      destination_file = File.join design.store_key_prefix, safe_filename
+      Store.save_to_store psd_file, destination_file
+
+      design.psd_file_path = destination_file
+      design.save!
+
+      design.push_to_processing_queue
+    end
+  end
+
 end
