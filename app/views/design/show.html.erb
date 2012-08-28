@@ -33,7 +33,7 @@
 
       <% if @design.pre_processed %>
       <div class="design-thumbnail">
-        <img src="/processed/<%= @design.safe_name %>/<%= File.basename @design.psd_file_path, '.psd' %>-fixed.png"/>
+        <img src="/extracted/<%= @design.safe_name %>/<%= @design.safe_name_prefix %>-fixed.png"/>
       </div>
       
       <% end %>
