@@ -343,15 +343,17 @@ class Design
     end
 
     Profiler.start    
-    Log.info "Beginning to process #{self.name}..."
+    Log.info "Beginning to parse #{self.name}..."
 
     # Parse the JSON
-    psd_data = self.get_processed_data
+    sif_object = SifParser.new self.processed_file_path
 
-    self.height = psd_data[:properties][:height]
-    self.width  = psd_data[:properties][:width]
-    self.resolution = psd_data[:properties][:resolution]
+    self.height = sif_object.get_design_height 
+    self.width  = sif_object.get_design_width
     
+    # TODO: Resolution information is hidden somewhere in the psd file. pick it up
+    #self.resolution = psd_data[:properties][:resolution]
+
     self.save!
     
     # Reset the global static classes to work for this PSD's data
@@ -360,8 +362,10 @@ class Design
     # Layer descriptors of all photoshop layers
     Log.info "Getting nodes..."
     layers = []
-    psd_data[:art_layers].each do |layer_id, node_json|
-      layer = Layer.create_from_raw_data node_json, self
+
+    raw_layers = sif_object.get_layers
+    raw_layers.each do |layer_json|
+      layer = Layer.create_from_raw_data layer_json, self
       if not layer.invalid_layer and not layer.zero_area?
         layers.push layer
         Log.info "Added Layer #{layer} (#{layer.zindex})"
