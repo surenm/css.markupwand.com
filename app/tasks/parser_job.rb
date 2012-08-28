@@ -10,16 +10,19 @@ class ParserJob
 
       design.set_status Design::STATUS_PARSING
 
-      Store::fetch_from_store design.store_processed_key
-      design_processed_directory = Rails.root.join 'tmp', 'store', design.store_processed_key
-      Log.info "Design processed directory : #{design_processed_directory} "
+      Store::fetch_from_store design.store_extracted_key
+      design_extracted_key = Rails.root.join 'tmp', 'store', design.store_extracted_key
+      
+      extracted_file = File.join design_extracted_key, "#{design.safe_name_prefix}.json"
 
-      Dir["#{design_processed_directory}/*.psd.json"].each do |processed_file|
-        Log.info "Found processed file - #{processed_file}"
-        design.processed_file_path = processed_file
-        design.save!
-        break
+      if not File.exists? extracted_file
+        Log.fatal "Extracted design file missing. Can't parse..."
+        raise "Missing extracted design file"
       end
+
+      Log.info "Found extracted file - #{extracted_file}"
+      design.processed_file_path = extracted_file
+      design.save!
 
       design.parse
 
