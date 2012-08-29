@@ -35,7 +35,7 @@ class ExtractorJob
     if File.exists? clipping_layer_check_file
       FileUtils.rm clipping_layer_check_file
       Log.info "Clipping layers found, queuing up for photoshop processing"
-      Resque.enqueue PreProcessorJob, design.id      
+      Resque.enqueue PreProcessorJob, design.get_processing_queue_message
       return
     end
     
