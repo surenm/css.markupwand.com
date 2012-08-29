@@ -78,3 +78,9 @@ group :development do
   gem 'ruby-prof'
   gem 'foreman'
 end
+
+group :deploy do
+  gem 'capistrano'
+  gem 'capistrano-ext'
+end
+
