@@ -308,6 +308,8 @@ class Design
     
     message[:user]   = self.user.email
     message[:design] = self.safe_name
+    message[:design_id] = self.id.to_s
+
 
     return message
   end
