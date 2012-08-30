@@ -17,8 +17,7 @@ set :rvm_type, :user
 namespace :deploy do
   task :start do
     run "cp #{shared_path}/staging_env #{current_path}/.env"
-    run "source /home/ubuntu/.rvm/scripts/rvm && cd #{current_path} && \
-         foreman start web_daemon"
+    run "source /home/ubuntu/.rvm/scripts/rvm && cd #{current_path} && foreman start web_daemon"
   end
 
   task :stop do
