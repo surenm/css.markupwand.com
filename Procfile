@@ -1,6 +1,6 @@
 web:           bundle exec unicorn_rails -c ./config/unicorn.rb
 web_daemon:    bundle exec unicorn_rails -c ./config/unicorn.rb -D 
-worker:        bundle exec rake resque:work QUEUE=uploader,extractor,parser,pre_processor,generator,html_writer
+worker:        bundle exec rake resque:work QUEUE=uploader,extractor,parser,generator,html_writer
 uploader:      bundle exec rake resque:work QUEUE=uploader
 extractor:     bundle exec rake resque:work QUEUE=extractor
 parser:        bundle exec rake resque:work QUEUE=parser

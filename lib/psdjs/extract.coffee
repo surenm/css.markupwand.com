@@ -22,6 +22,12 @@ assets_directory = path.join output_dir, "assets"
 # Parse the photoshop file
 psd.parse()
 
+if psd.hasClippingLayers()
+  clipping_layer_file = path.join output_dir, "has_clipping_layer"
+  console.log "Input photoshop file has clipping layer. Sending for preprocessing"
+  fs.writeFileSync clipping_layer_file, ""
+  process.exit()
+
 # Save the processed output to processed json
 fs.writeFileSync design_file, JSON.stringify(psd)
 

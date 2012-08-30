@@ -22,6 +22,7 @@ class ExtractorJob
     screenshot_file  = Rails.root.join processed_folder, "#{design.safe_name_prefix}.png"
     fixed_width_file = Rails.root.join processed_folder, "#{design.safe_name_prefix}-fixed.png"
     thumbnail_file   = Rails.root.join processed_folder, "#{design.safe_name_prefix}-thumbnail.png"
+    clipping_layer_check_file = Rails.root.join processed_folder, "has_clipping_layer"
     
     extractor_script = Rails.root.join 'tmp', 'psdjs', 'extract.coffee'
     coffee_script = Rails.root.join 'tmp', 'psdjs', 'node_modules', '.bin', 'coffee'
@@ -30,6 +31,13 @@ class ExtractorJob
 
     Log.info extractor_command
     system extractor_command
+
+    if File.exists? clipping_layer_check_file
+      FileUtils.rm clipping_layer_check_file
+      Log.info "Clipping layers found, queuing up for photoshop processing"
+      Resque.enqueue PreProcessorJob, design.get_processing_queue_message
+      return
+    end
     
     if not File.exists? screenshot_file
       design.add_tag Design::ERROR_SCREENSHOT_FAILED
