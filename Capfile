@@ -26,7 +26,7 @@ namespace :deploy do
   
   task :restart do
     run "cp #{shared_path}/staging_env #{current_path}/.env"
-    run "kill -USR2 `cat /tmp/unicorn.pid`"
+    run "if [ -f /tmp/unicorn.pid ]  ; then echo 'Restarting...'; kill -USR2 `cat /tmp/unicorn.pid`; else echo 'Starting...'; source /home/ubuntu/.rvm/scripts/rvm  && cd #{current_path} && foreman start web_daemon; fi"
   end
 end
 
