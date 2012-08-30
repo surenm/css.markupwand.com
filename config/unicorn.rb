@@ -13,8 +13,8 @@ timeout 45
 
 # pid file for the unicorn process
 pid '/tmp/unicorn.pid'
-stderr = '/mnt/logs/error.log'
-stdout = '/mnt/logs/access.log'
+stderr_path '/mnt/logs/error.log'
+stdout_path '/mnt/logs/access.log'
 
 # Listen on a Unix data socket
 if RAILS_ENV == 'production'
