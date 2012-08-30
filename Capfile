@@ -46,13 +46,20 @@ end
 after 'deploy:create_symlink', 'deploy:assets:precompile_cached'
 
 # Bundle install after new code 
-namespace :bundler do
+namespace :install do
   desc "Fetch bundle packages"
-  task :bundle_new_release, :roles => :app do
+  task :bundle, :roles => :app do
     run "source /home/ubuntu/.rvm/scripts/rvm && cd #{release_path} && bundle install"
   end
+  
+  desc "Install npm packages"
+  task :npm, :roles => :app do
+    psdjs_lib_dir = File.join current_path, 'vendor', 'psdjs'  
+    run "cd #{psdjs_lib_dir}; npm install -d"
+  end
 end
-after 'deploy:update_code', 'bundler:bundle_new_release'
+after 'deploy:update_code', 'install:bundle'
+after 'deploy:update_code', 'install:npm'
 
 # Application
 set :application, "markupwand"
