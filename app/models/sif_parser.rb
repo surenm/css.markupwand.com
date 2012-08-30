@@ -1,5 +1,10 @@
 class SifParser
   class SifParseError < Exception
+=begin
+    TODO: Parse error could happen when there is unexpected data structure, missing key etc.
+    So raise appropriate errors when that happens
+
+=end
   end
   
   # SIF is Smart Interface Format
