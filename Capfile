@@ -2,6 +2,7 @@ ssh_options[:forward_agent] = true
 default_run_options[:shell] = '/bin/bash'
 logger.level = Logger::INFO
 
+set :keep_releases, 10
 
 load 'deploy' if respond_to?(:namespace) # cap2 differentiator
 Dir['vendor/gems/*/recipes/*.rb','vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
