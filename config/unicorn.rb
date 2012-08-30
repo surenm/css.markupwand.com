@@ -2,7 +2,7 @@ RAILS_ENV = ENV['RAILS_ENV']
 RAILS_ROOT = Dir.pwd
 
 # 16 workers and 1 master in production, 2 workers and 1 master in development
-worker_processes (RAILS_ENV == 'production' ? 16 : 2)
+worker_processes (RAILS_ENV == 'production' or RAILS_ENV == "staging" ? 16 : 2)
 
 # Load rails+github.git into the master before forking workers
 # for super-fast worker spawn times
@@ -15,7 +15,7 @@ timeout 45
 pid '/tmp/unicorn.pid'
 
 # Listen on a Unix data socket
-if RAILS_ENV == 'production'
+if RAILS_ENV == 'production' or RAILS_ENV == "staging"
   listen '/tmp/unicorn.sock', :backlog => 2048
   stderr_path './log/error.log'
   stdout_path './log/access.log'

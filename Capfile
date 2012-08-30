@@ -14,7 +14,7 @@ set :rvm_type, :user
 # overrides
 namespace :deploy do
   task :start do
-    run "cp #{shared_path}/env #{current_path}/.env"
+    run "cp #{shared_path}/staging_env #{current_path}/.env"
     run "source /home/ubuntu/.rvm/scripts/rvm && cd #{current_path} && \
          foreman start web_daemon"
   end
@@ -24,6 +24,7 @@ namespace :deploy do
   end
   
   task :restart do
+    run "cp #{shared_path}/staging_env #{current_path}/.env"
     run "kill -USR2 `cat /tmp/unicorn.pid`"
   end
 end
