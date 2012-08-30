@@ -58,8 +58,8 @@ namespace :install do
     run "cd #{psdjs_lib_dir}; npm install -d"
   end
 end
-after 'deploy:update_code', 'install:bundle'
-after 'deploy:update_code', 'install:npm'
+after 'deploy:create_symlink', 'install:bundle'
+after 'deploy:create_symlink', 'install:npm'
 
 # Application
 set :application, "markupwand"
