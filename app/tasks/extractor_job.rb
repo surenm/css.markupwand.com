@@ -31,7 +31,10 @@ class ExtractorJob
     extractor_command = "#{coffee_script} #{extractor_script} #{photoshop_file} #{processed_folder} #{design.safe_name_prefix}"
 
     Log.info extractor_command
-    system extractor_command
+    status = system extractor_command
+    if status.nil?
+      raise "Failure extracting..."
+    end
 
     if File.exists? clipping_layer_check_file
       FileUtils.rm clipping_layer_check_file
