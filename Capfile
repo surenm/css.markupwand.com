@@ -14,7 +14,7 @@ set :rvm_type, :user
 # overrides
 namespace :deploy do
   task :start do
-    run "cd #{current_dir} && foreman start web_daemon"
+    run "source /home/ubuntu/.rvm/scripts/rvm && cd #{current_path} && foreman start web_daemon"
   end
 
   task :stop do
@@ -22,7 +22,11 @@ namespace :deploy do
   end
   
   task :restart do 
-    run "kill -USR2 `cat /tmp/unicorn.pid`"
+    if File.exists? '/tmp/unicorn.pid'
+      run "kill -USR2 `cat /tmp/unicorn.pid`"
+    else 
+      deploy.start
+    end
   end
 end
 
