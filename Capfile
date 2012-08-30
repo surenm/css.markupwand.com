@@ -15,19 +15,16 @@ set :rvm_type, :user
 namespace :deploy do
   task :start do
     run "cp #{shared_path}/env #{current_path}/.env"
-    run "source /home/ubuntu/.rvm/scripts/rvm && cd #{current_path} && foreman start web_daemon"
+    run "source /home/ubuntu/.rvm/scripts/rvm && cd #{current_path} && \
+         foreman start web_daemon"
   end
 
   task :stop do
     run "kill -QUIT `cat /tmp/unicorn.pid`"
   end
   
-  task :restart do 
-    if File.exists? '/tmp/unicorn.pid'
-      run "kill -USR2 `cat /tmp/unicorn.pid`"
-    else 
-      deploy.start
-    end
+  task :restart do
+    run "kill -USR2 `cat /tmp/unicorn.pid`"
   end
 end
 
