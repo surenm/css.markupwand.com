@@ -13,6 +13,8 @@ timeout 45
 
 # pid file for the unicorn process
 pid '/tmp/unicorn.pid'
+stderr = '/mnt/logs/error.log'
+stdout = '/mnt/logs/access.log'
 
 # Listen on a Unix data socket
 if RAILS_ENV == 'production'
@@ -20,6 +22,7 @@ if RAILS_ENV == 'production'
 else
   listen 3000
 end
+
 
 before_fork do |server, worker|
   ##
