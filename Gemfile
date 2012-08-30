@@ -25,6 +25,7 @@ gem 'rest-client'
 gem 'tidy_ffi'
 gem 'multimap'
 gem 'kaminari'
+gem 'foreman'
 
 # monitoring and profiling
 group :production do
@@ -76,5 +77,4 @@ group :development do
   gem 'pry-stack_explorer'
   gem 'pry_debug'
   gem 'ruby-prof'
-  gem 'foreman'
 end
