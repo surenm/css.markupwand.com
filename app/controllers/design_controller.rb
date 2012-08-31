@@ -1,5 +1,5 @@
 class DesignController < ApplicationController
-  before_filter :require_login, :except => [:upload_danger, :local_uploaded]
+  before_filter :require_login, :except => [:upload_danger]
   before_filter :is_user_design, :except => [:new, :uploaded, :local_new, :local_uploaded, :index, :upload_danger]
   before_filter :require_admin_login, :only => [:download_psd, :increase_priority]
 
