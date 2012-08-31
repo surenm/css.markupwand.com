@@ -43,6 +43,7 @@ class ExtractorJob
     # If non nil stderr, then extraction has failed most probably
     if not design.stderr.nil?
       Log.fatal "Extraction of design failed: #{design.stderr}"
+      design.set_status Design::STATUS_FAILED
       design.add_tag Design::ERROR_EXTRACTION_FAILED
       design.save!
       return
@@ -51,6 +52,7 @@ class ExtractorJob
     # If screenshot file is missing, make that as an error as well
     if not File.exists? screenshot_file
       Log.fatal "Design screenshot generation failed."
+      design.set_status Design::STATUS_FAILED
       design.add_tag Design::ERROR_SCREENSHOT_FAILED
       design.save!
       return
