@@ -1,3 +1,4 @@
+require 'open3'
 class ExtractorJob
   extend Resque::Plugins::History
   
@@ -31,11 +32,31 @@ class ExtractorJob
     extractor_command = "#{coffee_script} #{extractor_script} #{photoshop_file} #{processed_folder} #{design.safe_name_prefix}"
 
     Log.info extractor_command
-    status = system extractor_command
-    if status.nil?
-      raise "Failure extracting..."
+
+    Open3.popen3 extractor_command do |stdin, stdout, stderr|
+      design.stdout = stdout.readlines
+      err = stderr.readlines
+      design.stderr = err if not err.empty?
+      design.save!
+    end
+    
+    # If non nil stderr, then extraction has failed most probably
+    if not design.stderr.nil?
+      Log.fatal "Extraction of design failed: #{design.stderr}"
+      design.add_tag Design::ERROR_EXTRACTION_FAILED
+      design.save!
+      return
+    end
+    
+    # If screenshot file is missing, make that as an error as well
+    if not File.exists? screenshot_file
+      Log.fatal "Design screenshot generation failed."
+      design.add_tag Design::ERROR_SCREENSHOT_FAILED
+      design.save!
+      return
     end
 
+    # If there are clipping layers in design, then merge them using photoshop
     if File.exists? clipping_layer_check_file
       FileUtils.rm clipping_layer_check_file
       Log.info "Clipping layers found, queuing up for photoshop processing"
@@ -43,12 +64,6 @@ class ExtractorJob
       return
     end
     
-    if not File.exists? screenshot_file
-      design.add_tag Design::ERROR_SCREENSHOT_FAILED
-      design.save!
-      return
-    end
-
     fixed_width_cmd = "convert #{screenshot_file} -thumbnail '600x480>' -unsharp 0x.8 #{fixed_width_file}"
     thumbnail_cmd   = "convert #{screenshot_file} -thumbnail '180x240>' -unsharp 0x.8 #{thumbnail_file}"
     
