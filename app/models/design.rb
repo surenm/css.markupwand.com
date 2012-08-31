@@ -69,6 +69,10 @@ class Design
   field :height, :type => Integer
   field :width, :type => Integer
   field :resolution, :type => Integer
+  
+  # document processing output
+  field :stdout, :type => String, :default => nil
+  field :stderr, :type => String, :default => nil
 
   mount_uploader :file, DesignUploader
   
