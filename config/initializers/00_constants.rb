@@ -28,16 +28,6 @@ module Constants
     end
   end
 
-  # Load everything in env file to environment
-  env_file = Rails.root.join '.env'
-  contents = File.read env_file
-  contents.each_line do |line|
-    words = line.split "="
-    key = words[0]
-    value = words[1]
-    ENV[key] = value
-  end
-  
   # Round to nearest 5
   def Constants::round_to_nearest_five(num)
     (((num + 5 )/5)-1)*5
