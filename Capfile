@@ -57,9 +57,16 @@ namespace :install do
     psdjs_lib_dir = File.join current_path, 'vendor', 'psdjs'  
     run "cd #{psdjs_lib_dir}; npm install -d"
   end
+  
+  desc "Symlink log and tmp directories"
+  task :setup_tmp_dir do
+    run "rm -rf #{current_path}/tmp"
+    run "ln -s #{shared_path}/tmp #{current_path}/tmp"
+  end
 end
 after 'deploy:create_symlink', 'install:bundle'
 after 'deploy:create_symlink', 'install:npm'
+after 'deploy:create_symlink', 'install:setup_tmp_dir'
 
 # Application
 set :application, "markupwand"
