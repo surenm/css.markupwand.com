@@ -6,6 +6,9 @@ class ExtractorJob
   
   def self.perform(design_id)
     design = Design.find design_id
+    design.stdout = nil
+    design.stderr = nil
+    design.save!
 
     design.set_status Design::STATUS_EXTRACTING
 
