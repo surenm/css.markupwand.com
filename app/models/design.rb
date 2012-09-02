@@ -73,6 +73,7 @@ class Design
   mount_uploader :file, DesignUploader
   
   @@design_processed_data = nil
+
   
   def vote_class
     case self.rating
@@ -83,6 +84,14 @@ class Design
     when nil
       return 'none'
     end
+  end
+
+  # TODO Once mongo is removed, sif object should be json parsed
+  # only once.
+  def sif_object
+    @sif_object = SifParser.new self.processed_file_path if @sif_object.nil?
+
+    @sif_object
   end
 
   def reset_processed_data
@@ -348,12 +357,10 @@ class Design
     Log.info "Beginning to parse #{self.name}..."
 
     # Parse the JSON
-    sif_object = SifParser.new self.processed_file_path
-
-    self.height = sif_object.get_design_height 
-    self.width  = sif_object.get_design_width
+    self.height = self.sif_object.get_design_height 
+    self.width  = self.sif_object.get_design_width
     
-    # TODO: Resolution information is hidden somewhere in the psd file. pick it up
+    #TODO: Resolution information is hidden somewhere in the psd file. pick it up
     #self.resolution = psd_data[:properties][:resolution]
 
     self.save!
@@ -409,9 +416,6 @@ class Design
     # TODO Fork out and parallel process
     Log.info "Generating CSS Tree..."
     root_grid.style_selector.generate_css_tree
-
-    Log.info "Bubble up CSS properties..."
-    root_grid.style_selector.bubbleup_css_properties
 
     Log.info "Finding out selector name map..."
     self.selector_name_map = root_grid.style_selector.generate_initial_selector_name_map
