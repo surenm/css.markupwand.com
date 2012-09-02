@@ -1,7 +1,7 @@
 require 'RMagick'
 include Magick
 
-class Layer
+class Layer < Sif::SifLayer
   include Mongoid::Document
   include Mongoid::Timestamps::Created
   include Mongoid::Timestamps::Updated
@@ -44,7 +44,6 @@ class Layer
 
   field :uid, :type => String
   field :name, :type => String
-  field :kind, :type => String
   field :layer_type, :type => String, :default => nil
   field :zindex, :type => Integer, :default => 0
 
@@ -97,7 +96,7 @@ class Layer
       self.invalid_layer = false
       self.layer_bounds = BoundingBox.pickle layer_bounds
     end
-      self.save!
+    self.save!
   end
 
   def attribute_data
@@ -151,15 +150,6 @@ class Layer
     @bound_mode = bound_mode
   end
 
-  def layer_json
-    if not @layer_object
-      psd_data = self.design.get_processed_data
-      @layer_object = psd_data[:art_layers].fetch :"#{self.uid}"
-    end
-
-    @layer_object
-  end
-
   def bounds_key
     key = BOUND_MODES[@bound_mode]
     key = BOUND_MODES[:NORMAL_BOUNDS] if key.nil?
@@ -207,7 +197,7 @@ class Layer
   end
 
   def renderable_image?
-    !self.layer_json.nil? and self.layer_json.has_key? :renderImage and self.layer_json[:renderImage]
+    self.renderImage
   end
 
   def unmaskable_layer?
