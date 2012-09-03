@@ -349,7 +349,7 @@ class Design
   end
 
   # Parses the photoshop file json data and decomposes into grids
-  def parse
+  def group_grids
     if self.processed_file_path.nil? or self.processed_file_path.empty?
       Log.fatal "Extracted file not specified"
       self.set_status Design::STATUS_FAILED
@@ -357,8 +357,7 @@ class Design
     end
 
     Profiler.start    
-    Log.info "Beginning to parse #{self.name}..."
-
+    Log.info "Beginning to group grids #{self.name}..."
     
     #TODO: Resolution information is hidden somewhere in the psd file. pick it up
     #self.resolution = psd_data[:properties][:resolution]
@@ -374,13 +373,12 @@ class Design
     
     Log.info "Creating root grid..."
     grid = Grid.new :design => self, :root => true, :depth => 0
-    grid.set @layers, nil
+    grid.set_layers @layers, nil
 
     Log.info "Grouping the grids..."
     Grid.group!
     Profiler.stop
-
-    Log.info "Successfully completed parsing #{self.name}" if self.status != Design::STATUS_FAILED
+    Log.info "Successfully grouped grids..."
   end
   
   def generate_markup(args={})

@@ -27,7 +27,7 @@ class ParserJob
       #Create from SIF files
       design.populate_sif
 
-      design.parse
+      design.group_grids
 
       Store::delete_from_store design.store_generated_key
       Store::delete_from_store design.store_published_key
