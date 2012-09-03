@@ -124,14 +124,14 @@ class Grid
   end
   
   def print(indent_level=0)
+    Log.info "Beginning printing"
     spaces = ""
     prefix = "|--"
     indent_level.times {|i| spaces+=" "}
 
-    style_layers_string = self.style_layers.map { |layer_id| Layer.find layer_id }
-    Log.debug "#{spaces}#{prefix} (grid #{self.id.to_s}) #{self.bounds.to_s} (#{style_layers_string}, \
+    Log.info "#{spaces}#{prefix} (grid #{self.id.to_s}) #{self.bounds.to_s} (#{self.style_layers}, \
     positioned = #{is_positioned})"
-    self.children.each do |subgrid|
+    self.children.each do |id, subgrid|
       subgrid.print(indent_level+1)
     end
     
