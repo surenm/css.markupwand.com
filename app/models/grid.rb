@@ -1,40 +1,41 @@
 require 'digest/md5'
 
 class Grid
-  include Mongoid::Document
-  include Mongoid::Timestamps::Created
-  include Mongoid::Timestamps::Updated  
-  include ActionView::Helpers::TagHelper
-
-  # Belongs to a specific photoshop design
-  belongs_to :design
+  # Belongs to a specific photoshop design (Single Instance)
+  attr_accessor :design
 
   # self references for children and parent grids
-  has_many :children, :class_name => 'Grid', :inverse_of => :parent
-  belongs_to :parent, :class_name => 'Grid', :inverse_of => :children
-  embeds_one :style_selector, :class_name => 'GridStyleSelector'
+  # Contains lot of child grids (Hash)
+  attr_accessor :children
+  
+  # Belongs to a parent grid (Single instance)
+  attr_accessor :parent
 
-  has_and_belongs_to_many :layers, :class_name => 'Layer'
+  # Has one style selector (Single instance)
+  attr_accessor :style_selector
+
+  # Contains multiple layers (Hash)
+  attr_accessor :layers
   
   # fields relevant for a grid
-  field :name, :type => String
-  field :hash, :type => String
-  field :orientation, :type => Symbol, :default => Constants::GRID_ORIENT_NORMAL
-  field :root, :type => Boolean, :default => false
-  field :render_layer, :type => String, :default => nil
-  field :style_layers, :type => Array, :default => []
-  field :positioned_layers, :type => Array, :default => []
-  field :body_style_layers, :type => Array, :default => []
+  attr_accessor :name  #(String)
+  attr_accessor :hash  #(String)
+  attr_accessor :orientation  #(Symbol)
+  attr_accessor :root  #(Boolean)
+  attr_accessor :render_layer  #(String)
+  attr_accessor :style_layers  #(Array)
+  attr_accessor :positioned_layers  #(Array)
+  attr_accessor :body_style_layers  #(Array)
     
-  field :tag, :type => String, :default => :div
-  field :override_tag, :type => String, :default => nil
+  attr_accessor :tag  #(String)
+  attr_accessor :override_tag  #(String)
   
-  field :is_positioned, :type => Boolean, :default => false
+  attr_accessor :is_positioned  #(Boolean)
 
-  field :offset_box_buffer, :type => String, :default => nil
-  field :depth, :type => Integer, :default => -1
+  attr_accessor :offset_box_buffer  #(String)
+  attr_accessor :depth  #(Integer)
   
-  field :grouping_box, :type => String, :default => nil
+  attr_accessor :grouping_box  #(String)
 
   attr_accessor :render_layer_obj
   

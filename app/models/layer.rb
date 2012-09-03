@@ -1,12 +1,7 @@
 require 'RMagick'
 include Magick
 
-class Layer < Sif::SifLayer
-  include Mongoid::Document
-  include Mongoid::Timestamps::Created
-  include Mongoid::Timestamps::Updated
-  include ActionView::Helpers::TagHelper
-  
+class Layer  
   LAYER_BLACKANDWHITE      = "LayerKind.BLACKANDWHITE"
   LAYER_BRIGHTNESSCONTRAST = "LayerKind.BRIGHTNESSCONTRAST"
   LAYER_CHANNELMIXER       = "LayerKind.CHANNELMIXER"
@@ -39,65 +34,42 @@ class Layer < Sif::SifLayer
     :SNAPPED_BOUNDS => :snapped_bounds
   }
 
-  has_and_belongs_to_many :grids, :class_name => 'Grid'
-  belongs_to :design
 
-  field :uid, :type => String
-  field :name, :type => String
-  field :layer_type, :type => String, :default => nil
-  field :zindex, :type => Integer, :default => 0
+  ### Relational references ###
 
-  field :is_overlay, :type => Boolean
-  field :is_style_layer, :type => Boolean, :default => false
+  # Belongs to multiple grids
+  attr_accessor :grids
 
-  field :override_tag, :type => String, :default => nil
+  # Belongs to a design
+  attr_accessor :design
 
-  field :layer_bounds, :type => String, :default => nil
-  field :initial_layer_bounds, :type => String, :default => nil
+  # Layer's imported data
+  attr_accessor :uid # (String)
+  attr_accessor :kind # (String)
+  attr_accessor :name # (String)
+  attr_accessor :layer_type # (String)
+  attr_accessor :zindex # (Integer)
+
+  attr_accessor :is_overlay # (Boolean)
+  attr_accessor :is_style_layer # (Boolean)
+
+  attr_accessor :override_tag # (String)
+
+  attr_accessor :layer_bounds # (String)
+  attr_accessor :initial_layer_bounds # (String)
 
   # CSS Rules
-  field :css_rules, :type => Hash, :default => {}
-  field :chunk_text_css_rule, :type => Array, :default => []
-  field :chunk_text_css_selector, :type => Array, :default => []
-  field :extra_selectors, :type => Array, :default => []
-  field :generated_selector, :type => String
+  attr_accessor :css_rules # (Hash)
+  attr_accessor :chunk_text_css_rule # (Array)
+  attr_accessor :chunk_text_css_selector # (Array)
+  attr_accessor :extra_selectors # (Array)
+  attr_accessor :generated_selector # (String)
 
   # Decided that it is not multifont not based on photoshop,
   # but based on the repeating hash values.
-  field :is_multifont, :type => Boolean, :default => false
+  attr_accessor :is_multifont # (Boolean)
 
   attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
-
-  def self.create_from_raw_data(layer_json, design)
-    layer = Layer.new
-    layer.design = design
-
-    layer.set layer_json
-    return layer
-  end
-
-  def set(layer)
-    self.name = layer[:name]
-    self.layer_type = layer[:layerType] 
-    self.kind = layer[:layerType] # TODO: fix this
-    self.uid = layer[:layerId]
-    self.zindex = layer[:zindex]
-
-    raw_bounds = layer[:bounds]
-    bounds = BoundingBox.new raw_bounds[:top], raw_bounds[:left], raw_bounds[:bottom], raw_bounds[:right]
-    self.initial_bounds = bounds
-
-    design_bounds = BoundingBox.new 0, 0, self.design.height, self.design.width
-    layer_bounds = bounds.inner_crop(design_bounds)
-
-    if layer_bounds.nil?
-      self.invalid_layer = true
-    else
-      self.invalid_layer = false
-      self.layer_bounds = BoundingBox.pickle layer_bounds
-    end
-    self.save!
-  end
 
   def attribute_data
     {
