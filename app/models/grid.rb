@@ -3,6 +3,7 @@ require 'digest/md5'
 class Grid
   # Belongs to a specific photoshop design (Single Instance)
   attr_accessor :design
+  attr_reader :id
 
   # self references for children and parent grids
   # Contains lot of child grids (Hash)
@@ -47,6 +48,14 @@ class Grid
   
   def self.reset_grouping_queue
     @@grouping_queue.clear
+  end
+
+  def id
+    if @id.nil?
+      @id = Digest::MD5.hexdigest Time.now.to_i.to_s
+    end
+    
+    @id
   end
   
   # Debug methods - inspect, to_s and print for a grid
