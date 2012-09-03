@@ -85,7 +85,7 @@ class Grid
   def inspect; to_s; end
   
   def to_s
-    "Tag: #{self.tag}, Layers: #{self.layers.to_a}, Style layer: #{self.style_layers}, \
+    "Tag: #{self.tag}, Layers: #{self.layers.values}, Style layer: #{self.style_layers}, \
     Render layer: #{self.render_layer}"
   end
 
