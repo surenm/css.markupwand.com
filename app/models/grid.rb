@@ -75,7 +75,10 @@ class Grid
 
   def id
     if @id.nil?
-      @id = Digest::MD5.hexdigest Time.now.to_i.to_s
+      # Minimal version of mongodb's object id. 
+      # http://www.mongodb.org/display/DOCS/Object+IDs
+      # For incremental object ids.
+      @id = ($$.to_s + Time.now.to_i.to_s).to_i
     end
 
     @id
