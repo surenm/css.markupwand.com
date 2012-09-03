@@ -263,31 +263,6 @@ class Grid
       Log.info "Just one layer #{self.layers.first} is available..."
       self.render_layer = self.layers.first.id.to_s
     end
-    self.save!
-  end
-  
-  ## Grid construction methods
-  
-  # Extracts out style layers that should be applied for body.
-  # Different from normal style layers as it has to be applied to <body>
-  # tag, and needs to be compared with the psd file's properties.
-
-  def extract_body_style_layers
-    Log.info "Extracting body style layers"
-    body_style_layers = []
-    design_bounds = BoundingBox.new(0, 0, design.height, design.width)
-    self.layers.each do |layer|
-      if layer.bounds.encloses? design_bounds
-        Log.info "#{layer} is a body style layer"
-        body_style_layers.push layer
-      end
-    end
-
-    body_style_layers.each do |layer|
-      self.layers.delete layer
-    end
-
-    self.body_style_layers = body_style_layers.map { |layer| layer.id }
   end
   
   # Helper method: Extract style layers out of a grid.
