@@ -290,8 +290,8 @@ class Grid
       max_bounds = parent_box.bounds
     end
     
-    layers = {}
-    available_layers.each { |key, layer| layers[key] = layer if max_bounds.encloses? layer.bounds }
+    enclosing_layers = {}
+    available_layers.each { |key, layer| enclosing_layers[key] = layer if max_bounds.encloses? layer.bounds }
     grid_style_layers = layers.values.select do |layer| 
       layer.bounds == max_bounds and layer.styleable_layer?
     end
