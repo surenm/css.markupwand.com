@@ -45,6 +45,13 @@ class Grid
   
   # Grouping identifiers to detect infinite loop
   @@grouping_identifiers = Hash.new
+
+
+  def initialize(design, root = false, depth = 0 )
+    @design = design
+    @root   = root
+    @depth  = depth
+  end
   
   def self.reset_grouping_queue
     @@grouping_queue.clear
@@ -54,7 +61,7 @@ class Grid
     if @id.nil?
       @id = Digest::MD5.hexdigest Time.now.to_i.to_s
     end
-    
+
     @id
   end
   
@@ -139,13 +146,15 @@ class Grid
   end
   
   # Set data to a grid. More like a constructor, but mongoid models can't have the original constructors
-  def set(layers, parent)
+  def set_layers(layer_list, parent)
     self.parent = parent
-    layers.each { |layer| self.layers.push layer }
+    @layers = {}
+    layer_list.each do |layer|
+      @layers[layer.uid] = layer
+    end
+
     self.style_selector = GridStyleSelector.new
-    self.save!
-    
-    @@grouping_queue.push self if self.root?
+    @@grouping_queue.push self if self.root
   end
     
   # Grid representational data
