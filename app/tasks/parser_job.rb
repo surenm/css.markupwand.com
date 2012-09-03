@@ -24,11 +24,21 @@ class ParserJob
       design.processed_file_path = extracted_file
       design.save!
 
+      #Create from SIF files
+      design.populate_sif
+
       design.parse
 
+      Store::delete_from_store design.store_generated_key
+      Store::delete_from_store design.store_published_key
+
+      design.set_status Design::STATUS_GENERATING
+      design.save!
+
+      design.generate_markup :enable_data_attributes => true
+
       if design.status != Design::STATUS_FAILED
-        design.set_status Design::STATUS_PARSED
-        Resque.enqueue GeneratorJob, design_id
+        design.set_status Design::STATUS_COMPLETED
       end
 
     rescue Exception => error
