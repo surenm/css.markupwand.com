@@ -374,8 +374,7 @@ class Design
     
     Log.info "Creating root grid..."
     grid = Grid.new :design => self, :root => true, :depth => 0
-    grid.set layers, nil
-    grid.save!
+    grid.set @layers, nil
 
     Log.info "Grouping the grids..."
     Grid.group!
