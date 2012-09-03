@@ -28,7 +28,7 @@ class ExtractorJob
     thumbnail_file   = Rails.root.join processed_folder, "#{design.safe_name_prefix}-thumbnail.png"
     clipping_layer_check_file = Rails.root.join processed_folder, "has_clipping_layer"
     
-    psdjs_root_dir =  Rails.root.join 'vendor', 'psdjs'
+    psdjs_root_dir =  Rails.root.join 'lib', 'psd.js'
     extractor_script = File.join psdjs_root_dir, 'tasks', 'extract.coffee'
     coffee_script = 'coffee'
     
