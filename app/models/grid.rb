@@ -45,8 +45,11 @@ class Grid
 
   def initialize(args)
     @design = args[:design]
-    @root   = args[:root]
-    @depth  = args[:depth]
+    @root   = args[:root] || nil
+    @depth  = args[:depth] || 0
+    @grouping_box   = args[:grouping_box] || nil
+    @orientation    = args[:orientation] || Constants::GRID_ORIENT_NORMAL
+    @is_positioned  = args[:is_positioned] || false
 
 
     #Initialize id
@@ -57,16 +60,13 @@ class Grid
     @parent         ||= nil
     @style_selector ||= GridStyleSelector.new
     @layers         ||= {}
-    @orientation    ||= Constants::GRID_ORIENT_NORMAL
     @render_layer   ||= nil
     @style_layers   ||= []
 
     @positioned_layers ||= {}
     @tag               ||= :div
     @override_tag      ||= :div
-    @is_positioned     ||= false
     @offset_box_buffer ||= nil
-    @grouping_box      ||= nil
   end
   
   def self.reset_grouping_queue
