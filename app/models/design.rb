@@ -8,10 +8,12 @@ class Design
   include Mongoid::Document::Taggable
 
   belongs_to :user
-  has_many :grids
-  has_many :layers
+  
+  # Hash of items
+  attr_accessor :grids
+  attr_accessor :layers
 
-  embeds_one :font_map
+  attr_accessor :font_map
 
   # Design status types
   Design::STATUS_QUEUED       = :queued
@@ -60,15 +62,15 @@ class Design
   field :rating, :type => Boolean
   
   # CSS Related
-  field :selector_name_map, :type => Hash, :default => {}  
-  field :hashed_selectors, :type => Hash, :default => {} 
-  field :is_css_hashed,    :type => Boolean, :default => false
-  field :class_edited,     :type => Boolean, :default => false
+  attr_accessor :selector_name_map
+  attr_accessor :hashed_selectors
+  attr_accessor :is_css_hashed
+  attr_accessor :class_edited
   
   # Document properties
-  field :height, :type => Integer
-  field :width, :type => Integer
-  field :resolution, :type => Integer
+  attr_accessor :height
+  attr_accessor :width
+  attr_accessor :resolution
 
   mount_uploader :file, DesignUploader
   
@@ -86,11 +88,8 @@ class Design
     end
   end
 
-  # TODO Once mongo is removed, sif object should be json parsed
-  # only once.
-  def sif_object
-    @sif_object = SifParser.new self.processed_file_path if @sif_object.nil?
-
+  def populate_sif
+    @sif_object = SifParser.new(self.processed_file_path, self) if @sif_object.nil?
     @sif_object
   end
 
@@ -135,7 +134,7 @@ class Design
   end
   
   def get_root_grid
-    root_grids = self.grids.where(:root => true)
+    root_grids = self.grids.select { |grid| grid.root == true }
     #Log.error "Root grid = #{root_grids.last.id.to_s}, #{root_grids.length}"
     Log.fatal "More than one root node in design???" if root_grids.size > 1
 
@@ -231,6 +230,10 @@ class Design
       end
     end
 =end
+  end
+
+  def save_data
+    # Delegate this save to file save
   end
   
   def set_queue_priority(queue_priority)
@@ -356,9 +359,6 @@ class Design
     Profiler.start    
     Log.info "Beginning to parse #{self.name}..."
 
-    # Parse the JSON
-    self.height = self.sif_object.get_design_height 
-    self.width  = self.sif_object.get_design_width
     
     #TODO: Resolution information is hidden somewhere in the psd file. pick it up
     #self.resolution = psd_data[:properties][:resolution]
@@ -370,20 +370,7 @@ class Design
     
     # Layer descriptors of all photoshop layers
     Log.info "Getting nodes..."
-    layers = []
-
-    raw_layers = sif_object.get_layers
-    raw_layers.each do |layer_json|
-      layer = Layer.create_from_raw_data layer_json, self
-      if not layer.invalid_layer and not layer.zero_area?
-        layers.push layer
-        Log.info "Added Layer #{layer} (#{layer.zindex})"
-      elsif layer.zero_area?
-        Log.info "#{layer} has zero area"
-      elsif layer.invalid_layer
-        Log.info "#{layer} is out of design bounds (#{layer.zindex})"
-      end
-    end
+    @layers = @sif_object.layers
     
     Log.info "Creating root grid..."
     grid = Grid.new :design => self, :root => true, :depth => 0
