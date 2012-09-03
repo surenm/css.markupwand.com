@@ -93,7 +93,7 @@ class Grid
     if self.render_layer
       "Grid (render) #{self.render_layer.name}"
     else
-      names = self.layers.map do |layer|
+      names = self.layers.map do |uid, layer|
         layer.name
       end
       "Grid (parent) #{names.to_s}"
@@ -136,7 +136,7 @@ class Grid
     end
     
     if children.length == 0
-      self.layers.each do |layer|
+      self.layers.each do |uid, layer|
         layer.print(indent_level+1)
       end
     end  
@@ -228,7 +228,7 @@ class Grid
     if self.layers.empty?
       bounds = nil
     else
-      node_bounds = self.layers.collect {|layer| layer.bounds}
+      node_bounds = self.layers.collect {|uid, layer| layer.bounds}
       bounds = BoundingBox.get_super_bounds node_bounds
     end
     return bounds
