@@ -215,7 +215,8 @@ class Grid
     if self.children.empty?
       return nil
     end
-    self.children.sort {|a,b| a.id.to_s <=> b.id.to_s}.last
+    last_key = self.children.keys.sort.last
+    self.children[last_key]
   end
   
   def has_positioned_children?
