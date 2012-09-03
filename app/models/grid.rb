@@ -150,8 +150,12 @@ class Grid
   end
   
   # Set data to a grid. More like a constructor, but mongoid models can't have the original constructors
-  def set_layers(layer_list, parent)
+  def set(layer_list, parent)
     self.parent = parent
+    if self.parent
+      self.parent.children[self.id] = self
+    end
+
     @layers = {}
     layer_list.each do |layer|
       @layers[layer.uid] = layer
@@ -375,7 +379,7 @@ class Grid
                           :depth => self.depth + 1,
                           :grouping_box => BoundingBox.pickle(row_grouping_box.bounds)
 
-      row_grid.set_layers nodes_in_row_region, self
+      row_grid.set nodes_in_row_region, self
       
       Log.debug "Extracting style layers out of the row grid #{row_grid}"
       available_nodes = row_grid.extract_style_layers available_nodes, row_grouping_box
@@ -440,7 +444,7 @@ class Grid
         is_positioning_done = Grid.extract_positioned_layers grid, grouping_box, grouping_box_layers.values
       end
 
-      grid.set_layers all_grouping_box_layers, row_grid
+      grid.set all_grouping_box_layers, row_grid
             
       if not self.design.offset_box.nil?
           grid.offset_box_buffer = BoundingBox.pickle self.design.offset_box
