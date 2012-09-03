@@ -10,9 +10,15 @@ class SifParser
 
 =end
   end
+
+  attr_accessor :header
+  attr_accessor :layer_mask
+  attr_accessor :num_layers
+  attr_accessor :layers
+  attr_accessor :design
   
   # SIF is Smart Interface Format
-  def initialize(file_path)
+  def initialize(file_path, design)
     raise SifParseError if not File.exists? file_path
 
     fptr = File.read file_path
@@ -23,7 +29,11 @@ class SifParser
     # all writes to this file go through this.
     @sif = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
 
-    self.parse()
+    # Appends design data with design's properties
+    @design = design
+
+    self.parse
+
   end
 
   def parse
@@ -35,27 +45,32 @@ class SifParser
       self.validate_layer_mask
 
       @num_layers = @layer_mask[:numLayers]
+      # Set design's properties
+
+      set_design_properties
+      create_layers
     rescue Exception => e
       raise e
     end
   end
 
+  def set_design_properties
+    @design.height = get_design_height 
+    @design.width  = get_design_width
+  end
+
   # Get the layer objects. Right now, fetch from mongo
   # for that design.
-  # TODO Mongo remove
+  # 
   # Once mongo is removed, create and edit layers 
-  # directly from file.
-  def get_sif_layers(design)
-    if @layers.nil?
-      @layers = []
-      @layer_mask[:layers].each do |layer_json|
-        layer = (design.layers.where :uid => layer_json[:layerId]).first
-        layer.append_sif_data layer_json
-        @layers.push layer
-      end
+  # directly from file
+  def create_layers
+    @layers = []
+    @layer_mask[:layers].each do |layer_json|
+      layer = Sif::SifLayer::create layer_json, @design
+      @layers.push layer
+      Log.info "Creating from SIF #{layer.name}"
     end
-
-    @layers
   end
 
   # TODO - signature correct, change implementation later
