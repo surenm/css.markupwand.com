@@ -18,9 +18,7 @@ $(document).ready ->
 
   $("#file-select-zone").click ->
     Analytical.event "file_upload", "attempted"
-    filepicker.getFile ['image/photoshop', 'image/x-photoshop', 'image/psd', 'application/photoshop',
-                        'application/psd', 'zz-application/zz-winassoc-psd', 'application/x-photoshop',
-                        'image/vnd.adobe.photoshop'], {'multiple': false, 'modal': true, 'location': filepicker.SERVICES.DROPBOX,  'services' : [filepicker.SERVICES.COMPUTER, filepicker.SERVICES.DROPBOX]}, (url, data) ->
+    filepicker.getFile '*/*', {'multiple': false, 'modal': true, 'location': filepicker.SERVICES.DROPBOX,  'services' : [filepicker.SERVICES.COMPUTER, filepicker.SERVICES.DROPBOX]}, (url, data) ->
     
       Analytical.event "file_upload", "selected"
       file_url_field.attr "value", url
