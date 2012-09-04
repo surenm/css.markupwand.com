@@ -1,3 +1,7 @@
+# This should be moved to somewhere
+# equivalent of SIF Root - which holds the reference for the file.
+#
+# 
 class SifParser
   class SifParseError < Exception
 =begin
@@ -6,15 +10,30 @@ class SifParser
 
 =end
   end
+
+  attr_accessor :header
+  attr_accessor :layer_mask
+  attr_accessor :num_layers
+  attr_accessor :layers
+  attr_accessor :design
   
   # SIF is Smart Interface Format
-  def initialize(file_path)
+  def initialize(file_path, design)
     raise SifParseError if not File.exists? file_path
 
     fptr = File.read file_path
+    # This is json reference is opened only once,
+    # written back only through this.
+    # 
+    # This is equivalent of a db connection pool -
+    # all writes to this file go through this.
     @sif = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
 
-    self.parse()
+    # Appends design data with design's properties
+    @design = design
+
+    self.parse
+
   end
 
   def parse
@@ -26,9 +45,40 @@ class SifParser
       self.validate_layer_mask
 
       @num_layers = @layer_mask[:numLayers]
-      @layers = @layer_mask[:layers]
+      # Set design's properties
+
+      set_design_properties
+      create_layers
     rescue Exception => e
       raise e
+    end
+  end
+
+  def set_design_properties
+    @design.height = get_design_height 
+    @design.width  = get_design_width
+  end
+
+  # Get the layer objects. Right now, fetch from mongo
+  # for that design.
+  # 
+  # Once mongo is removed, create and edit layers 
+  # directly from file
+  def create_layers
+    @layers = []
+    @layer_mask[:layers].each do |layer_json|
+      layer = Sif::SifLayer::create layer_json, @design
+      @layers.push layer
+      Log.info "Creating from SIF #{layer.name}"
+    end
+  end
+
+  # TODO - signature correct, change implementation later
+  def get_sif_layer_by_id(layerId)
+    @layer_mask[:layers].each do |layer_json|
+      if layer_json[:layerId] == layerId
+        return layer_json
+      end
     end
   end
 
