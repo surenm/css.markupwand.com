@@ -164,8 +164,9 @@ class Grid
 
     @layers = {}
     layer_list.each do |layer|
-      @layers[layer.uid] = layer
+      @layers[layer.uid] = layer if not layer.empty?
     end
+
 
     self.style_selector = GridStyleSelector.new
     @@grouping_queue.push self if self.root
@@ -335,9 +336,6 @@ class Grid
 
     # list of layers in this grid
     available_nodes = self.layers.dup
-    available_nodes = available_nodes.select do |_, node|
-      not node.empty?
-    end
     
     layers_bounds = []
     available_nodes.values.each { |layer| layers_bounds.push layer.bounds }
@@ -534,11 +532,13 @@ class Grid
   end
   
   def self.crop_inner_intersect(intersecting_nodes)
-    smaller_node = Layer.find intersecting_nodes[0].id.to_s
-    bigger_node  = Layer.find intersecting_nodes[1].id.to_s
+    Log.info "Intersecting nodes"
+    Log.info intersecting_nodes
+    smaller_node = intersecting_nodes[0]
+    bigger_node  = intersecting_nodes[1]
     if intersecting_nodes[0].bounds.area > intersecting_nodes[1].bounds.area
-      smaller_node = Layer.find intersecting_nodes[1].id.to_s
-      bigger_node  = Layer.find intersecting_nodes[0].id.to_s
+      smaller_node = intersecting_nodes[1]
+      bigger_node  = intersecting_nodes[0]
     end
 
     new_bound = smaller_node.bounds.clone.inner_crop(bigger_node.bounds)
@@ -548,11 +548,11 @@ class Grid
   end
   
   def self.crop_outer_intersect(intersecting_nodes)
-    smaller_node = Layer.find intersecting_nodes[0].id.to_s
-    bigger_node  = Layer.find intersecting_nodes[1].id.to_s
+    smaller_node = intersecting_nodes[0]
+    bigger_node  = intersecting_nodes[1]
     if intersecting_nodes[0].bounds.area > intersecting_nodes[1].bounds.area
-      smaller_node = Layer.find intersecting_nodes[1].id.to_s
-      bigger_node  = Layer.find intersecting_nodes[0].id.to_s
+      smaller_node = intersecting_nodes[1]
+      bigger_node  = intersecting_nodes[0]
     end
 
     new_bound = smaller_node.bounds.clone.outer_crop(bigger_node.bounds)  
@@ -624,7 +624,6 @@ class Grid
     flow_grid = Grid.new :design => grid.design, :depth => grid.depth + 1
     flow_grid.set flow_layers_in_region, grid
     flow_grid.offset_box_buffer = BoundingBox.pickle offset_bounds
-    flow_grid.save!
     @@grouping_queue.push flow_grid
     
     return (not intersecting_layer_pairs.empty?)
