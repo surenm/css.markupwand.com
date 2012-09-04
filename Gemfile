@@ -78,4 +78,5 @@ group :development do
   gem 'pry_debug'
   gem 'ruby-prof'
   gem 'capistrano'
+  gem 'rvm-capistrano'
 end

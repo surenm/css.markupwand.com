@@ -8,7 +8,6 @@ load 'deploy' if respond_to?(:namespace) # cap2 differentiator
 Dir['vendor/gems/*/recipes/*.rb','vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
 
 # RVM shit
-$:.unshift(File.expand_path('./lib', ENV['rvm_path']))
 require "rvm/capistrano"
 set :rvm_ruby_string, '1.9.2'
 set :rvm_type, :user
