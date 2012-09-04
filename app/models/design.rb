@@ -201,8 +201,8 @@ class Design
       end
       
       self.grids.each do |grid|
-        grid.layer_ids.each do |layer_id|
-          layer = Layer.find layer_id
+        grid.layer_ids.each do |uid|
+          layer = grid.layers[uid]
           layers[layer.uid] = layer.attribute_data
         end        
       end
