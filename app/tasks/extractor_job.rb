@@ -6,8 +6,6 @@ class ExtractorJob
   
   def self.perform(design_id)
     design = Design.find design_id
-    design.stdout = nil
-    design.stderr = nil
     design.save!
 
     design.set_status Design::STATUS_EXTRACTING
@@ -35,32 +33,21 @@ class ExtractorJob
     extractor_command = "#{coffee_script} #{extractor_script} #{photoshop_file} #{processed_folder} #{design.safe_name_prefix}"
 
     Log.info extractor_command
-
+    err = nil
     Open3.popen3 extractor_command do |stdin, stdout, stderr|
       design.stdout = stdout.readlines
-      err = stderr.readlines
-      design.stderr = err if not err.empty?
-      design.save!
+      err = stderr.read
     end
     
     # If non nil stderr, then extraction has failed most probably
-    if not design.stderr.nil?
-      Log.fatal "Extraction of design failed: #{design.stderr}"
+    if not err.nil? and not err.empty?
+      Log.fatal "Extraction of design failed: #{err}"
       design.set_status Design::STATUS_FAILED
       design.add_tag Design::ERROR_EXTRACTION_FAILED
       design.save!
-      return
+      raise err
     end
     
-    # If screenshot file is missing, make that as an error as well
-    if not File.exists? screenshot_file
-      Log.fatal "Design screenshot generation failed."
-      design.set_status Design::STATUS_FAILED
-      design.add_tag Design::ERROR_SCREENSHOT_FAILED
-      design.save!
-      return
-    end
-
     # If there are clipping layers in design, then merge them using photoshop
     if File.exists? clipping_layer_check_file
       FileUtils.rm clipping_layer_check_file

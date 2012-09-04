@@ -60,11 +60,7 @@ class Design
 
   # Rating is Yes or No
   field :rating, :type => Boolean
-
-  # document processing output
-  field :stdout, :type => String, :default => nil
-  field :stderr, :type => String, :default => nil
-
+  
   # CSS Related
   attr_accessor :selector_name_map
   attr_accessor :hashed_selectors
