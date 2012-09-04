@@ -53,7 +53,7 @@ namespace :install do
   
   desc "Install npm packages"
   task :npm, :roles => :app do
-    psdjs_lib_dir = File.join current_path, 'vendor', 'psdjs'  
+    psdjs_lib_dir = File.join current_path, 'lib', 'psd.js'  
     run "cd #{psdjs_lib_dir}; npm install -d"
   end
   
