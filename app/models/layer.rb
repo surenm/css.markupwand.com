@@ -449,7 +449,6 @@ sass
     end
 
     attributes         = Hash.new
-
     attributes[:"data-grid-id"] = args.fetch :"data-grid-id", ""
     attributes[:"data-layer-id"] = self.id.to_s
     attributes[:"data-layer-name"] = self.name
@@ -481,7 +480,7 @@ sass
     spaces = ""
     prefix = "|--"
     indent_level.times { |i| spaces += " " }
-    Log.debug "#{spaces}#{prefix} (layer) #{self.name} #{@bounds.to_s}"
+    Log.info "#{spaces}#{prefix} (layer) #{self.name} #{@bounds.to_s}"
   end
 
 end
