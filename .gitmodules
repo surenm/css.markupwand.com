@@ -1,3 +1,0 @@
-[submodule "vendor/psdjs"]
-	path = vendor/psdjs
-	url = git@github.com:Goyaka/psd.js.git
