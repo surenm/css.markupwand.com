@@ -72,6 +72,9 @@ class Design
   attr_accessor :width
   attr_accessor :resolution
 
+  # Autoincrement counter
+  attr_accessor :incremental_counter
+
   mount_uploader :file, DesignUploader
   
   @@design_processed_data = nil
@@ -95,6 +98,15 @@ class Design
 
   def reset_processed_data
     @@design_processed_data = nil
+  end
+
+  def incremental_counter
+    if @incremental_counter.nil?
+      @incremental_counter = 1
+      return @incremental_counter
+    end
+    @incremental_counter = @incremental_counter + 1
+    return @incremental_counter
   end
 
   def safe_name_prefix
