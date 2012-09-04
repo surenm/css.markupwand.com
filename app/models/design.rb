@@ -302,8 +302,6 @@ class Design
   end
 
   def reset
-    self.grids.delete_all
-    self.layers.delete_all
     self.hashed_selectors  = {}
     self.selector_name_map = {}
     self.save!
