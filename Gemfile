@@ -37,6 +37,7 @@ gem 'unicorn'
 
 # Chat notification
 gem 'grove-rb'
+gem 'capistrano-grove'
 
 #File upload related gems
 gem 'carrierwave'
