@@ -131,13 +131,12 @@ class Grid
   end
   
   def print(indent_level=0)
-    Log.info "Beginning printing"
     spaces = ""
     prefix = "|--"
     indent_level.times {|i| spaces+=" "}
 
-    Log.info "#{spaces}#{prefix} (grid #{self.id.to_s}) #{self.bounds.to_s} (#{self.style_layers}, \
-    positioned = #{is_positioned})"
+    positioned_string = 'positioned' if is_positioned else ''
+    Log.info "#{spaces}#{prefix} (grid #{self.id}) #{self.bounds.to_s} #{self.style_layers.join(',')} #{positioned_string}"
     self.children.each do |id, subgrid|
       subgrid.print(indent_level+1)
     end
