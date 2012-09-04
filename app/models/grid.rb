@@ -75,10 +75,14 @@ class Grid
 
   def id
     if @id.nil?
-      # Minimal version of mongodb's object id. 
+      # Minimal version of mongodb's object id.
       # http://www.mongodb.org/display/DOCS/Object+IDs
       # For incremental object ids.
-      @id = ($$.to_s + Time.now.to_i.to_s).to_i
+      process_id  = "%07d" % $$ #7 digits
+      time_micro  = ("%0.6f" % Time.now.to_f).gsub(".", "") #16 digits
+      incremental = "%04d" % @design.incremental_counter #4 digits
+      @id = (time_micro + process_id + incremental).to_i.to_s(16)
+      Log.info "Initialized id as #{@id}"
     end
 
     @id
