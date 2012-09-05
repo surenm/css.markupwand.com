@@ -35,7 +35,6 @@ class ExtractorJob
     Log.info extractor_command
     err = nil
     Open3.popen3 extractor_command do |stdin, stdout, stderr|
-      design.stdout = stdout.readlines
       err = stderr.read
     end
     
