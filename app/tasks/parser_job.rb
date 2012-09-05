@@ -3,9 +3,8 @@ class ParserJob
 
   @queue = :parser
 
-  def self.perform(readable_design_id)
+  def self.perform(design_id)
     begin
-      design_id = readable_design_id.split('-').last
       design = Design.find design_id
 
       design.set_status Design::STATUS_PARSING
