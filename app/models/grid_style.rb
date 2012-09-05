@@ -1,16 +1,22 @@
-class GridStyleSelector
-  include Mongoid::Document
-  include Mongoid::Timestamps::Created
-  include Mongoid::Timestamps::Updated  
+class GridStyle
 
-  embedded_in :grid
+  attr_accessor :grid
 
-  field :css_rules, :type => Hash, :default => {}
-  field :extra_selectors, :type => Array, :default => []
-  field :generated_selector, :type => String
+  attr_accessor :css_rules # (Hash) 
+  attr_accessor :extra_selectors # (Array) 
+  attr_accessor :generated_selector # (String) 
 
-  field :hashed_selectors, :type => Array, :default => []
+  attr_accessor :hashed_selectors # (Array) 
 
+  def initialize(args)
+    @grid   = args[:grid]
+    if @grid.nil?
+      raise ArgumentError, "No grid object passed"
+    end
+
+    @root   = args[:root] || nil
+    @depth  = args[:depth] || 0
+  end
 
   ## helper methods
   def get_border_width
