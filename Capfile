@@ -1,3 +1,9 @@
+require 'grove/capistrano'
+set :grove_channel_key, 'zUvSh37EVD1EClAl8MrekEQKFlPuzZeA'
+set :grove_service, 'markupwand'
+
+after 'deploy', 'grove:notify'
+
 ssh_options[:forward_agent] = true
 default_run_options[:shell] = '/bin/bash'
 logger.level = Logger::INFO
