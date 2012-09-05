@@ -56,7 +56,6 @@ class Layer
   attr_accessor :override_tag # (String)
 
   attr_accessor :layer_bounds # (String)
-  attr_accessor :initial_layer_bounds # (String)
 
   # CSS Rules
   attr_accessor :css_rules # (Hash)
@@ -133,22 +132,8 @@ class Layer
     BoundingBox.depickle self.layer_bounds
   end
 
-  def initial_bounds
-    BoundingBox.depickle self.initial_layer_bounds
-  end
-
-  def initial_bounds=(new_bound)
-    if self.initial_layer_bounds.nil?
-      self.initial_layer_bounds = BoundingBox.pickle(new_bound)
-    end
-  end
-
   def bounds=(new_bound)
     self.layer_bounds = BoundingBox.pickle(new_bound)
-  end
-
-  def <=>(other_layer)
-    self.bounds <=> other_layer.bounds
   end
 
   def == (other_layer)

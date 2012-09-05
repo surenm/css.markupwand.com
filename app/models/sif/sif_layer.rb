@@ -12,7 +12,6 @@ class Sif::SifLayer
     raw_bounds = layer_json[:bounds]
     bounds     = BoundingBox.new raw_bounds[:top], raw_bounds[:left], raw_bounds[:bottom], raw_bounds[:right]
     
-    layer.initial_bounds = bounds
     design_bounds = BoundingBox.new 0, 0, layer.design.height, layer.design.width
     layer_bounds  = bounds.inner_crop(design_bounds)
 
