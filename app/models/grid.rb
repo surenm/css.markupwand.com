@@ -45,6 +45,11 @@ class Grid
 
   def initialize(args)
     @design = args[:design]
+
+    if @design.nil?
+      raise ArgumentError, "No design object passed"
+    end
+
     @root   = args[:root] || nil
     @depth  = args[:depth] || 0
     @grouping_box   = args[:grouping_box] || nil
@@ -58,7 +63,7 @@ class Grid
     # Set default values
     @children       ||= {}
     @parent         ||= nil
-    @style_selector ||= GridStyleSelector.new
+    @style_selector ||= GridStyle.new
     @layers         ||= {}
     @render_layer   ||= nil
     @style_layers   ||= []
@@ -167,7 +172,7 @@ class Grid
     end
 
 
-    self.style_selector = GridStyleSelector.new
+    self.style_selector = GridStyle.new
     @@grouping_queue.push self if self.root
   end
     
