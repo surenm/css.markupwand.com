@@ -82,7 +82,6 @@ class Grid
       time_micro  = ("%0.6f" % Time.now.to_f).gsub(".", "") #16 digits
       incremental = "%04d" % @design.incremental_counter #4 digits
       @id = (time_micro + process_id + incremental).to_i.to_s(16)
-      Log.info "Initialized id as #{@id}"
     end
 
     @id
