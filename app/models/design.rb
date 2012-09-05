@@ -310,7 +310,7 @@ class Design
   def reparse
     self.reset
     self.set_status Design::STATUS_PARSING
-    Resque.enqueue ParserJob, self.safe_name
+    Resque.enqueue ParserJob, self.id
   end
   
   def regenerate
