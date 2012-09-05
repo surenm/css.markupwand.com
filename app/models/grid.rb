@@ -13,7 +13,7 @@ class Grid
   attr_accessor :parent
 
   # Has one style selector (Single instance)
-  attr_accessor :style_selector
+  attr_accessor :style
 
   # Contains multiple layers (Hash)
   attr_accessor :layers
@@ -63,7 +63,7 @@ class Grid
     # Set default values
     @children       ||= {}
     @parent         ||= nil
-    @style_selector ||= GridStyle.new
+    @style          ||= GridStyle.new
     @layers         ||= {}
     @render_layer   ||= nil
     @style_layers   ||= []
@@ -172,7 +172,7 @@ class Grid
     end
 
 
-    self.style_selector = GridStyle.new
+    self.style = GridStyle.new
     @@grouping_queue.push self if self.root
   end
     
@@ -702,7 +702,7 @@ class Grid
 
     if self.render_layer.nil?
 
-      attributes[:class] = self.style_selector.selector_names.join(" ") if not self.style_selector.selector_names.empty?
+      attributes[:class] = self.style.selector_names.join(" ") if not self.style.selector_names.empty?
  
       sub_grid_args = Hash.new
       positioned_html = positioned_grids_html sub_grid_args
@@ -734,7 +734,7 @@ class Grid
       
 
       if self.render_layer.tag_name(true) == :img
-        grid_style_classes = self.style_selector.selector_names.join(" ") if not self.style_selector.selector_names.empty?
+        grid_style_classes = self.style.selector_names.join(" ") if not self.style.selector_names.empty?
         html = content_tag :div, inner_html, {:class => grid_style_classes}, false
       else 
         html = inner_html

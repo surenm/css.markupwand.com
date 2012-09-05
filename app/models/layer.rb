@@ -194,22 +194,22 @@ class Layer
     chosen_tag
   end
 
-  def set_style_rules(grid_style_selector)
+  def set_style_rules(grid_style)
     crop_objects_for_cropped_bounds
-    is_leaf = grid_style_selector.grid.is_leaf?
+    is_leaf = grid_style.grid.is_leaf?
   
     css = {}
     if not self.is_style_layer and not self.tag_name(is_leaf) == :img
-      css.update grid_style_selector.css_rules
+      css.update grid_style.css_rules
     end
   
-    self.extra_selectors = grid_style_selector.extra_selectors
+    self.extra_selectors = grid_style.extra_selectors
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
-      css.update CssParser::parse_background_image(self, grid_style_selector.grid)
+      css.update CssParser::parse_background_image(self, grid_style.grid)
     elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_shape self, grid_style_selector.grid
+      css.update CssParser::parse_shape self, grid_style.grid
     end
 
     if has_multifont?
@@ -224,7 +224,7 @@ class Layer
     end
 
     self.generated_selector = CssParser::create_incremental_selector if not css.empty?
-    CssParser::add_to_inverted_properties(css, grid_style_selector.grid)
+    CssParser::add_to_inverted_properties(css, grid_style.grid)
 
     self.css_rules = css
     self.save!
@@ -261,8 +261,8 @@ sass
     uniqued_multifont_data
   end
 
-  def get_style_rules(grid_style_selector)
-    set_style_rules(grid_style_selector) #if self.css_rules.empty?
+  def get_style_rules(grid_style)
+    set_style_rules(grid_style) #if self.css_rules.empty?
 
     self.css_rules
   end
@@ -293,8 +293,8 @@ sass
       all_selectors.push self.modified_generated_selector(grid) if not self.css_rules.empty?
     end
 
-    if not grid.style_selector.hashed_selectors.empty?
-      all_selectors = all_selectors + grid.style_selector.modified_hashed_selector
+    if not grid.style.hashed_selectors.empty?
+      all_selectors = all_selectors + grid.style.modified_hashed_selector
     end
 
     all_selectors.uniq!
