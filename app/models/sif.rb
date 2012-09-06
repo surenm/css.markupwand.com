@@ -22,12 +22,6 @@ class Sif
     Store.write_contents_to_store sif_file, sif_data.to_json
   end
   
-  def self.read(design)
-  end
-  
-  def self.update(design, updates)
-  end
-  
   # SIF is Smart Interface Format
   def initialize(design)
     # Appends design data with design's properties
@@ -78,59 +72,9 @@ class Sif
     
     return if @serialized_grids.nil?
     
-    @grids = serialized_grids.collect do |serialized_grid_data|
-      Grid.create_from_sif_data serialized_grid_data
     end
   end
-
-  # Get the layer objects. Right now, fetch from mongo
-  # for that design.
-  # 
-  # Once mongo is removed, create and edit layers 
-  # directly from file
-  def create_layers
-    @layers = []
-    @layer_mask[:layers].each do |layer_json|
-      layer = Sif::SifLayer::create layer_json, @design
-      @layers.push layer
-      Log.info "Creating from SIF #{layer.name}"
-    end
-  end
-
-  # TODO - signature correct, change implementation later
-  def get_sif_layer_by_id(layerId)
-    @layer_mask[:layers].each do |layer_json|
-      if layer_json[:layerId] == layerId
-        return layer_json
-      end
-    end
-  end
-
-  def validate_keys_in_hash(obj, keys)
-    keys.each do |key|
-      raise SifParseError if not obj.has_key? key
-    end
-  end
-
-  def validate_header
-    must_header_keys = [:width, :height, :modename]
-    self.validate_keys_in_hash @header, must_header_keys
-  end
-
-  def validate_layer_mask
-    must_layermask_keys = [:layers, :numLayers]
-    self.validate_keys_in_hash @layer_mask, must_layermask_keys
-  end
-
-  def get_design_width
-    return @header[:width]
-  end 
   
-  def get_design_height
-    return @header[:height]
   end
-
-  def get_layers
-    @layers
   end
 end
