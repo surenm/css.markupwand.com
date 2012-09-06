@@ -20,7 +20,7 @@ class ExtractorJob
     assets_directory = Rails.root.join processed_folder, "assets"
     FileUtils.mkdir_p assets_directory if not Dir.exists? assets_directory
     
-    processed_file   = Rails.root.join processed_folder, "#{design.safe_name_prefix}.json"
+    extracted_file   = Rails.root.join processed_folder, "#{design.safe_name_prefix}.json"
     screenshot_file  = Rails.root.join processed_folder, "#{design.safe_name_prefix}.png"
     fixed_width_file = Rails.root.join processed_folder, "#{design.safe_name_prefix}-fixed.png"
     thumbnail_file   = Rails.root.join processed_folder, "#{design.safe_name_prefix}-thumbnail.png"
@@ -55,6 +55,7 @@ class ExtractorJob
       return
     end
     
+    # Build screenshot, thumbnail files
     fixed_width_cmd = "convert #{screenshot_file} -thumbnail '600x480>' -unsharp 0x.8 #{fixed_width_file}"
     thumbnail_cmd   = "convert #{screenshot_file} -thumbnail '180x240>' -unsharp 0x.8 #{thumbnail_file}"
     
@@ -64,7 +65,7 @@ class ExtractorJob
     Log.info thumbnail_cmd
     system thumbnail_cmd
     
-    Store.save_to_store processed_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}.json")
+    Store.save_to_store extracted_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}.json")
     Store.save_to_store screenshot_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}.png")
     Store.save_to_store fixed_width_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}-fixed.png")
     Store.save_to_store thumbnail_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}-thumbnail.png")
