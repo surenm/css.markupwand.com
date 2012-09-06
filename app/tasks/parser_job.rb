@@ -27,7 +27,6 @@ class ParserJob
       design.populate_sif
       design.group_grids
 
-      return
 
       Store::delete_from_store design.store_generated_key
       Store::delete_from_store design.store_published_key
