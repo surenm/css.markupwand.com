@@ -50,9 +50,7 @@ class GridStyle
    
   # Find out bounding box difference from it and its children.
   def get_padding
-    non_style_layers = self.grid.layers.to_a.select do |layer|
-      not self.grid.style_layers.to_a.include? layer.id.to_s
-    end
+    non_style_layers = self.grid.layers.values - self.grid.style_layers
     
     children_bounds = non_style_layers.collect { |layer| layer.bounds }
     children_superbound = BoundingBox.get_super_bounds children_bounds
@@ -95,7 +93,7 @@ class GridStyle
       end      
       
       if not margin_boxes.empty?
-        children_bounds     = self.grid.layers.collect { |layer| layer.bounds }
+        children_bounds     = self.grid.layers.values.collect { |layer| layer.bounds }
         children_superbound = BoundingBox.get_super_bounds children_bounds        
         margin_superbound   = BoundingBox.get_super_bounds margin_boxes
            
@@ -222,8 +220,7 @@ class GridStyle
 
   def set_style_rules
     style_rules = {}
-    self.grid.style_layers.each do |layer_id|
-      layer = Layer.find layer_id
+    self.grid.style_layers.each do |uid, layer|
       style_rules.update layer.get_style_rules(self)
     end
 
@@ -245,8 +242,7 @@ class GridStyle
     
     if not self.grid.parent.nil?
       parent = self.grid.parent
-      parent_selector = parent.style
-      if parent_selector.css_rules.has_key? 'position' and parent_selector.css_rules.fetch('position') == "relative"
+      if parent.style.css_rules.has_key? 'position' and parent.style.css_rules.fetch('position') == 'relative'
         position_relatively = true
       elsif parent.is_positioned
         position_relatively = true
@@ -263,7 +259,7 @@ class GridStyle
     end
     
     # Handle absolute positioning now
-    style_rules.update CssParser::position_absolutely(grid) if grid.is_positioned
+    style_rules.update position_absolutely if grid.is_positioned
 
     #FIXME Sink
     self.extra_selectors.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
