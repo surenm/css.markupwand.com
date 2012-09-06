@@ -3,114 +3,49 @@ require 'digest/md5'
 class Grid  
   include ActionView::Helpers::TagHelper
   
-
+  # An unique id to the grid
+  attr_reader :id
+  
   # Belongs to a specific photoshop design (Single Instance)
   attr_accessor :design
-  attr_reader :id
-
+  
   # self references for children and parent grids
   # Contains lot of child grids (Hash)
   attr_accessor :children
-  
-  # Belongs to a parent grid (Single instance)
   attr_accessor :parent
 
-  # Has one style selector (Single instance)
-  attr_accessor :style
-
-  # Contains multiple layers (Hash)
-  attr_accessor :layers
-  
-  # fields relevant for a grid
-  attr_accessor :orientation  #(Symbol)
-  attr_accessor :root  #(Boolean)
+  # Layer types that belong to the grid
+  attr_accessor :layers # (Hash)
   attr_accessor :style_layers  #(Array)
   attr_accessor :positioned_layers  #(Hash)
+  attr_accessor :render_layer
+
+  # If this is a root grid of a design
+  attr_accessor :root  #(Boolean)
+  
+  # True if the grid node is going to be positioned
+  attr_accessor :is_positioned  #(Boolean)
     
+  # Style and semantics related fields for a grid
+  attr_accessor :style
+  attr_accessor :orientation  #(Symbol)
   attr_accessor :tag  #(String)
   attr_accessor :override_tag  #(String)
-  
-  attr_accessor :is_positioned  #(Boolean)
 
+  # Grouping related information for white spaces
+  attr_accessor :depth  #(Integer)  
   attr_accessor :offset_box_buffer  #(String)
-  attr_accessor :depth  #(Integer)
-  
   attr_accessor :grouping_box  #(String)
 
-  attr_accessor :render_layer
-  
   # Grouping queue is the order in which grids are processed
   @@grouping_queue = Queue.new
-  
-  # Grouping identifiers to detect infinite loop
-  @@grouping_identifiers = Hash.new
-
-
-  def initialize(args)
-    @design = args[:design]
-
-    if @design.nil?
-      raise ArgumentError, "No design object passed"
-    end
-
-    @design.grids[self.id] = self
-
-    @root   = args[:root] || nil
-    @depth  = args[:depth] || 0
-    @grouping_box   = args[:grouping_box] || nil
-    @orientation    = args[:orientation] || Constants::GRID_ORIENT_NORMAL
-    @is_positioned  = args[:is_positioned] || false
-
-
-    # Set default values
-    @children          ||= {}
-    @parent            ||= nil
-    @style             ||= GridStyle.new(:grid => self)
-    @layers            ||= {}
-    @render_layer      ||= nil
-    @style_layers      ||= []
-    @positioned_layers ||= {}
-    @tag               ||= :div
-    @override_tag      ||= :div
-    @offset_box_buffer ||= nil
-  end
-  
+    
   def self.reset_grouping_queue
     @@grouping_queue.clear
   end
-
-  def id
-    if @id.nil?
-      # Minimal version of mongodb's object id.
-      # http://www.mongodb.org/display/DOCS/Object+IDs
-      # For incremental object ids.
-      process_id  = "%07d" % $$ #7 digits
-      time_micro  = ("%0.6f" % Time.now.to_f).gsub(".", "") #16 digits
-      incremental = "%04d" % @design.incremental_counter #4 digits
-      @id = (time_micro + process_id + incremental).to_i.to_s(16)
-    end
-
-    @id
-  end
   
-  # Debug methods - inspect, to_s and print for a grid
-  def inspect; to_s; end
-  
-  def to_s
-    "Tag: #{self.tag}, Layers: #{self.layers.values}, Style layer: #{self.style_layers}, \
-    Render layer: #{self.render_layer}"
-  end
-
-  def to_short_s
-    if self.render_layer
-      "Grid (render) #{self.render_layer.name}"
-    else
-      names = self.layers.map do |uid, layer|
-        layer.name
-      end
-      "Grid (parent) #{names.to_s}"
-    end
-  end
+  # Grouping identifiers to detect infinite loop
+  @@grouping_identifiers = Hash.new
   
   def unique_identifier
     layer_uids = self.layers.collect { |uid, layer| uid }
@@ -135,30 +70,52 @@ class Grid
     @@grouping_identifiers = Hash.new
   end
   
-  def print(indent_level=0)
-    spaces = ""
-    prefix = "|--"
-    indent_level.times {|i| spaces+=" "}
+  # Deserialize SIF data to get a grid
+  def self.create_from_sif_data(sif_grid_data)
+  end
 
-    positioned_string = 'positioned' if is_positioned else ''
-    Log.info "#{spaces}#{prefix} (grid #{self.id}) #{self.bounds.to_s} #{self.style_layers.join(',')} #{positioned_string}"
-    self.children.each do |id, subgrid|
-      subgrid.print(indent_level+1)
+  def initialize(args)
+    @design = args[:design]
+
+    if @design.nil?
+      raise ArgumentError, "No design object passed"
     end
-    
-    if children.length == 0
-      self.layers.each do |uid, layer|
-        layer.print(indent_level+1)
-      end
-    end  
+
+    @design.grids[self.id] = self
+
+    @root   = args[:root] || nil
+    @depth  = args[:depth] || 0
+    @grouping_box   = args[:grouping_box] || nil
+    @orientation    = args[:orientation] || Constants::GRID_ORIENT_NORMAL
+    @is_positioned  = args[:is_positioned] || false
+
+    # Set default values
+    @children          ||= {}
+    @parent            ||= nil
+    @style             ||= GridStyle.new(:grid => self)
+    @layers            ||= {}
+    @render_layer      ||= nil
+    @style_layers      ||= []
+    @positioned_layers ||= {}
+    @tag               ||= :div
+    @override_tag      ||= :div
+    @offset_box_buffer ||= nil
   end
   
-  def get_label
-    css_classes = [""] #+ self.get_css_classes
-    css_classes_string = css_classes.join " ."
-    "<div class='editable-grid'><span class='editable-tag'> #{self.tag} </span> <span class='editable-class'> #{css_classes_string} </span></div>"
+  def id
+    if @id.nil?
+      # Minimal version of mongodb's object id.
+      # http://www.mongodb.org/display/DOCS/Object+IDs
+      # For incremental object ids.
+      process_id  = "%07d" % $$ #7 digits
+      time_micro  = ("%0.6f" % Time.now.to_f).gsub(".", "") #16 digits
+      incremental = "%04d" % @design.incremental_counter #4 digits
+      @id = (time_micro + process_id + incremental).to_i.to_s(16)
+    end
+
+    @id
   end
-  
+
   # Set data to a grid. More like a constructor, but mongoid models can't have the original constructors
   def set(layer_list, parent)
     self.parent = parent
@@ -173,8 +130,14 @@ class Grid
 
     @@grouping_queue.push self if self.root
   end
-    
+  
   # Grid representational data
+  def get_label
+    css_classes = [""] #+ self.get_css_classes
+    css_classes_string = css_classes.join " ."
+    "<div class='editable-grid'><span class='editable-tag'> #{self.tag} </span> <span class='editable-class'> #{css_classes_string} </span></div>"
+  end
+  
   def attribute_data
     {
       :id          => self.id,
@@ -739,4 +702,42 @@ class Grid
     
     return html
   end
+  
+  # Debug methods - inspect, to_s and print for a grid
+  def inspect; to_s; end
+  
+  def to_s
+    "Tag: #{self.tag}, Layers: #{self.layers.values}, Style layer: #{self.style_layers}, \
+    Render layer: #{self.render_layer}"
+  end
+
+  def to_short_s
+    if self.render_layer
+      "Grid (render) #{self.render_layer.name}"
+    else
+      names = self.layers.map do |uid, layer|
+        layer.name
+      end
+      "Grid (parent) #{names.to_s}"
+    end
+  end
+  
+ def print(indent_level=0)
+    spaces = ""
+    prefix = "|--"
+    indent_level.times {|i| spaces+=" "}
+
+    positioned_string = 'positioned' if is_positioned else ''
+    Log.info "#{spaces}#{prefix} (grid #{self.id}) #{self.bounds.to_s} #{self.style_layers.join(',')} #{positioned_string}"
+    self.children.each do |id, subgrid|
+      subgrid.print(indent_level+1)
+    end
+    
+    if children.length == 0
+      self.layers.each do |uid, layer|
+        layer.print(indent_level+1)
+      end
+    end  
+  end
+  
 end
