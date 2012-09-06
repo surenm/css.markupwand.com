@@ -316,7 +316,8 @@ sass
     return nil if raw_font_name.nil?
 
     design = self.grids.first.design
-    design.font_map.get_font raw_font_name
+    #design.font_map.get_font raw_font_name
+    raw_font_name
   end
 
   # A Layer whose bounds are zero
