@@ -2,6 +2,8 @@ require 'RMagick'
 include Magick
 
 class Layer  
+  include ActionView::Helpers::TagHelper
+
   LAYER_BLACKANDWHITE      = "LayerKind.BLACKANDWHITE"
   LAYER_BRIGHTNESSCONTRAST = "LayerKind.BRIGHTNESSCONTRAST"
   LAYER_CHANNELMIXER       = "LayerKind.CHANNELMIXER"
@@ -69,6 +71,11 @@ class Layer
   attr_accessor :is_multifont # (Boolean)
 
   attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
+
+  def initialize
+    @css_rules = {}
+    @extra_selectors = []
+  end
 
   def attribute_data
     {
@@ -232,8 +239,11 @@ class Layer
     self.save!
   end
 
+  #FIXME PSDJS
   def chunk_text_rules
     chunk_text_rules = ''
+    return chunk_text_rules
+
     self.chunk_text_css_rule.each_with_index do |value, index|
       if not value.empty?
         rule_list = CssParser::to_style_string(value)
@@ -264,7 +274,7 @@ sass
   end
 
   def get_style_rules(grid_style)
-    return {:'border': '1px solid #000'} #FIXME PSDJS
+    return {:'border' => '1px solid #000'} #FIXME PSDJS
     set_style_rules(grid_style) #if self.css_rules.empty?
 
     self.css_rules
@@ -439,7 +449,7 @@ sass
 
     attributes         = Hash.new
     attributes[:"data-grid-id"] = args.fetch :"data-grid-id", ""
-    attributes[:"data-layer-id"] = self.id.to_s
+    attributes[:"data-layer-id"] = self.uid.to_s
     attributes[:"data-layer-name"] = self.name
     attributes[:class] = self.selector_names(grid).join(" ") if not self.selector_names(grid).empty?
 
