@@ -29,46 +29,58 @@ class Sif
   end
   
   # SIF is Smart Interface Format
-  def initialize(file_path, design)
-    raise SifParseError if not File.exists? file_path
-
-    fptr = File.read file_path
-    # This is json reference is opened only once,
-    # written back only through this.
-    # 
-    # This is equivalent of a db connection pool -
-    # all writes to this file go through this.
-    @sif = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
-
+  def initialize(design)
     # Appends design data with design's properties
     @design = design
 
+    sif_file_path = File.join design.store_key_prefix, "#{design.safe_name_prefix}.sif"
+    sif_file = Store::fetch_object_from_store sif_file_path
+    sif_content = File.read sif_file
+
+    # This is equivalent of a db connection pool -
+    # all writes to this file go through this.
+    @sif_data = JSON.parse sif_content, :symbolize_names => true, :max_nesting => false
+    raise SifParseError if @sif_data.empty? or @sif_data.nil?
+    
     self.parse
   end
   
-  
-
   def parse
     begin
-      @header = @sif[:header]
-      self.validate_header
-
-      @layer_mask = @sif[:layerMask]
-      self.validate_layer_mask
-
-      @num_layers = @layer_mask[:numLayers]
-      # Set design's properties
-
-      set_design_properties
-      create_layers
+      self.parse_header
+      self.parse_layers
+      self.parse_grids
     rescue Exception => e
-      raise e
+      raise e 
     end
   end
-
-  def set_design_properties
-    @design.height = get_design_height 
-    @design.width  = get_design_width
+  
+  def parse_header
+    @header = @sif_data[:header]
+    @design_metadata = @header[:design_metadata]
+    @user_metadata = @header[:user_metada]
+  end
+  
+  def parse_layers
+    @serialized_layers = @sif_data[:layers]
+    
+    raise "Layers data is Nil" if @serialized_layers.nil?
+    
+    @layers = @serialized_layers.collect do |serialized_layer_data|
+      Layer.create_from_sif_data serialized_layer_data
+    end
+    
+    pp @layers
+  end
+  
+  def parse_grids
+    @serialized_grids = @sif_data[:grids]
+    
+    return if @serialized_grids.nil?
+    
+    @grids = serialized_grids.collect do |serialized_grid_data|
+      Grid.create_from_sif_data serialized_grid_data
+    end
   end
 
   # Get the layer objects. Right now, fetch from mongo
