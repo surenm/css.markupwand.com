@@ -207,12 +207,12 @@ class Grid
   end
   
   def positioned_children
-    self.children.select { |child_grid| child_grid.is_positioned }
+    self.children.values.select { |child_grid| child_grid.is_positioned }
   end
 
   def positioned_siblings
     if not self.root
-      self.parent.children.select { |sibling_grid| sibling_grid.is_positioned }
+      self.parent.children.values.select { |sibling_grid| sibling_grid.is_positioned }
     else
       []
     end
