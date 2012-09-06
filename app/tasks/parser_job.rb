@@ -9,27 +9,21 @@ class ParserJob
 
       design.set_status Design::STATUS_PARSING
 
-      Store::fetch_from_store design.store_extracted_key
-      design_extracted_key = Rails.root.join 'tmp', 'store', design.store_extracted_key
+      Store::fetch_from_store design.store_key_prefix
+      design_directory = Rails.root.join 'tmp', 'store', design.store_key_prefix
       
-      extracted_file = File.join design_extracted_key, "#{design.safe_name_prefix}.json"
+      sif_file = File.join design_directory, "#{design.safe_name_prefix}.sif"
 
-      if not File.exists? extracted_file
-        Log.fatal "Extracted design file missing. Can't parse..."
-        raise "Missing extracted design file"
+      if not File.exists? sif_file
+        Log.fatal "SIf file missing. Can't proceed..."
+        raise "Missing SIF file"
       end
 
-      Log.info "Found extracted file - #{extracted_file}"
-      design.processed_file_path = extracted_file
+      Log.info "Found SIF file - #{sif_file}"
+      design.sif_file_path = sif_file
       design.save!
 
-      SifBuilder.build_from_extracted_file design, extracted_file
-      return
-
-      #Create from SIF files
-      design.populate_sif
       design.group_grids
-
       return
 
       Store::delete_from_store design.store_generated_key
