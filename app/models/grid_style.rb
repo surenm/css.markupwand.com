@@ -287,6 +287,18 @@ class GridStyle
         
     CssParser::add_to_inverted_properties(self.css_rules, self.grid)
   end
+
+  def position_absolutely
+    css = {}
+    if self.grid.bounds and not self.grid.zindex.nil?
+      css[:position]  = 'absolute'
+      css[:top]       = (self.grid.bounds.top - self.grid.parent.bounds.top + 1).to_s + 'px'
+      css[:left]      = (self.grid.bounds.left - self.grid.parent.bounds.left + 1).to_s + 'px'
+      css[:'z-index'] = self.grid.zindex
+    end
+
+    css
+  end
   
   # Walks recursively through the grids and creates
   def generate_css_rules
