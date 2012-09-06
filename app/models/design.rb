@@ -439,15 +439,6 @@ class Design
     return
   end
 
-  def get_hashed_selector_map
-    map = {}
-    self.hashed_selectors.each do |selector, value|
-      map.update( {selector => {"name" => selector, "css" => value }})
-    end
-
-    map
-  end
-
   # This usually called after changing CSS class names
   def write_html_and_css
     Log.info "Writing HTML and CSS..."
@@ -554,21 +545,4 @@ config
     Store.save_to_store override_css, target_css
   end
 
-  # Prints out the grouped styles
-  def hashed_selectors_content
-    css_content = ""
-    self.hashed_selectors.each do |selector, rules|
-      css_rules_list = ""
-      rules.each do |rule, value|
-        css_rules_list += "#{rule.to_s}: #{value.to_s};"
-      end 
-      css_content += ".#{selector} {#{css_rules_list}}"
-    end
-
-    Log.info "Writing HASHED CSS content"
-
-    Log.info css_content
-
-    css_content
-  end
 end
