@@ -50,6 +50,8 @@ class Grid
       raise ArgumentError, "No design object passed"
     end
 
+    @design.grids[self.id] = self
+
     @root   = args[:root] || nil
     @depth  = args[:depth] || 0
     @grouping_box   = args[:grouping_box] || nil
@@ -57,17 +59,13 @@ class Grid
     @is_positioned  = args[:is_positioned] || false
 
 
-    #Initialize id
-    self.id 
-    
     # Set default values
-    @children       ||= {}
-    @parent         ||= nil
-    @style          ||= GridStyle.new(:grid => self)
-    @layers         ||= {}
-    @render_layer   ||= nil
-    @style_layers   ||= []
-
+    @children          ||= {}
+    @parent            ||= nil
+    @style             ||= GridStyle.new(:grid => self)
+    @layers            ||= {}
+    @render_layer      ||= nil
+    @style_layers      ||= []
     @positioned_layers ||= {}
     @tag               ||= :div
     @override_tag      ||= :div
