@@ -10,10 +10,10 @@ class Design
   belongs_to :user
   
   # Hash of items
-  attr_accessor :grids
-  attr_accessor :layers
+  attr_accessor :grids # (Hash)
+  attr_accessor :layers # (Hash)
 
-  attr_accessor :font_map
+  attr_accessor :font_map # FIXME PSDJS
 
   # Design status types
   Design::STATUS_QUEUED       = :queued
@@ -77,8 +77,14 @@ class Design
 
   mount_uploader :file, DesignUploader
   
-  @@design_processed_data = nil
+  # Initializer
+  after_initialize do |document|
+    @grids = {}
+    @layers = {}
+    @font_map = nil #FIXME PSDJS
+  end
 
+  @@design_processed_data = nil
   
   def vote_class
     case self.rating
@@ -146,8 +152,11 @@ class Design
   end
   
   def get_root_grid
-    root_grids = self.grids.select { |grid| grid.root == true }
-    #Log.error "Root grid = #{root_grids.last.id.to_s}, #{root_grids.length}"
+    root_grids = []
+    self.grids.each do |id, grid|
+      root_grids.push grid if grid.root == true
+    end
+
     Log.fatal "More than one root node in design???" if root_grids.size > 1
 
     return root_grids.last
@@ -157,6 +166,7 @@ class Design
     BoundingBox.new 0, 0, self.height, self.width
   end
     
+  # FIXME PSDJS Broken.
   def attribute_data(minimal=false)
     if minimal
       return {
@@ -185,8 +195,8 @@ class Design
         end        
       end
       
-      self.grids.each do |grid|
-        grid_css_classes = [] #FIXME CSS TREE grid.get_css_classes
+      self.grids.each do |id, grid|
+        grid_css_classes = []
         grid_css_classes.each do |css_class|
           css_classes[css_class] = Array.new if css_classes[css_class].nil?
           css_classes[css_class].push grid.id
@@ -336,7 +346,9 @@ class Design
     self.save!
   end
   
+  # FIXME PSDJS
   def webfonts_snippet
+    return ''
     self.font_map.google_webfonts_snippet
   end
 
@@ -378,19 +390,14 @@ class Design
     
     Log.info "Parsing fonts..."
     # TODO Fork out and parallel process
-    self.parse_fonts(self.layers)
+    # self.parse_fonts(self.layers)
 
     root_grid = self.get_root_grid
 
     # Once grids are generated, run through the tree and find out style sheets.
     # TODO Fork out and parallel process
     Log.info "Generating CSS Tree..."
-    root_grid.style_selector.generate_css_tree
-
-    Log.info "Finding out selector name map..."
-    self.selector_name_map = root_grid.style_selector.generate_initial_selector_name_map
-    self.selector_name_map.update(get_hashed_selector_map)
-    self.save!
+    root_grid.style.generate_css_rules
 
     Log.debug "Destroying design globals..."
     DesignGlobals.destroy
@@ -402,15 +409,6 @@ class Design
   
     Log.info "Successfully completed generating #{self.name}"
     return
-  end
-
-  def get_hashed_selector_map
-    map = {}
-    self.hashed_selectors.each do |selector, value|
-      map.update( {selector => {"name" => selector, "css" => value }})
-    end
-
-    map
   end
 
   # This usually called after changing CSS class names
@@ -426,7 +424,7 @@ class Design
     
     root_grid    = self.get_root_grid
     body_html    = root_grid.to_html
-    scss_content = self.font_map.font_scss + root_grid.style_selector.scss_tree + self.hashed_selectors_content 
+    scss_content = root_grid.style.scss_tree #FIXME PSDJS + self.font_map.font_scss
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
@@ -519,21 +517,4 @@ config
     Store.save_to_store override_css, target_css
   end
 
-  # Prints out the grouped styles
-  def hashed_selectors_content
-    css_content = ""
-    self.hashed_selectors.each do |selector, rules|
-      css_rules_list = ""
-      rules.each do |rule, value|
-        css_rules_list += "#{rule.to_s}: #{value.to_s};"
-      end 
-      css_content += ".#{selector} {#{css_rules_list}}"
-    end
-
-    Log.info "Writing HASHED CSS content"
-
-    Log.info css_content
-
-    css_content
-  end
 end

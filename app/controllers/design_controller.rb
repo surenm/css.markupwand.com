@@ -121,7 +121,7 @@ class DesignController < ApplicationController
       widget_name = params['widget_name'].downcase.gsub(" ", "-")
       @design.class_edited = true
       root_grid  = @design.get_root_grid
-      class_name = root_grid.style_selector.generated_selector
+      class_name = root_grid.style.generated_selector
       @design.selector_name_map[class_name] = {} if @design.selector_name_map[class_name].nil? 
       @design.selector_name_map[class_name]['name'] = widget_name
       @design.class_edited = true

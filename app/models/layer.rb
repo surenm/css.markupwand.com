@@ -2,6 +2,8 @@ require 'RMagick'
 include Magick
 
 class Layer  
+  include ActionView::Helpers::TagHelper
+
   LAYER_BLACKANDWHITE      = "LayerKind.BLACKANDWHITE"
   LAYER_BRIGHTNESSCONTRAST = "LayerKind.BRIGHTNESSCONTRAST"
   LAYER_CHANNELMIXER       = "LayerKind.CHANNELMIXER"
@@ -88,6 +90,11 @@ class Layer
     return layer
   end
   
+  def initialize
+    @css_rules = {}
+    @extra_selectors = []
+  end
+
   def attribute_data
     {
         :uid => self.uid,
@@ -212,22 +219,24 @@ class Layer
     chosen_tag
   end
 
-  def set_style_rules(grid_style_selector)
+  def set_style_rules(grid_style)
+    return {} #FIXME PSDJS
+    
     crop_objects_for_cropped_bounds
-    is_leaf = grid_style_selector.grid.is_leaf?
+    is_leaf = grid_style.grid.is_leaf?
   
     css = {}
     if not self.is_style_layer and not self.tag_name(is_leaf) == :img
-      css.update grid_style_selector.css_rules
+      css.update grid_style.css_rules
     end
   
-    self.extra_selectors = grid_style_selector.extra_selectors
+    self.extra_selectors = grid_style.extra_selectors
     if self.kind == LAYER_TEXT
       css.update CssParser::parse_text self
     elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
-      css.update CssParser::parse_background_image(self, grid_style_selector.grid)
+      css.update CssParser::parse_background_image(self, grid_style.grid)
     elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_shape self, grid_style_selector.grid
+      css.update CssParser::parse_shape self, grid_style.grid
     end
 
     if has_multifont?
@@ -242,14 +251,17 @@ class Layer
     end
 
     self.generated_selector = CssParser::create_incremental_selector if not css.empty?
-    CssParser::add_to_inverted_properties(css, grid_style_selector.grid)
+    CssParser::add_to_inverted_properties(css, grid_style.grid)
 
     self.css_rules = css
     self.save!
   end
 
+  #FIXME PSDJS
   def chunk_text_rules
     chunk_text_rules = ''
+    return chunk_text_rules
+
     self.chunk_text_css_rule.each_with_index do |value, index|
       if not value.empty?
         rule_list = CssParser::to_style_string(value)
@@ -279,8 +291,9 @@ sass
     uniqued_multifont_data
   end
 
-  def get_style_rules(grid_style_selector)
-    set_style_rules(grid_style_selector) #if self.css_rules.empty?
+  def get_style_rules(grid_style)
+    return {:'border' => '1px solid #000'} #FIXME PSDJS
+    set_style_rules(grid_style) #if self.css_rules.empty?
 
     self.css_rules
   end
@@ -311,8 +324,8 @@ sass
       all_selectors.push self.modified_generated_selector(grid) if not self.css_rules.empty?
     end
 
-    if not grid.style_selector.hashed_selectors.empty?
-      all_selectors = all_selectors + grid.style_selector.modified_hashed_selector
+    if not grid.style.hashed_selectors.empty?
+      all_selectors = all_selectors + grid.style.modified_hashed_selector
     end
 
     all_selectors.uniq!
@@ -334,7 +347,8 @@ sass
     return nil if raw_font_name.nil?
 
     design = self.grids.first.design
-    design.font_map.get_font raw_font_name
+    #design.font_map.get_font raw_font_name
+    raw_font_name
   end
 
   # A Layer whose bounds are zero
@@ -453,7 +467,7 @@ sass
 
     attributes         = Hash.new
     attributes[:"data-grid-id"] = args.fetch :"data-grid-id", ""
-    attributes[:"data-layer-id"] = self.id.to_s
+    attributes[:"data-layer-id"] = self.uid.to_s
     attributes[:"data-layer-name"] = self.name
     attributes[:class] = self.selector_names(grid).join(" ") if not self.selector_names(grid).empty?
 

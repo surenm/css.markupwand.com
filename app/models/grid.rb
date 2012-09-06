@@ -1,6 +1,9 @@
 require 'digest/md5'
 
-class Grid
+class Grid  
+  include ActionView::Helpers::TagHelper
+  
+
   # Belongs to a specific photoshop design (Single Instance)
   attr_accessor :design
   attr_reader :id
@@ -13,7 +16,7 @@ class Grid
   attr_accessor :parent
 
   # Has one style selector (Single instance)
-  attr_accessor :style_selector
+  attr_accessor :style
 
   # Contains multiple layers (Hash)
   attr_accessor :layers
@@ -45,6 +48,13 @@ class Grid
 
   def initialize(args)
     @design = args[:design]
+
+    if @design.nil?
+      raise ArgumentError, "No design object passed"
+    end
+
+    @design.grids[self.id] = self
+
     @root   = args[:root] || nil
     @depth  = args[:depth] || 0
     @grouping_box   = args[:grouping_box] || nil
@@ -52,17 +62,13 @@ class Grid
     @is_positioned  = args[:is_positioned] || false
 
 
-    #Initialize id
-    self.id 
-    
     # Set default values
-    @children       ||= {}
-    @parent         ||= nil
-    @style_selector ||= GridStyleSelector.new
-    @layers         ||= {}
-    @render_layer   ||= nil
-    @style_layers   ||= []
-
+    @children          ||= {}
+    @parent            ||= nil
+    @style             ||= GridStyle.new(:grid => self)
+    @layers            ||= {}
+    @render_layer      ||= nil
+    @style_layers      ||= []
     @positioned_layers ||= {}
     @tag               ||= :div
     @override_tag      ||= :div
@@ -147,7 +153,6 @@ class Grid
     end  
   end
   
-  # FIXME CSSTREE
   def get_label
     css_classes = [""] #+ self.get_css_classes
     css_classes_string = css_classes.join " ."
@@ -166,8 +171,6 @@ class Grid
       @layers[layer.uid] = layer if not layer.empty?
     end
 
-
-    self.style_selector = GridStyleSelector.new
     @@grouping_queue.push self if self.root
   end
     
@@ -206,12 +209,12 @@ class Grid
   end
   
   def positioned_children
-    self.children.select { |child_grid| child_grid.is_positioned }
+    self.children.values.select { |child_grid| child_grid.is_positioned }
   end
 
   def positioned_siblings
     if not self.root
-      self.parent.children.select { |sibling_grid| sibling_grid.is_positioned }
+      self.parent.children.values.select { |sibling_grid| sibling_grid.is_positioned }
     else
       []
     end
@@ -672,7 +675,7 @@ class Grid
   
   def positioned_grids_html(subgrid_args = {})
     html = ''
-    self.children.each do |grid|
+    self.children.values.each do |grid|
       if grid.is_positioned
         html += grid.to_html(subgrid_args)
       end
@@ -697,7 +700,7 @@ class Grid
 
     if self.render_layer.nil?
 
-      attributes[:class] = self.style_selector.selector_names.join(" ") if not self.style_selector.selector_names.empty?
+      attributes[:class] = self.style.selector_names.join(" ") if not self.style.selector_names.empty?
  
       sub_grid_args = Hash.new
       positioned_html = positioned_grids_html sub_grid_args
@@ -705,7 +708,7 @@ class Grid
         inner_html += content_tag :div, '', :class => 'marginfix'
       end
       
-      child_nodes = self.children.select { |node| not node.is_positioned }
+      child_nodes = self.children.values.select { |node| not node.is_positioned }
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
@@ -719,17 +722,15 @@ class Grid
       
     else
       sub_grid_args      = attributes
-      #FIXME Sink 
       sub_grid_args[tag] = self.tag
 
-      #FIXME Sink
       sub_grid_args[:inner_html] = self.positioned_grids_html
 
       inner_html  += self.render_layer.to_html sub_grid_args, self.is_leaf?, self
       
 
       if self.render_layer.tag_name(true) == :img
-        grid_style_classes = self.style_selector.selector_names.join(" ") if not self.style_selector.selector_names.empty?
+        grid_style_classes = self.style.selector_names.join(" ") if not self.style.selector_names.empty?
         html = content_tag :div, inner_html, {:class => grid_style_classes}, false
       else 
         html = inner_html
