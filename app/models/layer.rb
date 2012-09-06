@@ -45,16 +45,19 @@ class Layer
 
   # Layer's imported data
   attr_accessor :uid # (String)
-  attr_accessor :kind # (String)
   attr_accessor :name # (String)
-  attr_accessor :layer_type # (String)
+  attr_accessor :type # (String)
+  attr_accessor :kind # (String)
   attr_accessor :zindex # (Integer)
+  attr_accessor :opacity #(Integer)
+
+  attr_accessor :text
+  attr_accessor :shapes
+  attr_accessor :styles
 
   attr_accessor :is_overlay # (Boolean)
   attr_accessor :is_style_layer # (Boolean)
-
   attr_accessor :override_tag # (String)
-
   attr_accessor :layer_bounds # (String)
 
   # CSS Rules
@@ -70,6 +73,21 @@ class Layer
 
   attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
 
+  def self.create_from_sif_data(sif_layer_data)
+    layer = Layer.new
+    layer.name    = sif_layer_data[:name]
+    layer.type    = sif_layer_data[:type]
+    layer.uid     = sif_layer_data[:uid]
+    layer.zindex  = sif_layer_data[:zindex]
+    layer.bounds  = BoundingBox.depickle sif_layer_data[:bounds]
+    layer.opacity = sif_layer_data[:opacity]
+    layer.text    = sif_layer_data[:text]
+    layer.shapes  = sif_layer_data[:shapes]
+    layer.styles  = sif_layer_data[:styles]
+    
+    return layer
+  end
+  
   def attribute_data
     {
         :uid => self.uid,
@@ -454,7 +472,7 @@ sass
   end
 
   def to_s
-    "#{self.name} - #{self.bounds} - #{self.kind}"
+    "#{self.name} - #{self.bounds} - #{self.type}"
   end
 
   def inspect
