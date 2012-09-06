@@ -152,8 +152,11 @@ class Design
   end
   
   def get_root_grid
-    root_grids = self.grids.select { |grid| grid.root == true }
-    #Log.error "Root grid = #{root_grids.last.id.to_s}, #{root_grids.length}"
+    root_grids = []
+    self.grids.each do |id, grid|
+      root_grids.push grid if grid.root == true
+    end
+
     Log.fatal "More than one root node in design???" if root_grids.size > 1
 
     return root_grids.last
