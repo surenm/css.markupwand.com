@@ -90,10 +90,10 @@ class Design
       return 'none'
     end
   end
-
-  def populate_sif
-    @sif_object = SifParser.new(self.processed_file_path, self) if @sif_object.nil?
-    @sif_object
+  
+  def init_sif
+    @sif_object = Sif.new(self) if @sif == nil
+    return @sif_object
   end
 
   def reset_processed_data
@@ -342,19 +342,12 @@ class Design
 
   # Parses the photoshop file json data and decomposes into grids
   def group_grids
-    if self.processed_file_path.nil? or self.processed_file_path.empty?
-      Log.fatal "Extracted file not specified"
-      self.set_status Design::STATUS_FAILED
-      return
-    end
+    Profiler.start
+    self.init_sif
 
-    Profiler.start    
-    Log.info "Beginning to group grids #{self.name}..."
-    
+    Log.info "Beginning to group grids #{self.name}..."    
     #TODO: Resolution information is hidden somewhere in the psd file. pick it up
     #self.resolution = psd_data[:properties][:resolution]
-
-    self.save!
     
     # Reset the global static classes to work for this PSD's data
     Grid.reset_grouping_queue
