@@ -366,7 +366,7 @@ class Design
     
     # Layer descriptors of all photoshop layers
     Log.info "Getting nodes..."
-    @layers = @sif_object.layers
+    @layers = @sif_object.layers.values
     
     Log.info "Creating root grid..."
     grid = Grid.new :design => self, :root => true, :depth => 0
