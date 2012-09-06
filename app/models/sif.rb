@@ -12,9 +12,8 @@ class Sif
   end
 
   attr_accessor :header
-  attr_accessor :layer_mask
-  attr_accessor :num_layers
   attr_accessor :layers
+  attr_accessor :grids
   attr_accessor :design
   
   def self.write(design, sif_data)
@@ -69,10 +68,9 @@ class Sif
   
   def parse_grids
     @serialized_grids = @sif_data[:grids]
-    
+    @grids = Hash.new
     return if @serialized_grids.nil?
     
-    @grids = {}
     @serialized_grids.each do |serialized_grid_data|
       grid = Grid.create_from_sif_data serialized_grid_data
       @grids[grid.id] = grid
