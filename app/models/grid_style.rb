@@ -33,11 +33,13 @@ class GridStyle
     return border_width
   end
   
+  #FIXME PSJDS
   def is_single_line_text
     if not self.grid.render_layer.nil? and
-        (Layer.find self.grid.render_layer).kind == Layer::LAYER_TEXT and
-        not (Layer.find self.grid.render_layer).has_newline? and
-        (Layer.find self.grid.render_layer).text_type != "TextType.PARAGRAPHTEXT"
+        false and #FIXME PSDJS
+        self.grid.render_layer.kind == Layer::LAYER_TEXT and
+        not self.grid.render_layer.has_newline? and
+        self.grid.render_layer.text_type != "TextType.PARAGRAPHTEXT"
       return true
     else
       return false
