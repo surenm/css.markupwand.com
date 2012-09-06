@@ -23,6 +23,9 @@ class ParserJob
       design.processed_file_path = extracted_file
       design.save!
 
+      SifBuilder.build_from_extracted_file design, extracted_file
+      return
+
       #Create from SIF files
       design.populate_sif
       design.group_grids
