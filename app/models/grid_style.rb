@@ -289,101 +289,15 @@ class GridStyle
   end
   
   # Walks recursively through the grids and creates
-  def generate_css_tree
+  def generate_css_rules
     Log.info "Setting style rules for #{self.grid}..."
     self.set_style_rules
 
     if self.grid.render_layer.nil?
-      self.grid.children.each { |child| child.style.generate_css_tree }
+      self.grid.children.each { |child| child.style.generate_css_rules }
     else
-      render_layer_obj = Layer.find(self.grid.render_layer)
-      render_layer_obj.set_style_rules(self)
+      self.grid.render_layer.set_style_rules(self)
     end
-  end
-
-  # Bubble up repeating css properties.
-  def bubbleup_repeating_styles
-    rule_repeat_hash = {}
-
-    # Consider render layers also.
-    grid.children.each do |child|
-      rules_hash = child.style.css_rules
-      rules_hash = (Layer.find child.render_layer).css_rules if not child.render_layer.nil?
-      rules_hash.each do |css_property, css_value|
-        css_rule_hash_key = ({ css_property.to_sym => css_value }).to_json
-
-        rule_repeat_hash[css_rule_hash_key] ||= 0
-        rule_repeat_hash[css_rule_hash_key] = rule_repeat_hash[css_rule_hash_key] + 1
-      end
-    end
-
-    rule_repeat_hash.each do |rule, repeats|
-      rule_repeat_hash.delete rule if repeats == 0
-    end
-
-    bubbleable_rules = []
-    # Trim out the non-repeating properties.
-    rule_repeat_hash.each do |rule, repeats|
-      rule_key = (JSON.parse rule).keys.first
-      if is_text_rule?(rule_key)
-        child_grids = get_text_containing_grids grid.children
-      else
-        child_grids = grid.children
-      end
-
-      if repeats > (child_grids.length * 0.6)
-        if (Constants::css_properties.has_key? rule_key.to_sym and Constants::css_properties[rule_key.to_sym][:inherit])
-          bubbleable_rules.push rule
-          Log.debug "Bubbling up #{rule}"
-        end   
-      end 
-    end
-
-    # Remove all the repeating properties from the children
-    # JSON parse happening everytime. Optimize later
-    bubbleable_rules.each do |rule|
-      rule_object = (JSON.parse rule, :symbolize_names => true)
-      rule_key    = rule_object.keys.first
-      rule_value  = rule_object[rule_key]
-
-      grid.children.each do |child|
-        # Delete from the grid css.
-        if child.style.css_rules[rule_key] == rule_value
-          child.style.css_rules.delete rule_key
-          if DesignGlobals.instance.css_properties_inverted.has_key? rule
-            DesignGlobals.instance.css_properties_inverted[rule].delete child
-          end
-
-          child.save!
-        end
-
-        if not child.render_layer.nil?
-          layer_obj = Layer.find child.render_layer
-          if layer_obj.css_rules[rule_key.to_s] == rule_value
-            layer_obj.css_rules.delete rule_key.to_s
-            if DesignGlobals.instance.css_properties_inverted.has_key? rule
-              DesignGlobals.instance.css_properties_inverted[rule].delete child
-            end
-
-            layer_obj.save!
-          end
-        end
-      end
-
-      if not DesignGlobals.instance.css_properties_inverted[rule].nil? and DesignGlobals.instance.css_properties_inverted[rule].empty?
-        DesignGlobals.instance.css_properties_inverted.delete rule
-      end
-
-      Log.debug "Deleted #{rule_key} from #{grid.to_short_s}"
-    end
-
-    bubbleable_rules.each do |rule|
-      rule_object = (JSON.parse rule, :symbolize_names => true)
-      self.css_rules.update rule_object
-    end
-
-
-    grid.save!
   end
 
 
@@ -527,15 +441,6 @@ class GridStyle
     all_selectors
   end
 
-
-  # Group up font-family, etc from bottom most nodes and group them up
-  # Go through all the grids post order, with root node as the last node.
-  # Bubble up. 
-  def bubbleup_css_properties
-    self.grid.children.each { |kid| kid.style.bubbleup_css_properties }
-
-    bubbleup_repeating_styles
-  end
 
   def generate_initial_selector_name_map
     selector_hash = {}

@@ -419,7 +419,7 @@ class Design
     # Once grids are generated, run through the tree and find out style sheets.
     # TODO Fork out and parallel process
     Log.info "Generating CSS Tree..."
-    root_grid.style.generate_css_tree
+    root_grid.style.generate_css_rules
 
     Log.info "Finding out selector name map..."
     self.selector_name_map = root_grid.style.generate_initial_selector_name_map
