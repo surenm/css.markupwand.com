@@ -364,7 +364,9 @@ class Design
     self.save!
   end
   
+  # FIXME PSDJS
   def webfonts_snippet
+    return ''
     self.font_map.google_webfonts_snippet
   end
 
@@ -422,11 +424,6 @@ class Design
     Log.info "Generating CSS Tree..."
     root_grid.style.generate_css_rules
 
-    Log.info "Finding out selector name map..."
-    self.selector_name_map = root_grid.style.generate_initial_selector_name_map
-    self.selector_name_map.update(get_hashed_selector_map)
-    self.save!
-
     Log.debug "Destroying design globals..."
     DesignGlobals.destroy
 
@@ -452,7 +449,7 @@ class Design
     
     root_grid    = self.get_root_grid
     body_html    = root_grid.to_html
-    scss_content = self.font_map.font_scss + root_grid.style.scss_tree + self.hashed_selectors_content 
+    scss_content = root_grid.style.scss_tree #FIXME PSDJS + self.font_map.font_scss
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read

@@ -1,6 +1,9 @@
 require 'digest/md5'
 
-class Grid
+class Grid  
+  include ActionView::Helpers::TagHelper
+  
+
   # Belongs to a specific photoshop design (Single Instance)
   attr_accessor :design
   attr_reader :id
@@ -672,7 +675,7 @@ class Grid
   
   def positioned_grids_html(subgrid_args = {})
     html = ''
-    self.children.each do |grid|
+    self.children.values.each do |grid|
       if grid.is_positioned
         html += grid.to_html(subgrid_args)
       end
@@ -705,7 +708,7 @@ class Grid
         inner_html += content_tag :div, '', :class => 'marginfix'
       end
       
-      child_nodes = self.children.select { |node| not node.is_positioned }
+      child_nodes = self.children.values.select { |node| not node.is_positioned }
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
