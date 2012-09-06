@@ -195,6 +195,8 @@ class Layer
   end
 
   def set_style_rules(grid_style)
+    return {} #FIXME PSDJS
+    
     crop_objects_for_cropped_bounds
     is_leaf = grid_style.grid.is_leaf?
   
@@ -262,6 +264,7 @@ sass
   end
 
   def get_style_rules(grid_style)
+    return {:'border': '1px solid #000'} #FIXME PSDJS
     set_style_rules(grid_style) #if self.css_rules.empty?
 
     self.css_rules
