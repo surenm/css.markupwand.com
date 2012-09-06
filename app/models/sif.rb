@@ -60,11 +60,11 @@ class Sif
     
     raise "Layers data is Nil" if @serialized_layers.nil?
     
-    @layers = @serialized_layers.collect do |serialized_layer_data|
-      Layer.create_from_sif_data serialized_layer_data
+    @layers = Hash.new
+    @serialized_layers.each do |serialized_layer_data|
+      layer = Layer.create_from_sif_data serialized_layer_data
+      @layers[layer.uid] = layer
     end
-    
-    pp @layers
   end
   
   def parse_grids
@@ -72,9 +72,18 @@ class Sif
     
     return if @serialized_grids.nil?
     
+    @grids = {}
+    @serialized_grids.each do |serialized_grid_data|
+      grid = Grid.create_from_sif_data serialized_grid_data
+      @grids[grid.id] = grid
     end
   end
   
+  def get_layer(layer_id)
+    return @layers[layer_id]
   end
+  
+  def get_grid(grid_id)
+    return @grids[grid_id]
   end
 end
