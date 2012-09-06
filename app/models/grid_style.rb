@@ -210,6 +210,7 @@ class GridStyle
   # we want to pick it up from the modified selector map
   # and return
   def modified_generated_selector
+    return self.generated_selector #FIXME PSDJS
     modified_selector_name = self.grid.design.selector_name_map[self.generated_selector]
     if not modified_selector_name.nil?
       modified_selector_name["name"]
@@ -220,7 +221,7 @@ class GridStyle
 
   def set_style_rules
     style_rules = {}
-    self.grid.style_layers.each do |uid, layer|
+    self.grid.style_layers.each do |layer|
       style_rules.update layer.get_style_rules(self)
     end
 
@@ -274,6 +275,8 @@ class GridStyle
     # minimum height and width for shapes in style layers
     style_rules.update self.set_min_dimensions if set_shape_dimensions_flag
 
+    Log.info "Setting grid style rules #{style_rules}"
+
     self.css_rules.update style_rules
 
     self.generated_selector = CssParser::create_incremental_selector if not self.css_rules.empty?
@@ -297,7 +300,7 @@ class GridStyle
     self.set_style_rules
 
     if self.grid.render_layer.nil?
-      self.grid.children.each { |child| child.style.generate_css_rules }
+      self.grid.children.values.each { |child| child.style.generate_css_rules }
     else
       self.grid.render_layer.set_style_rules(self)
     end
@@ -341,8 +344,7 @@ class GridStyle
 
     layer_has_css = false
     if self.grid.render_layer
-      render_layer_obj = Layer.find(self.grid.render_layer)
-      layer_has_css = true if not render_layer_obj.css_rules.empty?
+      layer_has_css = true if not self.grid.render_layer.css_rules.empty?
     end
 
     if not self.generated_selector.nil?
@@ -359,9 +361,8 @@ class GridStyle
     selector_hash = {}
     initial_selector_name = nil
     if self.grid.render_layer
-      render_layer_obj = Layer.find self.grid.render_layer
-      initial_selector_name = (render_layer_obj.generated_selector) if not render_layer_obj.generated_selector.nil?
-      css = render_layer_obj.css_rules.clone
+      initial_selector_name = (self.grid.render_layer.generated_selector) if not self.grid.render_layer.generated_selector.nil?
+      css = self.grid.render_layer.css_rules.clone
     else
       initial_selector_name = (generated_selector) if not generated_selector.nil? and not generated_selector.empty?
       css = self.css_rules.clone
@@ -372,7 +373,7 @@ class GridStyle
     end
 
 
-    self.grid.children.each do |child|
+    self.grid.children.values.each do |child|
       selector_hash.update(child.style.generate_initial_selector_name_map)
     end
 
@@ -381,7 +382,7 @@ class GridStyle
 
   def scss_tree(tabs = 0)
     child_scss_trees = ''
-    self.grid.children.each do |child|
+    self.grid.children.values.each do |child|
       child_scss_trees += child.style.scss_tree(tabs + 1)
     end
 
@@ -410,12 +411,12 @@ sass
     end
 
     if not self.grid.render_layer.nil?
-      layer = (Layer.find self.grid.render_layer)
-      chunk_text_rules = layer.chunk_text_rules
-      if (not layer.css_rules.empty?) and (not layer.generated_selector.nil?)
-        css_rules_string = CssParser::to_style_string(layer.css_rules, spaces + '  ')
+      render_layer = self.grid.render_layer
+      chunk_text_rules = render_layer.chunk_text_rules
+      if (not render_layer.css_rules.empty?) and (not render_layer.generated_selector.nil?)
+        css_rules_string = CssParser::to_style_string(render_layer.css_rules, spaces + '  ')
         sass += <<sass
- .#{layer.modified_generated_selector(self.grid)} {
+ .#{render_layer.modified_generated_selector(self.grid)} {
 #{css_rules_string}
 #{spaces}}#{chunk_text_rules}
 sass
