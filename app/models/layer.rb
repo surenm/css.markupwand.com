@@ -220,41 +220,21 @@ class Layer
   end
 
   def set_style_rules(grid_style)
-    return {} #FIXME PSDJS
-    
+
     crop_objects_for_cropped_bounds
     is_leaf = grid_style.grid.is_leaf?
   
     css = {}
-    if not self.is_style_layer and not self.tag_name(is_leaf) == :img
-      css.update grid_style.css_rules
-    end
-  
+    Log.info self.styles
+
     self.extra_selectors = grid_style.extra_selectors
-    if self.kind == LAYER_TEXT
-      css.update CssParser::parse_text self
-    elsif not is_leaf and (self.kind == LAYER_SMARTOBJECT or renderable_image?)
-      css.update CssParser::parse_background_image(self, grid_style.grid)
-    elsif self.kind == LAYER_SOLIDFILL
-      css.update CssParser::parse_shape self, grid_style.grid
-    end
-
-    if has_multifont?
-      positions = multifont_positions
-      positions.each_with_index do |position, index|
-        self.chunk_text_css_rule[index]     = CssParser::get_text_chunk_style(self, index)
-        self.chunk_text_css_selector[index] = CssParser::create_incremental_selector
-      end
-
-      css.update multifont_style_uniq
-      self.save!
-    end
+    
+    # Things to do with styles
+    # 1. Background image
+    # 2. Multifont
 
     self.generated_selector = CssParser::create_incremental_selector if not css.empty?
     CssParser::add_to_inverted_properties(css, grid_style.grid)
-
-    self.css_rules = css
-    self.save!
   end
 
   #FIXME PSDJS
