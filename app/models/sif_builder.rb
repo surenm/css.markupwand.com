@@ -23,14 +23,10 @@ class SifBuilder
       SifBuilder.build_layer_from_psd_data raw_layer
     end
     
-    core_data = {
-      :layers => layers
-    }
-    
     sif_data = {
       :header => { :design_metadata => design_metadata, :user_metadata => user_metadata },
-      :core_data => core_data,
-      :computed_data => nil,
+      :layers => layers,
+      :grids => nil,
     }
     
     Sif::write(design, sif_data)
