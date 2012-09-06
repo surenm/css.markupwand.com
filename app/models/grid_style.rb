@@ -14,8 +14,10 @@ class GridStyle
       raise ArgumentError, "No grid object passed"
     end
 
-    @root   = args[:root] || nil
-    @depth  = args[:depth] || 0
+    @css_rules = {}
+    @extra_selectors    = []
+    @generated_selector = nil
+    @hashed_selectors   = []
   end
 
   ## helper methods
@@ -241,7 +243,7 @@ class GridStyle
     
     if not self.grid.parent.nil?
       parent = self.grid.parent
-      parent_selector = parent.style_selector
+      parent_selector = parent.style
       if parent_selector.css_rules.has_key? 'position' and parent_selector.css_rules.fetch('position') == "relative"
         position_relatively = true
       elsif parent.is_positioned
@@ -292,7 +294,7 @@ class GridStyle
     self.set_style_rules
 
     if self.grid.render_layer.nil?
-      self.grid.children.each { |child| child.style_selector.generate_css_tree }
+      self.grid.children.each { |child| child.style.generate_css_tree }
     else
       render_layer_obj = Layer.find(self.grid.render_layer)
       render_layer_obj.set_style_rules(self)
@@ -305,7 +307,7 @@ class GridStyle
 
     # Consider render layers also.
     grid.children.each do |child|
-      rules_hash = child.style_selector.css_rules
+      rules_hash = child.style.css_rules
       rules_hash = (Layer.find child.render_layer).css_rules if not child.render_layer.nil?
       rules_hash.each do |css_property, css_value|
         css_rule_hash_key = ({ css_property.to_sym => css_value }).to_json
@@ -346,8 +348,8 @@ class GridStyle
 
       grid.children.each do |child|
         # Delete from the grid css.
-        if child.style_selector.css_rules[rule_key] == rule_value
-          child.style_selector.css_rules.delete rule_key
+        if child.style.css_rules[rule_key] == rule_value
+          child.style.css_rules.delete rule_key
           if DesignGlobals.instance.css_properties_inverted.has_key? rule
             DesignGlobals.instance.css_properties_inverted[rule].delete child
           end
@@ -396,7 +398,7 @@ class GridStyle
         true
       else
         has_font_property = false
-        grid.style_selector.css_rules.each do |rule, value|
+        grid.style.css_rules.each do |rule, value|
           if is_text_rule?(rule)
             has_font_property = true
             break
@@ -438,7 +440,7 @@ class GridStyle
       next_selector_name = CssParser::create_incremental_selector
       design_hashed_selector_hash[next_selector_name] = rule_hash
       nodes.each do |node|
-        node.style_selector.hashed_selectors.push next_selector_name
+        node.style.hashed_selectors.push next_selector_name
         Log.info "Adding #{next_selector_name} to #{node.to_short_s}"
         node.save!
       end
@@ -495,7 +497,7 @@ class GridStyle
       self.save!
 
       self.grid.children.each do |child|
-        child.style_selector.reduce_hashed_css_properties
+        child.style.reduce_hashed_css_properties
       end
     end
   end
@@ -530,7 +532,7 @@ class GridStyle
   # Go through all the grids post order, with root node as the last node.
   # Bubble up. 
   def bubbleup_css_properties
-    self.grid.children.each { |kid| kid.style_selector.bubbleup_css_properties }
+    self.grid.children.each { |kid| kid.style.bubbleup_css_properties }
 
     bubbleup_repeating_styles
   end
@@ -553,7 +555,7 @@ class GridStyle
 
 
     self.grid.children.each do |child|
-      selector_hash.update(child.style_selector.generate_initial_selector_name_map)
+      selector_hash.update(child.style.generate_initial_selector_name_map)
     end
 
     selector_hash
@@ -562,7 +564,7 @@ class GridStyle
   def scss_tree(tabs = 0)
     child_scss_trees = ''
     self.grid.children.each do |child|
-      child_scss_trees += child.style_selector.scss_tree(tabs + 1)
+      child_scss_trees += child.style.scss_tree(tabs + 1)
     end
 
     spaces = ""

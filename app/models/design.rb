@@ -403,17 +403,17 @@ class Design
     
     Log.info "Parsing fonts..."
     # TODO Fork out and parallel process
-    self.parse_fonts(self.layers)
+    # self.parse_fonts(self.layers)
 
     root_grid = self.get_root_grid
 
     # Once grids are generated, run through the tree and find out style sheets.
     # TODO Fork out and parallel process
     Log.info "Generating CSS Tree..."
-    root_grid.style_selector.generate_css_tree
+    root_grid.style.generate_css_tree
 
     Log.info "Finding out selector name map..."
-    self.selector_name_map = root_grid.style_selector.generate_initial_selector_name_map
+    self.selector_name_map = root_grid.style.generate_initial_selector_name_map
     self.selector_name_map.update(get_hashed_selector_map)
     self.save!
 
@@ -451,7 +451,7 @@ class Design
     
     root_grid    = self.get_root_grid
     body_html    = root_grid.to_html
-    scss_content = self.font_map.font_scss + root_grid.style_selector.scss_tree + self.hashed_selectors_content 
+    scss_content = self.font_map.font_scss + root_grid.style.scss_tree + self.hashed_selectors_content 
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
