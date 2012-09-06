@@ -72,6 +72,11 @@ class ExtractorJob
 
     design.set_status Design::STATUS_EXTRACTED
     Log.info "Sucessfully completed extracting from photoshop file #{design.name}."
+
+    # Build sif file from extracted file    
+    Log.info "Building SIF File from extracted file..."
+    SifBuilder.build_from_extracted_file design, extracted_file
+    Log.info "Successfully built SIF file."
     
     Resque.enqueue ParserJob, design.id
   end
