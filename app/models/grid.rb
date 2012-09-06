@@ -150,7 +150,6 @@ class Grid
     end  
   end
   
-  # FIXME CSSTREE
   def get_label
     css_classes = [""] #+ self.get_css_classes
     css_classes_string = css_classes.join " ."
@@ -720,10 +719,8 @@ class Grid
       
     else
       sub_grid_args      = attributes
-      #FIXME Sink 
       sub_grid_args[tag] = self.tag
 
-      #FIXME Sink
       sub_grid_args[:inner_html] = self.positioned_grids_html
 
       inner_html  += self.render_layer.to_html sub_grid_args, self.is_leaf?, self

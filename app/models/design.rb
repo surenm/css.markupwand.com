@@ -13,7 +13,7 @@ class Design
   attr_accessor :grids # (Hash)
   attr_accessor :layers # (Hash)
 
-  attr_accessor :font_map # FIXME
+  attr_accessor :font_map # FIXME PSDJS
 
   # Design status types
   Design::STATUS_QUEUED       = :queued
@@ -81,7 +81,7 @@ class Design
   after_initialize do |document|
     @grids = {}
     @layers = {}
-    @font_map = nil #FIXME
+    @font_map = nil #FIXME PSDJS
   end
 
   @@design_processed_data = nil
@@ -184,6 +184,7 @@ class Design
     @@design_processed_data
   end
   
+  # FIXME PSDJS Broken.
   def attribute_data(minimal=false)
     if minimal
       return {
@@ -212,8 +213,8 @@ class Design
         end        
       end
       
-      self.grids.each do |grid|
-        grid_css_classes = [] #FIXME CSS TREE grid.get_css_classes
+      self.grids.each do |id, grid|
+        grid_css_classes = []
         grid_css_classes.each do |css_class|
           css_classes[css_class] = Array.new if css_classes[css_class].nil?
           css_classes[css_class].push grid.id
