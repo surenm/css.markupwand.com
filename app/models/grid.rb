@@ -63,7 +63,7 @@ class Grid
     # Set default values
     @children       ||= {}
     @parent         ||= nil
-    @style          ||= GridStyle.new
+    @style          ||= GridStyle.new(:grid => self)
     @layers         ||= {}
     @render_layer   ||= nil
     @style_layers   ||= []
@@ -171,8 +171,6 @@ class Grid
       @layers[layer.uid] = layer if not layer.empty?
     end
 
-
-    self.style = GridStyle.new
     @@grouping_queue.push self if self.root
   end
     
