@@ -10,10 +10,10 @@ class Design
   belongs_to :user
   
   # Hash of items
-  attr_accessor :grids
-  attr_accessor :layers
+  attr_accessor :grids # (Hash)
+  attr_accessor :layers # (Hash)
 
-  attr_accessor :font_map
+  attr_accessor :font_map # FIXME
 
   # Design status types
   Design::STATUS_QUEUED       = :queued
@@ -77,8 +77,14 @@ class Design
 
   mount_uploader :file, DesignUploader
   
-  @@design_processed_data = nil
+  # Initializer
+  after_initialize do |document|
+    @grids = {}
+    @layers = {}
+    @font_map = nil #FIXME
+  end
 
+  @@design_processed_data = nil
   
   def vote_class
     case self.rating
