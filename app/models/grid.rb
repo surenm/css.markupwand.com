@@ -339,12 +339,12 @@ class Grid
       self.design.row_offset_box = row_grouping_box.bounds
     else
       Log.info "Layers in this row group are #{nodes_in_row_region}. Creating a new row grid..."
-      row_grid = Grid.new :design => self.design, 
-                          :orientation => Constants::GRID_ORIENT_LEFT, 
-                          :depth => self.depth + 1,
-                          :grouping_box => BoundingBox.pickle(row_grouping_box.bounds)
-
-      row_grid.set nodes_in_row_region, self
+      row_grid = Grid.new ({  
+        :parent => self,
+        :layers => nodes_in_row_region,
+        :orientation => Constants::GRID_ORIENT_LEFT,
+        :grouping_box => BoundingBox.pickle(row_grouping_box.bounds)
+      })
       
       Log.debug "Extracting style layers out of the row grid #{row_grid}"
       available_nodes = row_grid.extract_style_layers available_nodes, row_grouping_box
@@ -393,9 +393,11 @@ class Grid
         available_nodes.delete layer.uid
       end    
             
-      grid = Grid.new :design => row_grid.design, 
-                      :depth  => row_grid.depth + 1, 
-                      :grouping_box => BoundingBox.pickle(grouping_box)
+      grid = Grid.new ({
+        :parent => row_grid,
+        :layers => grouping_box_layers.values,
+        :grouping_box => BoundingBox.pickle(grouping_box)
+        })
       
       # Reduce the set of nodes, remove style layers.
       Log.debug "Extract style layers for this grid #{grid}..."
@@ -408,8 +410,6 @@ class Grid
       if not gutters_available and grouping_box_layers.size > 1
         is_positioning_done = Grid.extract_positioned_layers grid, grouping_box, grouping_box_layers.values
       end
-
-      grid.set all_grouping_box_layers, row_grid
             
       if not self.design.offset_box.nil?
           grid.offset_box_buffer = BoundingBox.pickle self.design.offset_box
@@ -571,8 +571,11 @@ class Grid
       layers_in_region    = layers_in_region - layers_in_grid
       
       Log.info "Adding a new positioned grid with #{layers_in_grid}..."
-      positioned_grid  = Grid.new :design => grid.design, :depth => grid.depth + 1, :positioned => true
-      positioned_grid.set layers_in_grid, grid
+      positioned_grid  = Grid.new ({
+        :parent     => grid,
+        :layers     => layers_in_grid,
+        :positioned => true,
+        })
 
       @@grouping_queue.push positioned_grid
     end
@@ -581,8 +584,10 @@ class Grid
     Log.debug "Flow layers in region #{grouping_box} are #{flow_layers_in_region}."
     
     Log.info "Creating a new flow grid with #{flow_layers_in_region}..."
-    flow_grid = Grid.new :design => grid.design, :depth => grid.depth + 1
-    flow_grid.set flow_layers_in_region, grid
+    flow_grid = Grid.new ({
+      :parent => grid,
+      :layers => flow_layers_in_region,
+      })
     flow_grid.offset_box_buffer = BoundingBox.pickle offset_bounds
     @@grouping_queue.push flow_grid
     

@@ -350,8 +350,7 @@ class Design
     @layers = @sif.layers.values
     
     Log.info "Creating root grid..."
-    grid = Grid.new :design => self, :root => true, :depth => 0
-    grid.set @layers, nil
+    grid = Grid.new :design => self.id, :parent => nil, :layers => @layers, :root => true
 
     Log.info "Grouping the grids..."
     Grid.group!
