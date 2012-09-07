@@ -134,13 +134,27 @@ class Grid
   end
   
   def attribute_data
+    children_grids = @children.collect { |child_grid_id, child_grid| child_grid_id }
+    layers = @layers.collect {|uid, layer| uid}
+    style_layers = @style_layers.collect {|layer| layer.uid}
+    offset_box = BoundingBox.pickle @offset_box_buffer if not @offset_box_buffer.nil?
+    parent_id = @parent.id if not @parent.nil?
+    
     {
-      :id          => self.id,
-      :name        => self.name,
-      :tag         => self.tag,
-      :orientation => self.orientation,
-      :zindex      => self.zindex
-    }
+      :id                => @id,
+      :parent            => parent_id,
+      :layers            => layers,
+      :children          => children_grids,
+      :style_layers      => style_layers,
+      :render_layer      => @render_layer,
+      :positioned_layers => @positioned_layers.keys,
+      :root              => @root,
+      :positioned        => @positioned,
+      :orientation       => @orientation,
+      :tag               => @tag,
+      :offset_box_buffer => offset_box,
+      :grouping_box      => @grouping_box
+    }      
   end
   
   def get_tree
