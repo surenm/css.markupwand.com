@@ -310,17 +310,19 @@ class Design
     @layers = @sif.layers.values
     
     Log.info "Creating root grid..."
-    grid = Grid.new :design => self.id, :parent => nil, :layers => @layers, :root => true
+    grid = Grid.new :design => self, :parent => nil, :layers => @layers, :root => true
 
     Log.info "Grouping the grids..."
     Grid.group!
     grid.print
+    @sif.save!
     Log.info "Successfully grouped grids..."
   end
   
   def generate_markup(args={})
     Log.info "Beginning to generate markup and css for #{self.name}..."
     
+    self.init_sif
     generated_folder = self.store_generated_key
     
     # Set the root path for this design. That is where all the html and css is saved to.
