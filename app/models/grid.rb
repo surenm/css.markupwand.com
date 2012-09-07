@@ -35,7 +35,7 @@ class Grid
   attr_accessor :grouping_box  #(BoundingBox)
   
   ##########################################################
-  # GRID INSTANTIATE AND GRID OBJECT HELPERS
+  # GRID INSTANTIATE
   ##########################################################
   
   def initialize(args)
@@ -45,11 +45,14 @@ class Grid
     # If parent is nil, then this is a root node
     if @parent.nil?
       @root = true
-      @design = args[:design]
     end
-    
-    # A grid always has to belong to a design
-    @design = parent.design if not @root
+
+    # A grid always has to belong to a design    
+    if @root
+      @design = args[:design]
+    else
+      @design = parent.design if not @root
+    end
     
     # If args contains an id, the grid is just being restored.
     # Else create a new id
