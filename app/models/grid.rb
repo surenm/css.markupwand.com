@@ -74,6 +74,7 @@ class Grid
   end
 
   def initialize(args)
+    
     @parent = args[:parent]
     @layers = {}
     args[:layers].each do |layer|
@@ -82,9 +83,15 @@ class Grid
     
     # A grid belongs to its parent design.
     if @parent.nil? 
-      @design = Design.find args[:design]
+      @design = args[:design]
     else
       @design = parent.design
+    end
+    
+    if args[:id].nil?
+      @id = self.id
+    else
+      @id = args[:id]
     end
 
     @root          = args.fetch :root , false
