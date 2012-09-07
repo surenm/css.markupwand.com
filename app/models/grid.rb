@@ -197,10 +197,10 @@ class Grid
   # Bounds for a grid.
   # TODO: cache this grids
   def bounds
-    if self.layers.empty?
+    if @layers.empty?
       bounds = nil
     else
-      node_bounds = self.layers.collect {|uid, layer| layer.bounds}
+      node_bounds = @layers.collect {|uid, layer| layer.bounds}
       bounds = BoundingBox.get_super_bounds node_bounds
     end
     return bounds
