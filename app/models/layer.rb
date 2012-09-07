@@ -63,7 +63,8 @@ class Layer
   attr_accessor :layer_bounds # (String)
 
   # CSS Rules
-  attr_accessor :css_rules # (Hash)
+  attr_accessor :computed_css # (Hash)
+  attr_reader   :css_rules # (Array)
   attr_accessor :chunk_text_css_rule # (Array)
   attr_accessor :chunk_text_css_selector # (Array)
   attr_accessor :extra_selectors # (Array)
@@ -91,7 +92,7 @@ class Layer
   end
   
   def initialize
-    @css_rules = {}
+    @computed_css = {}
     @extra_selectors = []
   end
 
@@ -219,8 +220,16 @@ class Layer
     chosen_tag
   end
 
+  # Array of CSS rules, created using 
+  # computed using computed css and 
+  def css_rules
+    computed_css_array  = Compassify::get_scss(self.computed_css)
+    generated_css_array = Compassify::get_scss(self.styles)
+
+    generated_css_array + computed_css_array
+  end
+
   def set_style_rules(grid_style)
-    Log.info Compassify::get_scss(self.styles)
     #crop_objects_for_cropped_bounds
     is_leaf = grid_style.grid.is_leaf?
   
@@ -233,7 +242,6 @@ class Layer
     # 2. Multifont
 
     self.generated_selector = CssParser::create_incremental_selector if not css.empty?
-    CssParser::add_to_inverted_properties(css, grid_style.grid)
   end
 
   #FIXME PSDJS
@@ -257,7 +265,7 @@ sass
   end
 
   # Finds out if the same style is repeating for multifont,
-  # i.e it is not really a multifont, and makes it unique, adds it to css_rules.
+  # i.e it is not really a multifont, and makes it unique, adds it to computed_css.
   def multifont_style_uniq
     multifont_array = self.chunk_text_css_rule.clone.uniq
     uniqued_multifont_data = {}
@@ -268,13 +276,6 @@ sass
     end
 
     uniqued_multifont_data
-  end
-
-  def get_style_rules(grid_style)
-    return {:'border' => '1px solid #000'} #FIXME PSDJS
-    set_style_rules(grid_style) #if self.css_rules.empty?
-
-    self.css_rules
   end
 
   def is_empty_text_layer?
@@ -299,8 +300,8 @@ sass
   # Selector names (includes default selector and extra selectors)
   def selector_names(grid)
     all_selectors = extra_selectors
-    if not self.css_rules.empty?
-      all_selectors.push self.modified_generated_selector(grid) if not self.css_rules.empty?
+    if not self.computed_css.empty?
+      all_selectors.push self.modified_generated_selector(grid) if not self.computed_css.empty?
     end
 
     if not grid.style.hashed_selectors.empty?
