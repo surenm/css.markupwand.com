@@ -136,20 +136,18 @@ class Grid
   end
 
   def add_child_grid(grid)
-    self.reset!
     @children[grid.id] = grid
   end
   
-  def add_style_layers(grid, style_layers)
+  def add_style_layers(style_layers)
+    style_layers.each do |style_layer|
+      @style_layers[style_layer.uid] = style_layer
+    end
   end
   
-  def set_render_layer(grid, render_layer)
+  def set_render_layer(render_layer)
+    @render_layer = render_layer
   end
-  
-  def save!
-    design.save_grid self.attribute_data
-  end
-
   ##########################################################
   #  GRID OBJECT HELPERS
   ##########################################################
@@ -284,10 +282,10 @@ class Grid
   # If it has more layers, than try to get the sub grids 
   def group!
     if self.layers.size > 1
-      get_subgrids
+      self.get_subgrids
     elsif self.layers.size == 1
       Log.info "Just one layer #{self.layers.values.first} is available..."
-      self.render_layer = self.layers.values.first
+      self.set_render_layer self.layers.values.first
     end
   end
   
@@ -328,7 +326,7 @@ class Grid
     if grid_style_layers.size > 0
       Log.info "Extracting out the style layers #{grid_style_layers}..." 
       grid_style_layers.flatten!
-      grid_style_layers.each { |style_layer| self.style_layers[style_layer.uid] = style_layer }
+      self.add_style_layers grid_style_layers
 
       Log.debug "Deleting #{grid_style_layers} from grid..."
       grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}

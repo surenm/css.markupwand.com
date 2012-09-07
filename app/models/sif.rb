@@ -91,6 +91,11 @@ class Sif
     return @grids[grid_id]
   end
   
+  def set_grid(grid)
+    @grids = {} if @grids.nil?
+    @grids[grid.id] = grid
+  end
+  
   def save!
     sif_document = {
       :header => @header,
