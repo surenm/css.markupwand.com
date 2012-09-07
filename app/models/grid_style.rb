@@ -244,7 +244,7 @@ class GridStyle
       parent = self.grid.parent
       if parent.style.css_rules.has_key? 'position' and parent.style.css_rules.fetch('position') == 'relative'
         position_relatively = true
-      elsif parent.is_positioned
+      elsif parent.positioned
         position_relatively = true
       end
     end
@@ -259,7 +259,7 @@ class GridStyle
     end
     
     # Handle absolute positioning now
-    style_rules.update position_absolutely if grid.is_positioned
+    style_rules.update position_absolutely if grid.positioned
 
     self.extra_selectors.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
     

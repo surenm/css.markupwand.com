@@ -24,7 +24,7 @@ class Grid
   attr_accessor :root  #(Boolean)
   
   # True if the grid node is going to be positioned
-  attr_accessor :is_positioned  #(Boolean)
+  attr_accessor :positioned  #(Boolean)
     
   # Style and semantics related fields for a grid
   attr_accessor :style
@@ -158,7 +158,7 @@ class Grid
     tree[:children] = []
 
     if self.render_layer.nil?
-      child_nodes = self.children.select { |node| not node.is_positioned }
+      child_nodes = self.children.select { |node| not node.positioned }
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |child_node|
         tree[:children].push child_node.get_tree
@@ -172,12 +172,12 @@ class Grid
   end
   
   def positioned_children
-    self.children.values.select { |child_grid| child_grid.is_positioned }
+    self.children.values.select { |child_grid| child_grid.positioned }
   end
 
   def positioned_siblings
     if not self.root
-      self.parent.children.values.select { |sibling_grid| sibling_grid.is_positioned }
+      self.parent.children.values.select { |sibling_grid| sibling_grid.positioned }
     else
       []
     end
@@ -576,7 +576,7 @@ class Grid
       layers_in_region    = layers_in_region - layers_in_grid
       
       Log.info "Adding a new positioned grid with #{layers_in_grid}..."
-      positioned_grid  = Grid.new :design => grid.design, :depth => grid.depth + 1, :is_positioned => true
+      positioned_grid  = Grid.new :design => grid.design, :depth => grid.depth + 1, :positioned => true
       positioned_grid.set layers_in_grid, grid
 
       @@grouping_queue.push positioned_grid
@@ -639,7 +639,7 @@ class Grid
   def positioned_grids_html(subgrid_args = {})
     html = ''
     self.children.values.each do |grid|
-      if grid.is_positioned
+      if grid.positioned
         html += grid.to_html(subgrid_args)
       end
     end
@@ -671,7 +671,7 @@ class Grid
         inner_html += content_tag :div, '', :class => 'marginfix'
       end
       
-      child_nodes = self.children.values.select { |node| not node.is_positioned }
+      child_nodes = self.children.values.select { |node| not node.positioned }
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
@@ -727,7 +727,7 @@ class Grid
     prefix = "|--"
     indent_level.times {|i| spaces+=" "}
 
-    positioned_string = 'positioned' if is_positioned else ''
+    positioned_string = 'positioned' if positioned else ''
     Log.info "#{spaces}#{prefix} (grid #{self.id}) #{self.bounds.to_s} #{self.style_layers.join(',')} #{positioned_string}"
     self.children.each do |id, subgrid|
       subgrid.print(indent_level+1)
