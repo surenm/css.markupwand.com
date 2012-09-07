@@ -220,12 +220,11 @@ class Layer
   end
 
   def set_style_rules(grid_style)
-
-    crop_objects_for_cropped_bounds
+    Log.info Compassify::get_scss(self.styles)
+    #crop_objects_for_cropped_bounds
     is_leaf = grid_style.grid.is_leaf?
   
     css = {}
-    Log.info self.styles
 
     self.extra_selectors = grid_style.extra_selectors
     
