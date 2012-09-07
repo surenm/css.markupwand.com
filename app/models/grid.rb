@@ -58,12 +58,14 @@ class Grid
     # Else create a new id
     if args[:id].nil?
       @id = @design.get_next_grid_id
+      @design.save_grid self
+      @parent.add_child_grid self if not @root
     else
+      # If args has id, it means its restored from sif data.
+      # No need to reset parent relation as well as design relation
       @id = args[:id]
     end
     
-    @parent.add_child_grid self
-      
     # Next all layers in this grid
     @layers = {}
     layers_array = args.fetch :layers, []
@@ -83,16 +85,6 @@ class Grid
   
     # The html tag for this grid
     @tag = args.fetch :tag, :div
-    
-    # If grid is restored from serialized data, then it would already have an ID.
-    # so if there is an ID already, no need to trigger that information to design back
-    if args[:id].nil?
-      @id = self.id
-      @design.save_grid self.attribute_data
-      if not @parent.nil?
-        @parent.children[@id] = self
-      end
-    end
     
     @@grouping_queue.push self if @root
   end
