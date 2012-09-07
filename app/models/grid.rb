@@ -7,18 +7,16 @@ class Grid
   attr_reader :id
   
   # Belongs to a specific photoshop design (Single Instance)
-  attr_accessor :design
+  attr_reader :design
   
-  # self references for children and parent grids
-  # Contains lot of child grids (Hash)
-  attr_accessor :children
-  attr_accessor :parent
+  # self references for parent and children grids
+  attr_accessor :parent #(Grid)
+  attr_accessor :children #(Hash of Grid.id => Grid)
 
   # Layer types that belong to the grid
-  attr_accessor :layers # (Hash)
-  attr_accessor :style_layers  #(Array)
-  attr_accessor :positioned_layers  #(Hash)
-  attr_accessor :render_layer
+  attr_accessor :layers # (Hash of Layer.id => Layer)
+  attr_accessor :style_layers  #(Hash of Layer.id => Layer)
+  attr_accessor :render_layer #(Layer)
 
   # If this is a root grid of a design
   attr_accessor :root  #(Boolean)
@@ -42,6 +40,8 @@ class Grid
   def self.reset_grouping_queue
     @@grouping_queue.clear
   end
+  attr_accessor :offset_box  #(BoundingBox)
+  attr_accessor :grouping_box  #(BoundingBox)
   
   # Grouping identifiers to detect infinite loop
   @@grouping_identifiers = Hash.new
