@@ -56,8 +56,10 @@ class Sif
   
   def parse_layers
     @serialized_layers = @sif_data[:layers]
-    
-    raise "Layers data is Nil" if @serialized_layers.nil?
+    if @serialized_layers.nil?
+      # If the layers are nil, then there is nothing to do.
+      raise "Layers data is Nil"
+    end
     
     @layers = Hash.new
     @serialized_layers.each do |serialized_layer_data|
@@ -68,9 +70,13 @@ class Sif
   
   def parse_grids
     @serialized_grids = @sif_data[:grids]
-    @grids = Hash.new
-    return if @serialized_grids.nil?
+    if @serialized_grids.nil?
+      # If there are serialized grids then most probably the design is not yet parsed
+      @grids = nil
+      return
+    end
     
+    @grids = Hash.new
     @serialized_grids.each do |serialized_grid_data|
       grid = Grid.create_from_sif_data serialized_grid_data
       @grids[grid.id] = grid
