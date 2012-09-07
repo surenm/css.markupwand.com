@@ -613,8 +613,9 @@ class Grid
   end
   
   
-  ## Markup generation methods
-  
+  ##########################################################
+  # Markup related functions
+  ##########################################################
   def positioned_grids_html(subgrid_args = {})
     html = ''
     self.children.values.each do |grid|
@@ -623,11 +624,6 @@ class Grid
       end
     end
     html
-  end
-  
-  def fix_dom
-    dom_parser = DomParser.new self.id
-    dom_parser.reparse
   end
   
   def to_html(args = {})
@@ -668,7 +664,7 @@ class Grid
 
       sub_grid_args[:inner_html] = self.positioned_grids_html
 
-      inner_html  += self.render_layer.to_html sub_grid_args, self.is_leaf?, self
+      inner_html  += self.render_layer.to_html sub_grid_args, self.leaf?, self
       
 
       if self.render_layer.tag_name(true) == :img
@@ -721,5 +717,4 @@ class Grid
       end
     end  
   end
-  
 end

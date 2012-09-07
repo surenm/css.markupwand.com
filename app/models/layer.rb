@@ -211,7 +211,7 @@ class Layer
     return {} #FIXME PSDJS
     
     crop_objects_for_cropped_bounds
-    is_leaf = grid_style.grid.is_leaf?
+    is_leaf = grid_style.grid.leaf?
   
     css = {}
     if not self.is_style_layer and not self.tag_name(is_leaf) == :img
