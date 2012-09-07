@@ -115,7 +115,7 @@ class Grid
       :positioned        => @positioned,
       :orientation       => @orientation,
       :tag               => @tag,
-      :offset_box_buffer => offset_box_data,
+      :offset_box        => offset_box_data,
       :grouping_box      => grouping_box_data,
     }      
   end
