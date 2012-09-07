@@ -397,7 +397,7 @@ class Design
     # Once grids are generated, run through the tree and find out style sheets.
     # TODO Fork out and parallel process
     Log.info "Generating CSS Tree..."
-    root_grid.style.generate_css_rules
+    root_grid.style.compute_css
 
     Log.debug "Destroying design globals..."
     DesignGlobals.destroy
@@ -424,7 +424,13 @@ class Design
     
     root_grid    = self.get_root_grid
     body_html    = root_grid.to_html
-    scss_content = root_grid.style.scss_tree #FIXME PSDJS + self.font_map.font_scss
+    compass_includes = <<COMPASS
+@import "compass";
+@import "compass/css3/box-shadow";
+
+
+COMPASS
+    scss_content = compass_includes + root_grid.style.scss_tree #FIXME PSDJS + self.font_map.font_scss
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
