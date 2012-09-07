@@ -61,6 +61,8 @@ class Grid
     else
       @id = args[:id]
     end
+    
+    @parent.add_child_grid self
       
     # Next all layers in this grid
     @layers = {}
@@ -125,6 +127,31 @@ class Grid
     }      
   end
   
+  ##########################################################
+  # SPECIAL FUNCTIONS THAT NEED TO RESET ITSELF FROM SIF
+  ##########################################################
+  
+  def reset!
+  end
+
+  def add_child_grid(grid)
+    self.reset!
+    @children[grid.id] = grid
+  end
+  
+  def add_style_layers(grid, style_layers)
+  end
+  
+  def set_render_layer(grid, render_layer)
+  end
+  
+  def save!
+    design.save_grid self.attribute_data
+  end
+
+  ##########################################################
+  #  GRID OBJECT HELPERS
+  ##########################################################
   def positioned_children
     self.children.values.select { |child_grid| child_grid.positioned }
   end
