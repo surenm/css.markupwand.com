@@ -34,46 +34,50 @@ class Grid
   attr_accessor :offset_box  #(BoundingBox)
   attr_accessor :grouping_box  #(BoundingBox)
   
+  ##########################################################
+  # GRID INSTANTIATE AND GRID OBJECT HELPERS
+  ##########################################################
   
-  # Deserialize SIF data to get a grid
-  def self.create_from_sif_data(sif_grid_data)
-  end
-
   def initialize(args)
-    
+    # Set parent for this grid
     @parent = args[:parent]
-    @layers = {}
-    args[:layers].each do |layer|
-      @layers[layer.uid] = layer if not layer.empty?
-    end
     
-    # A grid belongs to its parent design.
-    if @parent.nil? 
+    # If parent is nil, then this is a root node
+    if @parent.nil?
+      @root = true
       @design = args[:design]
-    else
-      @design = parent.design
     end
     
+    # A grid always has to belong to a design
+    @design = parent.design if not @root
+    
+    # If args contains an id, the grid is just being restored.
+    # Else create a new id
     if args[:id].nil?
-      @id = self.id
+      @id = @design.get_next_grid_id
     else
       @id = args[:id]
     end
+      
+    # Next all layers in this grid
+    @layers = {}
+    layers_array = args.fetch :layers, []
+    layers_array.each {|layer| @layers[layer.uid] = layer}
 
-    @root          = args.fetch :root , false
-    @grouping_box  = args.fetch :grouping_box, nil
-    @orientation   = args.fetch :orientation, Constants::GRID_ORIENT_NORMAL
-    @positioned    = args.fetch :positioned, false
+    @style_layers = args.fetch :style_layers, {}
+    @render_layer = args.fetch :render_layer, nil
+    
+    # populate children grids for this grid
+    @children = args.fetch :children, {}
 
-    # Set default values
-    @children          = {}
-    @style             = GridStyle.new(:grid => self)
-    @render_layer      = nil
-    @style_layers      = []
-    @positioned_layers = {}
-    @tag               = :div
-    @override_tag      = :div
-    @offset_box_buffer = nil
+    # Grouping related boxes
+    @grouping_box = args.fetch :grouping_box, nil
+    @offset_box   = args.fetch :offset_box, nil
+    @orientation  = args.fetch :orientation, Constants::GRID_ORIENT_NORMAL
+    @apositioned  = args.fetch :positioned, false
+  
+    # The html tag for this grid
+    @tag = args.fetch :tag, :div
     
     # If grid is restored from serialized data, then it would already have an ID.
     # so if there is an ID already, no need to trigger that information to design back
@@ -88,72 +92,34 @@ class Grid
     @@grouping_queue.push self if @root
   end
   
-  def id
-    if @id.nil?
-      # Minimal version of mongodb's object id.
-      # http://www.mongodb.org/display/DOCS/Object+IDs
-      # For incremental object ids.
-      process_id  = "%07d" % $$ #7 digits
-      time_micro  = ("%0.6f" % Time.now.to_f).gsub(".", "") #16 digits
-      incremental = "%04d" % @design.incremental_counter #4 digits
-      @id = (time_micro + process_id + incremental).to_i.to_s(16)
-    end
-
-    @id
-  end
-
-  # Grid representational data
-  def get_label
-    css_classes = [""] #+ self.get_css_classes
-    css_classes_string = css_classes.join " ."
-    "<div class='editable-grid'><span class='editable-tag'> #{self.tag} </span> <span class='editable-class'> #{css_classes_string} </span></div>"
+  def self.create_from_sif_data(sif_grid_data)
   end
   
+  
   def attribute_data
-    children_grids = @children.collect { |child_grid_id, child_grid| child_grid_id }
-    layers = @layers.collect {|uid, layer| uid}
-    style_layers = @style_layers.collect {|layer| layer.uid}
-    offset_box = BoundingBox.pickle @offset_box_buffer if not @offset_box_buffer.nil?
-    parent_id = @parent.id if not @parent.nil?
+    parent_id       = @parent.id if not @root
+    children_ids    = @children.keys
+    layer_ids       = @layers.keys
+    style_layer_ids = @style_layers.keys
+    render_layer_id = @render_layer.uid if not @render_layer.nil?
     
-    {
+    offset_box_data = @offset_box.attribute_data if not @offset_box.nil?
+    grouping_box_data = @grouping_box.attribute_data if not @grouping_box.nil?
+    
+    attribute_data = {
       :id                => @id,
       :parent            => parent_id,
-      :layers            => layers,
-      :children          => children_grids,
-      :style_layers      => style_layers,
-      :render_layer      => @render_layer,
-      :positioned_layers => @positioned_layers.keys,
+      :layers            => layer_ids,
+      :children          => children_ids,
+      :style_layers      => style_layer_ids,
+      :render_layer      => render_layer_id,
       :root              => @root,
       :positioned        => @positioned,
       :orientation       => @orientation,
       :tag               => @tag,
-      :offset_box_buffer => offset_box,
-      :grouping_box      => @grouping_box
+      :offset_box_buffer => offset_box_data,
+      :grouping_box      => grouping_box_data,
     }      
-  end
-  
-  def get_tree
-    tree = {
-      :id    => self.id,
-      :tag   => self.tag,
-      :label => self.get_label
-    }
-    
-    tree[:children] = []
-
-    if self.render_layer.nil?
-      child_nodes = self.children.select { |node| not node.positioned }
-      child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
-      child_nodes.each do |child_node|
-        tree[:children].push child_node.get_tree
-      end
-    else 
-      render_layer_attr_data = self.render_layer.attribute_data
-      render_layer_attr_data[:id] = self.id
-      tree[:children].push render_layer_attr_data
-    end
-    return tree
   end
   
   def positioned_children
@@ -167,14 +133,6 @@ class Grid
       []
     end
   end
-
-  def last_processed_child
-    if self.children.empty?
-      return nil
-    end
-    last_key = self.children.keys.sort.last
-    self.children[last_key]
-  end
   
   def has_positioned_children?
     return self.positioned_children.size > 0
@@ -184,21 +142,58 @@ class Grid
     return self.positioned_siblings.size > 0
   end
   
-  # Bounds for a grid.
-  # TODO: cache this grids
+  # Its a Leaf grid if it has no children and has one render layer
+  def leaf?
+    self.children.keys.size == 0 and not self.render_layer.nil?
+  end
+
   def bounds
     if @layers.empty?
       bounds = nil
     else
-      node_bounds = @layers.collect {|uid, layer| layer.bounds}
+      node_bounds = @layers.values.collect {|layer| layer.bounds}
       bounds = BoundingBox.get_super_bounds node_bounds
     end
     return bounds
   end
   
-  # Its a Leaf grid if it has no children and has one render layer
-  def is_leaf?
-    self.children.count == 0 and not self.render_layer.nil?
+  def zindex
+    zindex = 0
+    
+    all_layers_z_indices = []
+    self.layers.each do |uid, layer|
+      all_layers_z_indices.push layer.zindex
+    end
+
+    grid_zindex = all_layers_z_indices.min
+    
+    return grid_zindex
+  end
+  
+  def tag
+    if self.is_image_grid?
+      :img
+    else
+      :div
+    end
+  end
+  
+  def is_image_grid?
+    if self.render_layer.nil?
+      false
+    else 
+      (self.render_layer.tag_name(self.leaf?) == :img)
+    end
+  end
+
+  def is_text_grid?
+    if self.render_layer.nil?
+      false
+    else
+      (self.render_layer.kind == Layer::LAYER_TEXT)
+    end
+  end
+  
   ##########################################################
   # GRID GROUPING
   ##########################################################
@@ -618,45 +613,6 @@ class Grid
     return (not intersecting_layer_pairs.empty?)
   end
   
-  # Finds out zindex of this grid
-  def zindex
-    zindex = 0
-    
-    all_layers_z_indices = []
-    self.layers.each do |uid, layer|
-      all_layers_z_indices.push layer.zindex
-    end
-
-    grid_zindex = all_layers_z_indices.min
-    
-    return grid_zindex
-  end
-  
-  def tag
-    if not self.override_tag.nil?
-      self.override_tag.to_sym
-    elsif self.is_image_grid?
-      :img
-    else
-      :div
-    end
-  end
-  
-  def is_image_grid?
-    if self.render_layer.nil?
-      false
-    else 
-      (self.render_layer.tag_name(self.is_leaf?) == :img)
-    end
-  end
-
-  def is_text_grid?
-    if self.render_layer.nil?
-      false
-    else
-      (self.render_layer.kind == Layer::LAYER_TEXT)
-    end
-  end
   
   ## Markup generation methods
   
