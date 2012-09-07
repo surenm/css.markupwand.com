@@ -90,11 +90,6 @@ class Layer
     return layer
   end
   
-  def initialize
-    @css_rules = {}
-    @extra_selectors = []
-  end
-
   def attribute_data
     {
         :uid => self.uid,

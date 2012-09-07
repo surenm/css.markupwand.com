@@ -77,13 +77,6 @@ class Design
 
   mount_uploader :file, DesignUploader
   
-  # Initializer
-  after_initialize do |document|
-    @grids = {}
-    @layers = {}
-    @font_map = nil #FIXME PSDJS
-  end
-
   @@design_processed_data = nil
   
   def vote_class
@@ -98,8 +91,8 @@ class Design
   end
   
   def init_sif
-    @sif_object = Sif.new(self) if @sif == nil
-    return @sif_object
+    @sif = Sif.new(self) if @sif == nil
+    return @sif
   end
 
   def reset_processed_data
@@ -366,7 +359,7 @@ class Design
     
     # Layer descriptors of all photoshop layers
     Log.info "Getting nodes..."
-    @layers = @sif_object.layers.values
+    @layers = @sif.layers.values
     
     Log.info "Creating root grid..."
     grid = Grid.new :design => self, :root => true, :depth => 0
