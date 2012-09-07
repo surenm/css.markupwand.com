@@ -29,14 +29,6 @@ class Layer
   LAYER_VIDEO              = "LayerKind.VIDEO"
   
 
-  BOUND_MODES = {
-    :NORMAL_BOUNDS  => :bounds,
-    :SMART_BOUNDS   => :smart_bounds,
-    :EDGE_BOUNDS    => :edge_detected_bounds,
-    :SNAPPED_BOUNDS => :snapped_bounds
-  }
-
-
   ### Relational references ###
 
   # Belongs to multiple grids
@@ -53,6 +45,7 @@ class Layer
   attr_accessor :zindex # (Integer)
   attr_accessor :opacity #(Integer)
   attr_accessor :bounds #(BoundingBox)
+  attr_accessor :smart_bounds #(BoundingBox)
 
   attr_accessor :text
   attr_accessor :shapes
@@ -61,7 +54,6 @@ class Layer
   attr_accessor :is_overlay # (Boolean)
   attr_accessor :is_style_layer # (Boolean)
   attr_accessor :override_tag # (String)
-  attr_accessor :layer_bounds # (String)
 
   # CSS Rules
   attr_accessor :css_rules # (Hash)
@@ -93,12 +85,15 @@ class Layer
   
   def attribute_data
     {
-        :uid => self.uid,
-        :name => self.name,
-        :kind => self.kind,
-        :layer_type => self.layer_type,
-        :label => self.name[0..9],
-        :tag => self.tag_name
+        :uid     => self.uid,
+        :name    => self.name,
+        :type    => self.type,
+        :zindex  => self.zindex,
+        :bounds  => self.bounds.attribute_data,
+        :opacity => self.opacity,
+        :text    => self.text,
+        :shapes  => self.shapes,
+        :styles  => self.styles,
     }
   end
 
@@ -133,20 +128,6 @@ class Layer
     else
       false
     end
-  end
-
-  def set_bounds_mode(bound_mode)
-    unless BOUND_MODES.include? bound_mode
-      raise "Unknown bound mode #{bound_mode}"
-    end
-    @bound_mode = bound_mode
-  end
-
-  def bounds_key
-    key = BOUND_MODES[@bound_mode]
-    key = BOUND_MODES[:NORMAL_BOUNDS] if key.nil?
-
-    key
   end
 
   def == (other_layer)
