@@ -90,4 +90,16 @@ class Sif
   def get_grid(grid_id)
     return @grids[grid_id]
   end
+  
+  def save!
+    sif_document = {
+      :header => @header,
+      :layers => @layers.values,
+      :grids  => @grids.values,
+    }
+    
+    # TODO: Do validation checks here
+    
+    Sif.write @design, sif_document
+  end
 end
