@@ -52,6 +52,7 @@ class Layer
   attr_accessor :kind # (String)
   attr_accessor :zindex # (Integer)
   attr_accessor :opacity #(Integer)
+  attr_accessor :bounds #(BoundingBox)
 
   attr_accessor :text
   attr_accessor :shapes
@@ -146,14 +147,6 @@ class Layer
     key = BOUND_MODES[:NORMAL_BOUNDS] if key.nil?
 
     key
-  end
-
-  def bounds
-    BoundingBox.depickle self.layer_bounds
-  end
-
-  def bounds=(new_bound)
-    self.layer_bounds = BoundingBox.pickle(new_bound)
   end
 
   def == (other_layer)
