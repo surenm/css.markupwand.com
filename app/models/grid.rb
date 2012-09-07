@@ -106,7 +106,10 @@ class Grid
     # so if there is an ID already, no need to trigger that information to design back
     if args[:id].nil?
       @id = self.id
-      @design.add_grid self
+      @design.save_grid self.attribute_data
+      if not @parent.nil?
+        @parent.children[@id] = self
+      end
     end
     
     @@grouping_queue.push self if @root
