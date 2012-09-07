@@ -86,6 +86,21 @@ class Design
     @sif = Sif.new(self) if @sif == nil
     return @sif
   end
+  
+  def grids
+    self.init_sif
+    return @sif.grids
+  end
+  
+  def layers
+    self.init_sif
+    return @sif.layers
+  end
+  
+  def add_grid(grid)
+    self.init_sif
+    @sif.grids = Hash.new if @sif.grids.nil?
+    @sif.grids[grid.id] = grid
   end
 
   def incremental_counter
