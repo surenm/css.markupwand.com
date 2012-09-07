@@ -16,4 +16,8 @@ module Compassify
   def Compassify::box_shadow(object)
     "@include box-shadow(#{object[:color]} #{object[:horizontal_offset]} #{object[:vertical_offset]} #{object[:blur]} #{object[:spread]} #{object[:type]});"
   end
+
+  def Compassify::solid_fill(object)
+    "background-color: #{object}"
+  end
 end
