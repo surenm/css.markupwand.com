@@ -113,6 +113,7 @@ class Grid
     
     attribute_data = {
       :id                => @id,
+      :design            => @design.id,
       :parent            => parent_id,
       :layers            => layer_ids,
       :children          => children_ids,
