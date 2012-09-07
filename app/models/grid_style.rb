@@ -2,8 +2,9 @@ class GridStyle
 
   attr_accessor :grid
 
-  attr_accessor :css_rules # (Hash) 
+  attr_accessor :computed_css # (Hash) 
   attr_accessor :extra_selectors # (Array) 
+  attr_accessor :css_rules # (Array)
   attr_accessor :generated_selector # (String) 
 
   attr_accessor :hashed_selectors # (Array) 
@@ -14,17 +15,18 @@ class GridStyle
       raise ArgumentError, "No grid object passed"
     end
 
-    @css_rules = {}
+    @computed_css = {}
     @extra_selectors    = []
     @generated_selector = nil
     @hashed_selectors   = []
   end
 
+  # FIXME PSDJS
   ## helper methods
   def get_border_width
     border_width = nil
-    if self.css_rules.has_key? :border
-      border_properties = self.css_rules.fetch(:border).split
+    if self.computed_css.has_key? :border
+      border_properties = self.computed_css.fetch(:border).split
       border_width_str = border_properties[0].scan(/\d+/).first
       if not border_width_str.nil?
         border_width = border_width_str.to_i
@@ -33,7 +35,7 @@ class GridStyle
     return border_width
   end
   
-  #FIXME PSJDS
+  #FIXME PSDJS
   def is_single_line_text
     if not self.grid.render_layer.nil? and
         false and #FIXME PSDJS
@@ -47,7 +49,6 @@ class GridStyle
   end
 
   ## Spacing and padding related method
-   
   # Find out bounding box difference from it and its children.
   def get_padding
     non_style_layers = self.grid.layers.values - self.grid.style_layers
@@ -219,16 +220,25 @@ class GridStyle
     end
   end
 
+  # Array of CSS rules, created using 
+  # computed using computed css and 
+  def css_rules
+    rules_array = Compassify::get_scss(self.computed_css)
+
+    self.grid.style_layers.each do |layer|
+      rules_array += layer.css_rules
+    end
+
+    rules_array
+  end
+
   def set_style_rules
     style_rules = {}
-    self.grid.style_layers.each do |layer|
-      style_rules.update layer.get_style_rules(self)
-    end
 
     set_shape_dimensions_flag = false
 
     # Checking if the style layers had a shape.
-    if self.css_rules.has_key? :'min-width' or self.css_rules.has_key? :'min-height'
+    if self.computed_css.has_key? :'min-width' or self.computed_css.has_key? :'min-height'
       style_rules.delete :'min-width'
       style_rules.delete :'min-height'
       set_shape_dimensions_flag = true
@@ -242,7 +252,7 @@ class GridStyle
     
     if not self.grid.parent.nil?
       parent = self.grid.parent
-      if parent.style.css_rules.has_key? 'position' and parent.style.css_rules.fetch('position') == 'relative'
+      if parent.style.computed_css.has_key? 'position' and parent.style.computed_css.fetch('position') == 'relative'
         position_relatively = true
       elsif parent.is_positioned
         position_relatively = true
@@ -275,9 +285,9 @@ class GridStyle
     # minimum height and width for shapes in style layers
     style_rules.update self.set_min_dimensions if set_shape_dimensions_flag
 
-    self.css_rules.update style_rules
+    self.computed_css.update style_rules
 
-    self.generated_selector = CssParser::create_incremental_selector if not self.css_rules.empty?
+    self.generated_selector = CssParser::create_incremental_selector if not self.computed_css.empty?
   end
 
   def position_absolutely
@@ -293,16 +303,15 @@ class GridStyle
   end
   
   # Walks recursively through the grids and creates
-  def generate_css_rules
+  def compute_css
     self.set_style_rules
 
     if self.grid.render_layer.nil?
-      self.grid.children.values.each { |child| child.style.generate_css_rules }
+      self.grid.children.values.each { |child| child.style.compute_css }
     else
       self.grid.render_layer.set_style_rules(self)
     end
   end
-
 
   def is_text_rule?(rule)
     rule.to_s.index('font-') != nil
@@ -315,7 +324,7 @@ class GridStyle
         true
       else
         has_font_property = false
-        grid.style.css_rules.each do |rule, value|
+        grid.style.computed_css.each do |rule, value|
           if is_text_rule?(rule)
             has_font_property = true
             break
@@ -341,11 +350,11 @@ class GridStyle
 
     layer_has_css = false
     if self.grid.render_layer
-      layer_has_css = true if not self.grid.render_layer.css_rules.empty?
+      layer_has_css = true if not self.grid.render_layer.computed_css.empty?
     end
 
     if not self.generated_selector.nil?
-      all_selectors.push self.modified_generated_selector if not self.css_rules.empty?
+      all_selectors.push self.modified_generated_selector if not self.computed_css.empty?
     end
 
     all_selectors.uniq!
@@ -359,10 +368,10 @@ class GridStyle
     initial_selector_name = nil
     if self.grid.render_layer
       initial_selector_name = (self.grid.render_layer.generated_selector) if not self.grid.render_layer.generated_selector.nil?
-      css = self.grid.render_layer.css_rules.clone
+      css = self.grid.render_layer.computed_css.clone
     else
       initial_selector_name = (generated_selector) if not generated_selector.nil? and not generated_selector.empty?
-      css = self.css_rules.clone
+      css = self.computed_css.clone
     end
 
     if not initial_selector_name.nil?
@@ -388,10 +397,10 @@ class GridStyle
       spaces = spaces + " "
     end
 
-    if self.css_rules.empty? or self.generated_selector.nil?
+    if self.computed_css.empty? or self.generated_selector.nil?
       sass = "#{child_scss_trees}"
     else
-      css_rules_string = CssParser::to_style_string(self.css_rules, spaces + "  ")
+      css_string = self.css_rules.join(";\n") + ";"
       child_css_string = ""
       if not child_scss_trees.empty?
          child_css_string = "\n#{spaces}" + child_scss_trees.rstrip
@@ -402,7 +411,7 @@ class GridStyle
 
       sass = <<sass
 #{initial_space}.#{self.modified_generated_selector} {
-#{css_rules_string}#{child_css_string}
+#{css_string}#{child_css_string}
 #{spaces}}
 sass
     end
@@ -410,11 +419,11 @@ sass
     if not self.grid.render_layer.nil?
       render_layer = self.grid.render_layer
       chunk_text_rules = render_layer.chunk_text_rules
-      if (not render_layer.css_rules.empty?) and (not render_layer.generated_selector.nil?)
-        css_rules_string = CssParser::to_style_string(render_layer.css_rules, spaces + '  ')
+      if (not render_layer.computed_css.empty?) and (not render_layer.generated_selector.nil?)
+        layer_css_string = render_layer.css_rules.join(";\n") + ";"
         sass += <<sass
  .#{render_layer.modified_generated_selector(self.grid)} {
-#{css_rules_string}
+#{layer_css_string}
 #{spaces}}#{chunk_text_rules}
 sass
       end
