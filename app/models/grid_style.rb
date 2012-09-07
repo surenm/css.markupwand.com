@@ -275,8 +275,6 @@ class GridStyle
     # minimum height and width for shapes in style layers
     style_rules.update self.set_min_dimensions if set_shape_dimensions_flag
 
-    Log.info "Setting grid style rules #{style_rules}"
-
     self.css_rules.update style_rules
 
     self.generated_selector = CssParser::create_incremental_selector if not self.css_rules.empty?
@@ -296,7 +294,6 @@ class GridStyle
   
   # Walks recursively through the grids and creates
   def generate_css_rules
-    Log.info "Setting style rules for #{self.grid}..."
     self.set_style_rules
 
     if self.grid.render_layer.nil?
