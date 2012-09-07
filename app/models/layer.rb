@@ -74,7 +74,7 @@ class Layer
     layer.type    = sif_layer_data[:type]
     layer.uid     = sif_layer_data[:uid]
     layer.zindex  = sif_layer_data[:zindex]
-    layer.bounds  = BoundingBox.depickle sif_layer_data[:bounds]
+    layer.bounds  = BoundingBox.create_from_attribute_data sif_layer_data[:bounds]
     layer.opacity = sif_layer_data[:opacity]
     layer.text    = sif_layer_data[:text]
     layer.shapes  = sif_layer_data[:shapes]
