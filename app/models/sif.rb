@@ -97,10 +97,17 @@ class Sif
   end
   
   def save!
+    serialized_layers = @layers.values
+    if not @grids.nil?
+      serialized_grids = @grids.values.collect do |grid|
+        grid.attribute_data
+      end
+    end
+    
     sif_document = {
       :header => @header,
-      :layers => @layers.values,
-      :grids  => @grids.values,
+      :layers => serialized_layers,
+      :grids  => serialized_grids,
     }
     
     # TODO: Do validation checks here
