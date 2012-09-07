@@ -97,10 +97,10 @@ class Design
     return @sif.layers
   end
   
-  def add_grid(grid)
+  def save_grid(grid_data)
     self.init_sif
     @sif.grids = Hash.new if @sif.grids.nil?
-    @sif.grids[grid.id] = grid
+    @sif.grids[grid_data[:id]] = grid_data
   end
 
   def incremental_counter
