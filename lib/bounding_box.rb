@@ -9,7 +9,11 @@ class BoundingBox
   def self.create_from_bounds(horizontal_bound, vertical_bound)
     BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
   end
-
+  
+  def self.create_from_attribute_data(data)
+    BoundingBox.new data[:top], data[:left], data[:bottom], data[:right]
+  end
+  
   def reset
     set(nil, nil, nil, nil)
   end
