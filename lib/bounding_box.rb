@@ -52,6 +52,15 @@ class BoundingBox
   def bounds
     self
   end
+  
+  def attribute_data
+    {
+      :top    => self.top,
+      :bottom => self.bottom,
+      :right  => self.right,
+      :left   => self.left,
+    }
+  end
 
   def to_s
     "(#{self.top}, #{self.left}, #{self.bottom}, #{self.right})"
