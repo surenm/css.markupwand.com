@@ -126,21 +126,6 @@ class Grid
     @id
   end
 
-  # Set data to a grid. More like a constructor, but mongoid models can't have the original constructors
-  def set(layer_list, parent)
-    self.parent = parent
-    if self.parent
-      self.parent.children[self.id] = self
-    end
-
-    @layers = {}
-    layer_list.each do |layer|
-      @layers[layer.uid] = layer if not layer.empty?
-    end
-
-    @@grouping_queue.push self if self.root
-  end
-  
   # Grid representational data
   def get_label
     css_classes = [""] #+ self.get_css_classes
