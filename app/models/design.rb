@@ -163,61 +163,6 @@ class Design
     BoundingBox.new 0, 0, self.height, self.width
   end
     
-  # FIXME PSDJS Broken.
-  def attribute_data(minimal=false)
-    if minimal
-      return {
-        :name          => self.name,
-        :psd_file_path => self.psd_file_path,
-        :id            => self.safe_name,
-        :status        => self.status,
-      }
-    end
-    
-    grids       = {}
-    layers      = {}
-    css_classes = {}
-    grid_data   = {}
-
-
-    if self.status == Design::STATUS_COMPLETED
-      grids = self.grids.collect do |grid|
-        grid.attribute_data
-      end
-      
-      self.grids.each do |grid|
-        grid.layer_ids.each do |uid|
-          layer = grid.layers[uid]
-          layers[layer.uid] = layer.attribute_data
-        end        
-      end
-      
-      self.grids.each do |id, grid|
-        grid_css_classes = []
-        grid_css_classes.each do |css_class|
-          css_classes[css_class] = Array.new if css_classes[css_class].nil?
-          css_classes[css_class].push grid.id
-        end
-      end
-      
-      root_grid = self.get_root_grid
-      dom_tree  = root_grid.get_tree
-    end
-    
-    {
-      :name          => self.name,
-      :psd_file_path => self.psd_file_path,
-      :font_map      => self.font_map,
-      :grids         => grids,
-      :layers        => layers.values,
-      :id            => self.safe_name,
-      :status        => self.status,
-      :css_classes   => css_classes,
-      :dom_tree      => dom_tree
-    }
-  end
-  
-    
   def set_status(status)
     self.status = status
     self.save!
