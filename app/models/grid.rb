@@ -79,7 +79,7 @@ class Grid
     @grouping_box = args.fetch :grouping_box, nil
     @offset_box   = args.fetch :offset_box, nil
     @orientation  = args.fetch :orientation, Constants::GRID_ORIENT_NORMAL
-    @apositioned  = args.fetch :positioned, false
+    @positioned  = args.fetch :positioned, false
   
     # The html tag for this grid
     @tag = args.fetch :tag, :div
