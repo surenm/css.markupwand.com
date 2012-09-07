@@ -111,6 +111,17 @@ class Design
     @incremental_counter = @incremental_counter + 1
     return @incremental_counter
   end
+  
+  def get_next_grid_id
+    # Minimal version of mongodb's object id.
+    # http://www.mongodb.org/display/DOCS/Object+IDs
+    # For incremental object ids.
+    process_id  = "%07d" % $$ #7 digits
+    time_micro  = ("%0.6f" % Time.now.to_f).gsub(".", "") #16 digits
+    incremental = "%04d" % self.incremental_counter #4 digits
+    new_id = (time_micro + process_id + incremental).to_i.to_s(16)
+    return new_id
+  end
 
   def safe_name_prefix
     Store::get_safe_name self.name
