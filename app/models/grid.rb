@@ -682,7 +682,10 @@ class Grid
     return html
   end
   
+  
+  ##########################################################
   # Debug methods - inspect, to_s and print for a grid
+  ##########################################################
   def inspect; to_s; end
   
   def to_s
@@ -707,7 +710,7 @@ class Grid
     indent_level.times {|i| spaces+=" "}
 
     positioned_string = 'positioned' if positioned else ''
-    Log.info "#{spaces}#{prefix} (grid #{self.id}) #{self.bounds.to_s} #{self.style_layers.join(',')} #{positioned_string}"
+    Log.info "#{spaces}#{prefix} (grid #{self.id}) #{self.bounds.to_s} #{self.style_layers.values.join(',')} #{positioned_string}"
     self.children.each do |id, subgrid|
       subgrid.print(indent_level+1)
     end
