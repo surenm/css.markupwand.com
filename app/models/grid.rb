@@ -31,43 +31,9 @@ class Grid
   attr_accessor :override_tag  #(String)
 
   # Grouping related information for white spaces
-  attr_accessor :offset_box_buffer  #(String)
-  attr_accessor :grouping_box  #(String)
-
-  # Grouping queue is the order in which grids are processed
-  @@grouping_queue = Queue.new
-    
-  def self.reset_grouping_queue
-    @@grouping_queue.clear
-  end
   attr_accessor :offset_box  #(BoundingBox)
   attr_accessor :grouping_box  #(BoundingBox)
   
-  # Grouping identifiers to detect infinite loop
-  @@grouping_identifiers = Hash.new
-  
-  def unique_identifier
-    layer_uids = self.layers.collect { |uid, layer| uid }
-    raw_identifier = "#{self.design.id}-#{layer_uids.join '-'}"
-    digest = Digest::MD5.hexdigest raw_identifier
-    return digest
-  end
-  
-  def get_grouping_count
-    identifier = self.unique_identifier
-    if not @@grouping_identifiers.has_key? identifier
-      @@grouping_identifiers[identifier] = 0
-    end
-    return @@grouping_identifiers.fetch identifier
-  end
-
-  def increment_grouping_count
-    @@grouping_identifiers[self.unique_identifier] = self.get_grouping_count + 1
-  end
-
-  def reset_grouping_count
-    @@grouping_identifiers = Hash.new
-  end
   
   # Deserialize SIF data to get a grid
   def self.create_from_sif_data(sif_grid_data)
@@ -233,6 +199,40 @@ class Grid
   # Its a Leaf grid if it has no children and has one render layer
   def is_leaf?
     self.children.count == 0 and not self.render_layer.nil?
+  ##########################################################
+  # GRID GROUPING
+  ##########################################################
+  # Grouping queue is the order in which grids are processed
+  @@grouping_queue = Queue.new
+    
+  def self.reset_grouping_queue
+    @@grouping_queue.clear
+  end
+  
+  # Grouping identifiers to detect infinite loop
+  @@grouping_identifiers = Hash.new
+  
+  def unique_identifier
+    layer_uids = self.layers.collect { |uid, layer| uid }
+    raw_identifier = "#{self.design.id}-#{layer_uids.join '-'}"
+    digest = Digest::MD5.hexdigest raw_identifier
+    return digest
+  end
+  
+  def get_grouping_count
+    identifier = self.unique_identifier
+    if not @@grouping_identifiers.has_key? identifier
+      @@grouping_identifiers[identifier] = 0
+    end
+    return @@grouping_identifiers.fetch identifier
+  end
+
+  def increment_grouping_count
+    @@grouping_identifiers[self.unique_identifier] = self.get_grouping_count + 1
+  end
+
+  def reset_grouping_count
+    @@grouping_identifiers = Hash.new
   end
   
   # Start off the grouping for a design
