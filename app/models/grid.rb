@@ -33,7 +33,6 @@ class Grid
   attr_accessor :override_tag  #(String)
 
   # Grouping related information for white spaces
-  attr_accessor :depth  #(Integer)  
   attr_accessor :offset_box_buffer  #(String)
   attr_accessor :grouping_box  #(String)
 
@@ -75,31 +74,42 @@ class Grid
   end
 
   def initialize(args)
-    @design = args[:design]
-
-    if @design.nil?
-      raise ArgumentError, "No design object passed"
+    @parent = args[:parent]
+    @layers = {}
+    args[:layers].each do |layer|
+      @layers[layer.uid] = layer if not layer.empty?
+    end
+    
+    # A grid belongs to its parent design.
+    if @parent.nil? 
+      @design = Design.find args[:design]
+    else
+      @design = parent.design
     end
 
-    @design.grids[self.id] = self
-
-    @root   = args[:root] || nil
-    @depth  = args[:depth] || 0
-    @grouping_box   = args[:grouping_box] || nil
-    @orientation    = args[:orientation] || Constants::GRID_ORIENT_NORMAL
-    @is_positioned  = args[:is_positioned] || false
+    @root          = args.fetch :root , false
+    @grouping_box  = args.fetch :grouping_box, nil
+    @orientation   = args.fetch :orientation, Constants::GRID_ORIENT_NORMAL
+    @positioned    = args.fetch :positioned, false
 
     # Set default values
-    @children          ||= {}
-    @parent            ||= nil
-    @style             ||= GridStyle.new(:grid => self)
-    @layers            ||= {}
-    @render_layer      ||= nil
-    @style_layers      ||= []
-    @positioned_layers ||= {}
-    @tag               ||= :div
-    @override_tag      ||= :div
-    @offset_box_buffer ||= nil
+    @children          = {}
+    @style             = GridStyle.new(:grid => self)
+    @render_layer      = nil
+    @style_layers      = []
+    @positioned_layers = {}
+    @tag               = :div
+    @override_tag      = :div
+    @offset_box_buffer = nil
+    
+    # If grid is restored from serialized data, then it would already have an ID.
+    # so if there is an ID already, no need to trigger that information to design back
+    if args[:id].nil?
+      @id = self.id
+      @design.add_grid self
+    end
+    
+    @@grouping_queue.push self if @root
   end
   
   def id
