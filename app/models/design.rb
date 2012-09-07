@@ -9,12 +9,6 @@ class Design
 
   belongs_to :user
   
-  # Hash of items
-  attr_accessor :grids # (Hash)
-  attr_accessor :layers # (Hash)
-
-  attr_accessor :font_map # FIXME PSDJS
-
   # Design status types
   Design::STATUS_QUEUED       = :queued
   Design::STATUS_UPLOADING    = :uploading
@@ -77,8 +71,6 @@ class Design
 
   mount_uploader :file, DesignUploader
   
-  @@design_processed_data = nil
-  
   def vote_class
     case self.rating
     when true
@@ -94,9 +86,6 @@ class Design
     @sif = Sif.new(self) if @sif == nil
     return @sif
   end
-
-  def reset_processed_data
-    @@design_processed_data = nil
   end
 
   def incremental_counter
@@ -347,7 +336,6 @@ class Design
 
   # Parses the photoshop file json data and decomposes into grids
   def group_grids
-    Profiler.start
     self.init_sif
 
     Log.info "Beginning to group grids #{self.name}..."    
@@ -368,14 +356,12 @@ class Design
     Log.info "Grouping the grids..."
     Grid.group!
     grid.print
-    Profiler.stop
     Log.info "Successfully grouped grids..."
   end
   
   def generate_markup(args={})
     Log.info "Beginning to generate markup and css for #{self.name}..."
     
-    Profiler::start
     generated_folder = self.store_generated_key
     
     # Set the root path for this design. That is where all the html and css is saved to.
@@ -397,9 +383,6 @@ class Design
 
     write_html_and_css
     
-    Log.info "Stopping profiler"
-    Profiler::stop
-  
     Log.info "Successfully completed generating #{self.name}"
     return
   end
