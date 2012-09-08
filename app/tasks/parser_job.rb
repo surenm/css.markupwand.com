@@ -30,7 +30,8 @@ class ParserJob
 
       design.set_status Design::STATUS_GENERATING
       design.save!
-
+      
+      design = Design.find design_id
       design.generate_markup :enable_data_attributes => true
 
       if design.status != Design::STATUS_FAILED
