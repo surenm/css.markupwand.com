@@ -87,10 +87,6 @@ class Grid
     @@grouping_queue.push self if @root
   end
   
-  def self.create_from_sif_data(sif_grid_data)
-  end
-  
-  
   def attribute_data
     parent_id       = @parent.id if not @root
     children_ids    = @children.keys
@@ -122,9 +118,6 @@ class Grid
   # SPECIAL FUNCTIONS THAT NEED TO RESET ITSELF FROM SIF
   ##########################################################
   
-  def reset!
-  end
-
   def add_child_grid(grid)
     @children[grid.id] = grid
   end
