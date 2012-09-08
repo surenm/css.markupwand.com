@@ -9,6 +9,8 @@ class GeneratorJob
       # Set design back to generating
       design.set_status Design::STATUS_GENERATING
 
+      Resque.enqueue_in(10.minutes,TimeoutAlertJob, design_id, design.status)
+
       # Fetch the processed files once again
       Store::fetch_from_store design.store_processed_key
 
@@ -29,5 +31,6 @@ class GeneratorJob
       Utils::pager_duty_alert error_description, :error => error.message, :user => design.user.email
       raise error
     end
+    Resque.remove_delayed(TimeoutAlertJob, design_id, design.status)
   end
 end
