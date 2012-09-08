@@ -71,6 +71,7 @@ class ExtractorJob
     Store.save_to_store thumbnail_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}-thumbnail.png")
     
     Dir.glob("#{assets_directory}/**/*").each do |asset_file_path|
+      next if File.directory? asset_file_path
       asset_basename = File.basename asset_file_path
       asset_destination_path = File.join design.store_extracted_key, "assets", asset_basename
       Store.save_to_store(asset_file_path, asset_destination_path)
