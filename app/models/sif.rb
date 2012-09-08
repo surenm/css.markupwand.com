@@ -163,6 +163,7 @@ class Sif
     layer.text    = sif_layer_data[:text]
     layer.shapes  = sif_layer_data[:shapes]
     layer.styles  = sif_layer_data[:styles]
+    layer.computed_css = {}
     return layer
   end
   

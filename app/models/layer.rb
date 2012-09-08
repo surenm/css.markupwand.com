@@ -193,7 +193,7 @@ class Layer
     # 1. Background image
     # 2. Multifont
 
-    self.generated_selector = CssParser::create_incremental_selector if not css.empty?
+    self.generated_selector = CssParser::create_incremental_selector
   end
 
   #FIXME PSDJS
