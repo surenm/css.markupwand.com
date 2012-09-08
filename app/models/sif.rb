@@ -88,6 +88,15 @@ class Sif
       serialized_grid_data = @serialized_grids[grid_id]
       @grids[grid_id] = self.create_grid serialized_grid_data
     end
+
+    
+    @serialized_grids.values.each do |grid_data|
+      children = grid_data[:children]
+      grid_id = grid_data[:id]
+      children.each do |child_id|
+        @grids[grid_id].children[child_id] = @grids[child_id]
+      end
+    end
   end
   
   def get_layer(layer_id)
