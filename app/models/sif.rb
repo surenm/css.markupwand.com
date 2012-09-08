@@ -55,16 +55,19 @@ class Sif
   end
   
   def parse_layers
-    @serialized_layers = @sif_data[:layers]
-    if @serialized_layers.nil?
+    serialized_layers_arr = @sif_data[:layers]
+    if serialized_layers_arr.nil?
       # If the layers are nil, then there is nothing to do.
       raise "Layers data is Nil"
     end
     
+    @serialized_layers = Hash.new
+    serialized_layers_arr.each { |layer_data| @serialized_layers[layer_data[:uid]] = layer_data }
+
     @layers = Hash.new
-    @serialized_layers.each do |serialized_layer_data|
-      layer = Layer.create_from_sif_data serialized_layer_data
-      @layers[layer.uid] = layer
+    @serialized_layers.each do |uid, serialized_layer_data|
+      layer = Sif.create_layer serialized_layer_data
+      @layers[uid] = layer
     end
   end
   
@@ -113,5 +116,18 @@ class Sif
     # TODO: Do validation checks here
     
     Sif.write @design, sif_document
+  end
+  def self.create_layer(sif_layer_data)
+    layer = Layer.new
+    layer.name    = sif_layer_data[:name]
+    layer.type    = sif_layer_data[:type]
+    layer.uid     = sif_layer_data[:uid]
+    layer.zindex  = sif_layer_data[:zindex]
+    layer.bounds  = BoundingBox.create_from_attribute_data sif_layer_data[:bounds]
+    layer.opacity = sif_layer_data[:opacity]
+    layer.text    = sif_layer_data[:text]
+    layer.shapes  = sif_layer_data[:shapes]
+    layer.styles  = sif_layer_data[:styles]
+    return layer
   end
 end

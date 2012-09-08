@@ -67,22 +67,7 @@ class Layer
   attr_accessor :is_multifont # (Boolean)
 
   attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
-
-  def self.create_from_sif_data(sif_layer_data)
-    layer = Layer.new
-    layer.name    = sif_layer_data[:name]
-    layer.type    = sif_layer_data[:type]
-    layer.uid     = sif_layer_data[:uid]
-    layer.zindex  = sif_layer_data[:zindex]
-    layer.bounds  = BoundingBox.create_from_attribute_data sif_layer_data[:bounds]
-    layer.opacity = sif_layer_data[:opacity]
-    layer.text    = sif_layer_data[:text]
-    layer.shapes  = sif_layer_data[:shapes]
-    layer.styles  = sif_layer_data[:styles]
     
-    return layer
-  end
-  
   def attribute_data
     {
         :uid     => self.uid,
