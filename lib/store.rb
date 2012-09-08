@@ -57,6 +57,12 @@ module Store
     Log.debug "Saving contents to #{file_key} in local store..."
     
     file_path   = File.join local_store, file_key
+    file_dir    = File.dirname file_path
+
+    if not File.directory? file_dir
+      FileUtils.mkdir_p file_dir
+    end
+
     Store::write_contents_to_local_file file_path, file_contents
   end
   
