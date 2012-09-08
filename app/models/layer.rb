@@ -15,14 +15,14 @@ class Layer
   LAYER_HUESATURATION      = "LayerKind.HUESATURATION"
   LAYER_INVERSION          = "LayerKind.INVERSION"
   LAYER_LEVELS             = "LayerKind.LEVELS"
-  LAYER_NORMAL             = "LayerKind.NORMAL"
+  LAYER_NORMAL             = "normal"
   LAYER_PATTERNFILL        = "LayerKind.PATTERNFILL"
   LAYER_PHOTOFILTER        = "LayerKind.PHOTOFILTER"
   LAYER_POSTERIZE          = "LayerKind.POSTERIZE"
   LAYER_SELECTIVECOLOR     = "LayerKind.SELECTIVECOLOR"
   LAYER_SMARTOBJECT        = "LayerKind.SMARTOBJECT"
   LAYER_SOLIDFILL          = "LayerKind.SOLIDFILL"
-  LAYER_TEXT               = "LayerKind.TEXT"
+  LAYER_TEXT               = "text"
   LAYER_THRESHOLD          = "LayerKind.THRESHOLD"
   LAYER_LAYER3D            = "LayerKind.LAYER3D"
   LAYER_VIBRANCE           = "LayerKind.VIBRANCE"
@@ -41,7 +41,6 @@ class Layer
   attr_accessor :uid # (String)
   attr_accessor :name # (String)
   attr_accessor :type # (String)
-  attr_accessor :kind # (String)
   attr_accessor :zindex # (Integer)
   attr_accessor :opacity #(Integer)
   attr_accessor :bounds #(BoundingBox)
@@ -85,7 +84,7 @@ class Layer
 
   def has_multifont?
     multifont = false
-    if self.kind == Layer::LAYER_TEXT
+    if self.type == Layer::LAYER_TEXT
       # Sum of all positions is > 0
       multifont = (multifont_positions.inject(:+) > 0)
     end
@@ -95,7 +94,7 @@ class Layer
 
   def multifont_positions
     positions = []
-    if self.kind == Layer::LAYER_TEXT
+    if self.type == Layer::LAYER_TEXT
       positions = layer_json.extract_value(:textKey, :value, :textStyleRange, :value).map do |font|
         font.extract_value(:value, :from, :value)
       end
@@ -105,7 +104,7 @@ class Layer
   end
 
   def has_newline?
-    if self.kind == Layer::LAYER_TEXT and
+    if self.type == Layer::LAYER_TEXT and
         layer_json.has_key? :textKey and
         layer_json.extract_value(:textKey, :value).has_key? :textKey
 
@@ -138,7 +137,7 @@ class Layer
   end
 
   def unmaskable_layer?
-    self.kind == Layer::LAYER_HUESATURATION
+    self.type == Layer::LAYER_HUESATURATION
   end
 
   def zero_area?
@@ -146,29 +145,29 @@ class Layer
   end
 
   def image_path
-    CssParser::get_image_path(self) if self.kind == LAYER_SMARTOBJECT or self.kind == LAYER_NORMAL
+    CssParser::get_image_path(self)
   end
 
   def tag_name(is_leaf = false)
     chosen_tag = ""
     if not self.override_tag.nil?
       self.override_tag
-    elsif self.kind == LAYER_SMARTOBJECT
+    elsif self.type == LAYER_SMARTOBJECT
       if is_leaf
         chosen_tag = :img
       else
         chosen_tag = :div
       end
-    elsif self.kind == LAYER_NORMAL
-      if self.renderable_image? and is_leaf
+    elsif self.type == LAYER_NORMAL
+      if is_leaf
         chosen_tag = :img
       else
         chosen_tag = :div
       end
-    elsif self.kind == LAYER_TEXT or self.kind == LAYER_SOLIDFILL
+    elsif self.type == LAYER_TEXT or self.type == LAYER_SOLIDFILL
       chosen_tag = :div
     else
-      Log.info "New layer found #{self.kind} for layer #{self.name}"
+      Log.info "New layer found #{self.type} for layer #{self.name}"
       chosen_tag = :div
     end
     chosen_tag
@@ -231,7 +230,7 @@ sass
   end
 
   def is_empty_text_layer?
-    if self.kind == Layer::LAYER_TEXT
+    if self.type == Layer::LAYER_TEXT
       text_content = layer_json.extract_value(:textKey, :value, :textKey, :value)
       if text_content.length == 0
         return true
@@ -267,7 +266,7 @@ sass
   def get_raw_font_name(position = 0)
     font_name = nil
 
-    if self.kind == Layer::LAYER_TEXT and not is_empty_text_layer?
+    if self.type == Layer::LAYER_TEXT and not is_empty_text_layer?
       font_name = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[position].extract_value(:value, :textStyle, :value, :fontName, :value)
     end
 
@@ -301,11 +300,12 @@ sass
     end
   end
 
-  def text
-    if self.kind == LAYER_TEXT
-      original_text = layer_json[:textKey][:value][:textKey][:value]
+  def text_content
+    if self.type == LAYER_TEXT
+      original_text = self.text
 
-      if has_multifont?
+      #FIXME PSDJS
+      if false and has_multifont?
         positions = multifont_positions
         chunks = []
         positions.each_with_index do |position, index|
@@ -393,8 +393,8 @@ sass
     tag = args.fetch :tag, generated_tag
 
     inner_html = args.fetch :inner_html, ''
-    if inner_html.empty? and self.kind == LAYER_TEXT
-      inner_html += text
+    if inner_html.empty? and self.type == LAYER_TEXT
+      inner_html += self.text_content
     end
 
     attributes         = Hash.new
@@ -414,7 +414,7 @@ sass
   end
 
   def styleable_layer?
-    (self.kind != Layer::LAYER_TEXT)
+    (self.type != Layer::LAYER_TEXT)
   end
 
   def to_s
