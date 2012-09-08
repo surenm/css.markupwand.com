@@ -39,13 +39,11 @@ class Grid
   ##########################################################
   
   def initialize(args)
+    # If parent is nil, then this is a root node
+    @root = args.fetch :root, false
+
     # Set parent for this grid
     @parent = args[:parent]
-    
-    # If parent is nil, then this is a root node
-    if @parent.nil?
-      @root = true
-    end
 
     # A grid always has to belong to a design    
     if @root
