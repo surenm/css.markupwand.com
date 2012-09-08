@@ -75,7 +75,7 @@ class ExtractorJob
       asset_destination_path = File.join design.store_extracted_key, "assets", asset_basename
       Store.save_to_store(asset_file_path, asset_destination_path)
     end
-    return
+
     design.set_status Design::STATUS_EXTRACTED
     Log.info "Sucessfully completed extracting from photoshop file #{design.name}."
 
