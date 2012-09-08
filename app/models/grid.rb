@@ -49,7 +49,7 @@ class Grid
     if @root
       @design = args[:design]
     else
-      @design = parent.design if not @root
+      @design = parent.design
     end
     
     # If args contains an id, the grid is just being restored.
@@ -83,6 +83,9 @@ class Grid
   
     # The html tag for this grid
     @tag = args.fetch :tag, :div
+    
+    # Grid styles
+    @style = args.fetch :style, GridStyle.new(:grid => self)
     
     @@grouping_queue.push self if @root
   end

@@ -51,7 +51,7 @@ class GridStyle
   ## Spacing and padding related method
   # Find out bounding box difference from it and its children.
   def get_padding
-    non_style_layers = self.grid.layers.values - self.grid.style_layers
+    non_style_layers = self.grid.layers.values - self.grid.style_layers.values
     
     children_bounds = non_style_layers.collect { |layer| layer.bounds }
     children_superbound = BoundingBox.get_super_bounds children_bounds
@@ -85,12 +85,12 @@ class GridStyle
     else
       margin_boxes = []
 
-      if not self.grid.offset_box_buffer.nil?
-        margin_boxes.push BoundingBox.depickle self.grid.offset_box_buffer
+      if not self.grid.offset_box.nil?
+        margin_boxes.push self.grid.offset_box
       end
 
       if not self.grid.grouping_box.nil?
-        margin_boxes.push BoundingBox.depickle self.grid.grouping_box
+        margin_boxes.push self.grid.grouping_box
       end      
       
       if not margin_boxes.empty?
@@ -178,7 +178,7 @@ class GridStyle
     width = self.unpadded_width
 
     if not width.nil? and width != 0
-      grouping_box = BoundingBox.depickle self.grid.grouping_box
+      grouping_box = self.grid.grouping_box
       has_trailing_offset = false
       has_trailing_offset = (self.grid.bounds != grouping_box) unless grouping_box.nil? or self.grid.bounds.nil?
       if self.is_single_line_text and not has_trailing_offset
@@ -225,7 +225,7 @@ class GridStyle
   def css_rules
     rules_array = Compassify::get_scss(self.computed_css)
 
-    self.grid.style_layers.each do |layer|
+    self.grid.style_layers.values.each do |layer|
       rules_array += layer.css_rules
     end
 
