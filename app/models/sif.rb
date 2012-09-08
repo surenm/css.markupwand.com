@@ -72,17 +72,21 @@ class Sif
   end
   
   def parse_grids
-    @serialized_grids = @sif_data[:grids]
-    if @serialized_grids.nil?
+    serialized_grids_arr = @sif_data[:grids]
+    if serialized_grids_arr.nil?
       # If there are serialized grids then most probably the design is not yet parsed
       @grids = nil
       return
     end
     
+    @serialized_grids = Hash.new
+    serialized_grids_arr.each { |grid_data| @serialized_grids[grid_data[:id]] = grid_data }
+    
     @grids = Hash.new
-    @serialized_grids.each do |serialized_grid_data|
-      grid = Grid.create_from_sif_data serialized_grid_data
-      @grids[grid.id] = grid
+    ordered_grids = get_grids_in_order()
+    ordered_grids.each do |grid_id|
+      serialized_grid_data = @serialized_grids[grid_id]
+      @grids[grid_id] = self.create_grid serialized_grid_data
     end
   end
   
