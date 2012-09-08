@@ -29,14 +29,6 @@ class Layer
   LAYER_VIDEO              = "LayerKind.VIDEO"
   
 
-  BOUND_MODES = {
-    :NORMAL_BOUNDS  => :bounds,
-    :SMART_BOUNDS   => :smart_bounds,
-    :EDGE_BOUNDS    => :edge_detected_bounds,
-    :SNAPPED_BOUNDS => :snapped_bounds
-  }
-
-
   ### Relational references ###
 
   # Belongs to multiple grids
@@ -52,6 +44,8 @@ class Layer
   attr_accessor :kind # (String)
   attr_accessor :zindex # (Integer)
   attr_accessor :opacity #(Integer)
+  attr_accessor :bounds #(BoundingBox)
+  attr_accessor :smart_bounds #(BoundingBox)
 
   attr_accessor :text
   attr_accessor :shapes
@@ -60,7 +54,6 @@ class Layer
   attr_accessor :is_overlay # (Boolean)
   attr_accessor :is_style_layer # (Boolean)
   attr_accessor :override_tag # (String)
-  attr_accessor :layer_bounds # (String)
 
   # CSS Rules
   attr_accessor :computed_css # (Hash)
@@ -75,35 +68,18 @@ class Layer
   attr_accessor :is_multifont # (Boolean)
 
   attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
-
-  def self.create_from_sif_data(sif_layer_data)
-    layer = Layer.new
-    layer.name    = sif_layer_data[:name]
-    layer.type    = sif_layer_data[:type]
-    layer.uid     = sif_layer_data[:uid]
-    layer.zindex  = sif_layer_data[:zindex]
-    layer.bounds  = BoundingBox.depickle sif_layer_data[:bounds]
-    layer.opacity = sif_layer_data[:opacity]
-    layer.text    = sif_layer_data[:text]
-    layer.shapes  = sif_layer_data[:shapes]
-    layer.styles  = sif_layer_data[:styles]
     
-    return layer
-  end
-  
-  def initialize
-    @computed_css = {}
-    @extra_selectors = []
-  end
-
   def attribute_data
     {
-        :uid => self.uid,
-        :name => self.name,
-        :kind => self.kind,
-        :layer_type => self.layer_type,
-        :label => self.name[0..9],
-        :tag => self.tag_name
+        :uid     => self.uid,
+        :name    => self.name,
+        :type    => self.type,
+        :zindex  => self.zindex,
+        :bounds  => self.bounds.attribute_data,
+        :opacity => self.opacity,
+        :text    => self.text,
+        :shapes  => self.shapes,
+        :styles  => self.styles,
     }
   end
 
@@ -138,28 +114,6 @@ class Layer
     else
       false
     end
-  end
-
-  def set_bounds_mode(bound_mode)
-    unless BOUND_MODES.include? bound_mode
-      raise "Unknown bound mode #{bound_mode}"
-    end
-    @bound_mode = bound_mode
-  end
-
-  def bounds_key
-    key = BOUND_MODES[@bound_mode]
-    key = BOUND_MODES[:NORMAL_BOUNDS] if key.nil?
-
-    key
-  end
-
-  def bounds
-    BoundingBox.depickle self.layer_bounds
-  end
-
-  def bounds=(new_bound)
-    self.layer_bounds = BoundingBox.pickle(new_bound)
   end
 
   def == (other_layer)
@@ -231,9 +185,7 @@ class Layer
 
   def set_style_rules(grid_style)
     #crop_objects_for_cropped_bounds
-    is_leaf = grid_style.grid.is_leaf?
-  
-    css = {}
+    is_leaf = grid_style.grid.leaf?
 
     self.extra_selectors = grid_style.extra_selectors
     

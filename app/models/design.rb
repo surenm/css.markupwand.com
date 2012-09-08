@@ -9,12 +9,6 @@ class Design
 
   belongs_to :user
   
-  # Hash of items
-  attr_accessor :grids # (Hash)
-  attr_accessor :layers # (Hash)
-
-  attr_accessor :font_map # FIXME PSDJS
-
   # Design status types
   Design::STATUS_QUEUED       = :queued
   Design::STATUS_UPLOADING    = :uploading
@@ -77,15 +71,6 @@ class Design
 
   mount_uploader :file, DesignUploader
   
-  # Initializer
-  after_initialize do |document|
-    @grids = {}
-    @layers = {}
-    @font_map = nil #FIXME PSDJS
-  end
-
-  @@design_processed_data = nil
-  
   def vote_class
     case self.rating
     when true
@@ -98,12 +83,23 @@ class Design
   end
   
   def init_sif
-    @sif_object = Sif.new(self) if @sif == nil
-    return @sif_object
+    @sif = Sif.new(self) if @sif == nil
+    return @sif
   end
-
-  def reset_processed_data
-    @@design_processed_data = nil
+  
+  def grids
+    self.init_sif
+    return @sif.grids
+  end
+  
+  def layers
+    self.init_sif
+    return @sif.layers
+  end
+  
+  def save_grid(grid)
+    self.init_sif
+    @sif.set_grid grid
   end
 
   def incremental_counter
@@ -113,6 +109,17 @@ class Design
     end
     @incremental_counter = @incremental_counter + 1
     return @incremental_counter
+  end
+  
+  def get_next_grid_id
+    # Minimal version of mongodb's object id.
+    # http://www.mongodb.org/display/DOCS/Object+IDs
+    # For incremental object ids.
+    process_id  = "%07d" % $$ #7 digits
+    time_micro  = ("%0.6f" % Time.now.to_f).gsub(".", "") #16 digits
+    incremental = "%04d" % self.incremental_counter #4 digits
+    new_id = (time_micro + process_id + incremental).to_i.to_s(16)
+    return new_id
   end
 
   def safe_name_prefix
@@ -165,61 +172,6 @@ class Design
   def bounds 
     BoundingBox.new 0, 0, self.height, self.width
   end
-    
-  # FIXME PSDJS Broken.
-  def attribute_data(minimal=false)
-    if minimal
-      return {
-        :name          => self.name,
-        :psd_file_path => self.psd_file_path,
-        :id            => self.safe_name,
-        :status        => self.status,
-      }
-    end
-    
-    grids       = {}
-    layers      = {}
-    css_classes = {}
-    grid_data   = {}
-
-
-    if self.status == Design::STATUS_COMPLETED
-      grids = self.grids.collect do |grid|
-        grid.attribute_data
-      end
-      
-      self.grids.each do |grid|
-        grid.layer_ids.each do |uid|
-          layer = grid.layers[uid]
-          layers[layer.uid] = layer.attribute_data
-        end        
-      end
-      
-      self.grids.each do |id, grid|
-        grid_css_classes = []
-        grid_css_classes.each do |css_class|
-          css_classes[css_class] = Array.new if css_classes[css_class].nil?
-          css_classes[css_class].push grid.id
-        end
-      end
-      
-      root_grid = self.get_root_grid
-      dom_tree  = root_grid.get_tree
-    end
-    
-    {
-      :name          => self.name,
-      :psd_file_path => self.psd_file_path,
-      :font_map      => self.font_map,
-      :grids         => grids,
-      :layers        => layers.values,
-      :id            => self.safe_name,
-      :status        => self.status,
-      :css_classes   => css_classes,
-      :dom_tree      => dom_tree
-    }
-  end
-  
     
   def set_status(status)
     self.status = status
@@ -354,7 +306,6 @@ class Design
 
   # Parses the photoshop file json data and decomposes into grids
   def group_grids
-    Profiler.start
     self.init_sif
 
     Log.info "Beginning to group grids #{self.name}..."    
@@ -366,23 +317,22 @@ class Design
     
     # Layer descriptors of all photoshop layers
     Log.info "Getting nodes..."
-    @layers = @sif_object.layers
+    @layers = @sif.layers.values
     
     Log.info "Creating root grid..."
-    grid = Grid.new :design => self, :root => true, :depth => 0
-    grid.set @layers, nil
+    grid = Grid.new :design => self, :parent => nil, :layers => @layers, :root => true
 
     Log.info "Grouping the grids..."
     Grid.group!
     grid.print
-    Profiler.stop
+    @sif.save!
     Log.info "Successfully grouped grids..."
   end
   
   def generate_markup(args={})
     Log.info "Beginning to generate markup and css for #{self.name}..."
     
-    Profiler::start
+    self.init_sif
     generated_folder = self.store_generated_key
     
     # Set the root path for this design. That is where all the html and css is saved to.
@@ -404,9 +354,6 @@ class Design
 
     write_html_and_css
     
-    Log.info "Stopping profiler"
-    Profiler::stop
-  
     Log.info "Successfully completed generating #{self.name}"
     return
   end

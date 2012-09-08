@@ -3,114 +3,221 @@ require 'digest/md5'
 class Grid  
   include ActionView::Helpers::TagHelper
   
-
-  # Belongs to a specific photoshop design (Single Instance)
-  attr_accessor :design
+  # An unique id to the grid
   attr_reader :id
-
-  # self references for children and parent grids
-  # Contains lot of child grids (Hash)
-  attr_accessor :children
   
-  # Belongs to a parent grid (Single instance)
-  attr_accessor :parent
-
-  # Has one style selector (Single instance)
-  attr_accessor :style
-
-  # Contains multiple layers (Hash)
-  attr_accessor :layers
+  # Belongs to a specific photoshop design (Single Instance)
+  attr_reader :design
   
-  # fields relevant for a grid
-  attr_accessor :orientation  #(Symbol)
+  # self references for parent and children grids
+  attr_accessor :parent #(Grid)
+  attr_accessor :children #(Hash of Grid.id => Grid)
+
+  # Layer types that belong to the grid
+  attr_accessor :layers # (Hash of Layer.id => Layer)
+  attr_accessor :style_layers  #(Hash of Layer.id => Layer)
+  attr_accessor :render_layer #(Layer)
+
+  # If this is a root grid of a design
   attr_accessor :root  #(Boolean)
-  attr_accessor :style_layers  #(Array)
-  attr_accessor :positioned_layers  #(Hash)
+  
+  # True if the grid node is going to be positioned
+  attr_accessor :positioned  #(Boolean)
     
+  # Style and semantics related fields for a grid
+  attr_accessor :style
+  attr_accessor :orientation  #(Symbol)
   attr_accessor :tag  #(String)
   attr_accessor :override_tag  #(String)
-  
-  attr_accessor :is_positioned  #(Boolean)
 
-  attr_accessor :offset_box_buffer  #(String)
-  attr_accessor :depth  #(Integer)
+  # Grouping related information for white spaces
+  attr_accessor :offset_box  #(BoundingBox)
+  attr_accessor :grouping_box  #(BoundingBox)
   
-  attr_accessor :grouping_box  #(String)
-
-  attr_accessor :render_layer
+  ##########################################################
+  # GRID INSTANTIATE
+  ##########################################################
   
-  # Grouping queue is the order in which grids are processed
-  @@grouping_queue = Queue.new
-  
-  # Grouping identifiers to detect infinite loop
-  @@grouping_identifiers = Hash.new
-
-
   def initialize(args)
-    @design = args[:design]
+    # If parent is nil, then this is a root node
+    @root = args.fetch :root, false
 
-    if @design.nil?
-      raise ArgumentError, "No design object passed"
+    # Set parent for this grid
+    @parent = args[:parent]
+
+    # A grid always has to belong to a design    
+    if @root
+      @design = args[:design]
+    else
+      @design = parent.design if not @root
     end
+    
+    # If args contains an id, the grid is just being restored.
+    # Else create a new id
+    if args[:id].nil?
+      @id = @design.get_next_grid_id
+      @design.save_grid self
+      @parent.add_child_grid self if not @root
+    else
+      # If args has id, it means its restored from sif data.
+      # No need to reset parent relation as well as design relation
+      @id = args[:id]
+    end
+    
+    # Next all layers in this grid
+    @layers = {}
+    layers_array = args.fetch :layers, []
+    layers_array.each {|layer| @layers[layer.uid] = layer}
 
-    @design.grids[self.id] = self
+    @style_layers = args.fetch :style_layers, {}
+    @render_layer = args.fetch :render_layer, nil
+    
+    # populate children grids for this grid
+    @children = args.fetch :children, {}
 
-    @root   = args[:root] || nil
-    @depth  = args[:depth] || 0
-    @grouping_box   = args[:grouping_box] || nil
-    @orientation    = args[:orientation] || Constants::GRID_ORIENT_NORMAL
-    @is_positioned  = args[:is_positioned] || false
-
-
-    # Set default values
-    @children          ||= {}
-    @parent            ||= nil
-    @style             ||= GridStyle.new(:grid => self)
-    @layers            ||= {}
-    @render_layer      ||= nil
-    @style_layers      ||= []
-    @positioned_layers ||= {}
-    @tag               ||= :div
-    @override_tag      ||= :div
-    @offset_box_buffer ||= nil
+    # Grouping related boxes
+    @grouping_box = args.fetch :grouping_box, nil
+    @offset_box   = args.fetch :offset_box, nil
+    @orientation  = args.fetch :orientation, Constants::GRID_ORIENT_NORMAL
+    @positioned  = args.fetch :positioned, false
+  
+    # The html tag for this grid
+    @tag = args.fetch :tag, :div
+    
+    @@grouping_queue.push self if @root
   end
   
+  def attribute_data
+    parent_id       = @parent.id if not @root
+    children_ids    = @children.keys
+    layer_ids       = @layers.keys
+    style_layer_ids = @style_layers.keys
+    render_layer_id = @render_layer.uid if not @render_layer.nil?
+    
+    offset_box_data = @offset_box.attribute_data if not @offset_box.nil?
+    grouping_box_data = @grouping_box.attribute_data if not @grouping_box.nil?
+    
+    attribute_data = {
+      :id                => @id,
+      :design            => @design.id,
+      :parent            => parent_id,
+      :layers            => layer_ids,
+      :children          => children_ids,
+      :style_layers      => style_layer_ids,
+      :render_layer      => render_layer_id,
+      :root              => @root,
+      :positioned        => @positioned,
+      :orientation       => @orientation,
+      :tag               => @tag,
+      :offset_box        => offset_box_data,
+      :grouping_box      => grouping_box_data,
+    }      
+  end
+  
+  ##########################################################
+  # SPECIAL FUNCTIONS THAT NEED TO RESET ITSELF FROM SIF
+  ##########################################################
+  
+  def add_child_grid(grid)
+    @children[grid.id] = grid
+  end
+  
+  def add_style_layers(style_layers)
+    style_layers.each do |style_layer|
+      @style_layers[style_layer.uid] = style_layer
+    end
+  end
+  
+  def set_render_layer(render_layer)
+    @render_layer = render_layer
+  end
+  ##########################################################
+  #  GRID OBJECT HELPERS
+  ##########################################################
+  def positioned_children
+    self.children.values.select { |child_grid| child_grid.positioned }
+  end
+
+  def positioned_siblings
+    if not self.root
+      self.parent.children.values.select { |sibling_grid| sibling_grid.positioned }
+    else
+      []
+    end
+  end
+  
+  def has_positioned_children?
+    return self.positioned_children.size > 0
+  end
+
+  def has_positioned_siblings?
+    return self.positioned_siblings.size > 0
+  end
+  
+  # Its a Leaf grid if it has no children and has one render layer
+  def leaf?
+    self.children.keys.size == 0 and not self.render_layer.nil?
+  end
+
+  def bounds
+    if @layers.empty?
+      bounds = nil
+    else
+      node_bounds = @layers.values.collect {|layer| layer.bounds}
+      bounds = BoundingBox.get_super_bounds node_bounds
+    end
+    return bounds
+  end
+  
+  def zindex
+    zindex = 0
+    
+    all_layers_z_indices = []
+    self.layers.each do |uid, layer|
+      all_layers_z_indices.push layer.zindex
+    end
+
+    grid_zindex = all_layers_z_indices.min
+    
+    return grid_zindex
+  end
+  
+  def tag
+    if self.is_image_grid?
+      :img
+    else
+      :div
+    end
+  end
+  
+  def is_image_grid?
+    if self.render_layer.nil?
+      false
+    else 
+      (self.render_layer.tag_name(self.leaf?) == :img)
+    end
+  end
+
+  def is_text_grid?
+    if self.render_layer.nil?
+      false
+    else
+      (self.render_layer.kind == Layer::LAYER_TEXT)
+    end
+  end
+  
+  ##########################################################
+  # GRID GROUPING
+  ##########################################################
+  # Grouping queue is the order in which grids are processed
+  @@grouping_queue = Queue.new
+    
   def self.reset_grouping_queue
     @@grouping_queue.clear
   end
-
-  def id
-    if @id.nil?
-      # Minimal version of mongodb's object id.
-      # http://www.mongodb.org/display/DOCS/Object+IDs
-      # For incremental object ids.
-      process_id  = "%07d" % $$ #7 digits
-      time_micro  = ("%0.6f" % Time.now.to_f).gsub(".", "") #16 digits
-      incremental = "%04d" % @design.incremental_counter #4 digits
-      @id = (time_micro + process_id + incremental).to_i.to_s(16)
-    end
-
-    @id
-  end
   
-  # Debug methods - inspect, to_s and print for a grid
-  def inspect; to_s; end
-  
-  def to_s
-    "Tag: #{self.tag}, Layers: #{self.layers.values}, Style layer: #{self.style_layers}, \
-    Render layer: #{self.render_layer}"
-  end
-
-  def to_short_s
-    if self.render_layer
-      "Grid (render) #{self.render_layer.name}"
-    else
-      names = self.layers.map do |uid, layer|
-        layer.name
-      end
-      "Grid (parent) #{names.to_s}"
-    end
-  end
+  # Grouping identifiers to detect infinite loop
+  @@grouping_identifiers = Hash.new
   
   def unique_identifier
     layer_uids = self.layers.collect { |uid, layer| uid }
@@ -133,124 +240,6 @@ class Grid
 
   def reset_grouping_count
     @@grouping_identifiers = Hash.new
-  end
-  
-  def print(indent_level=0)
-    spaces = ""
-    prefix = "|--"
-    indent_level.times {|i| spaces+=" "}
-
-    positioned_string = 'positioned' if is_positioned else ''
-    Log.info "#{spaces}#{prefix} (grid #{self.id}) #{self.bounds.to_s} #{self.style_layers.join(',')} #{positioned_string}"
-    self.children.each do |id, subgrid|
-      subgrid.print(indent_level+1)
-    end
-    
-    if children.length == 0
-      self.layers.each do |uid, layer|
-        layer.print(indent_level+1)
-      end
-    end  
-  end
-  
-  def get_label
-    css_classes = [""] #+ self.get_css_classes
-    css_classes_string = css_classes.join " ."
-    "<div class='editable-grid'><span class='editable-tag'> #{self.tag} </span> <span class='editable-class'> #{css_classes_string} </span></div>"
-  end
-  
-  # Set data to a grid. More like a constructor, but mongoid models can't have the original constructors
-  def set(layer_list, parent)
-    self.parent = parent
-    if self.parent
-      self.parent.children[self.id] = self
-    end
-
-    @layers = {}
-    layer_list.each do |layer|
-      @layers[layer.uid] = layer if not layer.empty?
-    end
-
-    @@grouping_queue.push self if self.root
-  end
-    
-  # Grid representational data
-  def attribute_data
-    {
-      :id          => self.id,
-      :name        => self.name,
-      :tag         => self.tag,
-      :orientation => self.orientation,
-      :zindex      => self.zindex
-    }
-  end
-  
-  def get_tree
-    tree = {
-      :id    => self.id,
-      :tag   => self.tag,
-      :label => self.get_label
-    }
-    
-    tree[:children] = []
-
-    if self.render_layer.nil?
-      child_nodes = self.children.select { |node| not node.is_positioned }
-      child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
-      child_nodes.each do |child_node|
-        tree[:children].push child_node.get_tree
-      end
-    else 
-      render_layer_attr_data = self.render_layer.attribute_data
-      render_layer_attr_data[:id] = self.id
-      tree[:children].push render_layer_attr_data
-    end
-    return tree
-  end
-  
-  def positioned_children
-    self.children.values.select { |child_grid| child_grid.is_positioned }
-  end
-
-  def positioned_siblings
-    if not self.root
-      self.parent.children.values.select { |sibling_grid| sibling_grid.is_positioned }
-    else
-      []
-    end
-  end
-
-  def last_processed_child
-    if self.children.empty?
-      return nil
-    end
-    last_key = self.children.keys.sort.last
-    self.children[last_key]
-  end
-  
-  def has_positioned_children?
-    return self.positioned_children.size > 0
-  end
-
-  def has_positioned_siblings?
-    return self.positioned_siblings.size > 0
-  end
-  
-  # Bounds for a grid.
-  # TODO: cache this grids
-  def bounds
-    if self.layers.empty?
-      bounds = nil
-    else
-      node_bounds = self.layers.collect {|uid, layer| layer.bounds}
-      bounds = BoundingBox.get_super_bounds node_bounds
-    end
-    return bounds
-  end
-  
-  # Its a Leaf grid if it has no children and has one render layer
-  def is_leaf?
-    self.children.count == 0 and not self.render_layer.nil?
   end
   
   # Start off the grouping for a design
@@ -276,36 +265,30 @@ class Grid
   # If it has more layers, than try to get the sub grids 
   def group!
     if self.layers.size > 1
-      get_subgrids
+      self.get_subgrids
     elsif self.layers.size == 1
       Log.info "Just one layer #{self.layers.values.first} is available..."
-      self.render_layer = self.layers.values.first
+      self.set_render_layer self.layers.values.first
     end
   end
   
+  ##########################################################
+  # PROCESSING GROUPING BOXES
+  ##########################################################
   # Helper method: Extract style layers out of a grid.
   # Usually any layer that matches the grouping box's bounds is a style layer
   def extract_style_layers(available_layers, parent_box = nil)
     return available_layers if (parent_box.nil? or available_layers.size == 1)
     
     # Get all the styles nodes at this level. These are the nodes that enclose every other nodes in the group
-    style_layers = []
     if parent_box.kind_of? BoundingBox
       max_bounds = parent_box
     else
       max_bounds = parent_box.bounds
     end
     
-    enclosing_layers = {}
-    available_layers.each { |key, layer| enclosing_layers[key] = layer if max_bounds.encloses? layer.bounds }
-    grid_style_layers = layers.values.select do |layer| 
-      layer.bounds == max_bounds and layer.styleable_layer?
-    end
-
-    # If a text layer is a style layer, remove 
-    # all the other layers, just return the 
-    # text layer as the only layer and render the 
-    # file.
+    # If a text layer is a style layer, remove all the other layers, just return the 
+    # text layer as the only layer and render the file.
     text_style_layers = layers.values.select do |layer|
       layer.bounds == max_bounds and layer.kind == Layer::LAYER_TEXT
     end
@@ -315,6 +298,10 @@ class Grid
       return {"#{chosen_layer.uid}" => chosen_layer}
     end
 
+    grid_style_layers = layers.values.select do |layer| 
+      layer.bounds == max_bounds and layer.styleable_layer?
+    end
+
     grid_style_layers.each do |layer|
       layer.is_style_layer = true
     end
@@ -322,8 +309,7 @@ class Grid
     if grid_style_layers.size > 0
       Log.info "Extracting out the style layers #{grid_style_layers}..." 
       grid_style_layers.flatten!
-      grid_style_layers.each { |style_layer| self.style_layers.push style_layer }
-      self.style_layers.uniq!
+      self.add_style_layers grid_style_layers
 
       Log.debug "Deleting #{grid_style_layers} from grid..."
       grid_style_layers.each { |style_layer| available_layers.delete style_layer.uid}
@@ -339,8 +325,7 @@ class Grid
     # list of layers in this grid
     available_nodes = self.layers.dup
     
-    layers_bounds = []
-    available_nodes.values.each { |layer| layers_bounds.push layer.bounds }
+    layers_bounds = available_nodes.values.collect { |layer| layer.bounds }
     parent_box = BoundingBox.get_super_bounds layers_bounds
     
     # extract out style layers and parse with remaining        
@@ -367,7 +352,6 @@ class Grid
         Log.warn "Ignored nodes (#{available_nodes}) in region #{self.bounds}" 
       end
     end
-    
   end
   
   # Get an atomic group within a row grouping box and process them one group at a time
@@ -381,12 +365,22 @@ class Grid
       self.design.row_offset_box = row_grouping_box.bounds
     else
       Log.info "Layers in this row group are #{nodes_in_row_region}. Creating a new row grid..."
-      row_grid = Grid.new :design => self.design, 
-                          :orientation => Constants::GRID_ORIENT_LEFT, 
-                          :depth => self.depth + 1,
-                          :grouping_box => BoundingBox.pickle(row_grouping_box.bounds)
+      
+      # if row grid offset is not nil, then set that as top margin for this row grid
+      row_grid_offset_box = nil
+      if not self.design.row_offset_box.nil?
+        Log.info "Setting #{self.design.row_offset_box} as margin offset box for the above row grid..."
+        row_grid_offset_box = self.design.row_offset_box
+        self.design.reset_row_offset_box
+      end
 
-      row_grid.set nodes_in_row_region, self
+      row_grid = Grid.new ({  
+        :parent => self,
+        :layers => nodes_in_row_region,
+        :orientation => Constants::GRID_ORIENT_LEFT,
+        :grouping_box => row_grouping_box.bounds,
+        :row_offset_box => row_grid_offset_box
+      })
       
       Log.debug "Extracting style layers out of the row grid #{row_grid}"
       available_nodes = row_grid.extract_style_layers available_nodes, row_grouping_box
@@ -395,16 +389,9 @@ class Grid
         available_nodes = process_grouping_box row_grid, grouping_box, available_nodes
       end
       
-      # reset previous row group's offset box buffer. Don't carry over to the new row
+      # reset any offset box buffer. Don't carry over to the new row
       Log.debug "Resetting previous row's offset box buffers..."
       self.design.reset_offset_box
-      
-      # if row grid offset is not nil, then set that as top margin for this row grid
-      if not self.design.row_offset_box.nil?
-        row_grid.offset_box_buffer = BoundingBox.pickle self.design.row_offset_box
-        Log.info "Setting #{self.design.row_offset_box} as margin offset box for the above row grid..."
-        self.design.reset_row_offset_box
-      end
     end
     
     return available_nodes
@@ -417,13 +404,8 @@ class Grid
     
     if raw_grouping_box_layers.empty?
       Log.info "No layers in #{grouping_box}. Marking this grouping box as margin..."
-      previous_grid       = row_grid.last_processed_child
-      previous_grid_layer = previous_grid.layers.values.first if !previous_grid.nil? and !previous_grid.layers.nil? and previous_grid.layers.size == 1
-      if not previous_grid_layer.nil? and previous_grid_layer.kind == Layer::LAYER_TEXT and previous_grid_layer.text_type == "TextType.POINTTEXT"
-        previous_grid.grouping_box = BoundingBox.pickle BoundingBox.get_super_bounds([previous_grid.bounds, grouping_box])
-      else
-        self.design.add_offset_box grouping_box.clone
-      end
+      # TODO: Fix previous grid logic
+      self.design.add_offset_box grouping_box.clone
     else
       Log.info "Layers in #{grouping_box} are #{raw_grouping_box_layers}. Creating a new grid..."
 
@@ -433,11 +415,21 @@ class Grid
       all_grouping_box_layers.each do |layer| 
         grouping_box_layers[layer.uid] = layer
         available_nodes.delete layer.uid
-      end    
-            
-      grid = Grid.new :design => row_grid.design, 
-                      :depth  => row_grid.depth + 1, 
-                      :grouping_box => BoundingBox.pickle(grouping_box)
+      end   
+      
+      grid_offset_box = nil
+      if not self.design.offset_box.nil?
+        Log.info "Setting #{self.design.offset_box} margin offset box for the above grid..."
+        grid_offset_box = self.design.offset_box
+        self.design.reset_offset_box
+      end
+
+      grid = Grid.new ({
+        :parent => row_grid,
+        :layers => grouping_box_layers.values,
+        :grouping_box => grouping_box,
+        :offset_box => grid_offset_box,
+      })
       
       # Reduce the set of nodes, remove style layers.
       Log.debug "Extract style layers for this grid #{grid}..."
@@ -446,24 +438,13 @@ class Grid
       # If where are still intersecting layers, make them positioned layers and remove them
       bounding_boxes = grouping_box_layers.values.collect { |node| node.bounds }
       gutters_available = BoundingBox.grouping_boxes_possible? bounding_boxes
-      is_positioning_done = false
+      positioning_done = false
       if not gutters_available and grouping_box_layers.size > 1
-        is_positioning_done = Grid.extract_positioned_layers grid, grouping_box, grouping_box_layers.values
+        positioning_done = Grid.extract_positioned_layers grid, grouping_box, grouping_box_layers.values
       end
-
-      grid.set all_grouping_box_layers, row_grid
             
-      if not self.design.offset_box.nil?
-          grid.offset_box_buffer = BoundingBox.pickle self.design.offset_box
-
-        Log.info "Setting #{self.design.offset_box} margin offset box for the above grid..."
-
-        #Reset the space
-        self.design.reset_offset_box
-      end
-
-      # This grid needs to be called with sub_grids, push to grouping procesing queue
-      if not is_positioning_done
+      # This grid is not positioned it might have subgrids, push to grouping procesing queue
+      if not positioning_done
         @@grouping_queue.push grid
       end
     end
@@ -494,6 +475,10 @@ class Grid
     return intersecting_node_pairs
   end
   
+  
+  ##########################################################
+  # FIX ERROR INTERSECTIONS
+  ##########################################################
   def self.fix_error_intersections(layers_in_region)
     return layers_in_region if layers_in_region.size <= 1
     
@@ -613,8 +598,12 @@ class Grid
       layers_in_region    = layers_in_region - layers_in_grid
       
       Log.info "Adding a new positioned grid with #{layers_in_grid}..."
-      positioned_grid  = Grid.new :design => grid.design, :depth => grid.depth + 1, :is_positioned => true
-      positioned_grid.set layers_in_grid, grid
+      positioned_grid  = Grid.new ({
+        :parent       => grid,
+        :layers       => layers_in_grid,
+        :positioned   => true,
+        :grouping_box => layer.bounds
+      })
 
       @@grouping_queue.push positioned_grid
     end
@@ -623,69 +612,30 @@ class Grid
     Log.debug "Flow layers in region #{grouping_box} are #{flow_layers_in_region}."
     
     Log.info "Creating a new flow grid with #{flow_layers_in_region}..."
-    flow_grid = Grid.new :design => grid.design, :depth => grid.depth + 1
-    flow_grid.set flow_layers_in_region, grid
-    flow_grid.offset_box_buffer = BoundingBox.pickle offset_bounds
+    flow_grid = Grid.new ({
+      :parent => grid,
+      :layers => flow_layers_in_region,
+      :grouping_box => grouping_box,
+      :offset_box => offset_bounds,
+    })
+    
     @@grouping_queue.push flow_grid
     
     return (not intersecting_layer_pairs.empty?)
   end
   
-  # Finds out zindex of this grid
-  def zindex
-    zindex = 0
-    
-    all_layers_z_indices = []
-    self.layers.each do |uid, layer|
-      all_layers_z_indices.push layer.zindex
-    end
-
-    grid_zindex = all_layers_z_indices.min
-    
-    return grid_zindex
-  end
   
-  def tag
-    if not self.override_tag.nil?
-      self.override_tag.to_sym
-    elsif self.is_image_grid?
-      :img
-    else
-      :div
-    end
-  end
-  
-  def is_image_grid?
-    if self.render_layer.nil?
-      false
-    else 
-      (self.render_layer.tag_name(self.is_leaf?) == :img)
-    end
-  end
-
-  def is_text_grid?
-    if self.render_layer.nil?
-      false
-    else
-      (self.render_layer.kind == Layer::LAYER_TEXT)
-    end
-  end
-  
-  ## Markup generation methods
-  
+  ##########################################################
+  # Markup related functions
+  ##########################################################
   def positioned_grids_html(subgrid_args = {})
     html = ''
     self.children.values.each do |grid|
-      if grid.is_positioned
+      if grid.positioned
         html += grid.to_html(subgrid_args)
       end
     end
     html
-  end
-  
-  def fix_dom
-    dom_parser = DomParser.new self.id
-    dom_parser.reparse
   end
   
   def to_html(args = {})
@@ -708,7 +658,7 @@ class Grid
         inner_html += content_tag :div, '', :class => 'marginfix'
       end
       
-      child_nodes = self.children.values.select { |node| not node.is_positioned }
+      child_nodes = self.children.values.select { |node| not node.positioned }
       child_nodes = child_nodes.sort { |a, b| a.id.to_s <=> b.id.to_s }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html sub_grid_args
@@ -726,7 +676,7 @@ class Grid
 
       sub_grid_args[:inner_html] = self.positioned_grids_html
 
-      inner_html  += self.render_layer.to_html sub_grid_args, self.is_leaf?, self
+      inner_html  += self.render_layer.to_html sub_grid_args, self.leaf?, self
       
 
       if self.render_layer.tag_name(true) == :img
@@ -738,5 +688,45 @@ class Grid
     end
     
     return html
+  end
+  
+  
+  ##########################################################
+  # Debug methods - inspect, to_s and print for a grid
+  ##########################################################
+  def inspect; to_s; end
+  
+  def to_s
+    "Tag: #{self.tag}, Layers: #{self.layers.values}, Style layer: #{self.style_layers}, \
+    Render layer: #{self.render_layer}"
+  end
+
+  def to_short_s
+    if self.render_layer
+      "Grid (render) #{self.render_layer.name}"
+    else
+      names = self.layers.map do |uid, layer|
+        layer.name
+      end
+      "Grid (parent) #{names.to_s}"
+    end
+  end
+  
+ def print(indent_level=0)
+    spaces = ""
+    prefix = "|--"
+    indent_level.times {|i| spaces+=" "}
+
+    positioned_string = 'positioned' if positioned else ''
+    Log.info "#{spaces}#{prefix} (grid #{self.id}) #{self.bounds.to_s} #{self.style_layers.values.join(',')} #{positioned_string}"
+    self.children.each do |id, subgrid|
+      subgrid.print(indent_level+1)
+    end
+    
+    if children.length == 0
+      self.layers.each do |uid, layer|
+        layer.print(indent_level+1)
+      end
+    end  
   end
 end

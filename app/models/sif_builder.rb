@@ -41,7 +41,7 @@ class SifBuilder
       :type    => raw_layer_data[:type],
       :uid     => raw_layer_data[:uid],
       :zindex  => raw_layer_data[:zindex],
-      :bounds  => BoundingBox.pickle(bounds),
+      :bounds  => bounds.attribute_data,
       :opacity => raw_layer_data[:opacity],
       :height  => raw_layer_data[:height],
       :width   => raw_layer_data[:width],
