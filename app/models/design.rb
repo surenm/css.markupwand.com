@@ -82,6 +82,15 @@ class Design
     end
   end
   
+  def attribute_data(minimal=false)
+    return {
+      :name          => self.name,
+      :psd_file_path => self.psd_file_path,
+      :id            => self.safe_name,
+      :status        => self.status,
+    }
+  end
+  
   def init_sif
     @sif = Sif.new(self) if @sif == nil
     return @sif
