@@ -117,6 +117,28 @@ class Sif
     
     Sif.write @design, sif_document
   end
+  
+  def get_grids_in_order
+    ordered_grids = []
+
+    start_grid_id = nil
+    @serialized_grids.values.each do |grid_data|
+      start_grid_id = grid_data[:id] if grid_data[:root]
+    end
+    
+    ordering_queue = Queue.new
+    ordering_queue.push start_grid_id
+    
+    while not ordering_queue.empty?
+      grid_id = ordering_queue.pop
+      ordered_grids.push grid_id
+      
+      children = @serialized_grids[grid_id][:children]
+      children.each { |child_id| ordering_queue.push child_id }
+    end
+    return ordered_grids
+  end
+  
   def self.create_layer(sif_layer_data)
     layer = Layer.new
     layer.name    = sif_layer_data[:name]
