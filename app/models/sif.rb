@@ -152,4 +152,53 @@ class Sif
     layer.styles  = sif_layer_data[:styles]
     return layer
   end
+  
+  def create_grid(sif_grid_data)
+    # Parent grid information. 
+    # Because we are parsing grids in order, these grids would have been already instantiated
+    if not sif_grid_data[:root]
+      parent_grid = self.get_grid sif_grid_data[:parent]
+    end
+
+    # create grid layers hash for all layers, style layers and render layer
+    grid_layers = {}
+    sif_grid_data[:layers].each do |layer_id|
+      grid_layers[layer_id] = self.get_layer(layer_id)
+    end
+    
+    style_layers = {}
+    sif_grid_data[:style_layers].each do |layer_id|
+      grid_layers[layer_id] = self.get_layer(layer_id)
+    end
+    
+    if not sif_grid_data[:render_layer].nil?
+      render_layer = self.get_layer(sif_grid_data[:render_layer]) 
+    end
+    
+    if not sif_grid_data[:grouping_box].nil?
+      grouping_box = BoundingBox.create_from_attribute_data sif_grid_data[:grouping_box]
+    end
+    
+    if not sif_grid_data[:offset_box].nil?
+      offset_box = BoundingBox.create_from_attribute_data sif_grid_data[:offset_box]
+    end
+    
+    args = Hash.new
+    args[:id]           = sif_grid_data[:id]
+    args[:parent]       = parent_grid
+    args[:design]       = @design
+    args[:layers]       = grid_layers.values
+    args[:style_layers] = style_layers
+    args[:render_layer] = render_layer
+    args[:grouping_box] = grouping_box
+    args[:offset_box]   = offset_box
+    args[:orientation]  = sif_grid_data[:orientation]
+    args[:root]         = sif_grid_data[:root]
+    args[:positioned]   = sif_grid_data[:positioned]
+    args[:tag]          = sif_grid_data[:tag]
+
+    # We have not instantiated children alone. Because children grids would not have been instantiated properly
+    grid = Grid.new args
+    return grid
+  end
 end
