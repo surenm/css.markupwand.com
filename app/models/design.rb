@@ -383,7 +383,7 @@ class Design
     published_folder = self.store_published_key
 
     # Set the root path for this design. That is where all the html and css is saved to.
-    @assets_path = generated_folder
+    @assets_path = Rails.root.join generated_folder, 'assets'
     
     root_grid    = self.get_root_grid
     body_html    = root_grid.to_html
