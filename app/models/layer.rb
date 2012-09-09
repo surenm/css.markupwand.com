@@ -192,7 +192,7 @@ class Layer
   end
 
   def set_style_rules(grid_style)
-    crop_objects_for_cropped_bounds
+    #crop_objects_for_cropped_bounds
     is_leaf = grid_style.grid.leaf?
 
     self.extra_selectors = grid_style.extra_selectors
