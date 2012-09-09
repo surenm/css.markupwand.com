@@ -205,7 +205,7 @@ class Grid
     if self.render_layer.nil?
       false
     else
-      (self.render_layer.kind == Layer::LAYER_TEXT)
+      (self.render_layer.type == Layer::LAYER_TEXT)
     end
   end
   
@@ -293,7 +293,7 @@ class Grid
     # If a text layer is a style layer, remove all the other layers, just return the 
     # text layer as the only layer and render the file.
     text_style_layers = layers.values.select do |layer|
-      layer.bounds == max_bounds and layer.kind == Layer::LAYER_TEXT
+      layer.bounds == max_bounds and layer.type == Layer::LAYER_TEXT
     end
 
     if text_style_layers.length > 0
