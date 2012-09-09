@@ -81,7 +81,7 @@ class Sif
 
     @layers = Hash.new
     @serialized_layers.each do |uid, serialized_layer_data|
-      layer = Sif.create_layer serialized_layer_data
+      layer = self.create_layer serialized_layer_data
       @layers[uid] = layer
     end
   end
@@ -168,7 +168,7 @@ class Sif
     return ordered_grids
   end
   
-  def self.create_layer(sif_layer_data)
+  def create_layer(sif_layer_data)
     layer = Layer.new
     layer.name    = sif_layer_data[:name]
     layer.type    = sif_layer_data[:type]
@@ -180,6 +180,7 @@ class Sif
     layer.shapes  = sif_layer_data[:shapes]
     layer.styles  = sif_layer_data[:styles]
     layer.computed_css = {}
+    layer.design  = @design
     return layer
   end
   
