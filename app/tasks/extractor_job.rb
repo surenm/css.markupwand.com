@@ -18,7 +18,9 @@ class ExtractorJob
     
     processed_folder = Rails.root.join 'tmp', 'store', design.store_extracted_key
     assets_directory = Rails.root.join processed_folder, "assets"
-    FileUtils.mkdir_p assets_directory if not Dir.exists? assets_directory
+    images_directory = Rails.root.join assets_directory, "images"
+
+    FileUtils.mkdir_p images_directory if not Dir.exists? images_directory
     
     extracted_file   = Rails.root.join processed_folder, "#{design.safe_name_prefix}.json"
     screenshot_file  = Rails.root.join processed_folder, "#{design.safe_name_prefix}.png"
