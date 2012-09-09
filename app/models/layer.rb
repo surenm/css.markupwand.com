@@ -132,10 +132,6 @@ class Layer
     return self.bounds.intersect_area other.bounds
   end
 
-  def renderable_image?
-    self.renderImage
-  end
-
   def unmaskable_layer?
     self.type == Layer::LAYER_HUESATURATION
   end
@@ -144,8 +140,21 @@ class Layer
     self.bounds.nil? or self.bounds.area == 0 or self.bounds.area.nil?
   end
 
+  #TODO Requires cleanup
   def image_path
-    CssParser::get_image_path(self)
+    if not @image_path      
+      layer_safe_name = Store::get_safe_name(self.name)
+      image_base_name = "#{layer_safe_name}_#{self.uid}.png"
+      @image_path = "./assets/images/#{image_base_name}"
+
+      Log.info "Fetching image. Design object = #{self.design}"
+      src_image_file   = Rails.root.join("tmp", "store", self.design.store_extracted_key, @image_path).to_s
+      destination_file = File.join design.assets_path, "images", image_base_name
+
+      Store::save_to_store src_image_file, destination_file
+    end
+
+    @image_path
   end
 
   def tag_name(is_leaf = false)
@@ -183,7 +192,7 @@ class Layer
   end
 
   def set_style_rules(grid_style)
-    #crop_objects_for_cropped_bounds
+    crop_objects_for_cropped_bounds
     is_leaf = grid_style.grid.leaf?
 
     self.extra_selectors = grid_style.extra_selectors
@@ -381,8 +390,8 @@ sass
   end
 
   def crop_objects_for_cropped_bounds
-    if self.renderable_image?
-      crop_image image_path
+    if self.type == LAYER_NORMAL
+      crop_image self.image_path
     end
   end
 
@@ -404,7 +413,7 @@ sass
     attributes[:class] = self.selector_names(grid).join(" ") if not self.selector_names(grid).empty?
 
     if tag == :img
-      attributes[:src] = image_path
+      attributes[:src] = self.image_path
       html = tag "img", attributes, false
     else
       html = content_tag tag, inner_html, attributes, false
