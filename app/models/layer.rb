@@ -142,16 +142,15 @@ class Layer
 
   #TODO Requires cleanup
   def image_path
-    if not @image_path      
+    if not @image_path
       layer_safe_name = Store::get_safe_name(self.name)
       image_base_name = "#{layer_safe_name}_#{self.uid}.png"
-      @image_path = "./assets/images/#{image_base_name}"
-
-      Log.info "Fetching image. Design object = #{self.design}"
-      src_image_file   = Rails.root.join("tmp", "store", self.design.store_extracted_key, @image_path).to_s
-      destination_file = File.join design.assets_path, "images", image_base_name
-
-      Store::save_to_store src_image_file, destination_file
+      @image_path     = "./assets/images/#{image_base_name}"
+      src_image_file  = Rails.root.join("tmp", "store", self.design.store_extracted_key, @image_path).to_s
+      generated       = File.join self.design.store_generated_key, "assets", "images", image_base_name
+      published       = File.join self.design.store_published_key, "assets", "images", image_base_name
+      Store::save_to_store src_image_file, generated
+      Store::save_to_store src_image_file, published
     end
 
     @image_path
