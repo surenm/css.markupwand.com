@@ -60,6 +60,9 @@ class Design
   attr_accessor :hashed_selectors
   attr_accessor :is_css_hashed
   attr_accessor :class_edited
+
+  # CSS assets path
+  attr_reader  :assets_path
   
   # Document properties
   attr_accessor :height
@@ -349,7 +352,7 @@ class Design
     generated_folder = self.store_generated_key
     
     # Set the root path for this design. That is where all the html and css is saved to.
-    CssParser::set_assets_root generated_folder
+    @assets_path = generated_folder
     
     Log.info "Parsing fonts..."
     # TODO Fork out and parallel process
@@ -380,7 +383,7 @@ class Design
     published_folder = self.store_published_key
 
     # Set the root path for this design. That is where all the html and css is saved to.
-    CssParser::set_assets_root generated_folder
+    @assets_path = generated_folder
     
     root_grid    = self.get_root_grid
     body_html    = root_grid.to_html
