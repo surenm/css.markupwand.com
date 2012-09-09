@@ -81,9 +81,6 @@
               else
                 $("#design-preview-dialog").dialog("open");
             });
-            $(document).ready(function() {
-                $("#design-preview-dialog").dialog("open");
-              })
           </script>
         <% end %>
       </div>
@@ -106,6 +103,6 @@ Analytical.track("design_preview_page");
 <% end %>
 <%= content_for :admin_content do %>
 <div id="design-preview-dialog">
-  <img src="/processed/<%= @design.safe_name %>/<%= File.basename @design.psd_file_path, '.psd' %>.png"/>
+  <img src="/extracted/<%= @design.safe_name %>/<%= File.basename @design.psd_file_path, '.psd' %>_psd.png"/>
 </div>
 <% end %>
