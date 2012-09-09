@@ -38,11 +38,26 @@ class Sif
     self.parse
   end
   
+  def validate
+    # Validate the objects in sif object
+    root_count = 0
+    if not @grids.nil?
+      @grids.values.each do |grid|
+        root_count = root_count + 1 if grid.root
+      end
+    end
+    
+    if root_count > 1
+      raise "More than one root node in grids"
+    end
+  end
+  
   def parse
     begin
       self.parse_header
       self.parse_layers
       self.parse_grids
+      self.validate
     rescue Exception => e
       raise e 
     end
@@ -110,9 +125,12 @@ class Sif
   def set_grid(grid)
     @grids = {} if @grids.nil?
     @grids[grid.id] = grid
+    self.validate
   end
   
   def save!
+    self.validate
+    
     serialized_layers = @layers.values
     if not @grids.nil?
       serialized_grids = @grids.values.collect do |grid|
@@ -125,8 +143,6 @@ class Sif
       :layers => serialized_layers,
       :grids  => serialized_grids,
     }
-    
-    # TODO: Do validation checks here
     
     Sif.write @design, sif_document
   end

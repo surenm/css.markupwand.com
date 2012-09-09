@@ -255,6 +255,10 @@ class Design
   end
 
   def reset
+    self.init_sif
+    @sif.grids = nil
+    @sif.save!
+    
     self.hashed_selectors  = {}
     self.selector_name_map = {}
     self.save!
