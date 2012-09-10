@@ -205,7 +205,7 @@ class Sif
     
     style_layers = {}
     sif_grid_data[:style_layers].each do |layer_id|
-      grid_layers[layer_id] = self.get_layer(layer_id)
+      style_layers[layer_id] = self.get_layer(layer_id)
     end
     
     if not sif_grid_data[:render_layer].nil?
