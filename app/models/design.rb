@@ -36,9 +36,6 @@ class Design
     Design::STATUS_FAILED       => 'label label-important'
   }
   
-  Design::PRIORITY_NORMAL = :normal
-  Design::PRIORITY_HIGH   = :high
-  
   Design::ERROR_FILE_ABSENT        = "file_absent"
   Design::ERROR_NOT_PHOTOSHOP_FILE = "not_photoshop_file"
   Design::ERROR_SCREENSHOT_FAILED  = "screenshot_failed"
@@ -50,7 +47,6 @@ class Design
   field :sif_file_path, :type => String, :default => nil
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
   field :storage, :type => String, :default => "local"
-  field :queue, :type => Symbol, :default => Design::PRIORITY_NORMAL
 
   # Rating is Yes or No
   field :rating, :type => Boolean
@@ -201,9 +197,6 @@ class Design
     # Delegate this save to file save
   end
   
-  def set_queue_priority(queue_priority)
-    self.queue = queue_priority
-    self.save!
   end
 
   # Offset box is a box, that is an empty grid that appears before
@@ -244,21 +237,6 @@ class Design
     Rails.cache.delete self.row_offset_box_key
   end
   
-  def reprocess
-    self.reset
-    self.push_to_processing_queue
-  end
-
-  def write_html_job
-    self.set_status Design::STATUS_REGENERATING
-    Resque.enqueue HtmlWriterJob, self.id  
-  end
-
-  def reset
-    self.init_sif
-    @sif.grids = nil
-    @sif.save!
-    
     self.hashed_selectors  = {}
     self.selector_name_map = {}
     self.save!
@@ -297,12 +275,6 @@ class Design
     Resque.enqueue ExtractorJob, self.id
   end
   
-  def move_to_priority_queue
-    message = self.get_processing_queue_message
-    Resque.dequeue ProcessorJob, message
-    Resque.enqueue PriorityProcessorJob, message
-    self.set_queue_priority Design::PRIORITY_HIGH
-  end
   
   def parse_fonts(layers)
     self.font_map = FontMap.new
