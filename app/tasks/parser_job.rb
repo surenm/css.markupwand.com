@@ -12,15 +12,15 @@ class ParserJob
       Store::fetch_from_store design.store_key_prefix
       design_directory = Rails.root.join 'tmp', 'store', design.store_key_prefix
       
-      sif_file = File.join design_directory, "#{design.safe_name_prefix}.sif"
+      sif_file_path = Rails.root.join 'tmp', 'store', design.get_sif_file_path
 
-      if not File.exists? sif_file
+      if not File.exists? sif_file_path
         Log.fatal "SIf file missing. Can't proceed..."
         raise "Missing SIF file"
       end
 
-      Log.info "Found SIF file - #{sif_file}"
-      design.sif_file_path = sif_file
+      Log.info "Found SIF file - #{sif_file_path}"
+      design.sif_file_path = sif_file_path
       design.save!
 
       design.group_grids
