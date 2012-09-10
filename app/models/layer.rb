@@ -195,6 +195,13 @@ class Layer
 
     self.extra_selectors = grid_style.extra_selectors
     
+    if not is_leaf and self.type == LAYER_NORMAL
+      @computed_css[:background]        = "url('../../#{self.image_path}') no-repeat"
+      @computed_css[:'background-size'] = "100% 100%"
+      @computed_css[:width]             = "#{grid_style.unpadded_width}px"
+      @computed_css[:height]            = "#{grid_style.unpadded_height}px"
+    end
+    
     # Things to do with styles
     # 1. Background image
     # 2. Multifont
