@@ -248,6 +248,7 @@ sass
   end
 
   def modified_generated_selector(grid)
+    return self.generated_selector
     modified_selector_name = grid.design.selector_name_map[self.generated_selector]
     if not modified_selector_name.nil?
       modified_selector_name["name"]
