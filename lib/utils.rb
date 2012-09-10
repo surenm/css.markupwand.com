@@ -66,7 +66,7 @@ module Utils
       design.psd_file_path = destination_file
       design.save!
 
-      design.push_to_processing_queue
+      design.push_to_extraction_queue
     end
   end
 
