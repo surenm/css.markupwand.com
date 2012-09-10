@@ -17,7 +17,7 @@ class Sif
   attr_accessor :design
   
   def self.write(design, sif_data)
-    sif_file = File.join design.store_key_prefix, "#{design.safe_name_prefix}.sif"
+    sif_file = design.get_sif_file_path
     Store.write_contents_to_store sif_file, sif_data.to_json
   end
   
@@ -26,7 +26,7 @@ class Sif
     # Appends design data with design's properties
     @design = design
 
-    sif_file_path = File.join design.store_key_prefix, "#{design.safe_name_prefix}.sif"
+    sif_file_path = @design.get_sif_file_path
     sif_file = Store::fetch_object_from_store sif_file_path
     sif_content = File.read sif_file
 
