@@ -69,7 +69,7 @@ class DesignController < ApplicationController
     design.psd_file_path = destination_file
     design.save!
     
-    design.push_to_processing_queue
+    design.push_to_extraction_queue
     
     redirect_to :action => :show, :id => design.safe_name
   end
@@ -185,9 +185,6 @@ class DesignController < ApplicationController
     @missing_fonts = @design.font_map.missing_fonts
   end
 
-  def gallery
-  end
-  
   def download
     tmp_folder = Store::fetch_from_store @design.store_published_key
     tar_file   = Rails.root.join("tmp", "#{@design.safe_name}.tar.gz")
@@ -196,6 +193,12 @@ class DesignController < ApplicationController
     system "cd #{tmp_folder} && tar -czvf #{tar_file} ."
     send_file tar_file, :disposition => 'inline'
   end
+  
+  def download_psd
+    file = Store::fetch_object_from_store(@design.psd_file_path)
+    send_file file, :disposition => 'inline'
+  end
+  
     
   def update
     GeneratorJob.perform @design.id
@@ -224,23 +227,13 @@ class DesignController < ApplicationController
     send_file temp_file, :disposition => "inline"
   end
   
-  def create_screenshot
-    Resque.enqueue ScreenshotJob, @design.id
-    redirect_to :action => :show, :id => @design.safe_name
-  end
-  
-  def reprocess
-    @design.reprocess
+  def reextract
+    @design.reextract
     redirect_to :action => :show, :id => @design.safe_name
   end
   
   def reparse
     @design.reparse
-    redirect_to :action => :show, :id => @design.safe_name
-  end
-
-  def write_html
-    @design.write_html_job
     redirect_to :action => :show, :id => @design.safe_name
   end
 
@@ -253,44 +246,11 @@ class DesignController < ApplicationController
     render :text => "Adingu! Ellaame udane venumaa! Logs will come soon in this page."
   end
   
-  def view_dom
-    root_grid = @design.get_root_grid
-    render :json => root_grid.get_tree
-  end 
-
   def view_json
-    sif_file_name = "#{@design.safe_name_prefix}.sif"
-
-    remote_file_path = File.join @design.store_key_prefix, sif_file_name
+    remote_file_path = @design.get_sif_file_path
     sif_file = Store::fetch_object_from_store remote_file_path
 
     send_file sif_file, :disposition => 'inline', :type => 'application/json'
   end
 
-  def upload_danger
-    # Stupid security for now.
-    if params[:secret] == '02b0c8ad8a141b04693e923b3d56a918'
-      design_data = params[:design]
-      design      = Design.new :name => design_data[:name], :store => Store::get_S3_bucket_name
-      design.user = User.find_by_email(params[:email])
-      design.save!
-      
-      Resque.enqueue UploaderJob, design.id, design_data
-
-      render :json => {:status => 'OK'}
-    else
-      render :json => {:status => 'ERROR'}
-    end
-
-  end 
-
-  def download_psd
-    file = Store::fetch_object_from_store(@design.psd_file_path)
-    send_file file, :disposition => 'inline'
-  end
-  
-  def increase_priority
-    @design.move_to_priority_queue
-    redirect_to :action => :show, :id => @design.safe_name
-  end
 end
