@@ -21,6 +21,10 @@ class GridStyle
     @hashed_selectors   = []
   end
 
+  def attribute_data
+    {}
+  end
+
   # FIXME PSDJS
   ## helper methods
   def get_border_width
@@ -419,8 +423,9 @@ sass
     if not self.grid.render_layer.nil?
       render_layer = self.grid.render_layer
       chunk_text_rules = render_layer.chunk_text_rules
-      if (not render_layer.computed_css.empty?) and (not render_layer.generated_selector.nil?)
-        layer_css_string = render_layer.css_rules.join(";\n") + ";"
+      css_rules = render_layer.css_rules
+      if not css_rules.length == 0
+        layer_css_string = css_rules.join(";\n") + ";"
         sass += <<sass
  .#{render_layer.modified_generated_selector(self.grid)} {
 #{layer_css_string}
