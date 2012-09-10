@@ -128,6 +128,12 @@ class Sif
     self.validate
   end
   
+  def reset_grids
+    @grids = nil
+    self.save!
+  end
+    
+  
   def save!
     self.validate
     

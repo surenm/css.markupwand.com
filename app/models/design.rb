@@ -268,26 +268,26 @@ class Design
   ##########################################################
   # Helper methods for running jobs on designs
   ##########################################################
-  def reset    
-    self.hashed_selectors  = {}
-    self.selector_name_map = {}
-    self.save!
-  end
-  
   def reextract
-    self.reset
+    # delete sif files and extracted folder and start again
+    sif_file = self.get_sif_file_path
+    extracted_folder = self.store_extracted_key
+    Store.delete_from_store sif_file
+    Store.delete_from_store extracted_folder
+    
     self.push_to_extraction_queue
   end
 
   def reparse
-    self.reset
+    # if sif files exist, remove grids from it and reparse
+    self.init_sif  
+    @sif.reset_grids
     self.set_status Design::STATUS_PARSING
     Resque.enqueue ParserJob, self.id
   end
   
   def regenerate
-    self.set_status Design::STATUS_REGENERATING
-    Resque.enqueue GeneratorJob, self.id
+    # TODO: If generated/published folders exist delete and remove those files and regenerate
   end
   
   def get_processing_queue_message
