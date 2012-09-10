@@ -114,6 +114,7 @@ class Grid
       :tag               => @tag,
       :offset_box        => offset_box_data,
       :grouping_box      => grouping_box_data,
+      :style             => @style.attribute_data
     }      
   end
   
@@ -721,7 +722,7 @@ class Grid
     indent_level.times {|i| spaces+=" "}
 
     positioned_string = 'positioned' if positioned else ''
-    Log.info "#{spaces}#{prefix} (grid #{self.id}) #{self.bounds.to_s} #{self.style_layers.values.join(',')} #{positioned_string}"
+    Log.info "#{spaces}#{prefix} (Grid) #{self.bounds.to_s} [Style: #{self.style_layers.values.join(',')}], [Render: #{self.render_layer}] #{positioned_string}"
     self.children.each do |id, subgrid|
       subgrid.print(indent_level+1)
     end
