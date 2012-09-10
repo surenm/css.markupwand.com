@@ -199,8 +199,7 @@ class Layer
     # Things to do with styles
     # 1. Background image
     # 2. Multifont
-
-    self.generated_selector = CssParser::create_incremental_selector
+    @generated_selector = CssParser::create_incremental_selector
   end
 
   #FIXME PSDJS
@@ -260,13 +259,7 @@ sass
   # Selector names (includes default selector and extra selectors)
   def selector_names(grid)
     all_selectors = extra_selectors
-    if not self.computed_css.empty?
-      all_selectors.push self.modified_generated_selector(grid) if not self.computed_css.empty?
-    end
-
-    if not grid.style.hashed_selectors.empty?
-      all_selectors = all_selectors + grid.style.modified_hashed_selector
-    end
+    all_selectors.push self.modified_generated_selector(grid)
 
     all_selectors.uniq!
     all_selectors
