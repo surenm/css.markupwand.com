@@ -401,10 +401,12 @@ class GridStyle
       spaces = spaces + " "
     end
 
-    if self.computed_css.empty? or self.generated_selector.nil?
+    css_rules = self.css_rules
+
+    if css_rules.length == 0
       sass = "#{child_scss_trees}"
     else
-      css_string = self.css_rules.join(";\n") + ";"
+      css_string = css_rules.join(";\n") + ";"
       child_css_string = ""
       if not child_scss_trees.empty?
          child_css_string = "\n#{spaces}" + child_scss_trees.rstrip
