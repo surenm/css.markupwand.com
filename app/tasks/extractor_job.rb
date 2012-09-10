@@ -17,10 +17,10 @@ class ExtractorJob
     psd_file_root  = File.basename design.psd_file_path, '.psd'
     
     processed_folder = Rails.root.join 'tmp', 'store', design.store_extracted_key
-    assets_directory = Rails.root.join processed_folder, "assets"
-    images_directory = Rails.root.join assets_directory, "images"
+    assets_folder = File.join processed_folder, "assets"
+    images_folder = File.join processed_folder, "assets", "images"
+    FileUtils.mkdir_p images_folder if not Dir.exists? images_folder
 
-    FileUtils.mkdir_p images_directory if not Dir.exists? images_directory
     
     extracted_file   = Rails.root.join processed_folder, "#{design.safe_name_prefix}.json"
     screenshot_file  = Rails.root.join processed_folder, "#{design.safe_name_prefix}.png"
@@ -72,10 +72,11 @@ class ExtractorJob
     Store.save_to_store fixed_width_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}-fixed.png")
     Store.save_to_store thumbnail_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}-thumbnail.png")
     
-    Dir.glob("#{assets_directory}/**/*").each do |asset_file_path|
+    Dir.glob("#{assets_folder}/**/*").each do |asset_file_path|
       next if File.directory? asset_file_path
-      asset_basename = File.basename asset_file_path
-      asset_destination_path = File.join design.store_extracted_key, "assets", asset_basename
+      asset_file_path_obj = Pathname.new asset_file_path
+      asset_relative_path = asset_file_path_obj.relative_path_from(Pathname.new assets_folder)
+      asset_destination_path = File.join design.store_extracted_key, "assets", "images", asset_relative_path
       Store.save_to_store(asset_file_path, asset_destination_path)
     end
 
