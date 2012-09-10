@@ -67,17 +67,9 @@ class Design
 
   mount_uploader :file, DesignUploader
   
-  def vote_class
-    case self.rating
-    when true
-      return 'good'
-    when false
-      return 'bad'
-    when nil
-      return 'none'
-    end
-  end
-  
+  ##########################################################
+  # Design Object helper functions
+  ##########################################################
   def attribute_data(minimal=false)
     return {
       :name          => self.name,
@@ -87,24 +79,34 @@ class Design
     }
   end
   
-  def init_sif
-    @sif = Sif.new(self) if @sif == nil
-    return @sif
+  def get_root_grid
+    root_grids = []
+    self.grids.each do |id, grid|
+      root_grids.push grid if grid.root == true
+    end
+
+    Log.fatal "More than one root node in design???" if root_grids.size > 1
+
+    return root_grids.last
   end
   
-  def grids
-    self.init_sif
-    return @sif.grids
+  def bounds 
+    BoundingBox.new 0, 0, self.height, self.width
   end
-  
-  def layers
-    self.init_sif
-    return @sif.layers
-  end
-  
-  def save_grid(grid)
-    self.init_sif
-    @sif.set_grid grid
+    
+  def set_status(status)
+    self.status = status
+    self.save!
+=begin
+    if self.status == Design::STATUS_COMPLETED
+      if not self.user.admin
+        to      = "#{self.user.name} <#{self.user.email}>"
+        subject = "#{self.name} generated"
+        text    = "Your HTML & CSS has been generated, click http://#{ENV['APP_URL']}/design/#{self.safe_name}/preview to download"
+        ApplicationHelper.post_simple_message to, subject, text
+      end
+    end
+=end
   end
 
   def incremental_counter
@@ -126,7 +128,33 @@ class Design
     new_id = (time_micro + process_id + incremental).to_i.to_s(16)
     return new_id
   end
-
+  
+  # FIXME PSDJS
+  def webfonts_snippet
+    return ''
+    self.font_map.google_webfonts_snippet
+  end
+  
+  def parse_fonts(layers)
+    self.font_map = FontMap.new
+    self.font_map.find_web_fonts layers
+    self.font_map.save!
+    self.save!
+  end
+  
+  def vote_class
+    case self.rating
+    when true
+      return 'good'
+    when false
+      return 'bad'
+    when nil
+      return 'none'
+    end
+  end
+  ##########################################################
+  # Store related functions
+  ##########################################################
   def safe_name_prefix
     Store::get_safe_name self.name
   end
@@ -163,42 +191,42 @@ class Design
     "#{self.id}-row_offset_box"
   end
   
-  def get_root_grid
-    root_grids = []
-    self.grids.each do |id, grid|
-      root_grids.push grid if grid.root == true
-    end
-
-    Log.fatal "More than one root node in design???" if root_grids.size > 1
-
-    return root_grids.last
+  def get_photoshop_file_path
+    safe_basename = Store::get_safe_name File.basename(self.name, ".psd")
+    File.join self.store_key_prefix, "#{safe_basename}.psd"
   end
   
-  def bounds 
-    BoundingBox.new 0, 0, self.height, self.width
-  end
-    
-  def set_status(status)
-    self.status = status
-    self.save!
-=begin
-    if self.status == Design::STATUS_COMPLETED
-      if not self.user.admin
-        to      = "#{self.user.name} <#{self.user.email}>"
-        subject = "#{self.name} generated"
-        text    = "Your HTML & CSS has been generated, click http://#{ENV['APP_URL']}/design/#{self.safe_name}/preview to download"
-        ApplicationHelper.post_simple_message to, subject, text
-      end
-    end
-=end
+  def get_sif_file_path
+    safe_basename = Store::get_safe_name File.basename(self.name, ".psd")
+    File.join self.store_key_prefix, "#{safe_basename}.sif"
   end
 
-  def save_data
-    # Delegate this save to file save
+  ##########################################################
+  # SIF related functions
+  ##########################################################
+  def init_sif
+    @sif = Sif.new(self) if @sif == nil
+    return @sif
   end
   
+  def grids
+    self.init_sif
+    return @sif.grids
+  end
+  
+  def layers
+    self.init_sif
+    return @sif.layers
+  end
+  
+  def save_grid(grid)
+    self.init_sif
+    @sif.set_grid grid
   end
 
+  ##########################################################
+  # Row grid and grid offset box related methods
+  ##########################################################
   # Offset box is a box, that is an empty grid that appears before
   # this current grid. The previous sibling being a empty box, it adds itself
   # to a buffer. And the next item picks it up from buffer and takes it as its 
@@ -237,9 +265,18 @@ class Design
     Rails.cache.delete self.row_offset_box_key
   end
   
+  ##########################################################
+  # Helper methods for running jobs on designs
+  ##########################################################
+  def reset    
     self.hashed_selectors  = {}
     self.selector_name_map = {}
     self.save!
+  end
+  
+  def reextract
+    self.reset
+    self.push_to_extraction_queue
   end
 
   def reparse
@@ -271,24 +308,14 @@ class Design
     return message
   end
   
-  def push_to_processing_queue
+  def push_to_extraction_queue
     Resque.enqueue ExtractorJob, self.id
   end
   
+  ##########################################################
+  # Actual jobs to be run on designs
+  ########################################################## 
   
-  def parse_fonts(layers)
-    self.font_map = FontMap.new
-    self.font_map.find_web_fonts layers
-    self.font_map.save!
-    self.save!
-  end
-  
-  # FIXME PSDJS
-  def webfonts_snippet
-    return ''
-    self.font_map.google_webfonts_snippet
-  end
-
   # Parses the photoshop file json data and decomposes into grids
   def group_grids
     self.init_sif
@@ -452,5 +479,4 @@ config
 
     Store.save_to_store override_css, target_css
   end
-
 end
