@@ -45,5 +45,10 @@ module Compassify
       end
     end
 
+    # This I think is still messy. Should fix it.
+    def get_border_radius(radius)
+      "@include border-radius(#{radius})"
+    end
+
   end
 end

@@ -384,6 +384,7 @@ class Design
     compass_includes = <<COMPASS
 @import "compass";
 @import "compass/css3/box-shadow";
+@import "compass/css3/border-radius";
 
 
 COMPASS
