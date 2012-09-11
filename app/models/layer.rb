@@ -310,7 +310,7 @@ sass
 
   def text_content
     if self.type == LAYER_TEXT
-      original_text = self.text
+      original_text = self.text[:text]
 
       #FIXME PSDJS
       if false and has_multifont?
