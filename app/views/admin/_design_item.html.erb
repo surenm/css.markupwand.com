@@ -16,12 +16,7 @@
         <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/reparse"> Reparse </a>
       </div>
 
-      <% if design.queue == Design::PRIORITY_NORMAL %>
-      <div class="btn-group">  
-        <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/pq"> Increase priority </a>
-      </div>
-      <% end %>
-        <div class="btn-group">
+      <div class="btn-group">
         <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/view-logs"> View logs </a>
         <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/view-json"> View JSON </a>
       </div>

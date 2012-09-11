@@ -15,19 +15,22 @@ class Layer
   LAYER_HUESATURATION      = "LayerKind.HUESATURATION"
   LAYER_INVERSION          = "LayerKind.INVERSION"
   LAYER_LEVELS             = "LayerKind.LEVELS"
-  LAYER_NORMAL             = "normal"
   LAYER_PATTERNFILL        = "LayerKind.PATTERNFILL"
   LAYER_PHOTOFILTER        = "LayerKind.PHOTOFILTER"
   LAYER_POSTERIZE          = "LayerKind.POSTERIZE"
   LAYER_SELECTIVECOLOR     = "LayerKind.SELECTIVECOLOR"
   LAYER_SMARTOBJECT        = "LayerKind.SMARTOBJECT"
   LAYER_SOLIDFILL          = "LayerKind.SOLIDFILL"
-  LAYER_TEXT               = "text"
   LAYER_THRESHOLD          = "LayerKind.THRESHOLD"
   LAYER_LAYER3D            = "LayerKind.LAYER3D"
   LAYER_VIBRANCE           = "LayerKind.VIBRANCE"
   LAYER_VIDEO              = "LayerKind.VIDEO"
-  
+
+  # PSDJS layer types
+  LAYER_TEXT               = "text"
+  LAYER_SHAPE              = "shape" 
+  LAYER_NORMAL             = "normal"
+ 
 
   ### Relational references ###
 
@@ -187,6 +190,10 @@ class Layer
     computed_css_array  = Compassify::get_scss(self.computed_css)
     generated_css_array = Compassify::get_scss(self.styles)
 
+    if self.type == LAYER_SHAPE and self.shapes.first.has_key? :curvature
+      generated_css_array.push Compassify::get_border_radius(self.shapes.first[:curvature])
+    end
+
     generated_css_array + computed_css_array
   end
 
@@ -310,7 +317,7 @@ sass
 
   def text_content
     if self.type == LAYER_TEXT
-      original_text = self.text
+      original_text = self.text[:text]
 
       #FIXME PSDJS
       if false and has_multifont?
