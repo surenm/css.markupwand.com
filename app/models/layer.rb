@@ -15,19 +15,22 @@ class Layer
   LAYER_HUESATURATION      = "LayerKind.HUESATURATION"
   LAYER_INVERSION          = "LayerKind.INVERSION"
   LAYER_LEVELS             = "LayerKind.LEVELS"
-  LAYER_NORMAL             = "normal"
   LAYER_PATTERNFILL        = "LayerKind.PATTERNFILL"
   LAYER_PHOTOFILTER        = "LayerKind.PHOTOFILTER"
   LAYER_POSTERIZE          = "LayerKind.POSTERIZE"
   LAYER_SELECTIVECOLOR     = "LayerKind.SELECTIVECOLOR"
   LAYER_SMARTOBJECT        = "LayerKind.SMARTOBJECT"
   LAYER_SOLIDFILL          = "LayerKind.SOLIDFILL"
-  LAYER_TEXT               = "text"
   LAYER_THRESHOLD          = "LayerKind.THRESHOLD"
   LAYER_LAYER3D            = "LayerKind.LAYER3D"
   LAYER_VIBRANCE           = "LayerKind.VIBRANCE"
   LAYER_VIDEO              = "LayerKind.VIDEO"
-  
+
+  # PSDJS layer types
+  LAYER_TEXT               = "text"
+  LAYER_SHAPE              = "shape" 
+  LAYER_NORMAL             = "normal"
+ 
 
   ### Relational references ###
 
