@@ -190,6 +190,10 @@ class Layer
     computed_css_array  = Compassify::get_scss(self.computed_css)
     generated_css_array = Compassify::get_scss(self.styles)
 
+    if self.type == LAYER_SHAPE and self.shapes.first.has_key? :curvature
+      generated_css_array.push Compassify::get_border_radius(self.shapes.first[:curvature])
+    end
+
     generated_css_array + computed_css_array
   end
 
