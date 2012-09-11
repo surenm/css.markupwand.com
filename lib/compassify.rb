@@ -15,11 +15,15 @@ module Compassify
     end
 
     # http://compass-style.org/examples/compass/css3/box_shadow/
-    def box_shadow(object)
-      "@include box-shadow(#{object[:color]} #{object[:horizontal_offset]} #{object[:vertical_offset]} #{object[:blur]} #{object[:spread]} #{object[:type]})"
+    def box_shadow(shadows)
+      shadow_css_items = []
+      shadows.each do |shadow|
+        shadow_css_items.push "#{shadow[:color]} #{shadow[:vertical_offset]} #{shadow[:horizontal_offset]} #{shadow[:blur]} #{shadow[:spread]} #{shadow[:type]}"
+      end
+      
+      "@include box-shadow(" + shadow_css_items.join(', ') + ")"
     end    
-    alias :inner_shadow :box_shadow
-
+    
     def solid_fill(object)
       "background-color: #{object}"
     end
