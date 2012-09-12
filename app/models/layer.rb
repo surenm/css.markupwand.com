@@ -195,15 +195,13 @@ class Layer
     end
 
     self.styles.each do |rule_key, rule_object|
-      if rule_key == :gradient_fill  
-        if self.type == LAYER_TEXT
+      if self.type == Layer::LAYER_TEXT
+        if rule_key == :gradient_fill
           generated_css_array.concat Compassify::get_scss(:text_gradient, rule_object)
-        else
-          generated_css_array.concat Compassify::get_scss(rule_key, rule_object)
+        elsif rule_key == :shadows
+          generated_css_array.concat Compassify::get_scss(:text_shadow, rule_object)
         end
-      elsif rule_key == :solid_fill and self.type != LAYER_NORMAL
-        generated_css_array.concat Compassify::get_scss(rule_key, rule_object)
-      else
+      else        
         generated_css_array.concat Compassify::get_scss(rule_key, rule_object)
       end
     end
