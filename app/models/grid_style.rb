@@ -227,7 +227,11 @@ class GridStyle
   # Array of CSS rules, created using 
   # computed using computed css and 
   def css_rules
-    rules_array = Compassify::get_scss(self.computed_css)
+    rules_array = []
+    self.computed_css.each do |rule_key, rule_object|
+      rules_array.concat Compassify::get_scss(rule_key, rule_object)
+    end
+    
 
     self.grid.style_layers.values.each do |layer|
       rules_array += layer.css_rules
