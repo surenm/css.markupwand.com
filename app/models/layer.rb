@@ -60,8 +60,7 @@ class Layer
   # CSS Rules
   attr_accessor :computed_css # (Hash)
   attr_reader   :css_rules # (Array)
-  attr_accessor :chunk_text_css_rule # (Array)
-  attr_accessor :chunk_text_css_selector # (Array)
+  attr_accessor :chunk_text_selector # (Array)
   attr_accessor :extra_selectors # (Array)
   attr_accessor :generated_selector # (String)
 
@@ -85,25 +84,12 @@ class Layer
     }
   end
 
-  def has_multifont?
-    multifont = false
-    if self.type == Layer::LAYER_TEXT
-      # Sum of all positions is > 0
-      multifont = (multifont_positions.inject(:+) > 0)
-    end
-
-    multifont || self.is_multifont
+  def initialize
+    @chunk_text_selector = []
   end
 
-  def multifont_positions
-    positions = []
-    if self.type == Layer::LAYER_TEXT
-      positions = layer_json.extract_value(:textKey, :value, :textStyleRange, :value).map do |font|
-        font.extract_value(:value, :from, :value)
-      end
-    end
-
-    positions
+  def has_multifont?
+    self.type == Layer::LAYER_TEXT and self.text.length > 0
   end
 
   def has_newline?
@@ -225,44 +211,35 @@ class Layer
       @computed_css[:height]            = "#{grid_style.unpadded_height}px"
     end
     
-    # Things to do with styles
-    # 1. Background image
-    # 2. Multifont
+    if not self.text.nil?
+      self.text.each_with_index do |_, index|
+        chunk_text_selector[index] = CssParser::create_incremental_selector('text')
+      end
+    end 
+    
     @generated_selector = CssParser::create_incremental_selector
   end
 
-  #FIXME PSDJS
   def chunk_text_rules
-    chunk_text_rules = ''
-    return chunk_text_rules
-
-    self.chunk_text_css_rule.each_with_index do |value, index|
-      if not value.empty?
-        rule_list = CssParser::to_style_string(value)
-        current_rule =  <<sass
-.#{self.chunk_text_css_selector[index]} {
-#{rule_list}
+    if not self.text.nil?
+      chunk_text_styles = ""
+      chunk_text_selector.each_with_index do |class_name, index|
+        rules_array = []
+       self.text[index][:styles].each do |rule_key, rule_object|
+          rules_array.concat Compassify::get_scss(rule_key, rule_object)
+        end
+        rules_string = rules_array.join(";\n") + ";"
+        chunk_text_style =  <<CSS
+.#{self.chunk_text_selector[index]} {
+  #{rules_string}
 }
-sass
-        chunk_text_rules += current_rule
+CSS
+        chunk_text_styles += chunk_text_style
       end
+      chunk_text_styles
+    else
+      ""
     end
-
-    chunk_text_rules
-  end
-
-  # Finds out if the same style is repeating for multifont,
-  # i.e it is not really a multifont, and makes it unique, adds it to computed_css.
-  def multifont_style_uniq
-    multifont_array = self.chunk_text_css_rule.clone.uniq
-    uniqued_multifont_data = {}
-    
-    if multifont_array.length == 1
-      self.chunk_text_css_rule = []
-      uniqued_multifont_data = multifont_array.first 
-    end
-
-    uniqued_multifont_data
   end
 
   def is_empty_text_layer?
@@ -276,13 +253,7 @@ sass
   end
 
   def modified_generated_selector(grid)
-    return self.generated_selector
-    modified_selector_name = grid.design.selector_name_map[self.generated_selector]
-    if not modified_selector_name.nil?
-      modified_selector_name["name"]
-    else
-      self.generated_selector
-    end
+    self.generated_selector
   end
 
   # Selector names (includes default selector and extra selectors)
@@ -292,16 +263,6 @@ sass
 
     all_selectors.uniq!
     all_selectors
-  end
-
-  def get_raw_font_name(position = 0)
-    font_name = nil
-
-    if self.type == Layer::LAYER_TEXT and not is_empty_text_layer?
-      font_name = layer_json.extract_value(:textKey, :value, :textStyleRange, :value)[position].extract_value(:value, :textStyle, :value, :fontName, :value)
-    end
-
-    font_name
   end
 
   def get_font_name(position)
@@ -335,30 +296,17 @@ sass
     if self.type == LAYER_TEXT
       original_text = (self.text.map { |text_chunk| text_chunk[:text] }).join ''
 
-      #FIXME PSDJS
-      if false and has_multifont?
-        positions = multifont_positions
-        chunks = []
-        positions.each_with_index do |position, index|
-          if (position == positions[index + 1])
-            chunks.push ""
-          else
-            next_position = (index == positions.length - 1) ? (original_text.length - 1) : (positions[index + 1] - 1)
-            chunks.push original_text[position..next_position]
-          end
-        end
+      if has_multifont?
 
         multifont_text = ''
 
-        chunks.each_with_index do |chunk, index|
-          next if chunk.length == 0
-          newlined_chunk = ActiveSupport::SafeBuffer.new(chunk.gsub("\n", "<br>").gsub("\r\r", "<br>").gsub("\r", "<br>"))
-          attributes = { :class => self.chunk_text_css_selector[index] }
+        self.text.each_with_index do |chunk, index|
+          newlined_chunk = ActiveSupport::SafeBuffer.new(chunk[:text].gsub("\n", "<br>").gsub("\r\r", "<br>").gsub("\r", "<br>"))
+          attributes = { :class => self.chunk_text_selector[index] }
           multifont_text +=  content_tag :span, newlined_chunk, attributes
         end
 
         multifont_text
-
       else
         original_text
       end

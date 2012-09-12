@@ -95,6 +95,7 @@ class Design
   end
     
   def set_status(status)
+    Log.info "Setting status == #{status}"
     self.status = status
     self.save!
 =begin
