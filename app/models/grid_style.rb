@@ -440,9 +440,15 @@ sass
         sass += <<sass
  .#{render_layer.modified_generated_selector(self.grid)} {
 #{layer_css_string}
-#{spaces}}#{chunk_text_rules}
+#{spaces}}
 sass
       end
+
+      if not render_layer.text.nil?
+        sass += chunk_text_rules
+      end
+
+      Log.info sass
     end
 
     sass
