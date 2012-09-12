@@ -39,19 +39,6 @@ class GridStyle
     return border_width
   end
   
-  #FIXME PSDJS
-  def is_single_line_text
-    if not self.grid.render_layer.nil? and
-        false and #FIXME PSDJS
-        self.grid.render_layer.kind == Layer::LAYER_TEXT and
-        not self.grid.render_layer.has_newline? and
-        self.grid.render_layer.text_type != "TextType.PARAGRAPHTEXT"
-      return true
-    else
-      return false
-    end
-  end
-
   ## Spacing and padding related method
   # Find out bounding box difference from it and its children.
   def get_padding
@@ -185,11 +172,7 @@ class GridStyle
       grouping_box = self.grid.grouping_box
       has_trailing_offset = false
       has_trailing_offset = (self.grid.bounds != grouping_box) unless grouping_box.nil? or self.grid.bounds.nil?
-      if self.is_single_line_text and not has_trailing_offset
-        return { :width => width.to_s + 'px' }
-      else
-        return { :width => width.to_s + 'px' }
-      end
+      return { :width => width.to_s + 'px' }
     end
     return {}
   end
@@ -448,7 +431,6 @@ sass
         sass += chunk_text_rules
       end
 
-      Log.info sass
     end
 
     sass
