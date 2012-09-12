@@ -474,9 +474,9 @@ module CssParser
     css
   end
 
-  def CssParser::create_incremental_selector
+  def CssParser::create_incremental_selector(type = 'class')
     DesignGlobals.instance.incremental_class_counter = DesignGlobals.instance.incremental_class_counter + 1
-    "class#{DesignGlobals.instance.incremental_class_counter}"
+    "#{type}#{DesignGlobals.instance.incremental_class_counter}"
   end
 
   # Adds to a inverted list where the key is the property and value
