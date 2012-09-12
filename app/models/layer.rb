@@ -187,11 +187,29 @@ class Layer
   # Array of CSS rules, created using 
   # computed using computed css and 
   def css_rules
-    computed_css_array  = Compassify::get_scss(self.computed_css)
-    generated_css_array = Compassify::get_scss(self.styles)
+    computed_css_array  = []
+    generated_css_array = []
+
+    self.computed_css.each do |rule_key, rule_object|
+      computed_css_array.concat Compassify::get_scss(rule_key, rule_object)
+    end
+
+    self.styles.each do |rule_key, rule_object|
+      if rule_key == :gradient_fill  
+        if self.type == LAYER_TEXT
+          generated_css_array.concat Compassify::get_scss(:text_gradient, rule_object)
+        else
+          generated_css_array.concat Compassify::get_scss(rule_key, rule_object)
+        end
+      elsif rule_key == :solid_fill and self.type != LAYER_NORMAL
+        generated_css_array.concat Compassify::get_scss(rule_key, rule_object)
+      else
+        generated_css_array.concat Compassify::get_scss(rule_key, rule_object)
+      end
+    end
 
     if self.type == LAYER_SHAPE and self.shapes.first.has_key? :curvature
-      generated_css_array.push Compassify::get_border_radius(self.shapes.first[:curvature])
+      generated_css_array.concat Compassify::get_border_radius(self.shapes.first[:curvature])
     end
 
     generated_css_array + computed_css_array
@@ -317,7 +335,7 @@ sass
 
   def text_content
     if self.type == LAYER_TEXT
-      original_text = self.text[:text]
+      original_text = (self.text.map { |text_chunk| text_chunk[:text] }).join ''
 
       #FIXME PSDJS
       if false and has_multifont?
