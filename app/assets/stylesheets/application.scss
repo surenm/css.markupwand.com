@@ -31,32 +31,23 @@
 body {
   font-family: "lemonde-sans", sans-serif;
   background: #DCDFE6;
-  @include background-image(url('/assets/dust.png'));
+  @include background-image(url('/assets/bg.png'));
 
   line-height: 25px;
   overflow: auto;
 }
 
 #header {
-  @include background-image(url('/assets/low_contrast_linen.png')); 
+  @include background-image(url('/assets/topbar.png')); 
   margin-bottom:0;
-  border-bottom:1px solid #333; 
-  @include box-shadow(#1A1313 0px 3px 10px);
+  //border-bottom:2px solid #333; 
+  //@include box-shadow(#1A1313 0px 3px 10px);
   position: relative;
   z-index: 10;
 
   .container {
     width: 940px;
-    padding: 5px 0;
     margin: 0 auto;
-
-    .nav-item {
-      margin-top: 4px;
-    }
-
-    .navbar-buttons {
-      margin-top: 5px;
-    }
 
     .brand:hover {
       border-bottom: 0 none;
