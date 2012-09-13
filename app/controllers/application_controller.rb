@@ -11,7 +11,8 @@ class ApplicationController < ActionController::Base
     if @user.nil?
       # No such user. Redirect to login page.
       redirect_to '/login'
-    else 
+    else
+      analytical.set(:index => 1, :name =>  "email", :value => @user.email, :scope => 1)
       if not @user.enabled
         # User found but not yet enabled
         invite_request = InviteRequest.where :email => @user
