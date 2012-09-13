@@ -89,9 +89,15 @@
             Mousetrap.bind('k', function() {
              document.location = $('#prev-button').attr('href')
             });
+         
             Mousetrap.bind('l', function() {
              document.location = $('#like-button').attr('href');
             });
+         
+            Mousetrap.bind('t', function() {
+             $('.tag_list').focus();
+            });
+         
             Mousetrap.bind('h', function() {
              document.location = $('#dislike-button').attr('href')
             });
