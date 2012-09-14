@@ -278,7 +278,7 @@ class GridStyle
 
     self.computed_css.update style_rules
 
-    self.generated_selector = CssParser::create_incremental_selector if not self.computed_css.empty?
+    self.generated_selector = CssParser::create_incremental_selector('wrapper') if not self.computed_css.empty?
   end
 
   def position_absolutely
