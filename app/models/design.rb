@@ -15,6 +15,8 @@ class Design
   Design::STATUS_UPLOADED     = :uploaded
   Design::STATUS_EXTRACTING   = :extracting
   Design::STATUS_EXTRACTED    = :extracted
+  Design::STATUS_CLIPPING     = :clipping
+  Design::STATUS_CLIPPED      = :clipped
   Design::STATUS_PARSING      = :parsing
   Design::STATUS_PARSED       = :parsed
   Design::STATUS_GENERATING   = :generating
