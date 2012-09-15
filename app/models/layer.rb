@@ -257,14 +257,11 @@ CSS
     return false
   end
 
-  def modified_generated_selector(grid)
-    self.generated_selector
-  end
-
   # Selector names (includes default selector and extra selectors)
   def selector_names(grid)
     all_selectors = extra_selectors
-    all_selectors.push self.modified_generated_selector(grid)
+    all_selectors.push self.generated_selector
+    all_selectors.concat grid.style.selector_names
 
     all_selectors.uniq!
     all_selectors
