@@ -133,11 +133,13 @@ class Sif
     self.save!
   end
     
-  
   def save!
     self.validate
     
-    serialized_layers = @layers.values
+    serialized_layers = @layers.values.collect do |layer|
+      layer.attribute_data
+    end
+
     if not @grids.nil?
       serialized_grids = @grids.values.collect do |grid|
         grid.attribute_data
