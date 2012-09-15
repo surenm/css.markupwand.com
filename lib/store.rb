@@ -31,6 +31,15 @@ module Store
     
     root_dir
   end
+
+  def Store::fetch_extracted_folder(design)
+    extracted_folder = Rails.root.join "tmp", "store", design.store_extracted_key
+    Log.info "Fetching #{extracted_folder}"
+    if not Dir.exists? extracted_folder.to_s
+      fetch_from_store design.store_extracted_key
+    end
+    extracted_folder
+  end
   
   def Store::write_contents_to_local_file(file_path, file_contents)
     file_dir = File.dirname file_path

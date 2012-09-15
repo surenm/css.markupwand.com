@@ -5,7 +5,7 @@ module Compassify
         style_string = (Compassify.send key, style_object)
         
         if (not style_string.nil?) and (not style_string.empty?)
-          return [style_string]
+          return style_string
         else
           return nil 
         end 
@@ -36,7 +36,7 @@ module Compassify
     end
     
     def solid_fill(object)
-      ["background-color: #{object}"]
+      ["background-color : #{object}"]
     end
     alias :solid_color :solid_fill
 

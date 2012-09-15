@@ -182,7 +182,13 @@ class Sif
     layer.type    = sif_layer_data[:type]
     layer.uid     = sif_layer_data[:uid]
     layer.zindex  = sif_layer_data[:zindex]
-    layer.bounds  = BoundingBox.create_from_attribute_data sif_layer_data[:bounds]
+    if sif_layer_data[:original_bounds].nil?
+      layer.initial_bounds = BoundingBox.create_from_attribute_data sif_layer_data[:bounds]
+    else
+      layer.initial_bounds = BoundingBox.depickle sif_layer_data[:original_bounds]
+    end
+    design_bounds = BoundingBox.new 0, 0, @header[:design_metadata][:height], @header[:design_metadata][:width]
+    layer.bounds  = layer.initial_bounds.inner_crop(design_bounds)
     layer.opacity = sif_layer_data[:opacity]
     layer.text    = sif_layer_data[:text]
     layer.shape  = sif_layer_data[:shape]
