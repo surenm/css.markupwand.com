@@ -20,7 +20,7 @@ class SifBuilder
     
     raw_layers = psd_data[:layerMask][:layers]
     layers = raw_layers.collect do |raw_layer|
-      SifBuilder.build_layer_from_psd_data raw_layer
+      SifBuilder.build_layer_from_psd_data design, raw_layer
     end
     
     sif_data = {
@@ -32,11 +32,12 @@ class SifBuilder
     Sif::write(design, sif_data)
   end
   
-  def self.build_layer_from_psd_data(raw_layer_data)
+  def self.build_layer_from_psd_data(design, raw_layer_data)
     raw_bounds = raw_layer_data[:bounds]
     bounds     = BoundingBox.new raw_bounds[:top], raw_bounds[:left], raw_bounds[:bottom], raw_bounds[:right]
     
     layer = {
+      :design  => design,
       :name    => raw_layer_data[:name],
       :type    => raw_layer_data[:type],
       :uid     => raw_layer_data[:uid],

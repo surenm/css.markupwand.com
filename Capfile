@@ -6,7 +6,7 @@ after 'deploy', 'grove:notify'
 
 ssh_options[:forward_agent] = true
 default_run_options[:shell] = '/bin/bash'
-logger.level = Logger::INFO
+logger.level = Logger::DEBUG
 
 set :keep_releases, 10
 
@@ -59,7 +59,7 @@ namespace :install do
   
   desc "Install npm packages"
   task :npm, :roles => :app do
-    psdjs_lib_dir = File.join current_path, 'lib', 'psd.js'  
+    psdjs_lib_dir = File.join release_path, 'lib', 'psd.js'  
     run "cd #{psdjs_lib_dir}; npm install -d"
   end
   

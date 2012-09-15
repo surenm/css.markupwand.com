@@ -46,6 +46,7 @@ class Layer
   attr_accessor :type # (String)
   attr_accessor :zindex # (Integer)
   attr_accessor :opacity #(Integer)
+  attr_accessor :original_bounds #(BoundingBox)
   attr_accessor :bounds #(BoundingBox)
   attr_accessor :smart_bounds #(BoundingBox)
 
@@ -53,8 +54,8 @@ class Layer
   attr_accessor :shape
   attr_accessor :styles
 
-  attr_accessor :is_overlay # (Boolean)
-  attr_accessor :is_style_layer # (Boolean)
+  attr_accessor :overlay # (Boolean)
+  attr_accessor :style_layer # (Boolean)
   attr_accessor :override_tag # (String)
 
   # CSS Rules
@@ -71,17 +72,21 @@ class Layer
   attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
     
   def attribute_data
-    {
-        :uid     => self.uid,
-        :name    => self.name,
-        :type    => self.type,
-        :zindex  => self.zindex,
-        :bounds  => self.bounds.attribute_data,
-        :opacity => self.opacity,
-        :text    => self.text,
-        :shape   => self.shape,
-        :styles  => self.styles,
+    attr_data = {
+      :uid     => self.uid,
+      :name    => self.name,
+      :type    => self.type,
+      :zindex  => self.zindex,
+      :bounds  => self.bounds.attribute_data,
+      :opacity => self.opacity,
+      :text    => self.text,
+      :shape   => self.shape,
+      :styles  => self.styles,
+      :design  => self.design.id,
+      :overlay => self.overlay,
+      :style_layer => self.style_layer,
     }
+    return Utils::prune_null_items attr_data
   end
 
   def initialize
@@ -200,6 +205,7 @@ class Layer
   end
 
   def set_style_rules(grid_style)
+    crop_objects_for_cropped_bounds
     is_leaf = grid_style.grid.leaf?
 
     self.extra_selectors = grid_style.extra_selectors
@@ -315,31 +321,41 @@ CSS
     end
   end
 
+  def initial_bounds
+    BoundingBox.depickle self.original_bounds
+  end
+
+  def initial_bounds=(new_bound)
+    if self.original_bounds.nil?
+      self.original_bounds = BoundingBox.pickle(new_bound)
+    end
+  end
+
   def crop_image(image_file)
-    Log.debug "Checking whether to crop #{image_file}"
+    Log.info "Checking whether to crop #{image_file}"
     if self.bounds == self.initial_bounds
-      Log.debug "Decided not to crop"
+      Log.info "Decided not to crop"
       return
     end
 
-    Log.debug "Decided that it should be cropped"
+    Log.info "Decided that it should be cropped"
 
     image_name = File.basename image_file
 
-    self.design.fetch_processed_folder
+    extracted_folder = Store::fetch_extracted_folder self.design
 
-    processed_folder = File.dirname design.processed_file_path
-    current_image_path = File.join processed_folder, image_name
-    Log.debug "Reading the image #{current_image_path}"
+    Log.info extracted_folder
+    current_image_path = File.join extracted_folder, image_file
+    Log.info "Reading the image #{current_image_path}"
     current_image = Image.read(current_image_path).first
 
     image_width = current_image.columns
     image_height = current_image.rows
 
-    Log.debug "Checking if the image in disk is bigger than the desired size"
+    Log.info "Checking if the image in disk is bigger than the desired size"
 
     if image_width >= self.bounds.width and image_height >= self.bounds.height
-      Log.debug "Yes it is! Cropping..."
+      Log.info "Yes it is! Cropping..."
 
       top_offset = (self.bounds.top - self.initial_bounds.top).abs
       left_offset = (self.bounds.left - self.initial_bounds.left).abs
@@ -348,10 +364,10 @@ CSS
       current_image.crop!(left_offset, top_offset, self.bounds.width, self.bounds.height)
       current_image.write(current_image_path)
 
-      Log.debug "Saving to the store"
-      Store::save_to_store current_image_path, File.join(design.store_processed_key, image_name)
+      Log.info "Saving to the store"
+      Store::save_to_store current_image_path, File.join(design.store_extracted_key, image_name)
     elsif  image_width < self.bounds.width and image_height < self.bounds.height
-      Log.error "Looks like the image has been cropped to a smaller size than desired."
+      Log.info "Looks like the image has been cropped to a smaller size than desired."
       return
     else
       Log.info "Looks like someone beat me to cropping it. Not cropping again."
