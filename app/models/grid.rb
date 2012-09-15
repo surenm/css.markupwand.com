@@ -307,7 +307,7 @@ class Grid
     end
 
     grid_style_layers.each do |layer|
-      layer.is_style_layer = true
+      layer.style_layer = true
     end
 
     if grid_style_layers.size > 0

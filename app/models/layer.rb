@@ -53,8 +53,8 @@ class Layer
   attr_accessor :shape
   attr_accessor :styles
 
-  attr_accessor :is_overlay # (Boolean)
-  attr_accessor :is_style_layer # (Boolean)
+  attr_accessor :overlay # (Boolean)
+  attr_accessor :style_layer # (Boolean)
   attr_accessor :override_tag # (String)
 
   # CSS Rules
