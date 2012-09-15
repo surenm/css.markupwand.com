@@ -386,6 +386,7 @@ class Design
     body_html    = root_grid.to_html
     compass_includes = <<COMPASS
 @import "compass";
+@import "compass/css3";
 @import "compass/css3/box-shadow";
 @import "compass/css3/border-radius";
 

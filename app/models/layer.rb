@@ -50,7 +50,7 @@ class Layer
   attr_accessor :smart_bounds #(BoundingBox)
 
   attr_accessor :text
-  attr_accessor :shapes
+  attr_accessor :shape
   attr_accessor :styles
 
   attr_accessor :is_overlay # (Boolean)
@@ -79,7 +79,7 @@ class Layer
         :bounds  => self.bounds.attribute_data,
         :opacity => self.opacity,
         :text    => self.text,
-        :shapes  => self.shapes,
+        :shape   => self.shape,
         :styles  => self.styles,
     }
   end
@@ -187,13 +187,13 @@ class Layer
         elsif rule_key == :shadows
           generated_css_array.concat Compassify::get_scss(:text_shadow, rule_object)
         end
-      else        
+      else
         generated_css_array.concat Compassify::get_scss(rule_key, rule_object)
       end
     end
 
-    if self.type == LAYER_SHAPE and self.shapes.first.has_key? :curvature
-      generated_css_array.concat Compassify::get_border_radius(self.shapes.first[:curvature])
+    if self.type == Layer::LAYER_SHAPE and self.shape.has_key? :curvature
+      generated_css_array.concat Compassify::get_border_radius(self.shape[:curvature])
     end
 
     generated_css_array + computed_css_array
