@@ -115,7 +115,9 @@ class Grid
       :offset_box        => offset_box_data,
       :grouping_box      => grouping_box_data,
       :style             => @style.attribute_data
-    }      
+    }   
+
+    return Utils::prune_null_items attribute_data   
   end
   
   ##########################################################
