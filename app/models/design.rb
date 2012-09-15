@@ -277,6 +277,7 @@ class Design
     extracted_folder = self.store_extracted_key
     Store.delete_from_store sif_file
     Store.delete_from_store extracted_folder
+    self.set_status Design::STATUS_QUEUED
     
     self.push_to_extraction_queue
   end
