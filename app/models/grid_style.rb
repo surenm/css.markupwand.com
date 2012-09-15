@@ -334,24 +334,16 @@ class GridStyle
     text_containing_grids
   end
 
-  def modified_hashed_selector
-    design = Design.find self.grid.design.id
-    modified = self.hashed_selectors.map { |selector| design.selector_name_map[selector]['name'] }
-    modified
-  end
-
   # Selector names array(includes default selector and extra selectors)
   def selector_names
-    all_selectors = self.extra_selectors + self.modified_hashed_selector
+    all_selectors = self.extra_selectors
 
     layer_has_css = false
     if self.grid.render_layer
       layer_has_css = true if not self.grid.render_layer.computed_css.empty?
     end
 
-    if not self.generated_selector.nil?
-      all_selectors.push self.modified_generated_selector if not self.computed_css.empty?
-    end
+    all_selectors.push self.modified_generated_selector if not self.css_rules.empty?
 
     all_selectors.uniq!
 
@@ -421,7 +413,7 @@ sass
       if not css_rules.length == 0
         layer_css_string = css_rules.join(";\n") + ";"
         sass += <<sass
- .#{render_layer.modified_generated_selector(self.grid)} {
+ .#{render_layer.generated_selector} {
 #{layer_css_string}
 #{spaces}}
 sass
