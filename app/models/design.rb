@@ -67,6 +67,9 @@ class Design
   # Autoincrement counter
   attr_accessor :incremental_counter
 
+  # Offset box buffer
+  attr_accessor :row_offset_box
+
   mount_uploader :file, DesignUploader
   
   ##########################################################
