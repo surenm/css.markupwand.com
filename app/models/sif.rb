@@ -183,7 +183,7 @@ class Sif
     layer.bounds  = BoundingBox.create_from_attribute_data sif_layer_data[:bounds]
     layer.opacity = sif_layer_data[:opacity]
     layer.text    = sif_layer_data[:text]
-    layer.shapes  = sif_layer_data[:shapes]
+    layer.shape  = sif_layer_data[:shape]
     layer.styles  = sif_layer_data[:styles]
     layer.computed_css = {}
     layer.design  = @design

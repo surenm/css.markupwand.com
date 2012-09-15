@@ -46,7 +46,7 @@ class SifBuilder
       :height  => raw_layer_data[:height],
       :width   => raw_layer_data[:width],
       :text    => raw_layer_data[:text],
-      :shapes  => raw_layer_data[:shapes],
+      :shape   => raw_layer_data[:shape],
       :styles  => raw_layer_data[:styles],
     }
   end
