@@ -67,6 +67,9 @@ class Design
   # Autoincrement counter
   attr_accessor :incremental_counter
 
+  # Offset box buffer
+  attr_accessor :row_offset_box
+
   mount_uploader :file, DesignUploader
   
   ##########################################################
@@ -277,6 +280,7 @@ class Design
     extracted_folder = self.store_extracted_key
     Store.delete_from_store sif_file
     Store.delete_from_store extracted_folder
+    self.set_status Design::STATUS_QUEUED
     
     self.push_to_extraction_queue
   end
