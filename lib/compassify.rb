@@ -4,7 +4,7 @@ module Compassify
       if Compassify.respond_to? key
         style_string = (Compassify.send key, style_object)
         
-        if (not style_string.nil?) and (not style_string.empty?)
+        if not style_string.nil?
           return style_string
         else
           return nil 
@@ -46,6 +46,11 @@ module Compassify
       else
         nil
       end
+    end
+
+    def pattern_fill(object)
+      #TODO: Extract pattern from psd and make it as repeat background image here
+      return []
     end
     
     def border(object)
