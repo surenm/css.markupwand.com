@@ -278,6 +278,8 @@ class Design
     # delete sif files and extracted folder and start again
     sif_file = self.get_sif_file_path
     extracted_folder = self.store_extracted_key
+    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
+    FileUtils.rm_rf tmp_folder
     Store.delete_from_store sif_file
     Store.delete_from_store extracted_folder
     self.set_status Design::STATUS_QUEUED
