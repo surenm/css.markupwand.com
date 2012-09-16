@@ -135,7 +135,7 @@ class Layer
     if not @image_path
       layer_safe_name = Store::get_safe_name(self.name)
       image_base_name = "#{layer_safe_name}_#{self.uid}.png"
-      @image_path     = "./assets/images/#{image_base_name}"
+      @image_path     = "assets/images/#{image_base_name}"
       src_image_file  = Rails.root.join("tmp", "store", self.design.store_extracted_key, @image_path).to_s
       generated       = File.join self.design.store_generated_key, "assets", "images", image_base_name
       published       = File.join self.design.store_published_key, "assets", "images", image_base_name
@@ -360,8 +360,8 @@ CSS
       current_image.crop!(left_offset, top_offset, self.bounds.width, self.bounds.height)
       current_image.write(current_image_path)
 
-      Log.info "Saving to the store"
-      Store::save_to_store current_image_path, File.join(design.store_extracted_key, image_name)
+      Log.info "Saving to the store at - #{File.join(design.store_extracted_key, image_file)}"
+      Store::save_to_store current_image_path, File.join(design.store_extracted_key, image_file)
     elsif  image_width < self.bounds.width and image_height < self.bounds.height
       Log.info "Looks like the image has been cropped to a smaller size than desired."
       return
