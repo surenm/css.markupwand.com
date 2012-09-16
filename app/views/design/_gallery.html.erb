@@ -10,7 +10,7 @@
             </div>
           </div>
           <div class="image center">
-            <a href="/design/<%= design.safe_name %>"><div style="background-image: url('/processed/<%= design.safe_name %>/<%= File.basename design.psd_file_path, '.psd' %>-thumbnail.png')" class="preview-thumbnail"></div></a>
+            <a href="/design/<%= design.safe_name %>"><div style="background-image: url('/extracted/<%= design.safe_name %>/<%= Store::get_safe_name File.basename(design.psd_file_path) %>-thumbnail.png')" class="preview-thumbnail"></div></a>
             <div class="<%= @status_class[design.status.to_sym] %>">
               <%= DesignsHelper::status_display_name  design.status.to_sym %>
             </div>
