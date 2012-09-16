@@ -30,6 +30,7 @@ module Compassify
 
     def text_shadow(shadows)
       shadow = shadows[:drop_shadow]
+      return [""]
       if not shadow.nil?
         ["@include text-shadow(#{shadow[:color]} #{shadow[:horizontal_offset]} #{shadow[:vertical_offset]}  #{shadow[:blur]})"]
       end
