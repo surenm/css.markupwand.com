@@ -133,11 +133,13 @@ class Sif
     self.save!
   end
     
-  
   def save!
     self.validate
     
-    serialized_layers = @layers.values
+    serialized_layers = @layers.values.collect do |layer|
+      layer.attribute_data
+    end
+
     if not @grids.nil?
       serialized_grids = @grids.values.collect do |grid|
         grid.attribute_data
@@ -191,6 +193,8 @@ class Sif
     layer.text    = sif_layer_data[:text]
     layer.shape  = sif_layer_data[:shape]
     layer.styles  = sif_layer_data[:styles]
+    layer.overlay = sif_layer_data[:overlay]
+    layer.style_layer = sif_layer_data[:style_layer]
     layer.computed_css = {}
     layer.design  = @design
     return layer

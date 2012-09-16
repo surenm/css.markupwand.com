@@ -79,7 +79,7 @@ class Grid
     @grouping_box = args.fetch :grouping_box, nil
     @offset_box   = args.fetch :offset_box, nil
     @orientation  = args.fetch :orientation, Constants::GRID_ORIENT_NORMAL
-    @positioned  = args.fetch :positioned, false
+    @positioned   = args.fetch :positioned, false
   
     # The html tag for this grid
     @tag = args.fetch :tag, :div
@@ -115,7 +115,9 @@ class Grid
       :offset_box        => offset_box_data,
       :grouping_box      => grouping_box_data,
       :style             => @style.attribute_data
-    }      
+    }   
+
+    return Utils::prune_null_items attribute_data   
   end
   
   ##########################################################
@@ -307,7 +309,7 @@ class Grid
     end
 
     grid_style_layers.each do |layer|
-      layer.is_style_layer = true
+      layer.style_layer = true
     end
 
     if grid_style_layers.size > 0
@@ -383,7 +385,7 @@ class Grid
         :layers => nodes_in_row_region,
         :orientation => Constants::GRID_ORIENT_LEFT,
         :grouping_box => row_grouping_box.bounds,
-        :row_offset_box => row_grid_offset_box
+        :offset_box => row_grid_offset_box
       })
       
       Log.debug "Extracting style layers out of the row grid #{row_grid}"
@@ -440,9 +442,9 @@ class Grid
       grouping_box_layers = grid.extract_style_layers grouping_box_layers, grouping_box
 
       # If where are still intersecting layers, make them positioned layers and remove them
-      bounding_boxes = grouping_box_layers.values.collect { |node| node.bounds }
+      bounding_boxes    = grouping_box_layers.values.collect { |node| node.bounds }
       gutters_available = BoundingBox.grouping_boxes_possible? bounding_boxes
-      positioning_done = false
+      positioning_done  = false
       if not gutters_available and grouping_box_layers.size > 1
         positioning_done = Grid.extract_positioned_layers grid, grouping_box, grouping_box_layers.values
       end

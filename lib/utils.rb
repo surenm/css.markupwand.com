@@ -70,4 +70,10 @@ module Utils
     end
   end
 
+  def Utils::prune_null_items(object)
+    new_object = Hash.new
+    object.each do |key, value|
+      new_object[key] = value if not value.nil?
+    end
+  end
 end

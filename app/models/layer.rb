@@ -54,8 +54,8 @@ class Layer
   attr_accessor :shape
   attr_accessor :styles
 
-  attr_accessor :is_overlay # (Boolean)
-  attr_accessor :is_style_layer # (Boolean)
+  attr_accessor :overlay # (Boolean)
+  attr_accessor :style_layer # (Boolean)
   attr_accessor :override_tag # (String)
 
   # CSS Rules
@@ -72,17 +72,21 @@ class Layer
   attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
     
   def attribute_data
-    {
-        :uid     => self.uid,
-        :name    => self.name,
-        :type    => self.type,
-        :zindex  => self.zindex,
-        :bounds  => self.bounds.attribute_data,
-        :opacity => self.opacity,
-        :text    => self.text,
-        :shape   => self.shape,
-        :styles  => self.styles,
+    attr_data = {
+      :uid     => self.uid,
+      :name    => self.name,
+      :type    => self.type,
+      :zindex  => self.zindex,
+      :bounds  => self.bounds.attribute_data,
+      :opacity => self.opacity,
+      :text    => self.text,
+      :shape   => self.shape,
+      :styles  => self.styles,
+      :design  => self.design.id,
+      :overlay => self.overlay,
+      :style_layer => self.style_layer,
     }
+    return Utils::prune_null_items attr_data
   end
 
   def initialize
