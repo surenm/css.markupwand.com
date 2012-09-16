@@ -47,6 +47,11 @@ module Compassify
         nil
       end
     end
+
+    def pattern_fill(object)
+      #TODO: Extract pattern from psd and make it as repeat background image here
+      return []
+    end
     
     def border(object)
       if object.is_a? Hash
