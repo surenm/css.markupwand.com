@@ -24,6 +24,7 @@ class ParserJob
       design.save!
 
       design.group_grids
+      design.get_root_grid.style.crop_images
 
       Store::delete_from_store design.store_generated_key
       Store::delete_from_store design.store_published_key
