@@ -4,7 +4,7 @@ module Compassify
       if Compassify.respond_to? key
         style_string = (Compassify.send key, style_object)
         
-        if (not style_string.nil?) and (not style_string.empty?)
+        if not style_string.nil?
           return style_string
         else
           return nil 
