@@ -77,7 +77,7 @@ class ExtractorJob
       next if File.directory? asset_file_path
       asset_file_path_obj = Pathname.new asset_file_path
       asset_relative_path = asset_file_path_obj.relative_path_from(Pathname.new assets_folder)
-      asset_destination_path = File.join design.store_extracted_key, "assets", "images", asset_relative_path
+      asset_destination_path = File.join design.store_extracted_key, "assets", asset_relative_path
       Store.save_to_store(asset_file_path, asset_destination_path)
     end
 
