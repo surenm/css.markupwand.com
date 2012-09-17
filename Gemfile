@@ -19,6 +19,7 @@ gem 'aws-sdk'
 gem 'resque', '1.21.0'
 gem 'resque-history'
 gem 'resque-cleaner'
+gem 'resque-scheduler', :require => 'resque_scheduler'
 gem 'redis'
 gem 'redis-store', '~> 1.0.0'
 gem 'rest-client'
@@ -36,8 +37,7 @@ end
 gem 'unicorn'
 
 # Chat notification
-gem 'grove-rb'
-gem 'capistrano-grove'
+gem 'hipchat'
 
 #File upload related gems
 gem 'carrierwave'
@@ -81,3 +81,9 @@ group :development do
   gem 'capistrano'
   gem 'rvm-capistrano'
 end
+
+group :deploy do
+  gem 'capistrano'
+  gem 'capistrano-ext'
+end
+
