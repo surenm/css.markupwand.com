@@ -3,8 +3,6 @@ set :hipchat_token, "64b7653958a37adb2f41b49efdad33"
 set :hipchat_room_name, "Markupwand"
 set :hipchat_announce, true # notify users?
 
-after 'deploy', 'grove:notify'
-
 ssh_options[:forward_agent] = true
 default_run_options[:shell] = '/bin/bash'
 logger.level = Logger::DEBUG
