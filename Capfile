@@ -1,6 +1,7 @@
-require 'grove/capistrano'
-set :grove_channel_key, 'zUvSh37EVD1EClAl8MrekEQKFlPuzZeA'
-set :grove_service, 'markupwand'
+require 'hipchat/capistrano'
+set :hipchat_token, "64b7653958a37adb2f41b49efdad33"
+set :hipchat_room_name, "Markupwand"
+set :hipchat_announce, true # notify users?
 
 after 'deploy', 'grove:notify'
 
