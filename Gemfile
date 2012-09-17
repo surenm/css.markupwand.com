@@ -36,7 +36,7 @@ end
 gem 'unicorn'
 
 # Chat notification
-gem 'grove-rb'
+gem 'hipchat'
 
 #File upload related gems
 gem 'carrierwave'
