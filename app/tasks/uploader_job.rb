@@ -11,7 +11,7 @@ class UploaderJob
 
     user = design.user
 
-    Utils::post_to_chat "#{user.name.to_s} #{user.email.to_s} uploaded #{design.safe_name.to_s}"
+    Utils::post_to_chat "#{user.name.to_s} #{user.email.to_s} uploaded <a href='http://www.markupwand.com/design/#{design.safe_name.to_s}'>#{design.safe_name_prefix}</a>"
     
     safe_basename = Store::get_safe_name File.basename(design_data[:name], ".psd")
   
