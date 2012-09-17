@@ -31,12 +31,12 @@ module Utils
     req.body = payload
     response = Net::HTTP.new("events.pagerduty.com", '80').start { |http| http.request(req) }
     Log.debug "Response #{response.code} #{response.message}:#{response.body}"
-    Utils::post_to_chat("[Pagerduty] " + error_description)
+    Utils::post_to_chat("[Pagerduty] " + error_description, 'red')
   end
 
-  def Utils::post_to_chat(message)
+  def Utils::post_to_chat(message, color = 'green', notify = true)
     client = HipChat::Client.new(ENV['HIPCHAT_TOKEN'])
-    client['Markupwand'].send('markupwand', message)
+    client['Markupwand'].send('markupwand', message, :notify => notify, :color => color)
   end
   
   def Utils::debug_intersecting_layers(layers)
