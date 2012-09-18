@@ -91,11 +91,8 @@ class DesignController < ApplicationController
       format.json { render :json => @design.attribute_data(true) }
     end
   end
-  
-  def edit
-  end
 
-  def edit_class
+  def edit
     @selector_name_map = @design.selector_name_map
   end
 
