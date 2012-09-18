@@ -127,7 +127,7 @@ class DesignController < ApplicationController
     end
 
 
-    redirect_to :action => :edit_class, :id => @design.safe_name
+    redirect_to :action => :edit, :id => @design.safe_name
   end
   
   def preview
