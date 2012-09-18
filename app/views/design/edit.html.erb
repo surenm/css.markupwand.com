@@ -28,13 +28,10 @@
       <div class="alert">Tip: Press <span class="label  ">TAB</span> key to move to the next class</div>
       <%= form_tag "/design/#{@design.safe_name}/save_class" do %>
       <ul>
-        <% @selector_name_map.each do |selector, modified_selector| %>
         <li>
-          <input autocomplete="off"  tabindex="1" class="editable_class" type="text" name="class_map['<%= selector %>']" 
-            data-original="<%= modified_selector['name'] %>" value="<%= modified_selector['name'] %>">
-          <pre>  <%= CssParser::to_style_string(modified_selector['css']) %></pre>
+          <input autocomplete="off"  tabindex="1" class="editable_class" type="text">
+          <pre> </pre>
         </li>
-        <% end %>
       </ul>
       <div class="save-wrapper">
         <input type="submit" class="saveclasses btn btn-primary" name="save_classes"  value="Save classes">
