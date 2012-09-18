@@ -323,6 +323,28 @@ class Grid
     
     return available_layers
   end
+
+  def extract_eclipsed_layers(available_nodes)
+    eclipsed_layers = []
+
+    available_nodes.each do |_, node_a|
+      available_nodes.each do |_, node_b|
+        if node_a != node_b
+          if node_a.eclipses? node_b
+            eclipsed_layers.push node_b
+          end
+        end
+      end
+    end
+
+    eclipsed_layers.each do |layer|
+      available_nodes.delete layer.uid
+    end
+
+    Log.info "Eclipsed layers = #{eclipsed_layers}"
+
+    return available_nodes
+  end
   
   # Get the row groups within this grid and try to process them one row at a time
   def get_subgrids
@@ -337,7 +359,8 @@ class Grid
     # extract out style layers and parse with remaining        
     Log.debug "Extracting style layers from root grid #{self}..."
     available_nodes = self.extract_style_layers available_nodes, parent_box
-    
+    available_nodes = self.extract_eclipsed_layers available_nodes
+
     # Some root grouping of nodes to recursive add as children
     root_grouping_box = BoundingBox.get_grouping_boxes available_nodes.values
     
