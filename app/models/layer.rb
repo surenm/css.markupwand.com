@@ -131,6 +131,10 @@ class Layer
     self.type == Layer::LAYER_HUESATURATION
   end
 
+  def eclipses?(other_layer)
+    self.encloses? other_layer and self.zindex > other_layer.zindex
+  end
+
   def zero_area?
     self.bounds.nil? or self.bounds.area == 0 or self.bounds.area.nil?
   end
