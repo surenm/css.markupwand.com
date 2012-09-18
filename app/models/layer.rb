@@ -191,21 +191,7 @@ class Layer
       computed_css_array.concat Compassify::get_scss(rule_key, rule_object)
     end
 
-    self.styles.each do |rule_key, rule_object|
-      if self.type == Layer::LAYER_TEXT
-        if rule_key == :gradient_fill
-          generated_css_array.concat Compassify::get_scss(:text_gradient, rule_object)
-        elsif rule_key == :shadows
-          generated_css_array.concat Compassify::get_scss(:text_shadow, rule_object)
-        end
-      else
-        generated_css_array.concat Compassify::get_scss(rule_key, rule_object)
-      end
-    end
-
-    if self.type == Layer::LAYER_SHAPE and self.shape.has_key? :curvature
-      generated_css_array.concat Compassify::get_border_radius(self.shape[:curvature])
-    end
+    generated_css_array = StylesGenerator.get_styles self
 
     generated_css_array + computed_css_array
   end
