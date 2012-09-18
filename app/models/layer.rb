@@ -49,6 +49,7 @@ class Layer
   attr_accessor :initial_bounds #(BoundingBox)
   attr_accessor :bounds #(BoundingBox)
   attr_accessor :smart_bounds #(BoundingBox)
+  attr_accessor :tag_name # (Symbol)
 
   attr_accessor :text
   attr_accessor :shape
@@ -131,6 +132,10 @@ class Layer
     self.type == Layer::LAYER_HUESATURATION
   end
 
+  def eclipses?(other_layer)
+    self.encloses? other_layer and self.zindex > other_layer.zindex
+  end
+
   def zero_area?
     self.bounds.nil? or self.bounds.area == 0 or self.bounds.area.nil?
   end
@@ -156,27 +161,32 @@ class Layer
 
   def tag_name(is_leaf = false)
     chosen_tag = ""
-    if not self.override_tag.nil?
-      self.override_tag
-    elsif self.type == LAYER_SMARTOBJECT
-      if is_leaf
-        chosen_tag = :img
-      else
-        chosen_tag = :div
-      end
-    elsif self.type == LAYER_NORMAL
-      if is_leaf
-        chosen_tag = :img
-      else
-        chosen_tag = :div
-      end
-    elsif self.type == LAYER_TEXT or self.type == LAYER_SOLIDFILL
-      chosen_tag = :div
+    if not @tag_name.nil?
+      @tag_name
     else
-      Log.info "New layer found #{self.type} for layer #{self.name}"
-      chosen_tag = :div
+      if not self.override_tag.nil?
+        self.override_tag
+      elsif self.type == LAYER_SMARTOBJECT
+        if is_leaf
+          chosen_tag = :img
+        else
+          chosen_tag = :div
+        end
+      elsif self.type == LAYER_NORMAL
+        if is_leaf
+          chosen_tag = :img
+        else
+          chosen_tag = :div
+        end
+      elsif self.type == LAYER_TEXT or self.type == LAYER_SOLIDFILL
+        chosen_tag = :div
+      else
+        Log.info "New layer found #{self.type} for layer #{self.name}"
+        chosen_tag = :div
+      end
+      @tag_name = chosen_tag
+      @tag_name
     end
-    chosen_tag
   end
 
   # Array of CSS rules, created using 
@@ -189,21 +199,7 @@ class Layer
       computed_css_array.concat Compassify::get_scss(rule_key, rule_object)
     end
 
-    self.styles.each do |rule_key, rule_object|
-      if self.type == Layer::LAYER_TEXT
-        if rule_key == :gradient_fill
-          generated_css_array.concat Compassify::get_scss(:text_gradient, rule_object)
-        elsif rule_key == :shadows
-          generated_css_array.concat Compassify::get_scss(:text_shadow, rule_object)
-        end
-      else
-        generated_css_array.concat Compassify::get_scss(rule_key, rule_object)
-      end
-    end
-
-    if self.type == Layer::LAYER_SHAPE and self.shape.has_key? :curvature
-      generated_css_array.concat Compassify::get_border_radius(self.shape[:curvature])
-    end
+    generated_css_array = StylesGenerator.get_styles self
 
     generated_css_array + computed_css_array
   end
@@ -268,7 +264,10 @@ CSS
   def selector_names(grid)
     all_selectors = extra_selectors
     all_selectors.push self.generated_selector
-    all_selectors.concat grid.style.selector_names
+
+    if @tag_name != :img
+      all_selectors.concat grid.style.selector_names
+    end
 
     all_selectors.uniq!
     all_selectors
@@ -385,24 +384,24 @@ CSS
     Log.info "[HTML] Layer #{self.to_s}"
     
     generated_tag = tag_name(is_leaf)
-    tag = args.fetch :tag, generated_tag
+    @tag_name = args.fetch :tag, generated_tag
 
     inner_html = args.fetch :inner_html, ''
     if inner_html.empty? and self.type == LAYER_TEXT
       inner_html += self.text_content
     end
 
-    attributes         = Hash.new
-    attributes[:"data-grid-id"] = args.fetch :"data-grid-id", ""
-    attributes[:"data-layer-id"] = self.uid.to_s
+    attributes                     = Hash.new
+    attributes[:"data-grid-id"]    = args.fetch :"data-grid-id", ""
+    attributes[:"data-layer-id"]   = self.uid.to_s
     attributes[:"data-layer-name"] = self.name
     attributes[:class] = self.selector_names(grid).join(" ") if not self.selector_names(grid).empty?
 
-    if tag == :img
+    if @tag_name == :img
       attributes[:src] = self.image_path
       html = tag "img", attributes, false
     else
-      html = content_tag tag, inner_html, attributes, false
+      html = content_tag @tag_name, inner_html, attributes, false
     end
 
     return html

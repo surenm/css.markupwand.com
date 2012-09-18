@@ -146,9 +146,6 @@ class PSDLayer
         @right = bounds.right
         @rows = @bottom - @top
         @cols = @right - @left
-      
-
-    @name = @legacyName unless @name?
 
     Log.debug "Layer #{layerIndex}:", @
 
@@ -310,6 +307,7 @@ class PSDLayer
     # Name length is padded in multiples of 4
     namelen = Util.pad4 @file.read(1)[0]
     @legacyName = Util.decodeMacroman(@file.read(namelen)).replace /\u0000/g, ''
+    @name = @legacyName unless @name?
 
   parseExtraData: ->
     while @file.tell() < @layerEnd
@@ -327,11 +325,11 @@ class PSDLayer
       Log.debug("Extra layer info: key = #{key}, length = #{length}")
       switch key
         when "SoCo"
-          @adjustments.solid_color = (new PSDSolidColor(@, length)).parse()
+          @adjustments.solid_fill = (new PSDSolidColor(@, length)).parse()
         when "GdFl"
-          @adjustments.gradient = (new PSDGradient(@, length)).parse()
+          @adjustments.gradient_overlay = (new PSDGradient(@, length)).parse()
         when "PtFl"
-          @adjustments.pattern = (new PSDPattern(@, length)).parse()
+          @adjustments.pattern_overlay = (new PSDPattern(@, length)).parse()
         when "tySh" # PS <= 5
           @adjustments.typeTool = (new PSDTypeTool(@, length)).parse(true)
         when "TySh" # PS >= 6
