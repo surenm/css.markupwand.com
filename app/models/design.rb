@@ -208,6 +208,10 @@ class Design
     Store::fetch_data_from_store(self.get_sif_file_path)
   end
 
+  def save_sif!
+    @sif.save! if @sif != nil
+  end
+
   ##########################################################
   # SIF related functions
   ##########################################################
