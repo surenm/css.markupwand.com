@@ -73,6 +73,8 @@ class Layer
   attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
     
   def attribute_data
+    parent_grid = self.parent_grid.nil? ? nil : self.parent_grid.id  
+
     attr_data = {
       :uid     => self.uid,
       :name    => self.name,
@@ -87,7 +89,7 @@ class Layer
       :overlay => self.overlay,
       :style_layer        => self.style_layer,
       :generated_selector => self.generated_selector,
-      :parent_grid        => self.parent_grid.id
+      :parent_grid        => parent_grid
     }
     return Utils::prune_null_items attr_data
   end
@@ -202,9 +204,10 @@ class Layer
     generated_css_array + computed_css_array
   end
 
-  def set_style_rules(grid_style)
+  def set_style_rules
     crop_objects_for_cropped_bounds
-    is_leaf = grid_style.grid.leaf?
+    grid_style = self.parent_grid.style
+    is_leaf    = self.parent_grid.style.grid.leaf?
 
     self.extra_selectors = grid_style.extra_selectors
     
@@ -224,7 +227,21 @@ class Layer
       end
     end 
     
-    @generated_selector = CssParser::create_incremental_selector
+    if not self.style_layer 
+      @generated_selector = CssParser::create_incremental_selector(self.readable_layer_type)
+    end
+
+  end
+
+  def readable_layer_type
+    case self.type
+    when LAYER_TEXT
+      'text'
+    when LAYER_NORMAL
+      'image'
+    when LAYER_SHAPE
+      'rectangle'
+    end
   end
 
   def chunk_text_rules

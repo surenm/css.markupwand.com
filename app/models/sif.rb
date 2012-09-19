@@ -55,8 +55,9 @@ class Sif
   def parse
     begin
       self.parse_header
-      self.parse_grids
       self.parse_layers
+      self.parse_grids
+      self.set_layer_parent
       self.validate
     rescue Exception => e
       raise e 
@@ -110,6 +111,21 @@ class Sif
       grid_id = grid_data[:id]
       children.each do |child_id|
         @grids[grid_id].children[child_id] = @grids[child_id]
+      end
+    end
+
+    Log.info "GRIDS ==== #{@grids}"
+  end
+
+  # Grids are not availabe when layers are created.
+  # Once both Grids and Layers are created, create parent values for layers
+  def set_layer_parent
+    Log.info @layers
+    Log.info @grids
+    @layers.each do |_, layer|
+      # The string id just becomes grid object.
+      if not layer.parent_grid.nil?
+        layer.parent_grid = @grids[layer.parent_grid]
       end
     end
   end
@@ -195,9 +211,9 @@ class Sif
     layer.styles       = sif_layer_data[:styles]
     layer.overlay      = sif_layer_data[:overlay]
     layer.style_layer  = sif_layer_data[:style_layer]
+    layer.parent_grid  = sif_layer_data[:parent_grid]
     layer.computed_css = {}
     layer.design       = @design
-    layer.parent_grid  = @grids[sif_layer_data[:parent_grid]]
     return layer
   end
   
