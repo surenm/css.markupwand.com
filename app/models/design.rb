@@ -8,6 +8,8 @@ class Design
   include Mongoid::Document::Taggable
 
   belongs_to :user
+
+  embeds_one :font_map
   
   # Design status types
   Design::STATUS_QUEUED       = :queued
@@ -389,7 +391,7 @@ class Design
     
     Log.info "Parsing fonts..."
     # TODO Fork out and parallel process
-    # self.parse_fonts(self.layers)
+    self.parse_fonts(self.layers)
 
     root_grid = self.get_root_grid
 
@@ -427,7 +429,7 @@ class Design
 
 
 COMPASS
-    scss_content = compass_includes + root_grid.style.scss_tree #FIXME PSDJS + self.font_map.font_scss
+    scss_content = self.font_map.font_scss + compass_includes + root_grid.style.scss_tree #FIXME PSDJS + 
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read

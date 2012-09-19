@@ -252,7 +252,7 @@ CSS
 
   def is_empty_text_layer?
     if self.type == Layer::LAYER_TEXT
-      text_content = layer_json.extract_value(:textKey, :value, :textKey, :value)
+      text_content = self.text.reduce("") {|buffer, t| buffer + t[:text]}
       if text_content.length == 0
         return true
       end
@@ -271,6 +271,16 @@ CSS
 
     all_selectors.uniq!
     all_selectors
+  end
+
+  def get_raw_font_name(position = 0)
+    font_name = nil
+
+    if self.type == Layer::LAYER_TEXT and not is_empty_text_layer?
+      font_name = self.text.first[:text]
+    end
+
+    font_name
   end
 
   def get_font_name(position)
