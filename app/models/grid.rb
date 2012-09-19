@@ -20,6 +20,9 @@ class Grid
 
   # If this is a root grid of a design
   attr_accessor :root  #(Boolean)
+
+  # Holds the depth of the grid
+  attr_accessor :depth #(Integer)
   
   # True if the grid node is going to be positioned
   attr_accessor :positioned  #(Boolean)
@@ -48,8 +51,10 @@ class Grid
     # A grid always has to belong to a design    
     if @root
       @design = args[:design]
+      @depth  = 0
     else
       @design = parent.design
+      @depth  = args.fetch :depth, 0 
     end
     
     # If args contains an id, the grid is just being restored.
@@ -409,6 +414,7 @@ class Grid
         :orientation => Constants::GRID_ORIENT_LEFT,
         :grouping_box => row_grouping_box.bounds,
         :offset_box => row_grid_offset_box
+        :depth      => (self.depth + 1)
       })
       
       Log.debug "Extracting style layers out of the row grid #{row_grid}"
@@ -458,6 +464,7 @@ class Grid
         :layers => grouping_box_layers.values,
         :grouping_box => grouping_box,
         :offset_box => grid_offset_box,
+        :depth => (row_grid.depth + 1)
       })
       
       # Reduce the set of nodes, remove style layers.
@@ -631,7 +638,8 @@ class Grid
         :parent       => grid,
         :layers       => layers_in_grid,
         :positioned   => true,
-        :grouping_box => layer.bounds
+        :grouping_box => layer.bounds,
+        :depth        => (grid.depth + 1)
       })
 
       @@grouping_queue.push positioned_grid
@@ -646,6 +654,7 @@ class Grid
       :layers => flow_layers_in_region,
       :grouping_box => grouping_box,
       :offset_box => offset_bounds,
+      :depth      => (grid.depth + 1)
     })
     
     @@grouping_queue.push flow_grid
