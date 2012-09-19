@@ -30,7 +30,7 @@
       <ul>
         <% @selector_names.each do |selector| %>
         <li>
-          <input autocomplete="off"  tabindex="1" class="editable_class" type="text" value="<%= selector[:name] %>">
+          <input autocomplete="off"  tabindex="1" name="selector[<%= selector[:type] %>-<%= selector[:id] %>]" class="editable_class" type="text" value="<%= selector[:name] %>">
         </li>
         <% end %>
       </ul>
