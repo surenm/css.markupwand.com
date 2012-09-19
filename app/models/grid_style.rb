@@ -15,13 +15,17 @@ class GridStyle
 
     @computed_css = {}
     @extra_selectors    = []
-    @generated_selector = nil
+    @generated_selector = args.fetch :generated_selector, nil
   end
 
   def attribute_data
     {
       :generated_selector => @generated_selector
     }
+  end
+
+  def to_s
+    "#{@generated_selector}"
   end
 
   # FIXME PSDJS
