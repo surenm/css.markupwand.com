@@ -105,9 +105,15 @@ class DesignController < ApplicationController
       end
     end
 
-    Log.info "=================================="
     @design.grids.each do |_, grid|
-      Log.info "#{grid.style}"
+      if not grid.style.generated_selector.nil?
+        selector_data = {
+          :name => grid.style.generated_selector,
+          :type => 'grid',
+          :id   => grid.id 
+        }
+        @selector_names.push selector_data
+      end
     end
 
     Log.info @selector_names
