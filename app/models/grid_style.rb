@@ -286,14 +286,14 @@ class GridStyle
     self.set_style_rules
 
     self.grid.style_layers.each do |_, layer|
-      layer.set_style_rules(self)
+      layer.set_style_rules
     end
 
 
     if self.grid.render_layer.nil?
       self.grid.children.values.each { |child| child.style.compute_css }
     else
-      self.grid.render_layer.set_style_rules(self)
+      self.grid.render_layer.set_style_rules
     end
   end
 
