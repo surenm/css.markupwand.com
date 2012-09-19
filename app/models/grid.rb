@@ -280,6 +280,7 @@ class Grid
     elsif self.layers.size == 1
       Log.info "Just one layer #{self.layers.values.first} is available..."
       self.set_render_layer self.layers.values.first
+      self.layers.values.first.parent_grid = self
     end
   end
   
@@ -315,6 +316,7 @@ class Grid
 
     grid_style_layers.each do |layer|
       layer.style_layer = true
+      layer.parent_grid = self
     end
 
     if grid_style_layers.size > 0

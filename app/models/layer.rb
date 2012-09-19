@@ -35,7 +35,7 @@ class Layer
   ### Relational references ###
 
   # Belongs to multiple grids
-  attr_accessor :grids
+  attr_accessor :parent_grid #(Grid object)
 
   # Belongs to a design
   attr_accessor :design
@@ -86,7 +86,8 @@ class Layer
       :design  => self.design.id,
       :overlay => self.overlay,
       :style_layer        => self.style_layer,
-      :generated_selector => self.generated_selector
+      :generated_selector => self.generated_selector,
+      :parent_grid        => self.parent_grid.id
     }
     return Utils::prune_null_items attr_data
   end
