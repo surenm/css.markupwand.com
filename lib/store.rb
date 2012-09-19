@@ -241,10 +241,9 @@ module Store
   end
 
   def Store::fetch_object_from_local_store(remote_file_path)
-
-    Log.debug "Fetching #{remote_file} from local store #{Store::get_local_store} to #{tmp_file}..."
+    tmp_file = Rails.root.join 'tmp', 'store', remote_file_path
+    Log.debug "Fetching #{remote_file_path} from local store #{Store::get_local_store} to #{tmp_file}..."
     contents = Store::fetch_data_from_local_store(remote_file_path)
-
     Store::write_contents_to_local_file tmp_file, contents
     
     return tmp_file
