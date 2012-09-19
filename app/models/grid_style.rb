@@ -22,7 +22,9 @@ class GridStyle
   end
 
   def attribute_data
-    {}
+    {
+      :generated_selector => @generated_selector
+    }
   end
 
   # FIXME PSDJS
@@ -193,20 +195,6 @@ class GridStyle
     return { :'min-height' => "#{height}px", :'min-width' => "#{width}px" }
   end
 
-  # Selector names are usually generated,
-  # but when the user edits the selector name (aka class name)
-  # we want to pick it up from the modified selector map
-  # and return
-  def modified_generated_selector
-    return self.generated_selector #FIXME PSDJS
-    modified_selector_name = self.grid.design.selector_name_map[self.generated_selector]
-    if not modified_selector_name.nil?
-      modified_selector_name["name"]
-    else
-      self.generated_selector
-    end
-  end
-
   # Array of CSS rules, created using 
   # computed using computed css and 
   def css_rules
@@ -343,7 +331,7 @@ class GridStyle
       layer_has_css = true if not self.grid.render_layer.computed_css.empty?
     end
 
-    all_selectors.push self.modified_generated_selector if not self.css_rules.empty?
+    all_selectors.push self.generated_selector if not self.css_rules.empty?
 
     all_selectors.uniq!
 
@@ -400,7 +388,7 @@ class GridStyle
       initial_space = "" if self.grid.root == true
 
       sass = <<sass
-#{initial_space}.#{self.modified_generated_selector} {
+#{initial_space}.#{self.generated_selector} {
 #{css_string}#{child_css_string}
 #{spaces}}
 sass
