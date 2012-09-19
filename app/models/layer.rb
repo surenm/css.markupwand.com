@@ -297,7 +297,7 @@ CSS
     font_name = nil
 
     if self.type == Layer::LAYER_TEXT and not is_empty_text_layer?
-      font_name = self.text.first[:text]
+      font_name = self.text.first[:styles][:'font-family'] unless self.text.first[:styles].nil?
     end
 
     font_name
