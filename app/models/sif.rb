@@ -113,15 +113,11 @@ class Sif
         @grids[grid_id].children[child_id] = @grids[child_id]
       end
     end
-
-    Log.info "GRIDS ==== #{@grids}"
   end
 
   # Grids are not availabe when layers are created.
   # Once both Grids and Layers are created, create parent values for layers
   def set_layer_parent
-    Log.info @layers
-    Log.info @grids
     @layers.each do |_, layer|
       # The string id just becomes grid object.
       if not layer.parent_grid.nil?
@@ -212,6 +208,8 @@ class Sif
     layer.overlay      = sif_layer_data[:overlay]
     layer.style_layer  = sif_layer_data[:style_layer]
     layer.parent_grid  = sif_layer_data[:parent_grid]
+
+    layer.generated_selector  = sif_layer_data[:generated_selector]
     layer.computed_css = {}
     layer.design       = @design
     return layer
@@ -260,6 +258,7 @@ class Sif
     args[:root]         = sif_grid_data[:root]
     args[:positioned]   = sif_grid_data[:positioned]
     args[:tag]          = sif_grid_data[:tag]
+    args[:style]        = sif_grid_data[:style]
 
     # We have not instantiated children alone. Because children grids would not have been instantiated properly
     grid = Grid.new args
