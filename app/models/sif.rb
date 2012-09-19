@@ -55,8 +55,8 @@ class Sif
   def parse
     begin
       self.parse_header
-      self.parse_layers
       self.parse_grids
+      self.parse_layers
       self.validate
     rescue Exception => e
       raise e 
@@ -187,16 +187,17 @@ class Sif
     else
       layer.initial_bounds = BoundingBox.depickle sif_layer_data[:original_bounds]
     end
-    design_bounds = BoundingBox.new 0, 0, @header[:design_metadata][:height], @header[:design_metadata][:width]
-    layer.bounds  = layer.initial_bounds.inner_crop(design_bounds)
-    layer.opacity = sif_layer_data[:opacity]
-    layer.text    = sif_layer_data[:text]
-    layer.shape  = sif_layer_data[:shape]
-    layer.styles  = sif_layer_data[:styles]
-    layer.overlay = sif_layer_data[:overlay]
-    layer.style_layer = sif_layer_data[:style_layer]
+    design_bounds      = BoundingBox.new 0, 0, @header[:design_metadata][:height], @header[:design_metadata][:width]
+    layer.bounds       = layer.initial_bounds.inner_crop(design_bounds)
+    layer.opacity      = sif_layer_data[:opacity]
+    layer.text         = sif_layer_data[:text]
+    layer.shape        = sif_layer_data[:shape]
+    layer.styles       = sif_layer_data[:styles]
+    layer.overlay      = sif_layer_data[:overlay]
+    layer.style_layer  = sif_layer_data[:style_layer]
     layer.computed_css = {}
-    layer.design  = @design
+    layer.design       = @design
+    layer.parent_grid  = @grids[sif_layer_data[:parent_grid]]
     return layer
   end
   
