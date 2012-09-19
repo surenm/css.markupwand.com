@@ -1,7 +1,7 @@
 class ChatNotifyJob
   extend Resque::Plugins::History
 
-  @queue = :chatnotify
+  @queue = :misc_tasks
 
   def self.perform(design_id, event)
     design = Design.find design_id
