@@ -11,9 +11,9 @@ addFocusOverlay = (node)->
   $(focus_overlay_div).addClass 'focus-overlay'
   iframe_doc().find('body').append focus_overlay_div
   $(focus_overlay_div).css "top", offset.top - 5
-  $(focus_overlay_div).css "left", offset.left - 5 
-  $(focus_overlay_div).width $(node).outerWidth() + 10 
-  $(focus_overlay_div).height $(node).outerHeight() + 10
+  $(focus_overlay_div).css "left", offset.left - 5
+  $(focus_overlay_div).width $(node).outerWidth(false) + 10 
+  $(focus_overlay_div).height $(node).outerHeight(false) + 10
 
 clearFocusOverlays =->
   iframe_doc().find('.focus-overlay').remove()
@@ -57,15 +57,6 @@ window.iframeLoaded =->
   cssLink.rel  = "stylesheet"
   cssLink.type = "text/css"
   $(iframe_doc()).find('head').append cssLink
-  if $('#widget-class-name')
-    $('#widget-class-name').modal({backdrop: true})
-    Analytical.event "edit_name_widget", "shown"
-    $('#widget-name')[0].focus()
-    viewport_width = $('body').innerWidth()
-    hmargin        = (viewport_width)/2;
-    $('#widget-class-name').css('left', hmargin + 'px')
-    $('#widget-class-name').bind 'hide', (e)->
-      Analytical.event "edit_name_widget", "skipped"
 
 
 
