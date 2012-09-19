@@ -7,8 +7,6 @@ class GridStyle
   attr_accessor :css_rules # (Array)
   attr_accessor :generated_selector # (String) 
 
-  attr_accessor :hashed_selectors # (Array) 
-
   def initialize(args)
     @grid   = args[:grid]
     if @grid.nil?
@@ -18,7 +16,6 @@ class GridStyle
     @computed_css = {}
     @extra_selectors    = []
     @generated_selector = nil
-    @hashed_selectors   = []
   end
 
   def attribute_data
@@ -336,30 +333,6 @@ class GridStyle
     all_selectors.uniq!
 
     all_selectors
-  end
-
-
-  def generate_initial_selector_name_map
-    selector_hash = {}
-    initial_selector_name = nil
-    if self.grid.render_layer
-      initial_selector_name = (self.grid.render_layer.generated_selector) if not self.grid.render_layer.generated_selector.nil?
-      css = self.grid.render_layer.computed_css.clone
-    else
-      initial_selector_name = (generated_selector) if not generated_selector.nil? and not generated_selector.empty?
-      css = self.computed_css.clone
-    end
-
-    if not initial_selector_name.nil?
-      selector_hash = { initial_selector_name => {"name" => initial_selector_name, "css" => css } }
-    end
-
-
-    self.grid.children.values.each do |child|
-      selector_hash.update(child.style.generate_initial_selector_name_map)
-    end
-
-    selector_hash
   end
 
   def scss_tree(tabs = 0)

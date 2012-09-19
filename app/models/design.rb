@@ -54,9 +54,6 @@ class Design
   field :rating, :type => Boolean
   
   # CSS Related
-  attr_accessor :selector_name_map
-  attr_accessor :hashed_selectors
-  attr_accessor :is_css_hashed
   attr_accessor :class_edited
   
   # Document properties

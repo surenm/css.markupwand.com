@@ -51,7 +51,6 @@ TransformersWeb::Application.routes.draw do
       match ''                 => 'design#show'
       match 'edit'             => 'design#edit'
       match 'save_class'       => 'design#save_class', :via => :post
-      match 'save_widget_name' => 'design#save_widget_name', :via => :post
       match 'preview'          => 'design#preview'
       match 'download'         => 'design#download'
       match 'update'           => 'design#update'
