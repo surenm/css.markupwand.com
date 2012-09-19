@@ -86,7 +86,10 @@ class Grid
     @tag = args.fetch :tag, :div
     
     # Grid styles
-    @style = args.fetch :style, GridStyle.new(:grid => self)
+    style_args = args.fetch :style, {}
+
+    style_args.update({:grid => self})
+    @style = GridStyle.new(style_args)
     
     @@grouping_queue.push self if @root
   end
