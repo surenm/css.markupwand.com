@@ -300,10 +300,21 @@ class Design
 
   def reparse
     # if sif files exist, remove grids from it and reparse
+    #self.init_sif  
+    #@sif.reset_grids
+    #self.set_status Design::STATUS_PARSING
+    #Resque.enqueue ParserJob, self.id
     self.init_sif  
     @sif.reset_grids
-    self.set_status Design::STATUS_PARSING
-    Resque.enqueue ParserJob, self.id
+    generated_folder = self.store_generated_key
+    published_folder = self.store_published_key
+    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
+    FileUtils.rm_rf tmp_folder
+    Store.delete_from_store generated_folder
+    Store.delete_from_store published_folder
+    self.set_status Design::STATUS_QUEUED
+    
+    self.push_to_parsing_queue
   end
   
   def regenerate
@@ -350,6 +361,10 @@ class Design
 
   def push_to_extraction_queue
     Resque.enqueue ExtractorJob, self.id
+  end
+
+  def push_to_parsing_queue
+    Resque.enqueue ParserJob, self.id
   end
   
   ##########################################################

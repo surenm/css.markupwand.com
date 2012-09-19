@@ -16,7 +16,7 @@ class ParserJob
 
       if not File.exists? sif_file_path
         Log.fatal "SIf file missing. Can't proceed..."
-        raise "Missing SIF file"
+        raise "Missing SIF file #{sif_file_path}"
       end
 
       Log.info "Found SIF file - #{sif_file_path}"
