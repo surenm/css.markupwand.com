@@ -17,16 +17,15 @@ TransformersWeb::Application.routes.draw do
   # Switch user
   devise_scope :user do
     get "login", :to => "devise/sessions#new"
-    get "logout", :to => "devise/sessions#destroy"
-    get "signup", :to => "devise/registrations#new"
+    get "logout",:to => "devise/sessions#destroy"
+    get "signup",:to => "devise/registrations#new"
   end
 
   match "/users/sign_in" => redirect("/login")
   match "/users/sign_up" => redirect("/signup")
-  match "/users" => redirect("/signup")
-  match "/start" => redirect("/")
-
-  match 'unauthorized' => 'login#unauthorized'
+  match "/users"         => redirect("/signup")
+  match "/start"         => redirect("/")
+  match 'unauthorized'   => 'login#unauthorized'
   
   # Dangerous controller route.
   if not Rails.env.production?
@@ -62,10 +61,11 @@ TransformersWeb::Application.routes.draw do
       match 'set-rating'       => 'design#set_rating'
       
       # admin actions to regenerate stuff
-      match 'reextract'    => 'design#reextract'
-      match 'reparse'      => 'design#reparse'
-      match 'regenerate'   => 'design#regenerate'
-      match 'download-psd' => 'design#download_psd'
+      match 'reextract'         => 'design#reextract'
+      match 'reparse'           => 'design#reparse'
+      match 'regenerate'        => 'design#regenerate'
+      match 'download-psd'      => 'design#download_psd'
+      match 'increase-priority' => 'design#increase_priority'
       
       # convinience methods to view logs, dom
       match 'view-logs'  => 'design#view_logs'

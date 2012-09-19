@@ -69,7 +69,7 @@ class DesignController < ApplicationController
     design.psd_file_path = destination_file
     design.save!
     
-    design.push_to_extraction_queue
+    design.push_to_processing_queue
     
     redirect_to :action => :show, :id => design.safe_name
   end
@@ -251,6 +251,11 @@ class DesignController < ApplicationController
     sif_file = Store::fetch_object_from_store remote_file_path
 
     send_file sif_file, :disposition => 'inline', :type => 'application/json'
+  end
+
+  def increase_priority
+    @design.move_to_priority_queue
+    redirect_to :action => :show, :id => @design.safe_name
   end
 
 end
