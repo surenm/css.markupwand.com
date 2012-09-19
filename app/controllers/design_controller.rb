@@ -93,7 +93,24 @@ class DesignController < ApplicationController
   end
 
   def edit
-    @selector_name_map = @design.selector_name_map
+    @selector_names = []
+    @design.layers.each do |_, layer|
+      if not layer.generated_selector.nil?
+        selector_data = {
+          :name => layer.generated_selector,
+          :type => 'layer',
+          :id   => layer.uid 
+        }
+        @selector_names.push selector_data
+      end
+    end
+
+    Log.info "=================================="
+    @design.grids.each do |_, grid|
+      Log.info "#{grid.style}"
+    end
+
+    Log.info @selector_names
   end
 
   def save_class
