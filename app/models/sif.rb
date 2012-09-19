@@ -244,7 +244,6 @@ class Sif
     args[:root]         = sif_grid_data[:root]
     args[:positioned]   = sif_grid_data[:positioned]
     args[:tag]          = sif_grid_data[:tag]
-    args[:depth]        = sif_grid_data[:depth]
 
     # We have not instantiated children alone. Because children grids would not have been instantiated properly
     grid = Grid.new args
