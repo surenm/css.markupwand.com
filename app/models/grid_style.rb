@@ -281,6 +281,12 @@ class GridStyle
 
     css
   end
+
+  def crop_images
+    self.grid.style_layers.each do |_, layer|
+      layer.crop_objects_for_cropped_bounds
+    end
+  end
   
   # Walks recursively through the grids and creates
   def compute_css

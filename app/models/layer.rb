@@ -46,7 +46,7 @@ class Layer
   attr_accessor :type # (String)
   attr_accessor :zindex # (Integer)
   attr_accessor :opacity #(Integer)
-  attr_accessor :original_bounds #(BoundingBox)
+  attr_accessor :initial_bounds #(BoundingBox)
   attr_accessor :bounds #(BoundingBox)
   attr_accessor :smart_bounds #(BoundingBox)
   attr_accessor :tag_name # (Symbol)
@@ -80,6 +80,7 @@ class Layer
       :name    => self.name,
       :type    => self.type,
       :zindex  => self.zindex,
+      :initial_bounds => self.initial_bounds.attribute_data,
       :bounds  => self.bounds.attribute_data,
       :opacity => self.opacity,
       :text    => self.text,
@@ -143,15 +144,18 @@ class Layer
     self.bounds.nil? or self.bounds.area == 0 or self.bounds.area.nil?
   end
 
+  def image_name
+    layer_safe_name = Store::get_safe_name(self.name)
+    image_name = "#{layer_safe_name}_#{self.uid}.png"
+  end
+
   #TODO Requires cleanup
   def image_path
     if not @image_path
-      layer_safe_name = Store::get_safe_name(self.name)
-      image_base_name = "#{layer_safe_name}_#{self.uid}.png"
-      @image_path     = "assets/images/#{image_base_name}"
+      @image_path     = "./assets/images/#{image_name}"
       src_image_file  = Rails.root.join("tmp", "store", self.design.store_extracted_key, @image_path).to_s
-      generated       = File.join self.design.store_generated_key, "assets", "images", image_base_name
-      published       = File.join self.design.store_published_key, "assets", "images", image_base_name
+      generated       = File.join self.design.store_generated_key, "assets", "images", image_name
+      published       = File.join self.design.store_published_key, "assets", "images", image_name
       Store::save_to_store src_image_file, generated
       Store::save_to_store src_image_file, published
     end
@@ -207,7 +211,7 @@ class Layer
   def set_style_rules
     crop_objects_for_cropped_bounds
     grid_style = self.parent_grid.style
-    is_leaf    = self.parent_grid.style.grid.leaf?
+    is_leaf    = grid_style.grid.leaf?
 
     self.extra_selectors = grid_style.extra_selectors
     
@@ -268,7 +272,7 @@ CSS
 
   def is_empty_text_layer?
     if self.type == Layer::LAYER_TEXT
-      text_content = layer_json.extract_value(:textKey, :value, :textKey, :value)
+      text_content = self.text.reduce("") {|buffer, t| buffer + t[:text]}
       if text_content.length == 0
         return true
       end
@@ -287,6 +291,16 @@ CSS
 
     all_selectors.uniq!
     all_selectors
+  end
+
+  def get_raw_font_name(position = 0)
+    font_name = nil
+
+    if self.type == Layer::LAYER_TEXT and not is_empty_text_layer?
+      font_name = self.text.first[:text]
+    end
+
+    font_name
   end
 
   def get_font_name(position)
@@ -339,14 +353,13 @@ CSS
     end
   end
 
-  def initial_bounds
-    BoundingBox.depickle self.original_bounds
+  def extracted_image_path
+    extracted_folder = Store::fetch_extracted_folder self.design
+    current_image_path = File.join extracted_folder, image_asset_path
   end
 
-  def initial_bounds=(new_bound)
-    if self.original_bounds.nil?
-      self.original_bounds = BoundingBox.pickle(new_bound)
-    end
+  def image_asset_path
+    image_file = File.join "assets", "images", self.image_name
   end
 
   def crop_image(image_file)
@@ -358,12 +371,7 @@ CSS
 
     Log.info "Decided that it should be cropped"
 
-    image_name = File.basename image_file
-
-    extracted_folder = Store::fetch_extracted_folder self.design
-
-    Log.info extracted_folder
-    current_image_path = File.join extracted_folder, image_file
+    current_image_path = image_file
     Log.info "Reading the image #{current_image_path}"
     current_image = Image.read(current_image_path).first
 
@@ -383,7 +391,7 @@ CSS
       current_image.write(current_image_path)
 
       Log.info "Saving to the store at - #{File.join(design.store_extracted_key, image_file)}"
-      Store::save_to_store current_image_path, File.join(design.store_extracted_key, image_file)
+      return current_image
     elsif  image_width < self.bounds.width and image_height < self.bounds.height
       Log.info "Looks like the image has been cropped to a smaller size than desired."
       return
@@ -395,7 +403,10 @@ CSS
 
   def crop_objects_for_cropped_bounds
     if self.type == LAYER_NORMAL
-      crop_image self.image_path
+      cropped_image = crop_image self.extracted_image_path
+      if not cropped_image.nil?
+        Store::save_to_store self.extracted_image_path, File.join(design.store_extracted_key, self.image_asset_path)
+      end
     end
   end
 

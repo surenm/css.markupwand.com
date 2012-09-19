@@ -69,7 +69,7 @@ class DesignController < ApplicationController
     design.psd_file_path = destination_file
     design.save!
     
-    design.push_to_extraction_queue
+    design.push_to_processing_queue
     
     redirect_to :action => :show, :id => design.safe_name
   end
@@ -178,7 +178,7 @@ class DesignController < ApplicationController
     @design.font_map.update_downloaded_fonts(saveable_fonts)
     @design.font_map.save!
     @design.save!
-    @design.write_html_job
+    @design.write_html_and_css
     
     redirect_to :action => :fonts, :id => @design.safe_name
   end
@@ -252,6 +252,11 @@ class DesignController < ApplicationController
     sif_file = Store::fetch_object_from_store remote_file_path
 
     send_file sif_file, :disposition => 'inline', :type => 'application/json'
+  end
+
+  def increase_priority
+    @design.move_to_priority_queue
+    redirect_to :action => :show, :id => @design.safe_name
   end
 
 end

@@ -8,11 +8,15 @@ class Design
   include Mongoid::Document::Taggable
 
   belongs_to :user
+
+  embeds_one :font_map
   
   # Design status types
   Design::STATUS_QUEUED       = :queued
   Design::STATUS_UPLOADING    = :uploading
   Design::STATUS_UPLOADED     = :uploaded
+  Design::STATUS_PROCESSING   = :processing
+  Design::STATUS_PROCESSED    = :processed
   Design::STATUS_EXTRACTING   = :extracting
   Design::STATUS_EXTRACTED    = :extracted
   Design::STATUS_CLIPPING     = :clipping
@@ -28,6 +32,8 @@ class Design
     Design::STATUS_QUEUED       => 'label label-info',
     Design::STATUS_UPLOADING    => 'label',
     Design::STATUS_UPLOADED     => 'label',
+    Design::STATUS_PROCESSING   => 'label label-info',
+    Design::STATUS_PROCESSED    => 'label label-info',
     Design::STATUS_EXTRACTING   => 'label label-info',
     Design::STATUS_EXTRACTED    => 'label label-info',
     Design::STATUS_PARSING      => 'label label-info',
@@ -43,12 +49,17 @@ class Design
   Design::ERROR_SCREENSHOT_FAILED  = "screenshot_failed"
   Design::ERROR_EXTRACTION_FAILED  = "extraction_failed"
 
+  Design::PRIORITY_NORMAL = :normal
+  Design::PRIORITY_HIGH   = :high
+
   # File meta data
   field :name, :type => String
   field :psd_file_path, :type => String
   field :sif_file_path, :type => String, :default => nil
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
+  
   field :storage, :type => String, :default => "local"
+  field :queue, :type => String, :default => Design::PRIORITY_NORMAL
 
   # Rating is Yes or No
   field :rating, :type => Boolean
@@ -294,10 +305,21 @@ class Design
 
   def reparse
     # if sif files exist, remove grids from it and reparse
+    #self.init_sif  
+    #@sif.reset_grids
+    #self.set_status Design::STATUS_PARSING
+    #Resque.enqueue ParserJob, self.id
     self.init_sif  
     @sif.reset_grids
-    self.set_status Design::STATUS_PARSING
-    Resque.enqueue ParserJob, self.id
+    generated_folder = self.store_generated_key
+    published_folder = self.store_published_key
+    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
+    FileUtils.rm_rf tmp_folder
+    Store.delete_from_store generated_folder
+    Store.delete_from_store published_folder
+    self.set_status Design::STATUS_QUEUED
+    
+    self.push_to_parsing_queue
   end
   
   def regenerate
@@ -322,8 +344,32 @@ class Design
     return message
   end
   
+  def push_to_processing_queue
+    # Enqueue extractor job to trigger screenshots for now
+    Resque.enqueue ExtractorJob, self.id
+    
+    self.set_status Design::STATUS_PROCESSING
+    self.queue = Design::PRIORITY_NORMAL
+    self.save!
+    
+    message = self.get_processing_queue_message
+    Resque.enqueue ProcessorJob, message
+  end
+
+  def move_to_priority_queue
+    message = self.get_processing_queue_message
+    Resque.dequeue ProcessorJob, message
+    Resque.enqueue PriorityProcessorJob, message
+    self.queue = Design::PRIORITY_HIGH
+    self.save!
+  end
+
   def push_to_extraction_queue
     Resque.enqueue ExtractorJob, self.id
+  end
+
+  def push_to_parsing_queue
+    Resque.enqueue ParserJob, self.id
   end
 
   def push_to_generation_queue
@@ -370,7 +416,7 @@ class Design
     
     Log.info "Parsing fonts..."
     # TODO Fork out and parallel process
-    # self.parse_fonts(self.layers)
+    self.parse_fonts(self.layers)
 
     root_grid = self.get_root_grid
 
@@ -409,7 +455,7 @@ class Design
 
 
 COMPASS
-    scss_content = compass_includes + root_grid.style.scss_tree #FIXME PSDJS + self.font_map.font_scss
+    scss_content = self.font_map.font_scss + compass_includes + root_grid.style.scss_tree #FIXME PSDJS + 
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read

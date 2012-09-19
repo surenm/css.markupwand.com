@@ -1,4 +1,8 @@
 class FontMap
+  include Mongoid::Document
+  include Mongoid::Timestamps::Created
+  include Mongoid::Timestamps::Updated 
+
   embedded_in :design
 
   attr_accessor :layers
@@ -21,9 +25,10 @@ class FontMap
   # Find out fonts and urls from
   # Google and Typekit
   def find_web_fonts(layers)
+    layer_values = layers.values
     fonts_list = []
 
-    layers.each do |layer|
+    layer_values.each do |layer|
       raw_layer_font = layer.get_raw_font_name
       if not DEFAULT_FONTS.include? raw_layer_font
         fonts_list.push raw_layer_font

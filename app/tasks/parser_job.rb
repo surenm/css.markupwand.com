@@ -16,7 +16,7 @@ class ParserJob
 
       if not File.exists? sif_file_path
         Log.fatal "SIf file missing. Can't proceed..."
-        raise "Missing SIF file"
+        raise "Missing SIF file #{sif_file_path}"
       end
 
       Log.info "Found SIF file - #{sif_file_path}"
@@ -24,6 +24,7 @@ class ParserJob
       design.save!
 
       design.group_grids
+      design.get_root_grid.style.crop_images
 
       Store::delete_from_store design.store_generated_key
       Store::delete_from_store design.store_published_key
