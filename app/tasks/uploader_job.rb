@@ -12,7 +12,7 @@ class UploaderJob
 
     user = design.user
 
-    Resque.enqueue ChatNotifyJob design.id, "uploaded"
+    Resque.enqueue ChatNotifyJob, design.id, "uploaded"
     
     safe_basename = Store::get_safe_name File.basename(design_data[:name], ".psd")
   
