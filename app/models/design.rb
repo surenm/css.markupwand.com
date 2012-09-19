@@ -207,6 +207,10 @@ class Design
     File.join self.store_key_prefix, "#{safe_basename}.sif"
   end
 
+  def get_sif_data
+    Store::fetch_data_from_store(self.get_sif_file_path)
+  end
+
   ##########################################################
   # SIF related functions
   ##########################################################

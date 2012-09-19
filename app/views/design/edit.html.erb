@@ -27,6 +27,7 @@
       <h3><i class="icon-edit icon-white"></i> Edit class names</h3>
       <div class="alert">Tip: Press <span class="label  ">TAB</span> key to move to the next class</div>
       <%= form_tag "/design/#{@design.safe_name}/save_class" do %>
+      <%= @design.get_sif_data %>
       <ul>
         <li>
           <input autocomplete="off"  tabindex="1" class="editable_class" type="text">
