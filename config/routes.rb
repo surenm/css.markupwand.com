@@ -11,7 +11,7 @@ TransformersWeb::Application.routes.draw do
   match '/getinvite'   => "landing_page#getinvite"
   match '/about'       => "landing_page#about"
   match '/faq'         => "landing_page#faq"
-  match '/best-practices' => "landing_page#limitations"
+  match '/limitations' => "landing_page#limitations"
 
   
   # Switch user
