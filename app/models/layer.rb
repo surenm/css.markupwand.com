@@ -178,7 +178,7 @@ class Layer
         else
           chosen_tag = :div
         end
-      elsif self.type == LAYER_TEXT or self.type == LAYER_SOLIDFILL
+      elsif self.type == LAYER_TEXT or self.type == LAYER_SHAPE
         chosen_tag = :div
       else
         Log.info "New layer found #{self.type} for layer #{self.name}"
@@ -227,7 +227,7 @@ class Layer
       end
     end 
     
-    if not self.style_layer 
+    if not self.style_layer and self.generated_selector.nil?
       @generated_selector = CssParser::create_incremental_selector(self.readable_layer_type)
     end
 
@@ -278,7 +278,7 @@ CSS
 
   # Selector names (includes default selector and extra selectors)
   def selector_names(grid)
-    all_selectors = extra_selectors
+    all_selectors = self.extra_selectors
     all_selectors.push self.generated_selector
 
     if @tag_name != :img

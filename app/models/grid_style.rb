@@ -14,7 +14,7 @@ class GridStyle
     end
 
     @computed_css = {}
-    @extra_selectors    = []
+    @extra_selectors    = args.fetch :extra_selectors, []
     @generated_selector = args.fetch :generated_selector, nil
   end
 
@@ -267,7 +267,7 @@ class GridStyle
 
     self.computed_css.update style_rules
 
-    self.generated_selector = CssParser::create_incremental_selector('wrapper') if not self.computed_css.empty?
+    self.generated_selector = CssParser::create_incremental_selector('wrapper') if (not self.computed_css.empty?) and self.generated_selector.nil?
   end
 
   def position_absolutely
