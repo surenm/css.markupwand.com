@@ -325,6 +325,11 @@ class Design
   def push_to_extraction_queue
     Resque.enqueue ExtractorJob, self.id
   end
+
+  def push_to_generation_queue
+    self.set_status Design::STATUS_GENERATING
+    Resque.enqueue GeneratorJob, self.id
+  end 
   
   ##########################################################
   # Actual jobs to be run on designs
