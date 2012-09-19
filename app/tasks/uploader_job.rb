@@ -1,4 +1,3 @@
-require 'chat_notify_job.rb'
 class UploaderJob
   extend Resque::Plugins::History
   @queue = :uploader
