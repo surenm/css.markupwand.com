@@ -378,6 +378,7 @@ class Design
 
     write_html_and_css
     
+    @sif.save!
     Log.info "Successfully completed generating #{self.name}"
     return
   end
