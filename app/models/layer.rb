@@ -85,7 +85,8 @@ class Layer
       :styles  => self.styles,
       :design  => self.design.id,
       :overlay => self.overlay,
-      :style_layer => self.style_layer,
+      :style_layer        => self.style_layer,
+      :generated_selector => self.generated_selector
     }
     return Utils::prune_null_items attr_data
   end
