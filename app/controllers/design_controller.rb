@@ -120,6 +120,18 @@ class DesignController < ApplicationController
   end
 
   def save_class
+    params['selector'].each do |key, selector_value|
+      type, id = key.split('-')
+      if type == 'layer'
+        @design.layers[id.to_i].generated_selector = selector_value
+      else
+        @design.grids[id].style.generated_selector = selector_value
+      end
+    end
+
+    @design.save_sif!
+    @design.push_to_generation_queue
+  
     redirect_to :action => :show, :id => @design.safe_name
   end
   
@@ -188,8 +200,7 @@ class DesignController < ApplicationController
     file = Store::fetch_object_from_store(@design.psd_file_path)
     send_file file, :disposition => 'inline'
   end
-  
-    
+      
   def update
     GeneratorJob.perform @design.id
     render :json => {:status => :success}
