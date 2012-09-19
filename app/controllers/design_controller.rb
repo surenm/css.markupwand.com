@@ -253,4 +253,9 @@ class DesignController < ApplicationController
     send_file sif_file, :disposition => 'inline', :type => 'application/json'
   end
 
+  def increase_priority
+    @design.move_to_priority_queue
+    redirect_to :action => :show, :id => @design.safe_name
+  end
+
 end
