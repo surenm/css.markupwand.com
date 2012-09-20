@@ -1,0 +1,19 @@
+<%= content_for :content do %>
+<%= render 'shared/header' %>
+<%= render 'admin/header' %>
+<div class="container">
+  <div class="row">
+    <h2>Stats</h2>
+    <h1> Uploads </h1>
+    <div class="uploads-graph">
+      <div id="uploads-graph-holder" style="width:960px;height:300px"></div>
+      <script type="text/javascript">
+        $.plot($("#uploads-graph-holder"), [<%= raw @upload_graph %>], {
+          xaxis: { mode: "time", ticks: 14 }
+        })
+      </script>
+    </div>
+
+  </div>
+</div>
+<% end %>
