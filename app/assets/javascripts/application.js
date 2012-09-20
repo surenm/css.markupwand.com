@@ -23,6 +23,7 @@
 //= require lib/tree.jquery
 //= require lib/jquery.jeditable
 //= require lib/bootstrap-modal
+//= require jquery.flot
 
 //= require twitter/bootstrap
 //= require models
