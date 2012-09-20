@@ -29,16 +29,15 @@
 @import "compass/css3/transform";
 
 body {
-  font-family: "lemonde-sans", sans-serif;
-  background: #DCDFE6;
-  @include background-image(url('/assets/bg.png'));
-
+  font-family: "droid-sans", sans-serif;
+  background: url('/assets/bg.png');
   line-height: 25px;
   overflow: auto;
 }
 
 #header {
   @include background-image(url('/assets/topbar.png')); 
+  height: 54px;
   margin-bottom:0;
   //border-bottom:2px solid #333; 
   //@include box-shadow(#1A1313 0px 3px 10px);
@@ -72,7 +71,7 @@ body {
 h1 {
   color: #333;
   margin: 30px;
-  font-family: 'Dancing Script', serif;
+  font-family: 'facitweb', serif;
 }
 
 h2 {

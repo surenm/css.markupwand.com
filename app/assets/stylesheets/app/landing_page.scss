@@ -18,8 +18,9 @@
 
 #landing-page {
   h2, h3, h4 {
-    font-family: "ff-tisa-web-pro",serif;
-    font-weight: normal;
+    font-family: "facitweb",serif;
+    font-weight: 800;
+    text-transform: uppercase;
   }
 
   .try-block {
@@ -42,21 +43,21 @@
 
 
   .statement {
-    padding: 75px 0 115px 0;
-    @include background-image(url('/assets/digital-banner2.png'));
+    padding: 50px 0 115px 0;
+    // @include background-image(url('/assets/digital-banner2.png'));
 
     h2 {
-      font-size: 70px;
-      color: #fff;
+      font-size: 50px;
+      color: #3C3B36;
       line-height: 80px;
-      @include text-shadow(rgba(black, 0.6) 3px 3px 6px);
+      @include text-shadow(#CCC 3px 3px 1px);
     }
 
     em {        
       display: inline-block;
       font-style: normal;
-      font-size: 30px;
-      color: #0FBAF3;
+      font-size: 25px;
+      color: #3c3b36;
     }
 
     font-weight: normal;
@@ -76,9 +77,9 @@
     position: relative;
     top: -65px;
     text-align: center;
-    background-color: #fff;
+    background-color: #FFFFFF;
     margin-top: 10px;
-    border-radius: 20px;
+    border-radius: 8px;
 
     .download-image {
       font-size: 10px;
