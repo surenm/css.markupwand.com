@@ -219,12 +219,13 @@ class Layer
     if not is_leaf and self.type == LAYER_NORMAL
       @computed_css[:background]        = "url('../../#{self.image_path}') no-repeat"
       @computed_css[:'background-size'] = "100% 100%"
+        
+      if grid_style
+        @computed_css[:width]             = "#{grid_style.unpadded_width}px"
+        @computed_css[:height]            = "#{grid_style.unpadded_height}px"
+      end
     end
 
-    if grid_style
-      @computed_css[:width]             = "#{grid_style.unpadded_width}px"
-      @computed_css[:height]            = "#{grid_style.unpadded_height}px"
-    end
     
     if not self.text.nil?
       self.text.each_with_index do |_, index|
