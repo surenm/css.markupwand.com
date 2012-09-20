@@ -77,7 +77,6 @@
     position: relative;
     top: -65px;
     text-align: center;
-    background-color: #FFFFFF;
     margin-top: 10px;
     border-radius: 8px;
 
@@ -93,7 +92,6 @@
       min-height:320px;
       background-image: url('/assets/transparent.png');
       text-align: center;
-      border:1px solid #aaa;
       border-radius: 4px;
       @include box-shadow(rgba(128, 128, 128, 0.5) 2px 2px 20px 6px inset);
 
@@ -271,7 +269,6 @@ a.start-using-button {
 
     li {
       display: inline-block;
-      border: 1px solid rgba(238, 238, 238, 1); 
       width: 25%;
       margin: 10px;
       padding: 10px;
