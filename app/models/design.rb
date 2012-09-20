@@ -303,6 +303,18 @@ class Design
     self.push_to_extraction_queue
   end
 
+  def reprocess
+    sif_file = self.get_sif_file_path
+    processed_folder = self.store_processed_key
+    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
+    FileUtils.rm_rf tmp_folder
+    Store.delete_from_store sif_file
+    Store.delete_from_store extracted_folder
+    self.set_status Design::STATUS_QUEUED
+    
+    self.push_to_processing_queue
+  end
+
   def reparse
     # if sif files exist, remove grids from it and reparse
     #self.init_sif  
@@ -345,9 +357,6 @@ class Design
   end
   
   def push_to_processing_queue
-    # Enqueue extractor job to trigger screenshots for now
-    Resque.enqueue ExtractorJob, self.id
-    
     self.set_status Design::STATUS_PROCESSING
     self.queue = Design::PRIORITY_NORMAL
     self.save!

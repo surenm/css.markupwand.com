@@ -146,7 +146,8 @@ class Layer
 
   def image_name
     layer_safe_name = Store::get_safe_name(self.name)
-    image_name = "#{layer_safe_name}_#{self.uid}.png"
+    image_base_name = "#{layer_safe_name.downcase}_#{self.uid}.png"
+    return image_base_name
   end
 
   #TODO Requires cleanup
