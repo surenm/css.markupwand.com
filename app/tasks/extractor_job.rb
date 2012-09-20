@@ -12,16 +12,19 @@ class ExtractorJob
 
     Log.info "Extracting design data from photoshop file #{design.name}..."
     
+    exports_source = design.store_processed_key
+    exports_destination = File.join design.store_extracted_key, "assets", "images"
+    Store.copy_within_store_recursively exports_source, exports_destination
+
     design_folder  = Store.fetch_from_store design.store_key_prefix
     photoshop_file = Rails.root.join 'tmp', 'store', design.psd_file_path
     psd_file_root  = File.basename design.psd_file_path, '.psd'
     
     processed_folder = Rails.root.join 'tmp', 'store', design.store_extracted_key
-    assets_folder = File.join processed_folder, "assets"
-    images_folder = File.join processed_folder, "assets", "images"
-    FileUtils.mkdir_p images_folder if not Dir.exists? images_folder
+    #assets_folder = File.join processed_folder, "assets"
+    #images_folder = File.join processed_folder, "assets", "images"
+    #FileUtils.mkdir_p images_folder if not Dir.exists? images_folder
 
-    
     extracted_file   = Rails.root.join processed_folder, "#{design.safe_name_prefix}.json"
     screenshot_file  = Rails.root.join processed_folder, "#{design.safe_name_prefix}.png"
     fixed_width_file = Rails.root.join processed_folder, "#{design.safe_name_prefix}-fixed.png"
@@ -72,14 +75,15 @@ class ExtractorJob
     Store.save_to_store screenshot_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}.png")
     Store.save_to_store fixed_width_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}-fixed.png")
     Store.save_to_store thumbnail_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}-thumbnail.png")
+
     
-    Dir.glob("#{assets_folder}/**/*").each do |asset_file_path|
-      next if File.directory? asset_file_path
-      asset_file_path_obj = Pathname.new asset_file_path
-      asset_relative_path = asset_file_path_obj.relative_path_from(Pathname.new assets_folder)
-      asset_destination_path = File.join design.store_extracted_key, "assets", asset_relative_path
-      Store.save_to_store(asset_file_path, asset_destination_path)
-    end
+    #Dir.glob("#{assets_folder}/**/*").each do |asset_file_path|
+    #  next if File.directory? asset_file_path
+    #  asset_file_path_obj = Pathname.new asset_file_path
+    #  asset_relative_path = asset_file_path_obj.relative_path_from(Pathname.new assets_folder)
+    #  asset_destination_path = File.join design.store_extracted_key, "assets", asset_relative_path
+    #  Store.save_to_store(asset_file_path, asset_destination_path)
+    #end
 
     design.set_status Design::STATUS_EXTRACTED
     Log.info "Sucessfully completed extracting from photoshop file #{design.name}."
