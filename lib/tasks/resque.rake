@@ -5,8 +5,6 @@ require 'resque_scheduler/tasks'
 task "resque:setup" => :environment
 task "resque:scheduler" => :environment
 
-Rake::Task["resque:work"].enhance ["install:psdjs"]
-
 task "install:psdjs" do
   psdjs_lib_dir = Rails.root.join 'lib', 'psdjs'
   psdjs_tmp_dir = Rails.root.join 'tmp', 'psdjs'
