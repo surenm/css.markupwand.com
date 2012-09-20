@@ -92,6 +92,8 @@ TransformersWeb::Application.routes.draw do
   match 'admin/regenerate' => 'admin#regenerate'
   match 'admin/su'         => 'admin#su'
   match 'admin/save_tag'   => 'admin#save_tag', :via => :post
+  match 'admin/stats'      => 'admin#stats'
+
  
   mount Resque::Server.new, :at => "/resque"
   
