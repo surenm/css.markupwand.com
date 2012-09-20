@@ -178,9 +178,7 @@ class DesignController < ApplicationController
     @design.font_map.update_downloaded_fonts(saveable_fonts)
     @design.font_map.save!
     @design.save!
-    @design.write_html_and_css
-    
-    redirect_to :action => :fonts, :id => @design.safe_name
+    self.reextract
   end
 
   def fonts
