@@ -67,6 +67,21 @@ class AdminController < ApplicationController
     @results_data[:design] = designs if not designs.empty?
   end
 
+  def stats
+    #Last 14 days upload graph
+    today = Date.today
+    date_list = []
+    (0..14).each do |difference|
+      date_list.push (today - difference)
+    end
+
+    @upload_graph = []
+    date_list.each do |date|
+      @upload_graph.push [(date.to_time.to_i * 1000), upload_count_for_date(date)]
+    end
+
+  end
+
   def save_tag
     d = Design.find params[:design_id]
     d.tag_list = params[:tag_list]
@@ -107,6 +122,21 @@ class AdminController < ApplicationController
       user = User.where(:email => params['email']).first
       sign_in_and_redirect user, :event => :authentication if user
     end
+  end
+
+  private
+  def upload_count_for_date(date)
+    cache_key    = "upload-#{date.to_time.to_i.to_s}"
+    cached_count = Rails.cache.read(cache_key)
+    if cached_count.nil?
+      current_date = date.to_time
+      next_date    = (date + 1).to_time
+      cached_count = Design.where(:created_at.gt => current_date, :created_at.lt => next_date).length
+      if date != Date.today
+        Rails.cache.write(cache_key, cached_count)
+      end
+    end
+    cached_count
   end
 
 end
