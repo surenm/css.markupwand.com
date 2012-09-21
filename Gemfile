@@ -28,11 +28,6 @@ gem 'multimap'
 gem 'kaminari'
 gem 'foreman'
 
-# monitoring and profiling
-group :production do
-  gem 'newrelic_rpm'
-end
-
 # Deployment related gems
 gem 'unicorn'
 
@@ -57,6 +52,12 @@ gem 'asset_sync'
 
 #Analytics
 gem 'analytical', :git => 'git://github.com/Goyaka/analytical.git'
+
+
+# monitoring and profiling
+group :production do
+  gem 'newrelic_rpm'
+end
 
 #Testing
 gem 'rspec-rails'
@@ -85,5 +86,6 @@ end
 group :deploy do
   gem 'capistrano'
   gem 'capistrano-ext'
+  gem 'capistrano-resque'
 end
 
