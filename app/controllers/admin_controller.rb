@@ -84,13 +84,15 @@ class AdminController < ApplicationController
     last_fortnight = (today - 14).to_time
     @users_by_signin = User.all.where(:last_sign_in_at.gt => last_fortnight, :admin.ne => true).
       order_by([[:sign_in_count, :desc]]).
-      limit(5).
+      limit(25).
       to_a
 
-    @users_by_uploads = User.all.where(:last_sign_in_at.gt => last_fortnight, :admin.ne => true).to_a
-    @users_by_uploads.sort! do |a, b|
+    users_by_uploads_all = User.all.where(:last_sign_in_at.gt => last_fortnight, :admin.ne => true).to_a
+    users_by_uploads_all.sort! do |a, b|
       b.designs.length <=> a.designs.length
     end
+
+    @users_by_uploads = users_by_uploads[0..25]
   end
 
   def save_tag
