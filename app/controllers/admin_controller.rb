@@ -92,7 +92,7 @@ class AdminController < ApplicationController
       b.designs.length <=> a.designs.length
     end
 
-    @users_by_uploads = users_by_uploads[0..25]
+    @users_by_uploads = users_by_uploads_all[0..25]
   end
 
   def save_tag
