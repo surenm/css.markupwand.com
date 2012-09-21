@@ -87,6 +87,21 @@ h1 {
   margin-top: 10px;
 }
 
-.uploads-graph {
-  background-color: white;
+.stats {
+  .uploads-graph {
+    background-color: white;
+  } 
+
+
+  h3 {
+    text-align: center;
+  }
+
+  .user-stats {
+    margin-top: 10px;
+
+    .user-table {
+      padding: 10px;
+    }
+  }
 }

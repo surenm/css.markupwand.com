@@ -80,6 +80,17 @@ class AdminController < ApplicationController
       @upload_graph.push [(date.to_time.to_i * 1000), upload_count_for_date(date)]
     end
 
+    #Active users in the last 14 days.
+    last_fortnight = (today - 14).to_time
+    @users_by_signin = User.all.where(:last_sign_in_at.gt => last_fortnight).
+      order_by([[:sign_in_count, :desc]]).
+      limit(5).
+      to_a
+
+    @users_by_uploads = User.all.where(:last_sign_in_at.gt => last_fortnight).to_a
+    @users_by_uploads.sort! do |a, b|
+      a.designs.length <=> b.designs.length
+    end
   end
 
   def save_tag

@@ -1,19 +1,43 @@
 <%= content_for :content do %>
 <%= render 'shared/header' %>
 <%= render 'admin/header' %>
-<div class="container">
+<div class="container stats">
   <div class="row">
-    <h2>Stats</h2>
-    <h1> Uploads </h1>
-    <div class="uploads-graph">
-      <div id="uploads-graph-holder" style="width:960px;height:300px"></div>
-      <script type="text/javascript">
-        $.plot($("#uploads-graph-holder"), [<%= raw @upload_graph %>], {
-          xaxis: { mode: "time", ticks: 14 }
-        })
-      </script>
+    <div class="row">
+      <h3> Uploads </h3>
+      <div class="uploads-graph">
+        <div id="uploads-graph-holder" style="width:960px;height:300px"></div>
+        <script type="text/javascript">
+          $.plot($("#uploads-graph-holder"), [<%= raw @upload_graph %>], {
+            xaxis: { mode: "time", ticks: 14 }
+          })
+        </script>
+      </div>
     </div>
 
+    <div class="row user-stats">
+      <h3>Active Users</h3>
+      <div class="row users-content">
+        <div class="span6 user-table">
+        <h4>Users by sign-in count in last 14 days</h4>
+        <table width="100%" border="1">
+        <tr><td>User</td><td>Signin count</td></tr>
+        <% @users_by_signin.each do |user| %>
+          <tr><td><a href="/admin?user=<%= user.email %>"><%= user.first_name %> <%= user.last_name %></a></td><td><%= user.sign_in_count %></td></tr>
+        <% end %>
+        </table>
+        </div>
+        <div class="span6 user-table">
+        <h4>Users by upload count in last 14 days</h4>
+        <table width="100%" border="1">
+        <tr><td>User</td><td>Upload count</td></tr>
+        <% @users_by_uploads.each do |user| %>
+          <tr><td><a href="/admin?user=<%= user.email %>"><%= user.first_name %> <%= user.last_name %></a></td><td><%= user.designs.length %></td></tr>
+        <% end %>
+        </table>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <% end %>
