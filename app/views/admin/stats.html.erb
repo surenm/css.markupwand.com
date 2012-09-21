@@ -23,7 +23,7 @@
         <table width="100%" border="1">
         <tr><td>User</td><td>Signin count</td></tr>
         <% @users_by_signin.each do |user| %>
-          <tr><td><a href="/admin?user=<%= user.email %>"><%= user.first_name %> <%= user.last_name %></a></td><td><%= user.sign_in_count %></td></tr>
+          <tr><td><a href="/admin?user=<%= user.email %>"><%= user.first_name %> <%= user.last_name %> (<%= user.email %>)</a></td><td><%= user.sign_in_count %></td></tr>
         <% end %>
         </table>
         </div>
@@ -32,7 +32,7 @@
         <table width="100%" border="1">
         <tr><td>User</td><td>Upload count</td></tr>
         <% @users_by_uploads.each do |user| %>
-          <tr><td><a href="/admin?user=<%= user.email %>"><%= user.first_name %> <%= user.last_name %></a></td><td><%= user.designs.length %></td></tr>
+          <tr><td><a href="/admin?user=<%= user.email %>"><%= user.first_name %> <%= user.last_name %> (<%= user.email %>)</a></td><td><%= user.designs.length %></td></tr>
         <% end %>
         </table>
         </div>

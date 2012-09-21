@@ -82,14 +82,14 @@ class AdminController < ApplicationController
 
     #Active users in the last 14 days.
     last_fortnight = (today - 14).to_time
-    @users_by_signin = User.all.where(:last_sign_in_at.gt => last_fortnight).
+    @users_by_signin = User.all.where(:last_sign_in_at.gt => last_fortnight, :admin.ne => true).
       order_by([[:sign_in_count, :desc]]).
       limit(5).
       to_a
 
-    @users_by_uploads = User.all.where(:last_sign_in_at.gt => last_fortnight).to_a
+    @users_by_uploads = User.all.where(:last_sign_in_at.gt => last_fortnight, :admin.ne => true).to_a
     @users_by_uploads.sort! do |a, b|
-      a.designs.length <=> b.designs.length
+      b.designs.length <=> a.designs.length
     end
   end
 
