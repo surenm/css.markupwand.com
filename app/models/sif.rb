@@ -118,6 +118,10 @@ class Sif
   # Grids are not availabe when layers are created.
   # Once both Grids and Layers are created, create parent values for layers
   def set_layer_parent
+    if @grids.nil?
+      return
+    end
+
     @layers.each do |_, layer|
       # The string id just becomes grid object.
       if not layer.parent_grid.nil?
@@ -142,6 +146,9 @@ class Sif
   
   def reset_grids
     @grids = nil
+    @layers.each do |layer_id, layer|
+      @layers[layer_id].parent_grid = nil
+    end
     self.save!
   end
     

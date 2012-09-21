@@ -332,7 +332,7 @@ class Design
     FileUtils.rm_rf tmp_folder
     Store.delete_from_store generated_folder
     Store.delete_from_store published_folder
-    self.set_status Design::STATUS_QUEUED
+    self.set_status Design::STATUS_EXTRACTED
     
     self.push_to_parsing_queue
   end
