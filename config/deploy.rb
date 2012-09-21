@@ -43,17 +43,28 @@ end
 
 # overrides
 namespace :deploy do
-  task :start do
+  task :web_start do
     run "cp #{shared_path}/staging_env #{current_path}/.env"
     run "source /home/ubuntu/.rvm/scripts/rvm && cd #{current_path} && foreman start web_daemon"
   end
 
-  task :stop do
+  task :web_stop do
     run "kill -QUIT `cat /tmp/unicorn.pid`"
   end
   
-  task :restart do
+  task :web_restart do
     run "cp #{shared_path}/staging_env #{current_path}/.env"
     run "if [ -f /tmp/unicorn.pid ]  ; then echo 'Restarting...'; kill -USR2 `cat /tmp/unicorn.pid`; else echo 'Starting...'; source /home/ubuntu/.rvm/scripts/rvm  && cd #{current_path} && foreman start web_daemon; fi"
+  end
+end
+
+# Heroku pushes
+namespace :heroku do
+  task :push do
+    if branch == "master"
+      system "git push -f #{heroku_remote} master" 
+    else
+      system "git push -f #{heroku_remote} #{branch}:master" 
+    end
   end
 end

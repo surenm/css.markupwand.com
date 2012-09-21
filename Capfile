@@ -14,7 +14,6 @@ ssh_options[:forward_agent] = true
 # Set the default bash shell for run commands on external server
 default_run_options[:shell] = '/bin/bash'
 
-
 # Just keep 10 releases on cleaning up
 set :keep_releases, 10
 
@@ -31,6 +30,8 @@ set :repository, "git@github.com:Goyaka/transformers-web.git"
 set :branch, "master" unless exists?(:branch)
 set :git_enable_submodules, 1
 set :deploy_via, :remote_cache
+
+before 'deploy:update_code', 'heroku:push'
 
 # After symlink is created, precompile assets
 after 'deploy:create_symlink', 'deploy:assets:precompile_cached'
