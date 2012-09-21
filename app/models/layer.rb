@@ -219,11 +219,17 @@ class Layer
     if not is_leaf and self.type == LAYER_NORMAL
       @computed_css[:background]        = "url('../../#{self.image_path}') no-repeat"
       @computed_css[:'background-size'] = "100% 100%"
-        
+      @computed_css[:'background-repeat'] = "no-repeat"
+
       if grid_style
-        @computed_css[:width]             = "#{grid_style.unpadded_width}px"
-        @computed_css[:height]            = "#{grid_style.unpadded_height}px"
+        @computed_css[:'min-width']  = "#{grid_style.unpadded_width}px"
+        @computed_css[:'min-height'] = "#{grid_style.unpadded_height}px"
       end
+    end
+
+    if is_leaf and self.type == LAYER_SHAPE and grid_style
+      @computed_css[:'min-width']  = "#{grid_style.unpadded_width}px"
+      @computed_css[:'min-height'] = "#{grid_style.unpadded_height}px"
     end
 
     

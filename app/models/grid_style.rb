@@ -215,13 +215,13 @@ class GridStyle
   def set_style_rules
     style_rules = {}
 
-    set_shape_dimensions_flag = false
+    has_shape_layers = false
 
     # Checking if the style layers had a shape.
-    if self.computed_css.has_key? :'min-width' or self.computed_css.has_key? :'min-height'
-      style_rules.delete :'min-width'
-      style_rules.delete :'min-height'
-      set_shape_dimensions_flag = true
+    self.grid.style_layers.each do |_, layer|
+      if layer.type == Layer::LAYER_SHAPE
+        has_shape_layers = true
+      end
     end
     
     # Positioning - absolute is handled separately. Just find out if a grid has to be relatively positioned
@@ -263,7 +263,7 @@ class GridStyle
     style_rules.update self.set_height if self.grid.has_positioned_children?
     
     # minimum height and width for shapes in style layers
-    style_rules.update self.set_min_dimensions if set_shape_dimensions_flag
+    style_rules.update self.set_min_dimensions if has_shape_layers
 
     self.computed_css.update style_rules
 
