@@ -53,7 +53,6 @@ gem 'asset_sync'
 #Analytics
 gem 'analytical', :git => 'git://github.com/Goyaka/analytical.git'
 
-
 # monitoring and profiling
 group :production do
   gem 'newrelic_rpm'
