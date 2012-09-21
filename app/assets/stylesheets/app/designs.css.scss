@@ -4,6 +4,9 @@
 @import "compass/css3/box-shadow";
 @import "compass/utilities";
 
+a:hover {
+  color: #005580;
+}
 #designs-list-page, #design-page {
   margin-top: 30px;
   min-height: 650px;
