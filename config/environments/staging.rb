@@ -31,7 +31,7 @@ TransformersWeb::Application.configure do
   config.assets.compile = true
 
   # Use a different cache store in production
-  config.cache_store = :redis_store, ENV['REDISTOGO_URL']
+  config.cache_store = :dalli_store
 
   config.action_mailer.default_url_options = { :host => 'markupwand-beta.herokuapp.com' }
   
