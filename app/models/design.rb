@@ -440,7 +440,7 @@ class Design
     Log.debug "Destroying design globals..."
     DesignGlobals.destroy
 
-    write_html_and_css
+    self.write_html_and_css
     
     @sif.save!
     Log.info "Successfully completed generating #{self.name}"
