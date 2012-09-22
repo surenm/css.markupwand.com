@@ -715,8 +715,7 @@ class Grid
       
 
       if self.render_layer.tag_name(true) == :img
-        grid_style_classes = self.style.selector_names.join(" ") if not self.style.selector_names.empty?
-        html = content_tag :div, inner_html, {:class => grid_style_classes}, false
+        html = content_tag :div, inner_html, {}, false
       else 
         html = inner_html
       end
