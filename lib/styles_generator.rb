@@ -29,6 +29,8 @@ class StylesGenerator
 
       css_rules.push css_rule
     end
+    
+    css_rules.flatten!
 
     return css_rules
   end
@@ -65,6 +67,8 @@ class StylesGenerator
     if layer.shape[:type] == "ROUNDED_RECTANGLE"
       css_rules.push Compassify::border_radius layer.shape
     end
+    
+    css_rules.flatten!
 
     return css_rules
   end
