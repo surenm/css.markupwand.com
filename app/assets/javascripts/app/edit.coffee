@@ -12,8 +12,10 @@ addFocusOverlay = (node)->
   iframe_doc().find('body').append focus_overlay_div
   $(focus_overlay_div).css "top", offset.top - 5
   $(focus_overlay_div).css "left", offset.left - 5
+  $(focus_overlay_div).css "left", offset.left - 5
   $(focus_overlay_div).width $(node).outerWidth(false) + 10 
   $(focus_overlay_div).height $(node).outerHeight(false) + 10
+  $(focus_overlay_div).css "pointer-events", "none"
 
 clearFocusOverlays =->
   iframe_doc().find('.focus-overlay').remove()
