@@ -180,26 +180,18 @@ class Layer
     self.type == Layer::LAYER_TEXT and self.text_chunks.size > 0
   end
 
-  def chunk_text_rules
-    if not self.text.nil?
-      chunk_text_styles = ""
-      chunk_text_selector.each_with_index do |class_name, index|
-        rules_array = []
-        self.text_chunks[index][:styles].each do |rule_key, rule_object|
-          rules_array.concat Compassify::get_scss(rule_key, rule_object)
-        end
-        rules_string = rules_array.join(";\n") + ";"
-        chunk_text_style =  <<CSS
-.#{self.chunk_text_selector[index]} {
-  #{rules_string}
-}
-CSS
-        chunk_text_styles += chunk_text_style
+  def chunk_text_styles
+    chunk_text_styles = ""
+    chunk_text_selector.each_with_index do |class_name, index|
+      rules_array = []
+      self.text_chunks[index][:styles].each do |rule_key, rule_object|
+        rules_array.concat Compassify::get_scss(rule_key, rule_object)
       end
-      chunk_text_styles
-    else
-      ""
+        
+      chunk_text_style =  Utils::build_stylesheet_block class_name, rules_array
+      chunk_text_styles += chunk_text_style
     end
+    chunk_text_styles
   end
 
   def text_content
