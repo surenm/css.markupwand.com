@@ -107,11 +107,11 @@ class Layer
   ########################################################## 
   def readable_layer_type
     case self.type
-    when LAYER_TEXT
+    when Layer::LAYER_TEXT
       'text'
-    when LAYER_NORMAL
+    when Layer::LAYER_NORMAL
       'image'
-    when LAYER_SHAPE
+    when Layer::LAYER_SHAPE
       'rectangle'
     end
   end
@@ -321,18 +321,17 @@ class Layer
     end
 
     generated_css_array = StylesGenerator.get_styles self
-
     generated_css_array + computed_css_array
   end
 
   def set_style_rules
-    crop_objects_for_cropped_bounds
+    self.crop_objects_for_cropped_bounds
     grid_style = self.parent_grid.style
     is_leaf    = grid_style.grid.leaf?
 
     self.extra_selectors = grid_style.extra_selectors
     
-    if not is_leaf and self.type == LAYER_NORMAL
+    if not is_leaf and self.type == Layer::LAYER_NORMAL
       @computed_css[:background]        = "url('../../#{self.image_path}') no-repeat"
       @computed_css[:'background-size'] = "100% 100%"
       @computed_css[:'background-repeat'] = "no-repeat"
@@ -343,13 +342,13 @@ class Layer
       end
     end
 
-    if is_leaf and self.type == LAYER_SHAPE and grid_style
+    if is_leaf and self.type == Layer::LAYER_SHAPE and grid_style
       @computed_css[:'min-width']  = "#{grid_style.unpadded_width}px"
       @computed_css[:'min-height'] = "#{grid_style.unpadded_height}px"
     end
 
     
-    if not self.text.nil?
+    if self.type == Layer::LAYER_TEXT
       self.text_chunks.each_with_index do |_, index|
         chunk_text_selector[index] = CssParser::create_incremental_selector('text')
       end
