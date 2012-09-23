@@ -71,7 +71,14 @@ class Layer
   attr_accessor :is_multifont # (Boolean)
 
   attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
-    
+  
+  ##########################################################
+  # Layer initialize and serialize functions
+  ##########################################################
+  def initialize
+    @chunk_text_selector = []
+  end
+
   def attribute_data
     parent_grid = self.parent_grid.nil? ? nil : self.parent_grid.id  
 
@@ -94,24 +101,18 @@ class Layer
     }
     return Utils::prune_null_items attr_data
   end
-
-  def initialize
-    @chunk_text_selector = []
-  end
-
-  def has_multifont?
-    self.type == Layer::LAYER_TEXT and self.text.length > 0
-  end
-
-  def has_newline?
-    if self.type == Layer::LAYER_TEXT and
-        layer_json.has_key? :textKey and
-        layer_json.extract_value(:textKey, :value).has_key? :textKey
-
-      string_data = layer_json[:textKey][:value][:textKey][:value]
-      (string_data =~ /\r/) or (string_data =~ /\n/)
-    else
-      false
+  
+  ##########################################################
+  # Layer helper functions
+  ########################################################## 
+  def readable_layer_type
+    case self.type
+    when LAYER_TEXT
+      'text'
+    when LAYER_NORMAL
+      'image'
+    when LAYER_SHAPE
+      'rectangle'
     end
   end
 
@@ -144,6 +145,90 @@ class Layer
     self.bounds.nil? or self.bounds.area == 0 or self.bounds.area.nil?
   end
 
+  # A Layer whose bounds are zero
+  def empty?
+    is_empty = false
+    if self.bounds
+      is_empty = ((self.bounds.top + self.bounds.left + self.bounds.bottom + self.bounds.right) == 0)
+    end
+
+    is_empty
+  end
+
+  def styleable_layer?
+    (self.type != Layer::LAYER_TEXT)
+  end
+  
+
+  ##########################################################
+  # Text Layer helper functions
+  ##########################################################
+
+  def full_text
+    return self.text[:full_text]
+  end
+
+  def text_chunks
+    return self.text[:chunks]
+  end
+
+  def is_empty_text_layer?
+    return self.full_text.size > 0
+  end
+
+  def has_multifont?
+    self.type == Layer::LAYER_TEXT and self.text_chunks.size > 0
+  end
+
+  def chunk_text_rules
+    if not self.text.nil?
+      chunk_text_styles = ""
+      chunk_text_selector.each_with_index do |class_name, index|
+        rules_array = []
+        self.text_chunks[index][:styles].each do |rule_key, rule_object|
+          rules_array.concat Compassify::get_scss(rule_key, rule_object)
+        end
+        rules_string = rules_array.join(";\n") + ";"
+        chunk_text_style =  <<CSS
+.#{self.chunk_text_selector[index]} {
+  #{rules_string}
+}
+CSS
+        chunk_text_styles += chunk_text_style
+      end
+      chunk_text_styles
+    else
+      ""
+    end
+  end
+
+  def text_content
+    if self.type == LAYER_TEXT
+      original_text = self.full_text
+
+      if has_multifont?
+
+        multifont_text = ''
+
+        self.text_chunks.each_with_index do |chunk, index|
+          newlined_chunk = ActiveSupport::SafeBuffer.new(chunk[:text].gsub("\n", "<br>").gsub("\r\r", "<br>").gsub("\r", "<br>"))
+          attributes = { :class => self.chunk_text_selector[index] }
+          multifont_text +=  content_tag :span, newlined_chunk, attributes
+        end
+
+        multifont_text
+      else
+        original_text
+      end
+    else
+      ''
+    end
+  end
+
+  ##########################################################
+  # Normal Layer helper functions
+  ########################################################## 
+  
   def image_name
     layer_safe_name = Store::get_safe_name(self.name)
     image_base_name = "#{layer_safe_name.downcase}_#{self.uid}.png"
@@ -164,200 +249,11 @@ class Layer
     @image_path
   end
 
-  def tag_name(is_leaf = false)
-    chosen_tag = ""
-    if not @tag_name.nil?
-      @tag_name
-    else
-      if not self.override_tag.nil?
-        self.override_tag
-      elsif self.type == LAYER_SMARTOBJECT
-        if is_leaf
-          chosen_tag = :img
-        else
-          chosen_tag = :div
-        end
-      elsif self.type == LAYER_NORMAL
-        if is_leaf
-          chosen_tag = :img
-        else
-          chosen_tag = :div
-        end
-      elsif self.type == LAYER_TEXT or self.type == LAYER_SHAPE
-        chosen_tag = :div
-      else
-        Log.info "New layer found #{self.type} for layer #{self.name}"
-        chosen_tag = :div
-      end
-      @tag_name = chosen_tag
-      @tag_name
-    end
-  end
-
-  # Array of CSS rules, created using 
-  # computed using computed css and 
-  def css_rules
-    computed_css_array  = []
-    generated_css_array = []
-
-    self.computed_css.each do |rule_key, rule_object|
-      computed_css_array.concat Compassify::get_scss(rule_key, rule_object)
-    end
-
-    generated_css_array = StylesGenerator.get_styles self
-
-    generated_css_array + computed_css_array
-  end
-
-  def set_style_rules
-    crop_objects_for_cropped_bounds
-    grid_style = self.parent_grid.style
-    is_leaf    = grid_style.grid.leaf?
-
-    self.extra_selectors = grid_style.extra_selectors
-    
-    if not is_leaf and self.type == LAYER_NORMAL
-      @computed_css[:background]        = "url('../../#{self.image_path}') no-repeat"
-      @computed_css[:'background-size'] = "100% 100%"
-      @computed_css[:'background-repeat'] = "no-repeat"
-
-      if grid_style
-        @computed_css[:'min-width']  = "#{grid_style.unpadded_width}px"
-        @computed_css[:'min-height'] = "#{grid_style.unpadded_height}px"
-      end
-    end
-
-    if is_leaf and self.type == LAYER_SHAPE and grid_style
-      @computed_css[:'min-width']  = "#{grid_style.unpadded_width}px"
-      @computed_css[:'min-height'] = "#{grid_style.unpadded_height}px"
-    end
-
-    
-    if not self.text.nil?
-      self.text.each_with_index do |_, index|
-        chunk_text_selector[index] = CssParser::create_incremental_selector('text')
-      end
-    end 
-    
-    if not self.style_layer and self.generated_selector.nil?
-      @generated_selector = CssParser::create_incremental_selector(self.readable_layer_type)
-    end
-
-  end
-
-  def readable_layer_type
-    case self.type
-    when LAYER_TEXT
-      'text'
-    when LAYER_NORMAL
-      'image'
-    when LAYER_SHAPE
-      'rectangle'
-    end
-  end
-
-  def chunk_text_rules
-    if not self.text.nil?
-      chunk_text_styles = ""
-      chunk_text_selector.each_with_index do |class_name, index|
-        rules_array = []
-       self.text[index][:styles].each do |rule_key, rule_object|
-          rules_array.concat Compassify::get_scss(rule_key, rule_object)
-        end
-        rules_string = rules_array.join(";\n") + ";"
-        chunk_text_style =  <<CSS
-.#{self.chunk_text_selector[index]} {
-  #{rules_string}
-}
-CSS
-        chunk_text_styles += chunk_text_style
-      end
-      chunk_text_styles
-    else
-      ""
-    end
-  end
-
-  def is_empty_text_layer?
-    if self.type == Layer::LAYER_TEXT
-      text_content = self.text.reduce("") {|buffer, t| buffer + t[:text]}
-      if text_content.length == 0
-        return true
-      end
-    end
-    return false
-  end
-
-  # Selector names (includes default selector and extra selectors)
-  def selector_names(grid)
-    all_selectors = self.extra_selectors
-    all_selectors.push self.generated_selector
-
-    if @tag_name != :img
-      all_selectors.concat grid.style.selector_names
-    end
-
-    all_selectors.uniq!
-    all_selectors
-  end
-
-  def get_raw_font_name(position = 0)
-    font_name = nil
-
-    if self.type == Layer::LAYER_TEXT and not is_empty_text_layer?
-      font_name = self.text.first[:styles][:'font-family'] unless self.text.first[:styles].nil?
-    end
-
-    font_name
-  end
-
-  def get_font_name(position)
-    raw_font_name = self.get_raw_font_name(position)
-    return nil if raw_font_name.nil?
-
-    design = self.grids.first.design
-    #design.font_map.get_font raw_font_name
-    raw_font_name
-  end
-
-  # A Layer whose bounds are zero
-  def empty?
-    is_empty = false
-    if self.bounds
-      is_empty = ((self.bounds.top + self.bounds.left + self.bounds.bottom + self.bounds.right) == 0)
-    end
-
-    is_empty
-  end
-
   def text_type
     if layer_json.has_key? :textType
       return layer_json[:textType]
     else
       return ""
-    end
-  end
-
-  def text_content
-    if self.type == LAYER_TEXT
-      original_text = (self.text.map { |text_chunk| text_chunk[:text] }).join ''
-
-      if has_multifont?
-
-        multifont_text = ''
-
-        self.text.each_with_index do |chunk, index|
-          newlined_chunk = ActiveSupport::SafeBuffer.new(chunk[:text].gsub("\n", "<br>").gsub("\r\r", "<br>").gsub("\r", "<br>"))
-          attributes = { :class => self.chunk_text_selector[index] }
-          multifont_text +=  content_tag :span, newlined_chunk, attributes
-        end
-
-        multifont_text
-      else
-        original_text
-      end
-    else
-      ''
     end
   end
 
@@ -418,6 +314,128 @@ CSS
     end
   end
 
+  ##########################################################
+  # Layer styles related functions
+  ##########################################################
+
+  # Array of CSS rules, created using 
+  # computed using computed css and 
+  def css_rules
+    computed_css_array  = []
+    generated_css_array = []
+
+    self.computed_css.each do |rule_key, rule_object|
+      computed_css_array.concat Compassify::get_scss(rule_key, rule_object)
+    end
+
+    generated_css_array = StylesGenerator.get_styles self
+
+    generated_css_array + computed_css_array
+  end
+
+  def set_style_rules
+    crop_objects_for_cropped_bounds
+    grid_style = self.parent_grid.style
+    is_leaf    = grid_style.grid.leaf?
+
+    self.extra_selectors = grid_style.extra_selectors
+    
+    if not is_leaf and self.type == LAYER_NORMAL
+      @computed_css[:background]        = "url('../../#{self.image_path}') no-repeat"
+      @computed_css[:'background-size'] = "100% 100%"
+      @computed_css[:'background-repeat'] = "no-repeat"
+
+      if grid_style
+        @computed_css[:'min-width']  = "#{grid_style.unpadded_width}px"
+        @computed_css[:'min-height'] = "#{grid_style.unpadded_height}px"
+      end
+    end
+
+    if is_leaf and self.type == LAYER_SHAPE and grid_style
+      @computed_css[:'min-width']  = "#{grid_style.unpadded_width}px"
+      @computed_css[:'min-height'] = "#{grid_style.unpadded_height}px"
+    end
+
+    
+    if not self.text.nil?
+      self.text_chunks.each_with_index do |_, index|
+        chunk_text_selector[index] = CssParser::create_incremental_selector('text')
+      end
+    end 
+    
+    if not self.style_layer and self.generated_selector.nil?
+      @generated_selector = CssParser::create_incremental_selector(self.readable_layer_type)
+    end
+
+  end
+
+  # Selector names (includes default selector and extra selectors)
+  def selector_names(grid)
+    all_selectors = self.extra_selectors
+    all_selectors.push self.generated_selector
+
+    if @tag_name != :img
+      all_selectors.concat grid.style.selector_names
+    end
+
+    all_selectors.uniq!
+    all_selectors
+  end
+
+  def get_raw_font_name(position = 0)
+    font_name = nil
+
+    if self.type == Layer::LAYER_TEXT and not is_empty_text_layer?
+      font_name = self.text.first[:styles][:'font-family'] unless self.text.first[:styles].nil?
+    end
+
+    font_name
+  end
+
+  def get_font_name(position)
+    raw_font_name = self.get_raw_font_name(position)
+    return nil if raw_font_name.nil?
+
+    design = self.grids.first.design
+    #design.font_map.get_font raw_font_name
+    raw_font_name
+  end
+
+  ##########################################################
+  # HTML generation related functions
+  ##########################################################
+
+  def tag_name(is_leaf = false)
+    chosen_tag = ""
+    if not @tag_name.nil?
+      @tag_name
+    else
+      if not self.override_tag.nil?
+        self.override_tag
+      elsif self.type == LAYER_SMARTOBJECT
+        if is_leaf
+          chosen_tag = :img
+        else
+          chosen_tag = :div
+        end
+      elsif self.type == LAYER_NORMAL
+        if is_leaf
+          chosen_tag = :img
+        else
+          chosen_tag = :div
+        end
+      elsif self.type == LAYER_TEXT or self.type == LAYER_SHAPE
+        chosen_tag = :div
+      else
+        Log.info "New layer found #{self.type} for layer #{self.name}"
+        chosen_tag = :div
+      end
+      @tag_name = chosen_tag
+      @tag_name
+    end
+  end
+
+
   def to_html(args = {}, is_leaf, grid)
     Log.info "[HTML] Layer #{self.to_s}"
     
@@ -445,9 +463,6 @@ CSS
     return html
   end
 
-  def styleable_layer?
-    (self.type != Layer::LAYER_TEXT)
-  end
 
   def to_s
     "#{self.name} - #{self.bounds} - #{self.type}"
