@@ -21,30 +21,50 @@
   </div>
   <div class = "clearfix"> </div>
 </div>
-<div id='editor-controls'>
+<div id="editor-controls">
   <div id="editor">
-    <div id="css_editor">
-      <h3><i class="icon-edit icon-white"></i> Edit class names</h3>
-      <div class="alert">Tip: Press <span class="label  ">TAB</span> key to move to the next class</div>
+    <div id="tag-editor" class="edit-block">
+      <h3><i class="icon-edit"></i> Tag names </h3>
+      <div class="edit-carousel">
+        <div class="row">
+          <a href="#" class="edit-prev">
+            <img src="/assets/prev.png">
+          </a>
+          <input type="text" class="big-box">
+          <a href="#" class="edit-next">
+            <img src="/assets/next.png">
+          </a>
+        </div>
+        <div class="alert">Press <span class="label label-warning">TAB</span></div>
+      </div>
+    </div>
+    <div id="css-editor" class="edit-block">
+      <h3><i class="icon-edit"></i> Class names</h3>
       <%= form_tag "/design/#{@design.safe_name}/save_class" do %>
-      <ul>
+        <div class="edit-carousel">
+          <div class="row">
+          <a href="#" class="edit-prev">
+            <img src="/assets/prev.png">
+          </a>
+          <input type="text" class="big-box">
+          <a href="#" class="edit-next">
+            <img src="/assets/next.png">
+          </a>
+          </div>
+          <div class="alert">Press <span class="label label-warning">TAB</span></div>
+        </div>
         <% @selector_names.each do |selector| %>
-        <li>
           <input autocomplete="off"  
                  tabindex="1" 
                  name="selector[<%= selector[:type] %>-<%= selector[:id] %>]" 
                  class="editable_class"
                  data-original="<%= selector[:name] %>" 
-                 type="text" 
+                 type="hidden" 
                  value="<%= selector[:name] %>">
-        </li>
         <% end %>
-      </ul>
-      <div class="save-wrapper">
-        <input type="submit" class="saveclasses btn btn-primary" name="save_classes"  value="Save classes">
-      </div>
       <% end %>
     </div>
+      <input type="submit" class="saveclasses btn btn-primary" name="save_classes"  value="Save classes">
   </div>
 </div>
 <div class='ide'>
