@@ -19,15 +19,6 @@ clearFocusOverlays =->
   iframe_doc().find('.focus-overlay').remove()
 
 addListeners =->
-  $('#css_editor input').focus( ->
-    showStyles(this)
-    $(this).select()
-    selector_nodes = $(iframe_doc()).find('body').find('.' + $(this).data('original'))
-    clearFocusOverlays()
-    for node in selector_nodes
-      addFocusOverlay(node)
-  )
-
   helper_terms = ['nav','navbar','header','footer',
   '-inner','-wrap','-outer','profile','banner','carousel',
   'menubar', '-header', '-footer', '-body', 'container', 
@@ -48,6 +39,23 @@ addListeners =->
       false
   )
 
+clickHandler = (e)->
+  e.stopPropagation();
+  clearFocusOverlays()
+  addFocusOverlay(e.target)
+  layer_id = ($(e.target).data('layer-id'))
+  grid_id  = ($(e.target).data('grid-id'))
+  tag_name   = $(e.target).prop('tagName')
+  if layer_id
+    class_name = Design.layers[layer_id]['class'] 
+  else if grid_id
+    class_name = Design.grids[grid_id]['class']
+
+  $('#tag-chooser').val(tag_name)
+
+  if class_name
+    $('#class-chooser').val(class_name)
+
 
 window.iframeLoaded =->
   iframe_dom   = $($("#editor-iframe").contents())
@@ -57,8 +65,7 @@ window.iframeLoaded =->
   cssLink.rel  = "stylesheet"
   cssLink.type = "text/css"
   $(iframe_doc()).find('head').append cssLink
-
-
+  $(iframe_doc()).find('body *').click clickHandler
 
 $(document).ready ->
   addListeners()
