@@ -38,12 +38,6 @@ body {
     opacity: 0.4;
   }
 
-  h3 {
-    font-size: 18px;
-    font-family: "lemonde-sans", sans-serif;
-    padding: 30px 0 0 0;
-  }
-
   .alert {
     font-size: 11px;
     margin: 0px 20px 10px 0;
@@ -76,6 +70,12 @@ body {
 
   .edit-carousel {
     margin-left: 4px;
+    margin-top: 10px;
+    .row {
+      margin-left: 0;
+    }
+
+
     .big-box {
       font-size: 18px;
       padding: 10px;
@@ -98,12 +98,9 @@ body {
       background-color: white;
     }
 
-  }
-
-
-  .edit-block {
-
-    margin-left: 20px;
+    select {
+      font-size: 18px;
+    }
 
   }
 
@@ -111,7 +108,7 @@ body {
     margin-left: 80px;
   }
 
-  #editor-controls {
+  #edit-panel {
     position: absolute;
     top: 44px;
     right: 0;
@@ -132,31 +129,28 @@ body {
       font-size: 15px;
     }
 
+    h3 {
+      font-size: 18px;
+      font-family: "lemonde-sans", sans-serif;
+      text-align: center;
+      border-bottom: 1px solid #666;
+      padding: 30px 0 0 0;
+      margin-bottom: 10px;
+    }
+
+
+    h4 {
+      font-family: 'Helvetica Neue', sans-serif;
+      padding: 2px 0;
+      background-color: #ccc;
+    }
+
+  
     label {
       color: #1D2A5B;
       font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
       font-weight: bold;
     }
-    
-    .css-style, .property {
-      margin: 2px;
-      
-      .key {
-        float: left;
-        width: 100px;
-      }
-      
-      .value {
-        float: left;
-        padding: 2px 4px;
-        color: #fff;      
-        background: #000;
-      }
-      
-      input[type=text] {
-        width: 60px;
-      }
-    }    
   }
   
   #editor-iframe {

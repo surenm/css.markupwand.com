@@ -21,51 +21,46 @@
   </div>
   <div class = "clearfix"> </div>
 </div>
-<div id="editor-controls">
-  <div id="editor">
-    <div id="tag-editor" class="edit-block">
-      <h3><i class="icon-edit"></i> Tag names </h3>
+<div id="edit-panel">
+  <h3><i class="icon-edit"></i> Edit Properties</h3>
+  <div id="tag-editor" class="edit-block">
+    <h4> Tag names </h4>
+    <div class="edit-carousel">
+      <div class="row">
+        <select>
+          <option value="div">&lt;div&gt;</option>
+          <option value="a">&lt;a&gt; (Link)</option> 
+          <option value="h1">&lt;h1&gt; (Heading level 1)</option>
+          <option value="h2">&lt;h2&gt; (Heading level 2)</option>
+          <option value="h3">&lt;h3&gt; (Heading level 3)</option>
+          <option value="h4">&lt;h4&gt; (Heading level 4)</option>
+        </select>
+      </div>
+      <div class="alert">Press <span class="label label-warning">TAB</span></div>
+    </div>
+  </div>
+
+  <div id="css-editor" class="edit-block">
+    <h4>Class</h4>
+    <%= form_tag "/design/#{@design.safe_name}/save_class" do %>
       <div class="edit-carousel">
         <div class="row">
-          <a href="#" class="edit-prev">
-            <img src="/assets/prev.png">
-          </a>
-          <input type="text" class="big-box">
-          <a href="#" class="edit-next">
-            <img src="/assets/next.png">
-          </a>
+        <input type="text" class="big-box">
         </div>
         <div class="alert">Press <span class="label label-warning">TAB</span></div>
       </div>
-    </div>
-    <div id="css-editor" class="edit-block">
-      <h3><i class="icon-edit"></i> Class names</h3>
-      <%= form_tag "/design/#{@design.safe_name}/save_class" do %>
-        <div class="edit-carousel">
-          <div class="row">
-          <a href="#" class="edit-prev">
-            <img src="/assets/prev.png">
-          </a>
-          <input type="text" class="big-box">
-          <a href="#" class="edit-next">
-            <img src="/assets/next.png">
-          </a>
-          </div>
-          <div class="alert">Press <span class="label label-warning">TAB</span></div>
-        </div>
-        <% @selector_names.each do |selector| %>
-          <input autocomplete="off"  
-                 tabindex="1" 
-                 name="selector[<%= selector[:type] %>-<%= selector[:id] %>]" 
-                 class="editable_class"
-                 data-original="<%= selector[:name] %>" 
-                 type="hidden" 
-                 value="<%= selector[:name] %>">
-        <% end %>
+      <% @selector_names.each do |selector| %>
+        <input autocomplete="off"  
+               tabindex="1" 
+               name="selector[<%= selector[:type] %>-<%= selector[:id] %>]" 
+               class="editable_class"
+               data-original="<%= selector[:name] %>" 
+               type="hidden"
+               value="<%= selector[:name] %>">
       <% end %>
-    </div>
-      <input type="submit" class="saveclasses btn btn-primary" name="save_classes"  value="Save classes">
+    <% end %>
   </div>
+  <input type="submit" class="saveclasses btn btn-primary" name="save_classes"  value="Save classes">
 </div>
 <div class='ide'>
   <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html' onload="parent.iframeLoaded();"></iframe>
