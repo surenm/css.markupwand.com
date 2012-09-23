@@ -76,4 +76,15 @@ module Utils
       new_object[key] = value if not value.nil?
     end
   end
+  
+  def Utils::build_stylesheet_block(class_name, styles_array, children_tree_css="")
+    styles_string = styles_array.join(";\n") + ";"
+    css_block = <<-CSS
+.#{class_name} {
+#{styles_string}
+#{children_tree_css}
+}
+CSS
+    return css_block
+  end
 end
