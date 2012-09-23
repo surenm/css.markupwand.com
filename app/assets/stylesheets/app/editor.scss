@@ -39,8 +39,9 @@ body {
   }
 
   h3 {
-    font-size: 14px;
-    padding:20px 0 0 0;
+    font-size: 18px;
+    font-family: "lemonde-sans", sans-serif;
+    padding: 30px 0 0 0;
   }
 
   .alert {
@@ -50,6 +51,8 @@ body {
     padding: 3px;
     width: 212px;
     line-height: 12px;
+    background-color: transparent;
+    color: #444;
 
     .label {
       font-size: 9px;
@@ -71,47 +74,41 @@ body {
     }
   }
 
+  .edit-carousel {
+    margin-left: 4px;
+    .big-box {
+      font-size: 18px;
+      padding: 10px;
+      height: 18px;
+      width: 180px;
+      margin: 0;
+    }
 
-  #css_editor {
+    .edit-prev,
+    .edit-next {
+      display: inline-block;
+      margin-bottom: 2px;
+      background-color: #eee;
+      padding: 3px;
+      border: 1px solid #888;
+      border-radius: 3px;
+    }
+
+    input {
+      background-color: white;
+    }
+
+  }
+
+
+  .edit-block {
 
     margin-left: 20px;
 
-    ul {
-      margin: 10px 0 10px 0;
-      list-style: none;
-      max-height: 500px;
-      overflow: scroll;
-      width: 230px;
+  }
 
-      li {
-        margin:0;
-        padding:0;
-      }
-
-      pre {
-        width: 200px;
-        display: none;
-      }
-
-      input {
-        background-color: inherit;
-        border:1px solid #aaf;
-        margin-bottom: 1px;
-      }
-
-      input:focus {
-        background-color: #fff;
-        border: 2px solid #00f;
-      }
-
-    }
-
-
-    .save-wrapper {
-      padding:10px;
-      text-align: center;
-    }
-
+  .saveclasses {
+    margin-left: 80px;
   }
 
   #editor-controls {
