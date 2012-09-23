@@ -68,7 +68,7 @@ body {
     }
   }
 
-  .edit-carousel {
+  .edit-block {
     margin-left: 4px;
     margin-top: 10px;
     .row {
@@ -96,6 +96,12 @@ body {
 
     input {
       background-color: white;
+      color: #444;
+    }
+
+    input[disabled], select[disabled] {
+      background-color: #ccc;
+      border:1px solid #ccc;
     }
 
     select {

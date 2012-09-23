@@ -21,6 +21,8 @@ clearFocusOverlays =->
   iframe_doc().find('.focus-overlay').remove()
 
 addListeners =->
+  $("#tag-chooser").prop('disabled', true)
+  $("#class-chooser").prop('disabled', true)
   helper_terms = ['nav','navbar','header','footer',
   '-inner','-wrap','-outer','profile','banner','carousel',
   'menubar', '-header', '-footer', '-body', 'container', 
@@ -30,7 +32,6 @@ addListeners =->
 
   for term in helper_terms
     helper_terms_typeahead.push({value : term})
-
 
   $('#css_editor input').typeahead({
     source: helper_terms_typeahead,
@@ -47,17 +48,25 @@ clickHandler = (e)->
   addFocusOverlay(e.target)
   layer_id = ($(e.target).data('layer-id'))
   grid_id  = ($(e.target).data('grid-id'))
-  tag_name   = $(e.target).prop('tagName')
+
+  $("#tag-chooser").prop('disabled', false) 
+  $("#class-chooser").prop('disabled', false)
+
   if layer_id
-    class_name = Design.layers[layer_id]['class'] 
+    class_name = Design.layers[layer_id]['class']
+    tag_name = Design.layers[layer_id]['tag']
   else if grid_id
     class_name = Design.grids[grid_id]['class']
+    tag_name = Design.grids[grid_id]['tag']
+  else
+    $("#tag-chooser").prop('disabled', true)
+    $("#class-chooser").prop('disabled', true)
+    $("#tag-chooser").val('nil')
+    $("#class-chooser").val('')
+    return
 
   $('#tag-chooser').val(tag_name)
-
-  if class_name
-    $('#class-chooser').val(class_name)
-
+  $('#class-chooser').val(class_name)  
 
 window.iframeLoaded =->
   iframe_dom   = $($("#editor-iframe").contents())
