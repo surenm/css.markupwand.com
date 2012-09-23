@@ -345,58 +345,29 @@ class GridStyle
     all_selectors
   end
 
-  def scss_tree(tabs = 0)
+  def scss_tree
     child_scss_trees = ''
     self.grid.children.values.each do |child|
-      child_scss_trees += child.style.scss_tree(tabs + 1)
+      child_scss_trees += child.style.scss_tree
     end
 
-    spaces = ""
-    for tab in 0..(tabs-1)
-      spaces = spaces + " "
-    end
-
-    css_rules = self.css_rules
-
-    if css_rules.length == 0
+    if self.css_rules.length == 0
       sass = "#{child_scss_trees}"
     else
-      css_string = css_rules.join(";\n") + ";"
       child_css_string = ""
       if not child_scss_trees.empty?
-         child_css_string = "\n#{spaces}" + child_scss_trees.rstrip
+         child_css_string = "\n" + child_scss_trees.rstrip
       end
-
-      initial_space = "  "
-      initial_space = "" if self.grid.root == true
-
-      sass = <<sass
-#{initial_space}.#{self.generated_selector} {
-#{css_string}#{child_css_string}
-#{spaces}}
-sass
+      
+      sass = Utils::build_stylesheet_block self.generated_selector, self.css_rules, child_css_string
     end
 
     if not self.grid.render_layer.nil?
       render_layer = self.grid.render_layer
-      chunk_text_rules = render_layer.chunk_text_rules
-      css_rules = render_layer.css_rules
-      if not css_rules.length == 0
-        layer_css_string = css_rules.join(";\n") + ";"
-        sass += <<sass
- .#{render_layer.generated_selector} {
-#{layer_css_string}
-#{spaces}}
-sass
-      end
-
-      if not render_layer.text.nil?
-        sass += chunk_text_rules
-      end
-
+      sass += render_layer.to_scss
     end
 
-    sass
+    return sass
   end
   
 end
