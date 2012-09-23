@@ -384,6 +384,13 @@ class Layer
     font_name
   end
 
+  def to_scss
+    if self.type = Layer::LAYER_TEXT
+      sass = self.chunk_text_styles
+    else
+      sass = Utils::build_stylesheet_block(self.generated_selector, self.css_rules)
+    end
+    sass
   end
 
   ##########################################################
