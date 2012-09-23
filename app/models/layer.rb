@@ -392,13 +392,6 @@ CSS
     font_name
   end
 
-  def get_font_name(position)
-    raw_font_name = self.get_raw_font_name(position)
-    return nil if raw_font_name.nil?
-
-    design = self.grids.first.design
-    #design.font_map.get_font raw_font_name
-    raw_font_name
   end
 
   ##########################################################
@@ -462,7 +455,6 @@ CSS
 
     return html
   end
-
 
   def to_s
     "#{self.name} - #{self.bounds} - #{self.type}"
