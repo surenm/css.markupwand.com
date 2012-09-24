@@ -173,7 +173,7 @@ class Layer
   end
 
   def is_empty_text_layer?
-    return self.full_text.size > 0
+    return self.full_text.size == 0
   end
 
   def has_multifont?
@@ -376,11 +376,13 @@ class Layer
   def get_raw_font_name(position = 0)
     font_name = nil
 
+    fonts = []
+
     if self.type == Layer::LAYER_TEXT and not is_empty_text_layer?
-      font_name = self.text.first[:styles][:'font-family'] unless self.text.first[:styles].nil?
+      fonts = self.text[:chunks].collect { |c| c[:styles][:'font-family']} unless self.text[:chunks].nil?
     end
 
-    font_name
+    fonts.uniq
   end
 
   def to_scss
