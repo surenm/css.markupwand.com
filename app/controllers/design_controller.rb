@@ -108,13 +108,15 @@ class DesignController < ApplicationController
   end
 
   def save_class
-    params['selector'].each do |key, selector_value|
-      type, id = key.split('-')
-      if type == 'layer'
-        @design.layers[id.to_i].generated_selector = selector_value
-      else
-        @design.grids[id].style.generated_selector = selector_value
-      end
+    dom_json = JSON.parse params['dom_json']
+    layers = dom_json['layer']
+    grids  = dom_json['grid']
+    layers.each do |id, layer_data|
+      @design.layers[id.to_i].generated_selector = layer_data['class']
+    end
+
+    grids.each do |id, grid_data|
+      @design.grids[id].style.generated_selector = grid_data['class']
     end
 
     @design.save_sif!

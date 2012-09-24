@@ -427,7 +427,7 @@ class Design
     
     Log.info "Parsing fonts..."
     # TODO Fork out and parallel process
-    self.parse_fonts(self.layers)
+    # self.parse_fonts(self.layers)
 
     root_grid = self.get_root_grid
 
