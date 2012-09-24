@@ -24,8 +24,9 @@
 
 <script type="text/javascript">
 Design = {}
-Design.grids = <%= raw @grids.to_json %>;
-Design.layers = <%= raw @layers.to_json %>;
+Design.grid = <%= raw @grids.to_json %>;
+Design.layer = <%= raw @layers.to_json %>;
+Design.unsaved_changes = false;
 </script>
 <div id="edit-panel">
   <h3><i class="icon-edit"></i> Edit Properties</h3>
@@ -56,8 +57,13 @@ Design.layers = <%= raw @layers.to_json %>;
       </div>
     <% end %>
   </div>
+
+  <div class="hide alert alert-danger" id="unsaved-changes">
+    You have unsaved changes. Hit save.
+  </div>
   <input type="submit" class="saveclasses btn btn-primary" name="save_classes"  value="Save classes">
 </div>
+
 <div class='ide'>
   <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html' onload="parent.iframeLoaded();"></iframe>
 </div>

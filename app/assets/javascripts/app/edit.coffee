@@ -23,7 +23,11 @@ clearFocusOverlays =->
 getChosenNode =->
   id   = $('#edit-panel').data('node-id')
   type = $('#edit-panel').data('node-type')
-  Design[type][id]
+  return Design[type][id]
+
+checkForUnsavedChanges =->
+  if Design.unsaved_changes
+    $('#unsaved-changes').show()
 
 addListeners =->
   $("#tag-chooser").prop('disabled', true)
@@ -39,15 +43,17 @@ addListeners =->
     helper_terms_typeahead.push({value : term})
 
   $("#tag-chooser").change( (e)->
-    console.log($(e.target).val())
-  )
-
-  $("#class-chooser").change( (e)->
-    console.log($(e.target).val())
+    node = getChosenNode()
+    node['tag'] = $(e.target).val()
+    Design.unsaved_changes = true
+    checkForUnsavedChanges()
   )
 
   $("#class-chooser").keyup( (e)->
-    console.log($(e.target).val())
+    node = getChosenNode()
+    node['class'] = $(e.target).val()
+    Design.unsaved_changes = true
+    checkForUnsavedChanges()
   )
 
 clickHandler = (e)->
@@ -61,13 +67,13 @@ clickHandler = (e)->
   $("#class-chooser").prop('disabled', false)
 
   if layer_id
-    class_name = Design.layers[layer_id]['class']
-    tag_name   = Design.layers[layer_id]['tag']
+    class_name = Design.layer[layer_id]['class']
+    tag_name   = Design.layer[layer_id]['tag']
     type       = 'layer'
     id         = layer_id
   else if grid_id
-    class_name = Design.grids[grid_id]['class']
-    tag_name   = Design.grids[grid_id]['tag']
+    class_name = Design.grid[grid_id]['class']
+    tag_name   = Design.grid[grid_id]['tag']
     type       = 'grid'
     id         = grid_id
   else

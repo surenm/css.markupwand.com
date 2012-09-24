@@ -162,6 +162,11 @@ body {
       font-weight: bold;
     }
   }
+
+  #unsaved-changes {
+    background-color: orange;
+    margin-left: 30px;
+  }
   
   #editor-iframe {
     position: absolute;
