@@ -53,7 +53,7 @@ class FontMap
     end
 
     Log.debug "Found #{google_fonts} from google web fonts library"
-    Log.debug "Still missing #{self.missing_fonts}"
+    Log.debug "Missing Fonts - #{self.missing_fonts}"
 
     copy_from_localfonts(fonts_list, SystemFont.all)
     copy_from_localfonts(fonts_list, self.design.user.user_fonts)
