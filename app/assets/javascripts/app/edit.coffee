@@ -28,6 +28,7 @@ getChosenNode =->
 checkForUnsavedChanges =->
   if Design.unsaved_changes
     $('#unsaved-changes').show()
+    $('#dom_json').val(JSON.stringify(Design))
 
 addListeners =->
   $("#tag-chooser").prop('disabled', true)
@@ -99,3 +100,4 @@ window.iframeLoaded =->
 
 $(document).ready ->
   addListeners()
+  checkForUnsavedChanges()

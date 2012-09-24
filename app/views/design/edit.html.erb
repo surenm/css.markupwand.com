@@ -50,18 +50,20 @@ Design.unsaved_changes = false;
 
   <div id="css-editor" class="edit-block">
     <h4>Class</h4>
-    <%= form_tag "/design/#{@design.safe_name}/save_class" do %>
-      <div class="edit-block-hd">
-        <input type="text" id="class-chooser" class="big-box">
-        <div class="alert">Press <span class="label label-warning">TAB</span></div>
-      </div>
-    <% end %>
+    <div class="edit-block-hd">
+      <input type="text" id="class-chooser" class="big-box">
+      <div class="alert">Press <span class="label label-warning">TAB</span></div>
+    </div>
   </div>
 
   <div class="hide alert alert-danger" id="unsaved-changes">
     You have unsaved changes. Hit save.
   </div>
-  <input type="submit" class="saveclasses btn btn-primary" name="save_classes"  value="Save classes">
+  
+  <%= form_tag "/design/#{@design.safe_name}/save_class" do %>
+    <input type="hidden" name="dom_json" id="dom_json" value="">
+    <input type="submit" class="saveclasses btn btn-primary" name="save_classes"  value="Save classes">
+  <% end %>
 </div>
 
 <div class='ide'>
