@@ -283,6 +283,8 @@ class GridStyle
   end
 
   def crop_images
+    Log.info "Style Layers"
+    Log.info self.grid.style_layers
     self.grid.style_layers.each do |_, layer|
       layer.crop_objects_for_cropped_bounds
     end

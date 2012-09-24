@@ -251,6 +251,8 @@ class Layer
 
   def extracted_image_path
     extracted_folder = Store::fetch_extracted_folder self.design
+    Log.debug extracted_folder
+    Log.debug image_asset_path
     current_image_path = File.join extracted_folder, image_asset_path
   end
 
@@ -286,7 +288,7 @@ class Layer
       current_image.crop!(left_offset, top_offset, self.bounds.width, self.bounds.height)
       current_image.write(current_image_path)
 
-      Log.info "Saving to the store at - #{File.join(design.store_extracted_key, image_file)}"
+      Log.info "Saving to the store at - #{File.join(design.store_extracted_key, self.image_asset_path)}"
       return current_image
     elsif  image_width < self.bounds.width and image_height < self.bounds.height
       Log.info "Looks like the image has been cropped to a smaller size than desired."
@@ -301,6 +303,7 @@ class Layer
     if self.type == LAYER_NORMAL
       cropped_image = crop_image self.extracted_image_path
       if not cropped_image.nil?
+        Log.debug "Cropped image - #{cropped_image}"
         Store::save_to_store self.extracted_image_path, File.join(design.store_extracted_key, self.image_asset_path)
       end
     end
