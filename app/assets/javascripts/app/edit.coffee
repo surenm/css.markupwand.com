@@ -20,6 +20,11 @@ addFocusOverlay = (node)->
 clearFocusOverlays =->
   iframe_doc().find('.focus-overlay').remove()
 
+getChosenNode =->
+  id   = $('#edit-panel').data('node-id')
+  type = $('#edit-panel').data('node-type')
+  Design[type][id]
+
 addListeners =->
   $("#tag-chooser").prop('disabled', true)
   $("#class-chooser").prop('disabled', true)
@@ -33,13 +38,16 @@ addListeners =->
   for term in helper_terms
     helper_terms_typeahead.push({value : term})
 
-  $('#css_editor input').typeahead({
-    source: helper_terms_typeahead,
-  })
+  $("#tag-chooser").change( (e)->
+    console.log($(e.target).val())
+  )
 
-  $('#css_editor input').keypress((e)->
-    if e.which == 13 
-      false
+  $("#class-chooser").change( (e)->
+    console.log($(e.target).val())
+  )
+
+  $("#class-chooser").keyup( (e)->
+    console.log($(e.target).val())
   )
 
 clickHandler = (e)->
@@ -54,19 +62,24 @@ clickHandler = (e)->
 
   if layer_id
     class_name = Design.layers[layer_id]['class']
-    tag_name = Design.layers[layer_id]['tag']
+    tag_name   = Design.layers[layer_id]['tag']
+    type       = 'layer'
+    id         = layer_id
   else if grid_id
     class_name = Design.grids[grid_id]['class']
-    tag_name = Design.grids[grid_id]['tag']
+    tag_name   = Design.grids[grid_id]['tag']
+    type       = 'grid'
+    id         = grid_id
   else
     $("#tag-chooser").prop('disabled', true)
     $("#class-chooser").prop('disabled', true)
-    $("#tag-chooser").val('nil')
-    $("#class-chooser").val('')
-    return
+    tag_name = 'nil'
+    class_name = ''
 
+  $('#edit-panel').data('node-id', id)
+  $('#edit-panel').data('node-type', type)
   $('#tag-chooser').val(tag_name)
-  $('#class-chooser').val(class_name)  
+  $('#class-chooser').val(class_name)
 
 window.iframeLoaded =->
   iframe_dom   = $($("#editor-iframe").contents())
