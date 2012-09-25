@@ -60,7 +60,7 @@ Design.unsaved_changes = false;
     You have unsaved changes. Hit save.
   </div>
   
-  <%= form_tag "/design/#{@design.safe_name}/save_class" do %>
+  <%= form_tag "/design/#{@design.safe_name}/save_edits" do %>
     <input type="hidden" name="dom_json" id="dom_json" value="">
     <input type="submit" class="saveclasses btn btn-primary" name="save_classes"  value="Save classes">
   <% end %>

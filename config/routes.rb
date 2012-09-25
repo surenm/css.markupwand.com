@@ -49,7 +49,7 @@ TransformersWeb::Application.routes.draw do
       # get, put and edit designs
       match ''                 => 'design#show'
       match 'edit'             => 'design#edit'
-      match 'save_class'       => 'design#save_class', :via => :post
+      match 'save_edits'       => 'design#save_edits', :via => :post
       match 'preview'          => 'design#preview'
       match 'download'         => 'design#download'
       match 'update'           => 'design#update'
