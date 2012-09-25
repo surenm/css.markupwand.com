@@ -347,10 +347,10 @@ class GridStyle
     all_selectors
   end
 
-  def scss_tree
+  def to_scss
     child_scss_trees = ''
     self.grid.children.values.each do |child|
-      child_scss_trees += child.style.scss_tree
+      child_scss_trees += child.style.to_scss
     end
 
     if self.css_rules.length == 0

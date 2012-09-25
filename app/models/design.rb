@@ -467,7 +467,7 @@ class Design
 
 
 COMPASS
-    scss_content = self.font_map.font_scss + compass_includes + root_grid.style.scss_tree #FIXME PSDJS + 
+    scss_content = self.font_map.font_scss + compass_includes + root_grid.style.to_scss
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
