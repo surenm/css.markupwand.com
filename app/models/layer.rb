@@ -374,7 +374,7 @@ class Layer
     fonts.uniq
   end
 
-  def to_scss
+  def get_style_node
     if self.type == Layer::LAYER_TEXT
       chunk_nodes = []
       
@@ -391,7 +391,12 @@ class Layer
     else
       layer_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules
     end
-    layer_style_node.to_scss
+
+    return layer_style_node
+  end
+
+  def to_scss
+    self.get_style_node.to_scss
   end
 
   ##########################################################
@@ -428,7 +433,6 @@ class Layer
     end
   end
 
-
   def to_html(args = {}, is_leaf, grid)
     Log.info "[HTML] Layer #{self.to_s}"
     
@@ -445,7 +449,7 @@ class Layer
     attributes[:"data-layer-id"]   = self.uid.to_s
     attributes[:"data-layer-name"] = self.name
     attributes[:class] = self.selector_names(grid).join(" ") if not self.selector_names(grid).empty?
-
+    
     if @tag_name == :img
       attributes[:src] = self.image_path
       html = tag "img", attributes, false

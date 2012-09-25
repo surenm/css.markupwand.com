@@ -346,30 +346,24 @@ class GridStyle
 
     all_selectors
   end
-
-  def to_scss
-    child_scss_trees = ''
+  
+  def get_style_node
+    children_nodes = []
     self.grid.children.values.each do |child|
-      child_scss_trees += child.style.to_scss
-    end
-
-    if self.css_rules.length == 0
-      sass = "#{child_scss_trees}"
-    else
-      child_css_string = ""
-      if not child_scss_trees.empty?
-         child_css_string = "\n" + child_scss_trees.rstrip
+      if not child.style.generated_selector.nil?
+        children_nodes.push child.style.get_style_node
       end
-      
-      sass = Utils::build_stylesheet_block self.generated_selector, self.css_rules, child_css_string
     end
-
+    
     if not self.grid.render_layer.nil?
       render_layer = self.grid.render_layer
-      sass += render_layer.to_scss
+      children_nodes.push render_layer.get_style_node
     end
+    grid_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules, :children => children_nodes
+  end
 
-    return sass
+  def to_scss
+    self.get_style_node.to_scss
   end
   
 end
