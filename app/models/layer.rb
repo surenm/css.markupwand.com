@@ -180,20 +180,6 @@ class Layer
     self.type == Layer::LAYER_TEXT and self.text_chunks.size > 0
   end
 
-  def chunk_text_styles
-    chunk_text_styles = ""
-    chunk_text_selector.each_with_index do |class_name, index|
-      rules_array = []
-      self.text_chunks[index][:styles].each do |rule_key, rule_object|
-        rules_array.concat Compassify::get_scss(rule_key, rule_object)
-      end
-        
-      chunk_text_style =  Utils::build_stylesheet_block class_name, rules_array
-      chunk_text_styles += chunk_text_style
-    end
-    chunk_text_styles
-  end
-
   def text_content
     if self.type == LAYER_TEXT
       original_text = self.full_text
@@ -390,11 +376,22 @@ class Layer
 
   def to_scss
     if self.type == Layer::LAYER_TEXT
-      sass = self.chunk_text_styles
+      chunk_nodes = []
+      
+      chunk_text_selector.each_with_index do |class_name, index|
+        chunk_styles = []
+        self.text_chunks[index][:styles].each do |rule_key, rule_object|
+          chunk_styles.concat Compassify::get_scss(rule_key, rule_object)
+        end
+        
+        chunk_nodes.push StyleNode.new :class => class_name, :style_rules => chunk_styles
+      end
+      
+      layer_style_node = StyleNode.new :class => self.generated_selector, :style_rules => {}, :children => chunk_nodes
     else
-      sass = Utils::build_stylesheet_block(self.generated_selector, self.css_rules)
+      layer_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules
     end
-    sass
+    layer_style_node.to_scss
   end
 
   ##########################################################
