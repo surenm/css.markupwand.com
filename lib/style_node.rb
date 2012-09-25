@@ -15,10 +15,10 @@ class StyleNode
   SCSS_TEMPLATE = ERB.new  <<-SCSS
 .<%= @style_class %> {
 <% @style_rules.each do |style_rule| %>\
-  <%= style_rule %>;
+<%= style_rule %>;
 <% end %>\
 <% @children.each do |child| %>\
-  <%= child.to_scss %>
+<%= child.to_scss %>
 <% end %>\
 }
 SCSS
