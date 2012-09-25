@@ -339,7 +339,7 @@ class Layer
     
     if self.type == Layer::LAYER_TEXT
       self.text_chunks.each_with_index do |_, index|
-        chunk_text_selector[index] = CssParser::create_incremental_selector('text')
+        chunk_text_selector[index] = CssParser::create_incremental_selector('text-chunk')
       end
     end 
     
