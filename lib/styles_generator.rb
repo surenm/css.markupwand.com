@@ -9,13 +9,28 @@ class StylesGenerator
       return StylesGenerator.get_normal_styles(layer)
     end
   end
+  
+  def self.remove_unused_effects(styles)
+    useful_styles = styles.dup
+    
+    remove_effects = []
+    if useful_styles.has_key? :solid_overlay
+      remove_effects = [:solid_fill, :gradient_fill, :pattern_fill,:gradient_overlay, :pattern_overlay]
+    elsif useful_styles.has_key? :gradient_overlay
+      remove_effects = [:solid_fill, :gradient_fill, :pattern_fill, :pattern_overlay]
+    end
+    
+    remove_effects.each { |effect| useful_styles.delete effect }
+      
+    return useful_styles
+  end
 
   def self.get_text_styles(layer)
     css_rules = []
 
-    # Todo: color_overlay > gradient_overlay > pattern_overlay
+    useful_styles = StylesGenerator::remove_unused_effects layer.styles
     
-    layer.styles.each do |rule_key, rule_object|
+    useful_styles.each do |rule_key, rule_object|
       case rule_key
       when :solid_overlay
         css_rule = Compassify::get_scss(:text_color_overlay, rule_object)
@@ -38,8 +53,10 @@ class StylesGenerator
   def self.get_shape_styles(layer)
     css_rules = []
     
-    # TODO: color_overlay > gradient_overlay > pattern_overlay > solid color fill > gradient fill. Handle opacity ranges also
-    layer.styles.each do |rule_key, rule_object|
+    useful_styles = StylesGenerator::remove_unused_effects layer.styles
+        
+    # TODO: Handle opacity ranges.
+    useful_styles.each do |rule_key, rule_object|
       case rule_key
       when :solid_fill
         css_rule = Compassify::get_scss(:solid_fill, rule_object)
