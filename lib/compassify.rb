@@ -71,7 +71,6 @@ module Compassify
     ################################
     def text_shadow(shadows)
       shadow = shadows[:drop_shadow]
-      return [""]
       if not shadow.nil?
         ["@include text-shadow(#{shadow[:color]} #{shadow[:horizontal_offset]} #{shadow[:vertical_offset]}  #{shadow[:blur]})"]
       end
@@ -82,9 +81,12 @@ module Compassify
     end
 
     def text_gradient_overlay(gradient)
+      ["color: #{gradient[:color_stops].first.split(' ').first}"]
+=begin this craps out text shadow for now. Hence disabling.
       ["background: -webkit-linear-gradient(#{gradient[:angle]}deg, #{gradient[:color_stops].join ', '})",
        "-webkit-background-clip: text",
        "-webkit-text-fill-color: transparent"]
+=end
     end
   end
 end
