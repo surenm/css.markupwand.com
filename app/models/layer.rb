@@ -159,6 +159,10 @@ class Layer
     (self.type != Layer::LAYER_TEXT)
   end
   
+  def render_layer?
+    self.parent_grid.leaf?
+  end
+  
 
   ##########################################################
   # Text Layer helper functions
