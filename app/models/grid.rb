@@ -205,7 +205,7 @@ class Grid
     if self.render_layer.nil?
       false
     else 
-      (self.render_layer.tag_name(self.leaf?) == :img)
+      (self.render_layer.tag_name == :img)
     end
   end
 

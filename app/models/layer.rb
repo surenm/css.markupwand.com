@@ -424,7 +424,7 @@ class Layer
 
   def tag_name
     chosen_tag = ""
-    is_leaf = self.parent_grid.leaf?
+    is_leaf = (not self.parent_grid.nil?) and self.parent_grid.leaf?
     
     if not @tag_name.nil?
       @tag_name
