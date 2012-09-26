@@ -313,6 +313,10 @@ class Layer
       computed_css_array.concat Compassify::get_scss(rule_key, rule_object)
     end
 
+    if self.render_layer?
+      computed_css_array.concat  self.parent_grid.style.css_rules
+    end
+
     generated_css_array = StylesGenerator.get_styles self
     generated_css_array + computed_css_array
   end
@@ -354,12 +358,14 @@ class Layer
   end
 
   # Selector names (includes default selector and extra selectors)
-  def selector_names(grid)
+  def selector_names
     all_selectors = self.extra_selectors
     all_selectors.push self.generated_selector
 
     if @tag_name != :img
-      all_selectors.concat grid.style.selector_names
+      if not self.parent_grid.nil?
+        all_selectors.concat parent_grid.style.extra_selectors
+      end
     end
 
     all_selectors.uniq!
@@ -452,7 +458,7 @@ class Layer
     attributes[:"data-grid-id"]    = args.fetch :"data-grid-id", ""
     attributes[:"data-layer-id"]   = self.uid.to_s
     attributes[:"data-layer-name"] = self.name
-    attributes[:class] = self.selector_names(grid).join(" ") if not self.selector_names(grid).empty?
+    attributes[:class] = self.selector_names.join(" ") if not self.selector_names.empty?
     
     if @tag_name == :img
       attributes[:src] = self.image_path
