@@ -349,16 +349,17 @@ class GridStyle
   
   def get_style_node
     children_nodes = []
+
     self.grid.children.values.each do |child|
       if not child.style.generated_selector.nil?
-        children_nodes.push child.style.get_style_node
+        if child.leaf?
+          children_nodes.push child.render_layer.get_style_node
+        else
+          children_nodes.push child.style.get_style_node
+        end
       end
     end
     
-    if not self.grid.render_layer.nil?
-      render_layer = self.grid.render_layer
-      children_nodes.push render_layer.get_style_node
-    end
     grid_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules, :children => children_nodes
   end
 
