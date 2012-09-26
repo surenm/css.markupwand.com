@@ -712,7 +712,7 @@ class Grid
 
       sub_grid_args[:inner_html] = self.positioned_grids_html
 
-      inner_html  += self.render_layer.to_html sub_grid_args, self.leaf?, self
+      inner_html  += self.render_layer.to_html sub_grid_args
       
 
       if self.render_layer.tag_name(true) == :img

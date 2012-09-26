@@ -422,8 +422,10 @@ class Layer
   # HTML generation related functions
   ##########################################################
 
-  def tag_name(is_leaf = false)
+  def tag_name
     chosen_tag = ""
+    is_leaf = self.parent_grid.leaf?
+    
     if not @tag_name.nil?
       @tag_name
     else
@@ -452,10 +454,10 @@ class Layer
     end
   end
 
-  def to_html(args = {}, is_leaf, grid)
+  def to_html(args = {})
     Log.info "[HTML] Layer #{self.to_s}"
     
-    generated_tag = tag_name(is_leaf)
+    generated_tag = self.tag_name
     @tag_name = args.fetch :tag, generated_tag
 
     inner_html = args.fetch :inner_html, ''
