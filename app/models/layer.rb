@@ -387,7 +387,7 @@ class Layer
         chunk_nodes.push StyleNode.new :class => class_name, :style_rules => chunk_styles
       end
       
-      layer_style_node = StyleNode.new :class => self.generated_selector, :style_rules => {}, :children => chunk_nodes
+      layer_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules, :children => chunk_nodes
     else
       layer_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules
     end
