@@ -383,6 +383,17 @@ class Layer
 
     fonts.uniq
   end
+  
+  def allow_chunk_styles?(css_property)
+    non_allowable_properties = [:color]
+    overriding_properties = [:solid_overlay, :gradient_overlay]
+    if non_allowable_properties.include? css_property
+      overriding_properties.each do |override|
+        return false if self.styles.has_key? override
+      end
+    end
+    return true
+  end
 
   def get_style_node
     if self.type == Layer::LAYER_TEXT
@@ -391,7 +402,9 @@ class Layer
       chunk_text_selector.each_with_index do |class_name, index|
         chunk_styles = []
         self.text_chunks[index][:styles].each do |rule_key, rule_object|
-          chunk_styles.concat Compassify::get_scss(rule_key, rule_object)
+          if self.allow_chunk_styles? rule_key
+            chunk_styles.concat Compassify::get_scss(rule_key, rule_object)
+          end
         end
         
         chunk_nodes.push StyleNode.new :class => class_name, :style_rules => chunk_styles
