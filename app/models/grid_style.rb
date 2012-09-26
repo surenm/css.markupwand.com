@@ -349,7 +349,7 @@ class GridStyle
   
   def get_style_node
     children_nodes = []
-
+    
     self.grid.children.values.each do |child|
       if not child.style.generated_selector.nil?
         if child.leaf?
@@ -359,8 +359,15 @@ class GridStyle
         end
       end
     end
-    
+  
     grid_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules, :children => children_nodes
+    
+    # if root node is also a leaf node? just one layer case
+    if self.grid.root and self.grid.leaf?
+      grid_style_node = self.grid.render_layer.get_style_node
+    end
+    
+    return grid_style_node
   end
 
   def to_scss
