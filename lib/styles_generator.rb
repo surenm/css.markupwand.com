@@ -17,10 +17,10 @@ class StylesGenerator
     
     layer.styles.each do |rule_key, rule_object|
       case rule_key
-      when :solid_fill
+      when :solid_overlay
         css_rule = Compassify::get_scss(:text_color_overlay, rule_object)
-      when :gradient_fill
-        css_rule = Compassify::get_scss(:text_gradient, rule_object)
+      when :gradient_overlay
+        css_rule = Compassify::get_scss(:text_gradient_overlay, rule_object)
       when :shadows
         css_rule = Compassify::get_scss(:text_shadow, rule_object)
       else
