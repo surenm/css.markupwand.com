@@ -715,7 +715,7 @@ class Grid
       inner_html  += self.render_layer.to_html sub_grid_args
       
 
-      if self.render_layer.tag_name(true) == :img
+      if self.render_layer.tag_name == :img
         html = content_tag :div, inner_html, {}, false
       else 
         html = inner_html

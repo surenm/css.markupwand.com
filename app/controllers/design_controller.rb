@@ -107,7 +107,7 @@ class DesignController < ApplicationController
     end
   end
 
-  def save_class
+  def save_edits
     dom_json = JSON.parse params['dom_json']
     layers = dom_json['layer']
     grids  = dom_json['grid']
