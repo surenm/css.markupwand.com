@@ -20,10 +20,11 @@ class Grid
 
   # If this is a root grid of a design
   attr_accessor :root  #(Boolean)
+  alias :root? :root
 
-  
   # True if the grid node is going to be positioned
   attr_accessor :positioned  #(Boolean)
+  alias :positioned? :positioned
     
   # Style and semantics related fields for a grid
   attr_accessor :style
@@ -145,12 +146,12 @@ class Grid
   #  GRID OBJECT HELPERS
   ##########################################################
   def positioned_children
-    self.children.values.select { |child_grid| child_grid.positioned }
+    self.children.values.select { |child_grid| child_grid.positioned? }
   end
 
   def positioned_siblings
     if not self.root
-      self.parent.children.values.select { |sibling_grid| sibling_grid.positioned }
+      self.parent.children.values.select { |sibling_grid| sibling_grid.positioned? }
     else
       []
     end
@@ -666,7 +667,7 @@ class Grid
   def positioned_grids_html(subgrid_args = {})
     html = ''
     self.children.values.each do |grid|
-      if grid.positioned
+      if grid.positioned?
         html += grid.to_html(subgrid_args)
       end
     end

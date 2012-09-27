@@ -73,7 +73,7 @@ class GridStyle
     #TODO. Margin is not always from left and top. It is from all sides.
 
     margin = {:top => 0, :left => 0}
-    if self.grid.root == true
+    if self.grid.root?
       margin[:top]  += self.grid.bounds.top
       margin[:left] += self.grid.bounds.left
     else
@@ -234,7 +234,7 @@ class GridStyle
       parent = self.grid.parent
       if parent.style.computed_css.has_key? 'position' and parent.style.computed_css.fetch('position') == 'relative'
         position_relatively = true
-      elsif parent.positioned
+      elsif parent.positioned?
         position_relatively = true
       end
     end
@@ -244,12 +244,12 @@ class GridStyle
     end
     
     # float left class if parent is set to GRID_ORIENT_LEFT
-    if not self.grid.root and (self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT)
+    if not self.grid.root? and (self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT)
       self.extra_selectors.push 'pull-left'
     end
     
     # Handle absolute positioning now
-    style_rules.update position_absolutely if grid.positioned
+    style_rules.update position_absolutely if grid.positioned?
 
     self.extra_selectors.push('row') if not self.grid.children.empty? and self.grid.orientation == Constants::GRID_ORIENT_LEFT
     
@@ -363,7 +363,7 @@ class GridStyle
     grid_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules, :children => children_nodes
     
     # if root node is also a leaf node? just one layer case
-    if self.grid.root and self.grid.leaf?
+    if self.grid.root? and self.grid.leaf?
       grid_style_node = self.grid.render_layer.get_style_node
     end
     
