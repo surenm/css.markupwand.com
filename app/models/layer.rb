@@ -66,10 +66,6 @@ class Layer
   attr_accessor :extra_selectors # (Array)
   attr_accessor :generated_selector # (String)
 
-  # Decided that it is not multifont not based on photoshop,
-  # but based on the repeating hash values.
-  attr_accessor :is_multifont # (Boolean)
-
   attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
   
   ##########################################################
