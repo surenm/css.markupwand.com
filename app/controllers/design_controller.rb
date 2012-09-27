@@ -109,14 +109,16 @@ class DesignController < ApplicationController
 
   def save_edits
     dom_json = JSON.parse params['dom_json']
-    layers = dom_json['layer']
-    grids  = dom_json['grid']
+    layers   = dom_json['layer']
+    grids    = dom_json['grid']
     layers.each do |id, layer_data|
       @design.layers[id.to_i].generated_selector = layer_data['class']
+      @design.layers[id.to_i].tag_name = layer_data['tag']
     end
 
     grids.each do |id, grid_data|
       @design.grids[id].style.generated_selector = grid_data['class']
+      @design.grids[id].tag = grid_data['tag']
     end
 
     @design.save_sif!
