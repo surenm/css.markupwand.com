@@ -194,18 +194,22 @@ class Grid
   end
   
   def tag
-    if self.is_image_grid?
-      :img
-    else
-      :div
+    if @tag.nil?
+      if self.is_image_grid?
+        @tag = 'img'
+      else
+        @tag = 'div'
+      end
     end
+
+    return @tag
   end
   
   def is_image_grid?
     if self.render_layer.nil?
       false
     else 
-      (self.render_layer.tag_name == :img)
+      (self.render_layer.tag_name == 'img')
     end
   end
 
@@ -703,7 +707,7 @@ class Grid
       inner_html += positioned_html
       
       if child_nodes.length > 0
-        html = content_tag tag, inner_html, attributes, false
+        html = content_tag self.tag, inner_html, attributes, false
       end
       
     else
@@ -715,8 +719,8 @@ class Grid
       inner_html  += self.render_layer.to_html sub_grid_args
       
 
-      if self.render_layer.tag_name == :img
-        html = content_tag :div, inner_html, {}, false
+      if self.render_layer.tag_name == 'img'
+        html = content_tag 'div', inner_html, {}, false
       else 
         html = inner_html
       end

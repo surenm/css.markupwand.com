@@ -89,6 +89,7 @@ class Layer
       :text    => self.text,
       :shape   => self.shape,
       :styles  => self.styles,
+      :tag     => self.tag_name,
       :design  => self.design.id,
       :overlay => self.overlay,
       :style_layer        => self.style_layer,
@@ -358,7 +359,7 @@ class Layer
     all_selectors = self.extra_selectors
     all_selectors.push self.generated_selector
 
-    if @tag_name != :img
+    if @tag_name != 'img'
       if not self.parent_grid.nil?
         all_selectors.concat parent_grid.style.extra_selectors
       end
@@ -431,23 +432,17 @@ class Layer
     else
       if not self.override_tag.nil?
         self.override_tag
-      elsif self.type == LAYER_SMARTOBJECT
-        if is_leaf
-          chosen_tag = :img
-        else
-          chosen_tag = :div
-        end
       elsif self.type == LAYER_NORMAL
         if is_leaf
-          chosen_tag = :img
+          chosen_tag = 'img'
         else
-          chosen_tag = :div
+          chosen_tag = 'div'
         end
       elsif self.type == LAYER_TEXT or self.type == LAYER_SHAPE
-        chosen_tag = :div
+        chosen_tag = 'div'
       else
         Log.info "New layer found #{self.type} for layer #{self.name}"
-        chosen_tag = :div
+        chosen_tag = 'div'
       end
       @tag_name = chosen_tag
       @tag_name
@@ -471,7 +466,7 @@ class Layer
     attributes[:"data-layer-name"] = self.name
     attributes[:class] = self.selector_names.join(" ") if not self.selector_names.empty?
     
-    if @tag_name == :img
+    if @tag_name == "img"
       attributes[:src] = self.image_path
       html = tag "img", attributes, false
     else
