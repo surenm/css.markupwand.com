@@ -3,4 +3,45 @@
     <ul class="nav nav-pills">
       <li><a href="/admin/"> Admin home </a> </li>
     </ul>
+
   </div>
+  <div class="row">
+    <div class="span5">
+      <%= form_tag("/admin", :method => :get) do %>
+        <%= label_tag(:user, "Email:") %>
+        <%= text_field_tag(:user, "#{params[:user]}") %>
+        <%= submit_tag("Search by User", :class => "btn btn-success") %>
+      <% end %>
+    </div>
+    <div class="span5">
+      <%= form_tag("/admin", :method => :get) do %>
+        <%= label_tag(:design, "Designs (comma separated):") %>
+        <%= text_area_tag(:designs, "#{params[:designs]}") %>
+        <%= submit_tag("Search by designs", :class => "btn btn-success") %>
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="btn-group">
+    <%= link_to 'All', params.merge(:status => 'all'), :class => "btn" %>
+    <%= link_to 'Queued', params.merge( :status => Design::STATUS_QUEUED), :class => "btn" %>
+    <%= link_to 'Uploading', params.merge( :status => Design::STATUS_UPLOADING), :class => "btn" %>
+    <%= link_to 'Uploaded', params.merge( :status => Design::STATUS_UPLOADED), :class => "btn" %>
+    <%= link_to 'Parsing', params.merge( :status => Design::STATUS_PARSING), :class => "btn" %>
+    <%= link_to 'Parsed', params.merge( :status => Design::STATUS_PARSED), :class => "btn" %>
+    <%= link_to 'Generating', params.merge( :status => Design::STATUS_GENERATING), :class => "btn" %>
+    <%= link_to 'Regenerating', params.merge( :status => Design::STATUS_REGENERATING), :class => "btn" %>
+    <%= link_to 'Completed', params.merge( :status => Design::STATUS_COMPLETED), :class => "btn" %>
+    <%= link_to 'Failed', params.merge( :status => Design::STATUS_FAILED), :class => "btn" %>
+  </div>
+
+  <div class="rating">
+
+    <h4>Rating</h4>
+    <div class="btn-group">
+      <%= link_to 'Good', params.merge( :rating => 'true'), :class => "btn btn-success" %>
+      <%= link_to 'Bad', params.merge( :rating => 'false'), :class => "btn btn-danger" %>
+      <%= link_to 'Empty', params.merge( :rating => 'unrated'), :class => "btn" %>
+    </div>
+  </div>
+</div>

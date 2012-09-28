@@ -8,16 +8,19 @@ class Design
   include Mongoid::Document::Taggable
 
   belongs_to :user
-  has_many :grids
-  has_many :layers
 
   embeds_one :font_map
-
+  
   # Design status types
   Design::STATUS_QUEUED       = :queued
   Design::STATUS_UPLOADING    = :uploading
   Design::STATUS_UPLOADED     = :uploaded
   Design::STATUS_PROCESSING   = :processing
+  Design::STATUS_PROCESSED    = :processed
+  Design::STATUS_EXTRACTING   = :extracting
+  Design::STATUS_EXTRACTED    = :extracted
+  Design::STATUS_CLIPPING     = :clipping
+  Design::STATUS_CLIPPED      = :clipped
   Design::STATUS_PARSING      = :parsing
   Design::STATUS_PARSED       = :parsed
   Design::STATUS_GENERATING   = :generating
@@ -26,51 +29,132 @@ class Design
   Design::STATUS_FAILED       = :failed
 
   Design::STATUS_CLASS = {
-    Design::STATUS_QUEUED       => 'label label-warning',
+    Design::STATUS_QUEUED       => 'label label-info',
     Design::STATUS_UPLOADING    => 'label',
     Design::STATUS_UPLOADED     => 'label',
-    Design::STATUS_PROCESSING   => 'label label-warning',
-    Design::STATUS_PARSING      => 'label label-warning',
-    Design::STATUS_PARSED       => 'label label-warning',
-    Design::STATUS_GENERATING   => 'label label-warning',
-    Design::STATUS_REGENERATING => 'label label-warning',
+    Design::STATUS_PROCESSING   => 'label label-info',
+    Design::STATUS_PROCESSED    => 'label label-info',
+    Design::STATUS_EXTRACTING   => 'label label-info',
+    Design::STATUS_EXTRACTED    => 'label label-info',
+    Design::STATUS_PARSING      => 'label label-info',
+    Design::STATUS_PARSED       => 'label label-info',
+    Design::STATUS_GENERATING   => 'label label-info',
+    Design::STATUS_REGENERATING => 'label label-info',
     Design::STATUS_COMPLETED    => 'label label-success',
     Design::STATUS_FAILED       => 'label label-important'
   }
   
-  Design::PRIORITY_NORMAL = :normal
-  Design::PRIORITY_HIGH   = :high
-  
   Design::ERROR_FILE_ABSENT        = "file_absent"
   Design::ERROR_NOT_PHOTOSHOP_FILE = "not_photoshop_file"
   Design::ERROR_SCREENSHOT_FAILED  = "screenshot_failed"
+  Design::ERROR_EXTRACTION_FAILED  = "extraction_failed"
+
+  Design::PRIORITY_NORMAL = :normal
+  Design::PRIORITY_HIGH   = :high
 
   # File meta data
   field :name, :type => String
   field :psd_file_path, :type => String
-  field :processed_file_path, :type => String, :default => nil
+  field :sif_file_path, :type => String, :default => nil
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
+  
   field :storage, :type => String, :default => "local"
-  field :queue, :type => Symbol, :default => Design::PRIORITY_NORMAL
+  field :queue, :type => String, :default => Design::PRIORITY_NORMAL
 
   # Rating is Yes or No
   field :rating, :type => Boolean
   
   # CSS Related
-  field :selector_name_map, :type => Hash, :default => {}  
-  field :hashed_selectors, :type => Hash, :default => {} 
-  field :is_css_hashed,    :type => Boolean, :default => false
-  field :class_edited,     :type => Boolean, :default => false
-  field :pre_processed,    :type => Boolean, :default => false
+  attr_accessor :class_edited
   
   # Document properties
-  field :height, :type => Integer
-  field :width, :type => Integer
-  field :resolution, :type => Integer
+  attr_accessor :height
+  attr_accessor :width
+  attr_accessor :resolution
+
+  # Autoincrement counter
+  attr_accessor :incremental_counter
+
+  # Offset box buffer
+  attr_accessor :row_offset_box
 
   mount_uploader :file, DesignUploader
   
-  @@design_processed_data = nil
+  ##########################################################
+  # Design Object helper functions
+  ##########################################################
+  def attribute_data(minimal=false)
+    return {
+      :name          => self.name,
+      :psd_file_path => self.psd_file_path,
+      :id            => self.safe_name,
+      :status        => self.status,
+    }
+  end
+  
+  def get_root_grid
+    root_grids = []
+    self.grids.each do |id, grid|
+      root_grids.push grid if grid.root == true
+    end
+
+    Log.fatal "More than one root node in design???" if root_grids.size > 1
+
+    return root_grids.last
+  end
+  
+  def bounds 
+    BoundingBox.new 0, 0, self.height, self.width
+  end
+    
+  def set_status(status)
+    Log.info "Setting status == #{status}"
+    self.status = status
+    self.save!
+=begin
+    if self.status == Design::STATUS_COMPLETED
+      if not self.user.admin
+        to      = "#{self.user.name} <#{self.user.email}>"
+        subject = "#{self.name} generated"
+        text    = "Your HTML & CSS has been generated, click http://#{ENV['APP_URL']}/design/#{self.safe_name}/preview to download"
+        ApplicationHelper.post_simple_message to, subject, text
+      end
+    end
+=end
+  end
+
+  def incremental_counter
+    if @incremental_counter.nil?
+      @incremental_counter = 1
+      return @incremental_counter
+    end
+    @incremental_counter = @incremental_counter + 1
+    return @incremental_counter
+  end
+  
+  def get_next_grid_id
+    # Minimal version of mongodb's object id.
+    # http://www.mongodb.org/display/DOCS/Object+IDs
+    # For incremental object ids.
+    process_id  = "%07d" % $$ #7 digits
+    time_micro  = ("%0.6f" % Time.now.to_f).gsub(".", "") #16 digits
+    incremental = "%04d" % self.incremental_counter #4 digits
+    new_id = (time_micro + process_id + incremental).to_i.to_s(16)
+    return new_id
+  end
+  
+  # FIXME PSDJS
+  def webfonts_snippet
+    return ''
+    self.font_map.google_webfonts_snippet
+  end
+  
+  def parse_fonts(layers)
+    self.font_map = FontMap.new
+    self.font_map.find_web_fonts layers
+    self.font_map.save!
+    self.save!
+  end
   
   def vote_class
     case self.rating
@@ -82,11 +166,9 @@ class Design
       return 'none'
     end
   end
-
-  def reset_processed_data
-    @@design_processed_data = nil
-  end
-
+  ##########################################################
+  # Store related functions
+  ##########################################################
   def safe_name_prefix
     Store::get_safe_name self.name
   end
@@ -111,8 +193,8 @@ class Design
     File.join self.store_key_prefix, "published"
   end
   
-  def store_psdjsprocessed_key
-    File.join self.store_key_prefix, "psdjsprocessed"
+  def store_extracted_key
+    File.join self.store_key_prefix, "extracted"
   end
   
   def offset_box_key
@@ -123,109 +205,50 @@ class Design
     "#{self.id}-row_offset_box"
   end
   
-  def get_root_grid
-    root_grids = self.grids.where(:root => true)
-    #Log.error "Root grid = #{root_grids.last.id.to_s}, #{root_grids.length}"
-    Log.fatal "More than one root node in design???" if root_grids.size > 1
-
-    return root_grids.last
+  def get_photoshop_file_path
+    safe_basename = Store::get_safe_name File.basename(self.name, ".psd")
+    File.join self.store_key_prefix, "#{safe_basename}.psd"
   end
   
-  def bounds 
-    BoundingBox.new 0, 0, self.height, self.width
-  end
-    
-  def fetch_processed_folder
-    processed_folder = Rails.root.join "tmp", "store", self.store_processed_key
-    if not Dir.exists? processed_folder.to_s
-      Store::fetch_from_store self.store_processed_key 
-    end
-  end
-  
-  def get_processed_data
-    self.fetch_processed_folder
-    if @@design_processed_data.nil?
-      fptr     = File.read self.processed_file_path
-      psd_data = JSON.parse fptr, :symbolize_names => true, :max_nesting => false
-      @@design_processed_data = psd_data
-    end
-
-    @@design_processed_data
-  end
-  
-  def attribute_data(minimal=false)
-    if minimal
-      return {
-        :name          => self.name,
-        :psd_file_path => self.psd_file_path,
-        :id            => self.safe_name,
-        :status        => self.status,
-      }
-    end
-    
-    grids       = {}
-    layers      = {}
-    css_classes = {}
-    grid_data   = {}
-
-
-    if self.status == Design::STATUS_COMPLETED
-      grids = self.grids.collect do |grid|
-        grid.attribute_data
-      end
-      
-      self.grids.each do |grid|
-        grid.layer_ids.each do |layer_id|
-          layer = Layer.find layer_id
-          layers[layer.uid] = layer.attribute_data
-        end        
-      end
-      
-      self.grids.each do |grid|
-        grid_css_classes = [] #FIXME CSS TREE grid.get_css_classes
-        grid_css_classes.each do |css_class|
-          css_classes[css_class] = Array.new if css_classes[css_class].nil?
-          css_classes[css_class].push grid.id
-        end
-      end
-      
-      root_grid = self.get_root_grid
-      dom_tree  = root_grid.get_tree
-    end
-    
-    {
-      :name          => self.name,
-      :psd_file_path => self.psd_file_path,
-      :font_map      => self.font_map,
-      :grids         => grids,
-      :layers        => layers.values,
-      :id            => self.safe_name,
-      :status        => self.status,
-      :css_classes   => css_classes,
-      :dom_tree      => dom_tree
-    }
-  end
-  
-    
-  def set_status(status)
-    self.status = status
-    self.save!
-    
-    if self.status == Design::STATUS_COMPLETED
-      if not self.user.admin
-        to      = "#{self.user.name} <#{self.user.email}>"
-        subject = "#{self.name} generated"
-        text    = "Your HTML & CSS has been generated, click http://#{ENV['APP_URL']}/design/#{self.safe_name}/preview to download"
-        ApplicationHelper.post_simple_message to, subject, text
-      end
-    end
-  end
-  
-  def set_queue_priority(queue_priority)
-    self.queue = queue_priority
-    self.save!
+  def get_sif_file_path
+    safe_basename = Store::get_safe_name File.basename(self.name, ".psd")
+    File.join self.store_key_prefix, "#{safe_basename}.sif"
   end
 
+  def get_sif_data
+    Store::fetch_data_from_store(self.get_sif_file_path)
+  end
+
+  def save_sif!
+    @sif.save! if @sif != nil
+  end
+
+  ##########################################################
+  # SIF related functions
+  ##########################################################
+  def init_sif
+    @sif = Sif.new(self) if @sif == nil
+    return @sif
+  end
+  
+  def grids
+    self.init_sif
+    return @sif.grids
+  end
+  
+  def layers
+    self.init_sif
+    return @sif.layers
+  end
+  
+  def save_grid(grid)
+    self.init_sif
+    @sif.set_grid grid
+  end
+
+  ##########################################################
+  # Row grid and grid offset box related methods
+  ##########################################################
   # Offset box is a box, that is an empty grid that appears before
   # this current grid. The previous sibling being a empty box, it adds itself
   # to a buffer. And the next item picks it up from buffer and takes it as its 
@@ -264,33 +287,58 @@ class Design
     Rails.cache.delete self.row_offset_box_key
   end
   
+  ##########################################################
+  # Helper methods for running jobs on designs
+  ##########################################################
+  def reextract
+    # delete sif files and extracted folder and start again
+    sif_file = self.get_sif_file_path
+    extracted_folder = self.store_extracted_key
+    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
+    FileUtils.rm_rf tmp_folder
+    Store.delete_from_store sif_file
+    Store.delete_from_store extracted_folder
+    self.set_status Design::STATUS_QUEUED
+    
+    self.push_to_extraction_queue
+  end
+
   def reprocess
-    self.reset
+    sif_file = self.get_sif_file_path
+    processed_folder = self.store_processed_key
+    extracted_folder = self.store_extracted_key
+
+    Store.delete_from_store sif_file
+    Store.delete_from_store extracted_folder
+
+    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
+    FileUtils.rm_rf tmp_folder
+    
+    self.set_status Design::STATUS_QUEUED
     self.push_to_processing_queue
   end
 
-  def write_html_job
-    self.set_status Design::STATUS_REGENERATING
-    Resque.enqueue HtmlWriterJob, self.id  
-  end
-
-  def reset
-    self.grids.delete_all
-    self.layers.delete_all
-    self.hashed_selectors  = {}
-    self.selector_name_map = {}
-    self.save!
-  end
-
   def reparse
-    self.reset
-    self.set_status Design::STATUS_PARSING
-    Resque.enqueue ParserJob, self.safe_name
+    # if sif files exist, remove grids from it and reparse
+    #self.init_sif  
+    #@sif.reset_grids
+    #self.set_status Design::STATUS_PARSING
+    #Resque.enqueue ParserJob, self.id
+    self.init_sif  
+    @sif.reset_grids
+    generated_folder = self.store_generated_key
+    published_folder = self.store_published_key
+    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
+    FileUtils.rm_rf tmp_folder
+    Store.delete_from_store generated_folder
+    Store.delete_from_store published_folder
+    self.set_status Design::STATUS_EXTRACTED
+    
+    self.push_to_parsing_queue
   end
   
   def regenerate
-    self.set_status Design::STATUS_REGENERATING
-    Resque.enqueue GeneratorJob, self.id
+    # TODO: If generated/published folders exist delete and remove those files and regenerate
   end
   
   def get_processing_queue_message
@@ -305,94 +353,78 @@ class Design
     
     message[:user]   = self.user.email
     message[:design] = self.safe_name
+    message[:design_id] = self.id.to_s
+
 
     return message
   end
   
   def push_to_processing_queue
     self.set_status Design::STATUS_PROCESSING
-    self.set_queue_priority Design::PRIORITY_NORMAL
+    self.queue = Design::PRIORITY_NORMAL
+    self.save!
+    
     message = self.get_processing_queue_message
     Resque.enqueue ProcessorJob, message
-    Resque.enqueue ScreenshotJob, self.id
   end
-  
+
   def move_to_priority_queue
     message = self.get_processing_queue_message
     Resque.dequeue ProcessorJob, message
     Resque.enqueue PriorityProcessorJob, message
-    self.set_queue_priority Design::PRIORITY_HIGH
-  end
-  
-  def parse_fonts(layers)
-    self.font_map = FontMap.new
-    self.font_map.find_web_fonts layers
-    self.font_map.save!
+    self.queue = Design::PRIORITY_HIGH
     self.save!
   end
-  
-  def webfonts_snippet
-    self.font_map.google_webfonts_snippet
+
+  def push_to_extraction_queue
+    Resque.enqueue ExtractorJob, self.id
   end
 
+  def push_to_parsing_queue
+    Resque.enqueue ParserJob, self.id
+  end
+
+  def push_to_generation_queue
+    self.set_status Design::STATUS_GENERATING
+    Resque.enqueue GeneratorJob, self.id
+  end 
+  
+  ##########################################################
+  # Actual jobs to be run on designs
+  ########################################################## 
+  
   # Parses the photoshop file json data and decomposes into grids
-  def parse
-    if self.processed_file_path.nil? or self.processed_file_path.empty?
-      Log.fatal "Processed file not specified"
-      self.set_status Design::STATUS_FAILED
-      return
-    end
+  def group_grids
+    self.init_sif
 
-    Profiler.start    
-    Log.info "Beginning to process #{self.name}..."
-
-    # Parse the JSON
-    psd_data = self.get_processed_data
-
-    self.height = psd_data[:properties][:height]
-    self.width  = psd_data[:properties][:width]
-    self.resolution = psd_data[:properties][:resolution]
-    
-    self.save!
+    Log.info "Beginning to group grids #{self.name}..."    
+    #TODO: Resolution information is hidden somewhere in the psd file. pick it up
+    #self.resolution = psd_data[:properties][:resolution]
     
     # Reset the global static classes to work for this PSD's data
     Grid.reset_grouping_queue
     
     # Layer descriptors of all photoshop layers
     Log.info "Getting nodes..."
-    layers = []
-    psd_data[:art_layers].each do |layer_id, node_json|
-      layer = Layer.create_from_raw_data node_json, self
-      if not layer.invalid_layer and not layer.zero_area?
-        layers.push layer
-        Log.info "Added Layer #{layer} (#{layer.zindex})"
-      elsif layer.zero_area?
-        Log.info "#{layer} has zero area"
-      elsif layer.invalid_layer
-        Log.info "#{layer} is out of design bounds (#{layer.zindex})"
-      end
-    end
+    @layers = @sif.layers.values
     
     Log.info "Creating root grid..."
-    grid = Grid.new :design => self, :root => true, :depth => 0
-    grid.set layers, nil
-    grid.save!
+    grid = Grid.new :design => self, :parent => nil, :layers => @layers, :root => true
 
     Log.info "Grouping the grids..."
     Grid.group!
-    Profiler.stop
-
-    Log.info "Successfully completed parsing #{self.name}" if self.status != Design::STATUS_FAILED
+    grid.print
+    @sif.save!
+    Log.info "Successfully grouped grids..."
   end
   
   def generate_markup(args={})
     Log.info "Beginning to generate markup and css for #{self.name}..."
     
-    Profiler::start
+    self.init_sif
     generated_folder = self.store_generated_key
     
     # Set the root path for this design. That is where all the html and css is saved to.
-    CssParser::set_assets_root generated_folder
     
     Log.info "Parsing fonts..."
     # TODO Fork out and parallel process
@@ -403,35 +435,16 @@ class Design
     # Once grids are generated, run through the tree and find out style sheets.
     # TODO Fork out and parallel process
     Log.info "Generating CSS Tree..."
-    root_grid.style_selector.generate_css_tree
-
-    Log.info "Bubble up CSS properties..."
-    root_grid.style_selector.bubbleup_css_properties
-
-    Log.info "Finding out selector name map..."
-    self.selector_name_map = root_grid.style_selector.generate_initial_selector_name_map
-    self.selector_name_map.update(get_hashed_selector_map)
-    self.save!
+    root_grid.style.compute_css
 
     Log.debug "Destroying design globals..."
     DesignGlobals.destroy
 
-    write_html_and_css
+    self.write_html_and_css
     
-    Log.info "Stopping profiler"
-    Profiler::stop
-  
+    @sif.save!
     Log.info "Successfully completed generating #{self.name}"
     return
-  end
-
-  def get_hashed_selector_map
-    map = {}
-    self.hashed_selectors.each do |selector, value|
-      map.update( {selector => {"name" => selector, "css" => value }})
-    end
-
-    map
   end
 
   # This usually called after changing CSS class names
@@ -443,11 +456,18 @@ class Design
     published_folder = self.store_published_key
 
     # Set the root path for this design. That is where all the html and css is saved to.
-    CssParser::set_assets_root generated_folder
     
     root_grid    = self.get_root_grid
     body_html    = root_grid.to_html
-    scss_content = self.font_map.font_scss + root_grid.style_selector.scss_tree + self.hashed_selectors_content 
+    compass_includes = <<COMPASS
+@import "compass";
+@import "compass/css3";
+@import "compass/css3/box-shadow";
+@import "compass/css3/border-radius";
+
+
+COMPASS
+    scss_content = self.font_map.font_scss + compass_includes + root_grid.style.to_scss
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
@@ -515,7 +535,6 @@ config
     css_contents
   end
 
-  
   def write_css_files(scss_content, base_folder)
     Log.info "Writing css (compass) file..."    
 
@@ -539,23 +558,5 @@ config
     target_css   = File.join base_folder, "assets", "css", "bootstrap_override.css"
 
     Store.save_to_store override_css, target_css
-  end
-
-  # Prints out the grouped styles
-  def hashed_selectors_content
-    css_content = ""
-    self.hashed_selectors.each do |selector, rules|
-      css_rules_list = ""
-      rules.each do |rule, value|
-        css_rules_list += "#{rule.to_s}: #{value.to_s};"
-      end 
-      css_content += ".#{selector} {#{css_rules_list}}"
-    end
-
-    Log.info "Writing HASHED CSS content"
-
-    Log.info css_content
-
-    css_content
   end
 end

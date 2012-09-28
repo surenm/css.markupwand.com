@@ -4,11 +4,7 @@ include Log4r
 module Log
   LOGGER = Log4r::Logger.new 'logger'
   LOGGER.outputters = Log4r::StdoutOutputter.new 'console'
-  if not ENV["LOG_LEVEL"].nil?
-    LOGGER.level = Log4r.const_get ENV["LOG_LEVEL"]
-  else 
-    LOGGER.level = Log4r::INFO
-  end
+  LOGGER.level = Log4r::INFO
   
   def Log.method_missing(method, *args, &block)
     LOGGER.send method, args[0]

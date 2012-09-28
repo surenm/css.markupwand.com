@@ -1,36 +1,70 @@
 <%= content_for :css do %>
   <%= stylesheet_link_tag "app/editor", :media => "all" %>
-  <%= render 'shared/header' %>
-
-  <%= render "shared/templates" %>
 <% end %>
 <%= content_for :content do %>
-<%= render 'shared/header' %>
-<div id="editor-header" class="navbar navbar-fixed-top">
+
+<div id="editor-header" class="small-header navbar navbar-fixed-top">
   <div class="navbar-inner">
     <div class="action row center">
-      <div class="forward right"> 
-        <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/preview/"> Preview → </a> 
+      <div class="right">
+        <div class="name"><small> Design: </small><%= @design.name %> </div>
       </div>
-      <div class="back left"> <a class="btn btn-large btn-warning" href="/design/<%= @design.safe_name %>/">  ← Back to Design Page </a></div>
-      <div class="name"><small> Design: </small><%= @design.name %> </div>
+
+      <span class="left btn-group">
+        <a onclick="Analytical.event('edit_page', 'home_page')" href="/designs" class="btn btn-large"><i class="icon-home icon-white"></i></a>
+        <a onclick="Analytical.event('edit_page', 'design_page')"  class="btn btn-large" href="/design/<%= @design.safe_name %>/">  ← Back to Design Page </a>
+        <a onclick="Analytical.event('edit_page', 'preview')"  class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/preview/"> 
+          <i class="icon-zoom-in icon-white"> &nbsp;</i> Preview
+        </a>
+      </span> 
     </div>
   </div>
   <div class = "clearfix"> </div>
 </div>
 <div id='editor-controls'>
-  <div id='editor'>
+  <div id="editor">
+    <div id="css_editor">
+      <h3><i class="icon-edit icon-white"></i> Edit class names</h3>
+      <div class="alert">Tip: Press <span class="label  ">TAB</span> key to move to the next class</div>
+      <%= form_tag "/design/#{@design.safe_name}/save_class" do %>
+      <ul>
+        <% @selector_names.each do |selector| %>
+        <li>
+          <input autocomplete="off"  
+                 tabindex="1" 
+                 name="selector[<%= selector[:type] %>-<%= selector[:id] %>]" 
+                 class="editable_class"
+                 data-original="<%= selector[:name] %>" 
+                 type="text" 
+                 value="<%= selector[:name] %>">
+        </li>
+        <% end %>
+      </ul>
+      <div class="save-wrapper">
+        <input type="submit" class="saveclasses btn btn-primary" name="save_classes"  value="Save classes">
+      </div>
+      <% end %>
+    </div>
   </div>
 </div>
 <div class='ide'>
-  <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html'></iframe>
+  <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html' onload="parent.iframeLoaded();"></iframe>
 </div>
+<% if @design.class_edited == false %>
+<div class="modal hide" data-backdrop="true" id="widget-class-name">
+  <%= form_tag "/design/#{@design.safe_name}/save_widget_name" do %>
+  <div class="modal-header">Name this widget</div>
+  <div class="modal-body">
+    <input type="text" name="widget_name" id="widget-name" placeholder="signup-block">
+    <p> This will be used as the class name for the widget</p>
+    <input type="submit" class="btn btn-primary" value="Save" />
+  </div>
+  <% end %>
+</div>
+<% end %>
 <% end %>
 
 <%= content_for :javascript do %>
-<script type="text/javascript">
-var design = <%= raw(@design.attribute_data.to_json) %>;
-Analytical.track("design_edit_page");
-</script>
-<%= javascript_include_tag "app/editor" %>
+<%= javascript_include_tag "app/edit" %>
+<%= javascript_include_tag "bootstrap-typeahead" %>
 <% end %>

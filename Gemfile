@@ -7,8 +7,8 @@ gem 'rails', '3.2.0'
 gem 'bson'
 gem 'bson_ext'
 gem 'execjs'
-gem 'jquery-rails'
-gem "flot-rails"
+gem 'flot-rails'
+gem 'jquery-rails', '2.0.2'
 gem 'json'
 gem 'mongo'
 gem 'mongoid'
@@ -28,11 +28,7 @@ gem 'rest-client'
 gem 'tidy_ffi'
 gem 'multimap'
 gem 'kaminari'
-
-# monitoring and profiling
-group :production do
-  gem 'newrelic_rpm'
-end
+gem 'foreman'
 
 # Deployment related gems
 gem 'unicorn'
@@ -59,6 +55,11 @@ gem 'asset_sync'
 #Analytics
 gem 'analytical', :git => 'git://github.com/Goyaka/analytical.git'
 
+# monitoring and profiling
+group :production do
+  gem 'newrelic_rpm'
+end
+
 #Testing
 gem 'rspec-rails'
 group :test do
@@ -79,11 +80,13 @@ group :development do
   gem 'pry-stack_explorer'
   gem 'pry_debug'
   gem 'ruby-prof'
-  gem 'foreman'
+  gem 'capistrano'
+  gem 'rvm-capistrano'
 end
 
 group :deploy do
   gem 'capistrano'
   gem 'capistrano-ext'
+  gem 'capistrano-resque'
 end
 

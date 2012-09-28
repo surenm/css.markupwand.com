@@ -1,0 +1,12 @@
+.DS_Store
+sftp-config.json
+node_modules
+.cake_task_cache
+tasks.js
+local_constants.yml
+examples/testcases/*
+examples/output*
+examples/images*
+tasks/testcases/*
+tasks/output*
+tasks/images*

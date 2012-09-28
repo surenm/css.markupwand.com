@@ -1,10 +1,8 @@
-web:           bundle exec unicorn -p $PORT -c ./config/unicorn.rb
-worker:        bundle exec rake resque:work QUEUE=uploader,screenshot,parser,pre_processor,generator,html_writer,screenshot,alerter
+web:           bundle exec unicorn_rails -p $PORT -c ./config/unicorn_heroku.rb
+web_daemon:    bundle exec unicorn_rails -c ./config/unicorn.rb -D 
+worker:        bundle exec rake resque:work QUEUE=uploader,extractor,parser,generator,misc_tasks
 uploader:      bundle exec rake resque:work QUEUE=uploader
-screenshot:    bundle exec rake resque:work QUEUE=screenshot
+extractor:     bundle exec rake resque:work QUEUE=extractor
 parser:        bundle exec rake resque:work QUEUE=parser
 generator:     bundle exec rake resque:work QUEUE=generator
-html_writer:   bundle exec rake resque:work QUEUE=html_writer
-screenshot:    bundle exec rake resque:work QUEUE=screenshot
 misc_tasks:    bundle exec rake resque:work QUEUE=misc_tasks
-alerter:       bundle exec rake resque:work QUEUE=alerter

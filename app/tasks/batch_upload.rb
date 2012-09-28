@@ -8,6 +8,22 @@ require 'open-uri'
 # pass second param as 'beta' to upload to beta machine
 # 
 class BatchUpload
+
+  def self.upload_local(folder, email)
+    files          = Dir.glob(folder + "/*.psd")
+    files.each do |file|
+      contents       = open(file, "rb") {|io| io.read }
+      secret         = '02b0c8ad8a141b04693e923b3d56a918'
+      markupwand_url = 'http://localhost:3000/design/uploaded' 
+      begin
+        data           = RestClient.post markupwand_url.to_s, {:'design[file]' => File.new(file), :email => email}, {"Content-Type" => "application/octet-stream"}
+      rescue Exception => e
+        puts e.inspect
+      end
+      break
+    end
+  end
+
   def self.upload(folder, email, target = 'prod')
     upload_data = {:mimetypes => ["*/*"],
      :app => {

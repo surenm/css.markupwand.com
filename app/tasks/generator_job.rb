@@ -1,36 +1,40 @@
 class GeneratorJob
   extend Resque::Plugins::History
+
   @queue = :generator
 
   def self.perform(design_id)
     begin
       design = Design.find design_id
 
-      # Set design back to generating
       design.set_status Design::STATUS_GENERATING
+      design.save!
 
-      Resque.enqueue_in(10.minutes,TimeoutAlertJob, design_id, design.status)
+      Store::fetch_from_store design.store_key_prefix
+      design_directory = Rails.root.join 'tmp', 'store', design.store_key_prefix
+      
+      sif_file_path = Rails.root.join 'tmp', 'store', design.get_sif_file_path
 
-      # Fetch the processed files once again
-      Store::fetch_from_store design.store_processed_key
+      if not File.exists? sif_file_path
+        Log.fatal "SIf file missing. Can't proceed..."
+        raise "Missing SIF file"
+      end
 
-      # delete the generated and published folder
       Store::delete_from_store design.store_generated_key
       Store::delete_from_store design.store_published_key
 
-      # Generate markup once in editable mode once
       design.generate_markup :enable_data_attributes => true
 
-      # mark editing complete
-      design.set_status Design::STATUS_COMPLETED
-            
+      if design.status != Design::STATUS_FAILED
+        design.set_status Design::STATUS_COMPLETED
+      end
+
     rescue Exception => error
       design.set_status Design::STATUS_FAILED
-      
-      error_description = "HTML generation failed for #{design.user.email} on design #{design.safe_name}"
+   
+      error_description = "Parsing failed for #{design.user.email} on design #{design.safe_name}"
       Utils::pager_duty_alert error_description, :error => error.message, :user => design.user.email
       raise error
     end
-    Resque.remove_delayed(TimeoutAlertJob, design_id, design.status)
   end
 end
