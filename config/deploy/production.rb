@@ -7,6 +7,8 @@ set :heroku_app, "markupwand"
 set :heroku_remote, "production"
 
 
+server "ec2-23-22-97-138.compute-1.amazonaws.com", :web, :app
+
 namespace :deploy do  
   task :copy_prod_configs do 
     run "cp #{shared_path}/prod_env #{current_path}/.env"
