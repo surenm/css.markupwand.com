@@ -111,7 +111,7 @@ class Design
     Log.info "Setting status == #{status}"
     self.status = status
     self.save!
-=begin
+
     if self.status == Design::STATUS_COMPLETED
       if not self.user.admin
         to      = "#{self.user.name} <#{self.user.email}>"
@@ -120,7 +120,6 @@ class Design
         ApplicationHelper.post_simple_message to, subject, text
       end
     end
-=end
   end
 
   def incremental_counter
