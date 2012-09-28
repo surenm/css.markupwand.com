@@ -25,6 +25,9 @@ class UploaderJob
     destination_file = File.join design.store_key_prefix, file_name
     Store.write_contents_to_store destination_file, psd_file_data
     
+    original_file_backup = File.join design.store_key_prefix, "#{file_name}.orig"
+    Store.write_contents_to_store original_file_backup, psd_file_data
+    
     design.psd_file_path = destination_file
     design.save!
     Log.info "Done uploading successfully!"
