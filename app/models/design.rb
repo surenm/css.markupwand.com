@@ -6,6 +6,7 @@ class Design
   include Mongoid::Timestamps::Updated
   include Mongoid::Versioning
   include Mongoid::Document::Taggable
+  include ActionView::Helpers::DateHelper
 
   belongs_to :user
 
@@ -212,6 +213,22 @@ class Design
   def get_sif_file_path
     safe_basename = Store::get_safe_name File.basename(self.name, ".psd")
     File.join self.store_key_prefix, "#{safe_basename}.sif"
+  end
+
+  def get_conversion_time
+    if self.status == Design::STATUS_COMPLETED
+      completed_time = self.updated_at.to_i
+      queued         = self.versions.select { |version| version.status == :queued }  
+      if not queued.empty?
+        queued_time = queued.first.updated_at.to_i
+        time_taken  = (completed_time - queued_time)
+        return distance_of_time_in_words(time_taken) + " #{time_taken}"
+      else
+        return "invalid"
+      end
+    else
+      return "invalid"
+    end
   end
 
   def get_sif_data
