@@ -20,6 +20,31 @@ body {
     }
   }
 
+  .alert {
+    font-size: 11px;
+    margin: 0px 20px 10px 0;
+    font-family: 'Helvetica Neue';
+    padding: 3px;
+    width: 212px;
+    line-height: 12px;
+    background-color: transparent;
+    color: #444;
+
+    .label {
+      font-size: 9px;
+      font-weight: normal;
+      font-family: Ubuntu;
+    }
+  }
+
+  .alert-info {
+    background-color: white;
+    margin: 10px 25px;
+    border: 1px solid #ccc;
+    width: 192px;
+  }
+
+
   #widget-class-name {
     .modal-header {
       font-size: 19px;
@@ -38,23 +63,6 @@ body {
     opacity: 0.4;
   }
 
-  .alert {
-    font-size: 11px;
-    margin: 0px 20px 10px 0;
-    font-family: 'Helvetica Neue';
-    padding: 3px;
-    width: 212px;
-    line-height: 12px;
-    background-color: transparent;
-    color: #444;
-
-    .label {
-      font-size: 9px;
-      font-weight: normal;
-      font-family: Ubuntu;
-    }
-  }
-
   #css_prefix { 
     margin-left: 20px;
 
@@ -71,10 +79,10 @@ body {
   .edit-block {
     margin-left: 4px;
     margin-top: 10px;
+
     .row {
       margin-left: 0;
     }
-
 
     .big-box {
       font-size: 18px;
@@ -152,7 +160,7 @@ body {
     h4 {
       font-family: 'Helvetica Neue', sans-serif;
       padding: 2px 0;
-      background-color: #ccc;
+      margin-left: 20px;
     }
 
   
