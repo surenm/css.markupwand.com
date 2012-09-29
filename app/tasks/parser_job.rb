@@ -36,6 +36,7 @@ class ParserJob
 
       if design.status != Design::STATUS_FAILED
         design.set_status Design::STATUS_COMPLETED
+        Resque.enqueue ChatNotifyJob, design.id, "completed"
       end
 
     rescue Exception => error
