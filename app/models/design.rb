@@ -222,7 +222,7 @@ class Design
       if not queued.empty?
         queued_time = queued.first.updated_at.to_i
         time_taken  = (completed_time - queued_time)
-        time_taken_string = (time_taken / 60).to_s + ":" +  (time_taken % 60).to_s
+        time_taken_string = "%02d:%02d" % (time_taken / 60), (time_taken % 60).to_s
         return distance_of_time_in_words(time_taken) + "(#{time_taken_string}m)"
       else
         return "invalid"
