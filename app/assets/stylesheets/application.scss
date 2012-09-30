@@ -294,11 +294,24 @@ h1, h2, h3, h4, h5 {
     p {      
       font-size: 16px;
     }
-    strong {
+    h3 {
       font-size: 20px;
       font-weight: normal;
       display: block;
       margin-bottom:4px;
+
+      a {
+        color:inherit;
+      }
+
+      a:hover {
+        text-decoration:none;
+      }
+
+      a.permalink {
+        color: #00f;
+        font-size:15px;
+      }
     }
     margin-bottom: 30px;
 

@@ -13,14 +13,14 @@ But you could get good quality code even now, by following these tricks:
 <br/>
 <ol>
 
-<li> <strong>Avoid overlapping layers:</strong> When we find overlapping layers, we try to make a few guesses on whether the designer intentionally made the layers overlap or not. This guess might not always be right. We are improving on it. Please bear with us till we get there.
+<li> <h3><a name="overlaps">Avoid overlapping layers</a> <a href="#overlaps" class="permalink">#</a></h3> When we find overlapping layers, we try to make a few guesses on whether the designer intentionally made the layers overlap or not. This guess might not always be right. We are improving on it. Please bear with us till we get there.
 <br/><br/>Example:
 
 <%= image_tag "overlaps.png", {:alt => "No overlaps", :class => 'illustration'} %>
 
 In case we see overlapping layers which cannot be resolved, we try to relatively position it (it is horrible, we know)
 
-<li> <strong>Avoid separating text blocks by spaces:</strong> Please, do not separate pieces of text in a navigation bar/ menu bar using spaces or enter. Try to create individual text layers. Each text layer that you create would result in one DOM element. In the navigation bars, you would want each link to be an individual DOM element, right?
+<li> <h3><a name="separate-text">Avoid separating text blocks by spaces</a> <a href="#separate-text" class="permalink">#</a></h3> Please, do not separate pieces of text in a navigation bar/ menu bar using spaces or enter. Try to create individual text layers. Each text layer that you create would result in one DOM element. In the navigation bars, you would want each link to be an individual DOM element, right?
 <br/><br/>
 Example:
 
@@ -30,7 +30,7 @@ Split out these space separated text items, make them individual pieces.
 
 </li>
 
-<li> <strong>Avoid multiple layers for a single-image:</strong> Each layer you give us would result in one DOM element. If you intend multiple layers to form one image, please merge the layers together.
+<li> <h3><a name="singlelayer-image">Avoid multiple layers for a single-image</a> <a href="#singlelayer-image" class="permalink">#</a></h3> Each layer you give us would result in one DOM element. If you intend multiple layers to form one image, please merge the layers together.
 <br/><br/>
 Example:
 
@@ -38,7 +38,7 @@ Example:
 
 
 </li>
-<li> <strong>Use Fill Layers instead of Normal Layers:</strong>
+<li> <h3><a name="fill-layers">Use Fill Layers instead of Normal Layers</a> <a href="#fill-layers" class="permalink">#</a></h3>
 
 <%= image_tag "normal-layers.png", {:alt => "No Fill layers instead of normal layers", :class => 'illustration'} %>
 
