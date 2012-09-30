@@ -8,7 +8,7 @@ class DesignController < ApplicationController
     design_id = params[:id].split('-').last
     @design = Design.find design_id
       
-    if @user != @design.user and not @user.admin
+    if not @user.admin and (@user != @design.user or @design.softdelete) 
       redirect_to dashboard_path
     end
   end
@@ -76,7 +76,7 @@ class DesignController < ApplicationController
   
   def index
     @status_class = Design::STATUS_CLASS
-    @designs = @user.designs.sort do |a, b|
+    @designs = @user.designs.where(:softdelete => false).sort do |a, b|
       b.created_at <=> a.created_at
     end
 

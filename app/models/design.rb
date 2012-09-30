@@ -58,6 +58,7 @@ class Design
   field :psd_file_path, :type => String
   field :sif_file_path, :type => String, :default => nil
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
+  field :softdelete, :type => Boolean, :default => false
   
   field :storage, :type => String, :default => "local"
   field :queue, :type => String, :default => Design::PRIORITY_NORMAL
