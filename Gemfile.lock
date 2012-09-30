@@ -95,7 +95,6 @@ GEM
       sass (~> 3.2.0.alpha.93)
     compass-rails (1.0.3)
       compass (>= 0.12.2, < 0.14)
-    dalli (2.2.1)
     devise (2.1.2)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
@@ -256,6 +255,9 @@ GEM
     rest-client (1.6.7)
       mime-types (>= 1.16)
     rmagick (2.13.1)
+    rpm_contrib (2.1.11)
+      newrelic_rpm (>= 3.1.1)
+      newrelic_rpm (>= 3.1.1)
     rspec (2.11.0)
       rspec-core (~> 2.11.0)
       rspec-expectations (~> 2.11.0)
@@ -349,7 +351,6 @@ DEPENDENCIES
   coffee-rails (~> 3.2.2)
   compass (>= 0.12.alpha.4)
   compass-rails
-  dalli
   devise
   execjs
   factory_girl_rails (~> 3.0)
@@ -378,6 +379,7 @@ DEPENDENCIES
   resque-scheduler
   rest-client
   rmagick
+  rpm_contrib
   rspec-rails
   ruby-prof
   rvm-capistrano
