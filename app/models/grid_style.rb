@@ -3,6 +3,7 @@ class GridStyle
   attr_accessor :grid
 
   attr_accessor :computed_css # (Hash) 
+  attr_accessor :normal_css # (Hash) Anything that is added via editor
   attr_accessor :extra_selectors # (Array) 
   attr_accessor :css_rules # (Array)
   attr_accessor :generated_selector # (String) 
@@ -14,13 +15,16 @@ class GridStyle
     end
 
     @computed_css = {}
+    @normal_css   = args.fetch :normal_css, {}
+
     @extra_selectors    = args.fetch :extra_selectors, []
     @generated_selector = args.fetch :generated_selector, nil
   end
 
   def attribute_data
     {
-      :generated_selector => @generated_selector
+      :generated_selector => @generated_selector,
+      :normal_css => @normal_css
     }
   end
 
@@ -200,10 +204,12 @@ class GridStyle
   # computed using computed css and 
   def css_rules
     rules_array = []
-    self.computed_css.each do |rule_key, rule_object|
+    all_css_rules = self.computed_css.clone
+    all_css_rules.update self.normal_css
+
+    all_css_rules.each do |rule_key, rule_object|
       rules_array.concat Compassify::get_scss(rule_key, rule_object)
-    end
-    
+    end    
 
     self.grid.style_layers.values.each do |layer|
       rules_array += layer.css_rules
