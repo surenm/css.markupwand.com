@@ -25,14 +25,15 @@ getChosenNode =->
   type = $('#edit-panel').data('node-type')
   return Design[type][id]
 
-checkForUnsavedChanges =->
-  if Design.unsaved_changes
-    $('#unsaved-changes').show()
-    $('#dom_json').val(JSON.stringify(Design))
+showUnsavedChanges =->
+  $('#unsaved-changes').show()
+  $('#dom_json').val(JSON.stringify(Design))
 
 addListeners =->
   $("#tag-chooser").prop('disabled', true)
   $("#class-chooser").prop('disabled', true)
+  $("#center-align").prop('disabled', true)
+
   helper_terms = ['nav','navbar','header','footer',
   '-inner','-wrap','-outer','profile','banner','carousel',
   'menubar', '-header', '-footer', '-body', 'container', 
@@ -46,15 +47,28 @@ addListeners =->
   $("#tag-chooser").change( (e)->
     node = getChosenNode()
     node['tag'] = $(e.target).val()
-    Design.unsaved_changes = true
-    checkForUnsavedChanges()
+    showUnsavedChanges()
   )
 
   $("#class-chooser").keyup( (e)->
     node = getChosenNode()
     node['class'] = $(e.target).val()
-    Design.unsaved_changes = true
-    checkForUnsavedChanges()
+    showUnsavedChanges()
+  )
+
+  $("#center-align").change( (e)->
+    node_data = getChosenNode()
+    node = ($($("#editor-iframe").contents()).find('[data-' + node_data['type'] + '-id=' + node_data['id'] + ']'))
+    if node
+      if $(e.target).attr("checked") == "checked"
+        node.css('margin-left','auto')
+        node.css('margin-right','auto')
+      else
+        node.css('margin-left', '')
+        node.css('margin-right', '')
+      
+      clearFocusOverlays()
+      addFocusOverlay(node)
   )
 
 clickHandler = (e)->
@@ -66,22 +80,33 @@ clickHandler = (e)->
 
   $("#tag-chooser").prop('disabled', false) 
   $("#class-chooser").prop('disabled', false)
+  $("#center-align").prop('disabled', false)
 
   if layer_id
     class_name = Design.layer[layer_id]['class']
     tag_name   = Design.layer[layer_id]['tag']
+    $("#center-align").prop('disabled', true)
     type       = 'layer'
     id         = layer_id
   else if grid_id
     class_name = Design.grid[grid_id]['class']
     tag_name   = Design.grid[grid_id]['tag']
+    if Design.grid[grid_id]['css'].hasOwnProperty 'margin' and Design.grid[grid_id]['css']['margin'] == '0 auto'
+       $("#center-align").attr('checked', true)
+    else
+       $("#center-align").attr('checked', false)
+
     type       = 'grid'
     id         = grid_id
   else
     $("#tag-chooser").prop('disabled', true)
     $("#class-chooser").prop('disabled', true)
+    $("#center-align").prop('disabled', true)
+    $("#center-align").attr('checked', false)
+
     tag_name = 'nil'
     class_name = ''
+    $("#css-debug").html('')
 
   $('#edit-panel').data('node-id', id)
   $('#edit-panel').data('node-type', type)
@@ -100,4 +125,3 @@ window.iframeLoaded =->
 
 $(document).ready ->
   addListeners()
-  checkForUnsavedChanges()
