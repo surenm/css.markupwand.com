@@ -8,7 +8,7 @@ class DesignController < ApplicationController
     design_id = params[:id].split('-').last
     @design = Design.find design_id
       
-    if @user != @design.user and not @user.admin
+    if not @user.admin and (@user != @design.user or @design.softdelete) 
       redirect_to dashboard_path
     end
   end
@@ -52,7 +52,12 @@ class DesignController < ApplicationController
   def local_uploaded
     file_name   = params[:design]["file"].original_filename
     design      = Design.new :name => file_name
-    design.user = @user    
+    if @user.nil?
+      design.user = User.find_by_email params[:email]
+    else
+      design.user = @user
+    end
+
     design.file = params[:design]["file"]
     design.save!
 
@@ -71,7 +76,7 @@ class DesignController < ApplicationController
   
   def index
     @status_class = Design::STATUS_CLASS
-    @designs = @user.designs.sort do |a, b|
+    @designs = @user.designs.where(:softdelete => false).sort do |a, b|
       b.created_at <=> a.created_at
     end
 
@@ -86,46 +91,40 @@ class DesignController < ApplicationController
       format.json { render :json => @design.attribute_data(true) }
     end
   end
-  
+
   def edit
-  end
+    @grids  = {}
+    @layers = {}
 
-  def edit_class
-    @selector_name_map = @design.selector_name_map
-  end
-
-  def save_class
-    edit_count = 0
-    params['class_map'].each do |lookup, value|
-      lookup_key = lookup.gsub("'",'')
-      @design.selector_name_map[lookup_key]['name'] = value
-      edit_count = edit_count + 1
+    @design.grids.each do |id, data|
+      @grids[id]  = {:class => data.style.generated_selector,
+                     :tag   => data.tag }
     end
 
-    analytical.event "class_rename_count", edit_count
+    @design.layers.each do |id, data|
+      @layers[id] = {:class => data.generated_selector,
+                     :tag   => data.tag_name }
+    end
+  end
 
-    @design.class_edited = true
-    @design.save!
-    @design.write_html_job
+  def save_edits
+    dom_json = JSON.parse params['dom_json']
+    layers   = dom_json['layer']
+    grids    = dom_json['grid']
+    layers.each do |id, layer_data|
+      @design.layers[id.to_i].generated_selector = layer_data['class']
+#      @design.layers[id.to_i].tag_name = layer_data['tag']
+    end
+
+    grids.each do |id, grid_data|
+      @design.grids[id].style.generated_selector = grid_data['class']
+#      @design.grids[id].tag = grid_data['tag']
+    end
+
+    @design.save_sif!
+    @design.push_to_generation_queue
+  
     redirect_to :action => :show, :id => @design.safe_name
-  end
-
-  def save_widget_name
-
-    if not params['widget_name'].empty?
-      widget_name = params['widget_name'].downcase.gsub(" ", "-")
-      @design.class_edited = true
-      root_grid  = @design.get_root_grid
-      class_name = root_grid.style_selector.generated_selector
-      @design.selector_name_map[class_name] = {} if @design.selector_name_map[class_name].nil? 
-      @design.selector_name_map[class_name]['name'] = widget_name
-      @design.class_edited = true
-      analytical.event "edit_name_widget", "named"
-      @design.save!
-    end
-
-
-    redirect_to :action => :edit_class, :id => @design.safe_name
   end
   
   def preview
@@ -171,18 +170,13 @@ class DesignController < ApplicationController
     @design.font_map.update_downloaded_fonts(saveable_fonts)
     @design.font_map.save!
     @design.save!
-    @design.write_html_job
-    
-    redirect_to :action => :fonts, :id => @design.safe_name
+    self.reextract
   end
 
   def fonts
     @missing_fonts = @design.font_map.missing_fonts
   end
 
-  def gallery
-  end
-  
   def download
     tmp_folder = Store::fetch_from_store @design.store_published_key
     tar_file   = Rails.root.join("tmp", "#{@design.safe_name}.tar.gz")
@@ -191,7 +185,12 @@ class DesignController < ApplicationController
     system "cd #{tmp_folder} && tar -czvf #{tar_file} ."
     send_file tar_file, :disposition => 'inline'
   end
-    
+  
+  def download_psd
+    file = Store::fetch_object_from_store(@design.psd_file_path)
+    send_file file, :disposition => 'inline'
+  end
+      
   def update
     GeneratorJob.perform @design.id
     render :json => {:status => :success}
@@ -209,6 +208,8 @@ class DesignController < ApplicationController
       base_folder = @design.store_processed_key
     elsif params[:type] == "generated"
       base_folder = @design.store_generated_key
+    elsif params[:type] == "extracted"
+      base_folder = @design.store_extracted_key
     end
 
     remote_file = File.join base_folder, "#{params[:uri]}.#{params[:ext]}"
@@ -217,23 +218,13 @@ class DesignController < ApplicationController
     send_file temp_file, :disposition => "inline"
   end
   
-  def create_screenshot
-    Resque.enqueue ScreenshotJob, @design.id
-    redirect_to :action => :show, :id => @design.safe_name
-  end
-  
-  def reprocess
-    @design.reprocess
+  def reextract
+    @design.reextract
     redirect_to :action => :show, :id => @design.safe_name
   end
   
   def reparse
     @design.reparse
-    redirect_to :action => :show, :id => @design.safe_name
-  end
-
-  def write_html
-    @design.write_html_job
     redirect_to :action => :show, :id => @design.safe_name
   end
 
@@ -246,44 +237,16 @@ class DesignController < ApplicationController
     render :text => "Adingu! Ellaame udane venumaa! Logs will come soon in this page."
   end
   
-  def view_dom
-    root_grid = @design.get_root_grid
-    render :json => root_grid.get_tree
-  end 
-
   def view_json
-    processed_filebasename = File.basename @design.processed_file_path
+    remote_file_path = @design.get_sif_file_path
+    sif_file = Store::fetch_object_from_store remote_file_path
 
-    remote_file_path = File.join @design.store_processed_key, processed_filebasename    
-    processed_file   = Store::fetch_object_from_store remote_file_path
-
-    send_file processed_file, :disposition => 'inline'
+    send_file sif_file, :disposition => 'inline', :type => 'application/json'
   end
 
-  def upload_danger
-    # Stupid security for now.
-    if params[:secret] == '02b0c8ad8a141b04693e923b3d56a918'
-      design_data = params[:design]
-      design      = Design.new :name => design_data[:name], :store => Store::get_S3_bucket_name
-      design.user = User.find_by_email(params[:email])
-      design.save!
-      
-      Resque.enqueue UploaderJob, design.id, design_data
-
-      render :json => {:status => 'OK'}
-    else
-      render :json => {:status => 'ERROR'}
-    end
-
-  end 
-
-  def download_psd
-    file = Store::fetch_object_from_store(@design.psd_file_path)
-    send_file file, :disposition => 'inline'
-  end
-  
   def increase_priority
     @design.move_to_priority_queue
     redirect_to :action => :show, :id => @design.safe_name
   end
+
 end

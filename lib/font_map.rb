@@ -1,7 +1,7 @@
 class FontMap
   include Mongoid::Document
   include Mongoid::Timestamps::Created
-  include Mongoid::Timestamps::Updated  
+  include Mongoid::Timestamps::Updated 
 
   embedded_in :design
 
@@ -25,17 +25,23 @@ class FontMap
   # Find out fonts and urls from
   # Google and Typekit
   def find_web_fonts(layers)
+    Log.debug "Finding web fonts for #{layers.size} layers"
+    layer_values = layers.values
     fonts_list = []
 
-    layers.each do |layer|
-      raw_layer_font = layer.get_raw_font_name
-      if not DEFAULT_FONTS.include? raw_layer_font
-        fonts_list.push raw_layer_font
+    layer_values.each do |layer|
+      raw_layer_fonts = layer.get_raw_font_name
+      raw_layer_fonts.each do |raw_layer_font|
+        if not DEFAULT_FONTS.include? raw_layer_font
+          fonts_list.push raw_layer_font
+        end
       end
     end
 
     fonts_list.uniq!
     fonts_list.compact!
+
+    Log.debug "Looking for #{fonts_list}"
         
     google_fonts  = find_in_google(fonts_list)
     
@@ -46,10 +52,19 @@ class FontMap
       self.missing_fonts.delete font_name
     end
 
+    Log.debug "Found #{google_fonts} from google web fonts library"
+    Log.debug "Missing Fonts - #{self.missing_fonts}"
+
     copy_from_localfonts(fonts_list, SystemFont.all)
     copy_from_localfonts(fonts_list, self.design.user.user_fonts)
 
+    Log.debug "System fonts - #{SystemFont.all.collect{|f| f.fontname}}"
+    Log.debug "User fonts - #{self.design.user.user_fonts.collect{|f| f.fontname}}"
+    
     self.google_webfonts_snippet = google_fonts[:snippet]
+
+    Log.debug "Snippet to include Google Web fonts - #{self.google_webfonts_snippet}"
+
     self.typekit_snippet = ''
     self.save!
   end

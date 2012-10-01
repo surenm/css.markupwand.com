@@ -20,6 +20,31 @@ body {
     }
   }
 
+  .alert {
+    font-size: 11px;
+    margin: 0px 20px 10px 0;
+    font-family: 'Helvetica Neue';
+    padding: 3px;
+    width: 212px;
+    line-height: 12px;
+    background-color: transparent;
+    color: #444;
+
+    .label {
+      font-size: 9px;
+      font-weight: normal;
+      font-family: Ubuntu;
+    }
+  }
+
+  .alert-info {
+    background-color: white;
+    margin: 10px 25px;
+    border: 1px solid #ccc;
+    width: 192px;
+  }
+
+
   #widget-class-name {
     .modal-header {
       font-size: 19px;
@@ -38,26 +63,6 @@ body {
     opacity: 0.4;
   }
 
-  h3 {
-    font-size: 14px;
-    padding:20px 0 0 0;
-  }
-
-  .alert {
-    font-size: 11px;
-    margin: 0px 20px 10px 0;
-    font-family: 'Helvetica Neue';
-    padding: 3px;
-    width: 212px;
-    line-height: 12px;
-
-    .label {
-      font-size: 9px;
-      font-weight: normal;
-      font-family: Ubuntu;
-    }
-  }
-
   #css_prefix { 
     margin-left: 20px;
 
@@ -71,50 +76,53 @@ body {
     }
   }
 
+  .edit-block {
+    margin-left: 4px;
+    margin-top: 10px;
 
-  #css_editor {
-
-    margin-left: 20px;
-
-    ul {
-      margin: 10px 0 10px 0;
-      list-style: none;
-      max-height: 500px;
-      overflow: scroll;
-      width: 230px;
-
-      li {
-        margin:0;
-        padding:0;
-      }
-
-      pre {
-        width: 200px;
-        display: none;
-      }
-
-      input {
-        background-color: inherit;
-        border:1px solid #aaf;
-        margin-bottom: 1px;
-      }
-
-      input:focus {
-        background-color: #fff;
-        border: 2px solid #00f;
-      }
-
+    .row {
+      margin-left: 0;
     }
 
+    .big-box {
+      font-size: 18px;
+      padding: 10px;
+      height: 18px;
+      width: 180px;
+      margin: 0;
+    }
 
-    .save-wrapper {
-      padding:10px;
-      text-align: center;
+    .edit-prev,
+    .edit-next {
+      display: inline-block;
+      margin-bottom: 2px;
+      background-color: #eee;
+      padding: 3px;
+      border: 1px solid #888;
+      border-radius: 3px;
+    }
+
+    input {
+      background-color: white;
+      color: #444;
+    }
+
+    input[disabled], select[disabled] {
+      background-color: #ccc;
+      border:1px solid #ccc;
+    }
+
+    select {
+      font-size: 18px;
     }
 
   }
 
-  #editor-controls {
+  .saveclasses {
+    margin-left: 80px;
+  }
+
+  #edit-panel {
     position: absolute;
     top: 44px;
     right: 0;
@@ -135,31 +143,37 @@ body {
       font-size: 15px;
     }
 
+    h3 {
+      font-size: 18px;
+      font-family: "lemonde-sans", sans-serif;
+      text-align: center;
+      border-bottom: 1px solid #666;
+      padding: 30px 0 0 0;
+      margin-bottom: 10px;
+    }
+
+    .edit-block-hd {
+      margin-left: 20px;
+    }
+
+
+    h4 {
+      font-family: 'Helvetica Neue', sans-serif;
+      padding: 2px 0;
+      margin-left: 20px;
+    }
+
+  
     label {
       color: #1D2A5B;
       font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
       font-weight: bold;
     }
-    
-    .css-style, .property {
-      margin: 2px;
-      
-      .key {
-        float: left;
-        width: 100px;
-      }
-      
-      .value {
-        float: left;
-        padding: 2px 4px;
-        color: #fff;      
-        background: #000;
-      }
-      
-      input[type=text] {
-        width: 60px;
-      }
-    }    
+  }
+
+  #unsaved-changes {
+    background-color: orange;
+    margin-left: 30px;
   }
   
   #editor-iframe {

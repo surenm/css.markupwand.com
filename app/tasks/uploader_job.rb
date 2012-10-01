@@ -11,7 +11,7 @@ class UploaderJob
 
     user = design.user
 
-    Utils::post_to_chat "#{user.name.to_s} #{user.email.to_s} uploaded <a href='http://www.markupwand.com/design/#{design.safe_name.to_s}'>#{design.safe_name_prefix}</a>"
+    Resque.enqueue ChatNotifyJob, design.id, "uploaded"
     
     safe_basename = Store::get_safe_name File.basename(design_data[:name], ".psd")
   
@@ -24,6 +24,9 @@ class UploaderJob
 
     destination_file = File.join design.store_key_prefix, file_name
     Store.write_contents_to_store destination_file, psd_file_data
+    
+    original_file_backup = File.join design.store_key_prefix, "#{file_name}.orig"
+    Store.write_contents_to_store original_file_backup, psd_file_data
     
     design.psd_file_path = destination_file
     design.save!

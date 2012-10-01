@@ -31,6 +31,15 @@ module Store
     
     root_dir
   end
+
+  def Store::fetch_extracted_folder(design)
+    extracted_folder = Rails.root.join "tmp", "store", design.store_extracted_key
+    Log.info "Fetching #{extracted_folder}"
+    if not Dir.exists? extracted_folder.to_s
+      fetch_from_store design.store_extracted_key
+    end
+    extracted_folder
+  end
   
   def Store::write_contents_to_local_file(file_path, file_contents)
     file_dir = File.dirname file_path
@@ -57,6 +66,12 @@ module Store
     Log.debug "Saving contents to #{file_key} in local store..."
     
     file_path   = File.join local_store, file_key
+    file_dir    = File.dirname file_path
+
+    if not File.directory? file_dir
+      FileUtils.mkdir_p file_dir
+    end
+
     Store::write_contents_to_local_file file_path, file_contents
   end
   
@@ -191,27 +206,44 @@ module Store
       return Store::fetch_from_local_store remote_folder
     end    
   end
-  
-  def Store::fetch_object_from_remote_store(remote_file_path)
+
+  # Returns content instead of file pointer
+  def Store::fetch_data_from_remote_store(remote_file_path)
     bucket      = Store::get_remote_store
     remote_file = bucket.objects[remote_file_path]
 
+    remote_file.read
+  end
+
+  def Store::fetch_data_from_local_store(remote_file_path)
+    local_store = Store::get_local_store
+    remote_file = File.join local_store, remote_file_path
+    File.read remote_file
+  end
+
+  def Store::fetch_data_from_store(remote_file_path)
+    if Constants::store_remote?
+      Store::fetch_data_from_remote_store(remote_file_path)
+    else
+      Store::fetch_data_from_local_store(remote_file_path)
+    end
+  end
+
+  ### FETCHES OBJECT FROM STORE, RETURNS A FILE PATH
+  def Store::fetch_object_from_remote_store(remote_file_path)
     tmp_file = Rails.root.join 'tmp', 'store', remote_file_path
-    contents = remote_file.read
-    Log.debug "Fetching #{remote_file_path} from remote store #{bucket.name} to #{tmp_file}..."    
+    Log.debug "Fetching #{remote_file_path} from remote store to #{tmp_file}..."    
+    contents = Store::fetch_data_from_remote_store(remote_file_path)
+
     Store::write_contents_to_local_file tmp_file, contents
     
     return tmp_file
   end
-  
+
   def Store::fetch_object_from_local_store(remote_file_path)
-    local_store = Store::get_local_store
-    remote_file = File.join local_store, remote_file_path
-    
     tmp_file = Rails.root.join 'tmp', 'store', remote_file_path
-    contents = File.read remote_file
-    
-    Log.debug "Fetching #{remote_file} from local store #{local_store} to #{tmp_file}..."    
+    Log.debug "Fetching #{remote_file_path} from local store #{Store::get_local_store} to #{tmp_file}..."
+    contents = Store::fetch_data_from_local_store(remote_file_path)
     Store::write_contents_to_local_file tmp_file, contents
     
     return tmp_file
@@ -224,7 +256,9 @@ module Store
       return Store::fetch_object_from_local_store remote_file
     end    
   end
-  
+
+
+  ### DELETES FROM STORE
   def Store::delete_from_remote_store(file_path)
     Log.debug "Deleting #{file_path} from remote store..."
     bucket = Store::get_remote_store

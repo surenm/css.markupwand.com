@@ -253,7 +253,7 @@ module CssParser
     if layer.is_overlay?
       height = layer.bounds.height
     else
-      height = grid.style_selector.unpadded_height
+      height = grid.style.unpadded_height
     end
 
     border_width = CssParser::box_border_width(layer.layer_json)
@@ -274,7 +274,7 @@ module CssParser
     if layer.is_overlay?
       width = layer.bounds.width
     else
-      width = grid.style_selector.unpadded_width
+      width = grid.style.unpadded_width
     end
 
     border_width = CssParser::box_border_width(layer.layer_json)
@@ -467,16 +467,16 @@ module CssParser
     css[:background] = "url('../../#{layer.image_path}') no-repeat"
     css[:'background-size'] = "100% 100%"
     if grid
-      css[:width] = "#{grid.style_selector.unpadded_width}px"
-      css[:height] = "#{grid.style_selector.unpadded_height}px"
+      css[:width] = "#{grid.style.unpadded_width}px"
+      css[:height] = "#{grid.style.unpadded_height}px"
     end
 
     css
   end
 
-  def CssParser::create_incremental_selector
+  def CssParser::create_incremental_selector(type = 'class')
     DesignGlobals.instance.incremental_class_counter = DesignGlobals.instance.incremental_class_counter + 1
-    "class#{DesignGlobals.instance.incremental_class_counter}"
+    "#{type}#{DesignGlobals.instance.incremental_class_counter}"
   end
 
   # Adds to a inverted list where the key is the property and value

@@ -32,21 +32,21 @@
           <span class="left btn-group vote-actions">
 
               <% if not @prev.nil? %>
-              <a class="btn" href="/design/<%= @prev.safe_name %>/preview" >
+              <a id="prev-button" class="btn" href="/design/<%= @prev.safe_name %>/preview" >
                 <i class="icon-arrow-left icon-white"></i>              
               </a>
               <% end %>
               
-              <a class="btn btn-success" href="/design/<%= @design.safe_name %>/set-rating?rate=true">
+              <a id="like-button" class="btn btn-success" href="/design/<%= @design.safe_name %>/set-rating?rate=true">
                 <i class="icon-thumbs-up icon-white"></i>
               </a>
               
-              <a class="btn btn-danger" href="/design/<%= @design.safe_name %>/set-rating?rate=false">
+              <a id="dislike-button" class="btn btn-danger" href="/design/<%= @design.safe_name %>/set-rating?rate=false">
                 <i class="icon-thumbs-down icon-white"></i>
               </a>
 
               <% if not @next.nil? %>
-              <a class="btn" href="/design/<%= @next.safe_name %>/preview" >
+              <a class="btn" id="next-button" href="/design/<%= @next.safe_name %>/preview" >
                 <i class="icon-arrow-right icon-white"></i>              
               </a>
               <% end %>
@@ -74,22 +74,45 @@
           </span>
 
           <script>
-            $('#design-preview-dialog').dialog({ autoOpen: false, position: [960, 70],  width: "960"})
-            $('#design-preview-button').click(function(){
+            $('#design-preview-dialog').dialog({ autoOpen: false, modal: true, width: "1200", height: "700", position: "center"});
+            var designToggleView = function(event) {
               if($("#design-preview-dialog").dialog("isOpen"))
                 $("#design-preview-dialog").dialog("close");
               else
                 $("#design-preview-dialog").dialog("open");
+            }
+            $('#design-preview-button').click(designToggleView);
+
+
+            Mousetrap.bind('j', function() {
+             document.location = $('#next-button').attr('href')
             });
-            $(document).ready(function() {
-                $("#design-preview-dialog").dialog("open");
-              })
+
+            Mousetrap.bind('k', function() {
+             document.location = $('#prev-button').attr('href')
+            });
+         
+            Mousetrap.bind('l', function() {
+             document.location = $('#like-button').attr('href');
+            });
+         
+            Mousetrap.bind('t', function() {
+             $('.tag_list').focus();
+            });
+         
+            Mousetrap.bind('h', function() {
+             document.location = $('#dislike-button').attr('href')
+            });
+
+            Mousetrap.bind('v', designToggleView);
+
           </script>
         <% end %>
       </div>
     </div>
   </div>
   <div class = "clearfix"> </div>
+  <!-- FIXME PSDJS -->
   <% if @design.font_map.missing_fonts.length > 0 %>
     <div class="font-error alert alert-error">
     We couldn't find few of your fonts. <a href="/design/<%= @design.safe_name %>/fonts">Upload your fonts</a> for better results
@@ -98,13 +121,8 @@
 </div>
 <iframe id="preview-iframe" src='<%= "/published/#{@design.safe_name}/index.html" %>'></iframe>
 <% end %>
-<%= content_for :javascript do %>
-<script type="text/javascript">
-Analytical.track("design_preview_page");
-</script>
-<% end %>
 <%= content_for :admin_content do %>
 <div id="design-preview-dialog">
-  <img src="/processed/<%= @design.safe_name %>/<%= File.basename @design.psd_file_path, '.psd' %>.png"/>
+  <img src="/extracted/<%= @design.safe_name %>/<%= File.basename @design.psd_file_path, '.psd' %>_psd.png"/>
 </div>
 <% end %>

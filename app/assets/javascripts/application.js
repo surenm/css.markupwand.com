@@ -20,6 +20,7 @@
 //= require lib/underscore
 //= require lib/backbone
 //= require lib/utils
+//= require mousetrap.min
 //= require lib/tree.jquery
 //= require lib/jquery.jeditable
 //= require lib/bootstrap-modal

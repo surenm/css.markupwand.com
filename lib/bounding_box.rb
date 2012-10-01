@@ -9,7 +9,11 @@ class BoundingBox
   def self.create_from_bounds(horizontal_bound, vertical_bound)
     BoundingBox.new horizontal_bound[0], vertical_bound[0], horizontal_bound[1], vertical_bound[1]
   end
-
+  
+  def self.create_from_attribute_data(data)
+    BoundingBox.new data[:top], data[:left], data[:bottom], data[:right]
+  end
+  
   def reset
     set(nil, nil, nil, nil)
   end
@@ -51,6 +55,15 @@ class BoundingBox
   
   def bounds
     self
+  end
+  
+  def attribute_data
+    {
+      :top    => self.top,
+      :bottom => self.bottom,
+      :right  => self.right,
+      :left   => self.left,
+    }
   end
 
   def to_s
@@ -214,7 +227,11 @@ class BoundingBox
     Log.debug "Checking if objects #{objects} are in region #{region}"
     objects_in_region = objects.select do |item|
       if item.kind_of? Layer
-        region.encloses? item.bounds and item.zindex >= zindex.to_i 
+        if not zindex.nil?
+          region.encloses? item.bounds and item.zindex >= zindex.to_i 
+        else 
+          region.encloses? item.bounds
+        end
       else 
         region.encloses? item
       end
