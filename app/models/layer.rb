@@ -130,10 +130,6 @@ class Layer
     return self.bounds.intersect_area other.bounds
   end
 
-  def unmaskable_layer?
-    self.type == Layer::LAYER_HUESATURATION
-  end
-
   def eclipses?(other_layer)
     self.encloses? other_layer and self.zindex > other_layer.zindex
   end
