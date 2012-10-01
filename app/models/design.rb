@@ -271,6 +271,10 @@ class Design
   # to a buffer. And the next item picks it up from buffer and takes it as its 
   # own offset bounding box.
   #
+  
+  @@grid_offset_box = nil
+  @@row_offset_box  = nil
+  
   # This function is for serializing bounding box and storing it.
   def add_offset_box(bounding_box)
     new_offset_box = nil
@@ -279,29 +283,29 @@ class Design
     else 
       new_offset_box = BoundingBox.get_super_bounds [bounding_box, self.offset_box]
     end
-    Rails.cache.write self.offset_box_key, BoundingBox.pickle(new_offset_box)
+     @@grid_offset_box = new_offset_box
   end
   
   # Accessor for offset bounding box
   # De-serializes the offset box from mongo data.
   def offset_box
-    BoundingBox.depickle Rails.cache.read self.offset_box_key
+    @@grid_offset_box
   end
   
   def reset_offset_box
-    Rails.cache.delete self.offset_box_key
+    @@grid_offset_box = nil
   end
   
   def row_offset_box=(bounding_box)
-    Rails.cache.write self.row_offset_box_key, BoundingBox.pickle(bounding_box)
+    @@row_offset_box = bounding_box
   end
   
   def row_offset_box
-    BoundingBox.depickle Rails.cache.read self.row_offset_box_key
+    @@row_offset_box
   end
   
   def reset_row_offset_box
-    Rails.cache.delete self.row_offset_box_key
+    @@row_offset_box = nil
   end
   
   ##########################################################
