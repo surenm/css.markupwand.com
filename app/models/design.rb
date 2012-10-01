@@ -562,7 +562,8 @@ config
     # Write style.scss file and style.css file
     scss_path = File.join base_folder, "assets", "css"
     scss_file_name = File.join scss_path, "style.scss"
-    Store.write_contents_to_store scss_file_name, scss_content
+    indented_scss = Utils::indent_scss scss_content
+    Store.write_contents_to_store scss_file_name, indented_scss
 
     css_path = File.join base_folder, "assets", "css"
     css_file_name = File.join css_path, "style.css"

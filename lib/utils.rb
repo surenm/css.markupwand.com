@@ -87,4 +87,16 @@ module Utils
 CSS
     return css_block
   end
+  
+  def Utils::indent_scss(unindented_scss)
+    scss_code = ""
+    tabs = 0
+    unindented_scss.split("\n").each do |line|
+      tabs = tabs - 1  if line.include? '}'
+      white_space = Array.new(tabs, '    ').join
+      scss_code += "#{white_space}#{line}\n"
+      tabs = tabs + 1 if line.include? '{'
+    end
+    return scss_code
+  end
 end
