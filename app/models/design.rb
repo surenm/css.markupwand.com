@@ -522,7 +522,7 @@ COMPASS
 
   # Right now convert using the system command
   # Figure out how to do this via function call, later.
-  def generate_css_from_sass(sass_content)
+  def generate_css_from_sass(scss_content)
     compile_dir = Rails.root.join("tmp", self.safe_name)
     FileUtils.mkdir_p compile_dir
     config_rb = <<config
@@ -536,8 +536,8 @@ relative_assets = true
 fonts_dir = ""   
 config
     
-    sass_file = Rails.root.join("tmp", self.safe_name, 'style.scss')
-    File.open(sass_file, 'w+') { |f| f.write(sass_content) }
+    scss_file = Rails.root.join("tmp", self.safe_name, 'style.scss')
+    File.open(scss_file, 'w+') { |f| f.write(scss_content) }
 
     config_rb_file = Rails.root.join("tmp", self.safe_name, 'config.rb')
     File.open(config_rb_file, 'w+') { |f| f.write(config_rb) }
