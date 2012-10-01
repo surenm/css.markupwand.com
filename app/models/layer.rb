@@ -224,14 +224,6 @@ class Layer
     @image_path
   end
 
-  def text_type
-    if layer_json.has_key? :textType
-      return layer_json[:textType]
-    else
-      return ""
-    end
-  end
-
   def extracted_image_path
     extracted_folder = Store::fetch_extracted_folder self.design
     Log.debug extracted_folder
