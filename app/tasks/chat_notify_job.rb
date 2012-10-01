@@ -4,6 +4,7 @@ class ChatNotifyJob
   @queue = :misc_tasks
 
   def self.perform(design_id, event)
+    return if Rails.env.development?
     design = Design.find design_id
     user = design.user
 
