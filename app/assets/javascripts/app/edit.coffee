@@ -63,12 +63,18 @@ addListeners =->
       if $(e.target).attr("checked") == "checked"
         node.css('margin-left','auto')
         node.css('margin-right','auto')
+        node_data.css['margin-left']  = 'auto'
+        node_data.css['margin-right'] = 'auto'
+        console.log node_data
       else
         node.css('margin-left', '')
         node.css('margin-right', '')
+        delete node_data.css['margin-left']
+        delete node_data.css['margin-right']
       
       clearFocusOverlays()
       addFocusOverlay(node)
+      showUnsavedChanges()
   )
 
 clickHandler = (e)->
