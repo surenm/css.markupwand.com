@@ -1,11 +1,16 @@
 require 'capistrano/ext/multistage'
+require 'capistrano-resque'
+require 'hipchat'
 
-# Hip chat notifications
-require 'hipchat/capistrano'
-set :hipchat_token, "64b7653958a37adb2f41b49efdad33"
-set :hipchat_room_name, "Markupwand"
-set :hipchat_announce, true # notify users?
+default_run_options[:pty] = false
+default_run_options[:shell] = false
 
+module Helper
+  def self.notify(message)    
+    client = HipChat::Client.new('64b7653958a37adb2f41b49efdad33')
+    client['Markupwand'].send('capistrano', message, :notify => true, :color => 'green')
+  end
+end
 
 # Precompile assets when there is change to asset files
 namespace :deploy do
@@ -61,10 +66,11 @@ end
 # Heroku pushes
 namespace :heroku do
   task :push do
+    Helper.notify "Heroku: pushing #{branch} to #{heroku_remote}."
     if branch == "master"
       system "git push -f #{heroku_remote} master" 
     else
       system "git push -f #{heroku_remote} #{branch}:master" 
     end
-  end
+  end  
 end
