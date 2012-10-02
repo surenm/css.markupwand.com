@@ -3,16 +3,13 @@ load 'deploy' if respond_to?(:namespace) # cap2 differentiator
 Dir['vendor/gems/*/recipes/*.rb','vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
 
 # remove this line to skip loading any of the default tasks
-load 'config/deploy' 
+load 'config/deploy'
 
 # Set logger level
 logger.level = Logger::DEBUG
 
 # Enable ssh agent forwarding
 ssh_options[:forward_agent] = true
-
-# Set the default bash shell for run commands on external server
-default_run_options[:shell] = '/bin/bash'
 
 # Just keep 10 releases on cleaning up
 set :keep_releases, 10
