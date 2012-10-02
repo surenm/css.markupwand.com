@@ -272,6 +272,10 @@ class Design
   # to a buffer. And the next item picks it up from buffer and takes it as its 
   # own offset bounding box.
   #
+  
+  @@grid_offset_box = nil
+  @@row_offset_box  = nil
+  
   # This function is for serializing bounding box and storing it.
   def add_offset_box(bounding_box)
     new_offset_box = nil
@@ -280,29 +284,29 @@ class Design
     else 
       new_offset_box = BoundingBox.get_super_bounds [bounding_box, self.offset_box]
     end
-    Rails.cache.write self.offset_box_key, BoundingBox.pickle(new_offset_box)
+     @@grid_offset_box = new_offset_box
   end
   
   # Accessor for offset bounding box
   # De-serializes the offset box from mongo data.
   def offset_box
-    BoundingBox.depickle Rails.cache.read self.offset_box_key
+    @@grid_offset_box
   end
   
   def reset_offset_box
-    Rails.cache.delete self.offset_box_key
+    @@grid_offset_box = nil
   end
   
   def row_offset_box=(bounding_box)
-    Rails.cache.write self.row_offset_box_key, BoundingBox.pickle(bounding_box)
+    @@row_offset_box = bounding_box
   end
   
   def row_offset_box
-    BoundingBox.depickle Rails.cache.read self.row_offset_box_key
+    @@row_offset_box
   end
   
   def reset_row_offset_box
-    Rails.cache.delete self.row_offset_box_key
+    @@row_offset_box = nil
   end
   
   ##########################################################
@@ -519,7 +523,7 @@ COMPASS
 
   # Right now convert using the system command
   # Figure out how to do this via function call, later.
-  def generate_css_from_sass(sass_content)
+  def generate_css_from_sass(scss_content)
     compile_dir = Rails.root.join("tmp", self.safe_name)
     FileUtils.mkdir_p compile_dir
     config_rb = <<config
@@ -533,8 +537,8 @@ relative_assets = true
 fonts_dir = ""   
 config
     
-    sass_file = Rails.root.join("tmp", self.safe_name, 'style.scss')
-    File.open(sass_file, 'w+') { |f| f.write(sass_content) }
+    scss_file = Rails.root.join("tmp", self.safe_name, 'style.scss')
+    File.open(scss_file, 'w+') { |f| f.write(scss_content) }
 
     config_rb_file = Rails.root.join("tmp", self.safe_name, 'config.rb')
     File.open(config_rb_file, 'w+') { |f| f.write(config_rb) }
@@ -559,7 +563,8 @@ config
     # Write style.scss file and style.css file
     scss_path = File.join base_folder, "assets", "css"
     scss_file_name = File.join scss_path, "style.scss"
-    Store.write_contents_to_store scss_file_name, scss_content
+    indented_scss = Utils::indent_scss scss_content
+    Store.write_contents_to_store scss_file_name, indented_scss
 
     css_path = File.join base_folder, "assets", "css"
     css_file_name = File.join css_path, "style.css"
