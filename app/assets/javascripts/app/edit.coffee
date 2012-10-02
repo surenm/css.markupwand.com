@@ -65,10 +65,9 @@ addListeners =->
         node.css('margin-right','auto')
         node_data.css['margin-left']  = 'auto'
         node_data.css['margin-right'] = 'auto'
-        console.log node_data
       else
-        node.css('margin-left', '')
-        node.css('margin-right', '')
+        node.css('margin-left', '0')
+        node.css('margin-right', '0')
         delete node_data.css['margin-left']
         delete node_data.css['margin-right']
       
@@ -76,6 +75,13 @@ addListeners =->
       addFocusOverlay(node)
       showUnsavedChanges()
   )
+
+
+centerAligned = (grid)->
+    grid['css'].hasOwnProperty('margin-left') and 
+    grid['css'].hasOwnProperty('margin-right') and
+    grid['css']['margin-left'] == 'auto' and
+    grid['css']['margin-right'] == 'auto'
 
 clickHandler = (e)->
   e.stopPropagation();
@@ -97,7 +103,7 @@ clickHandler = (e)->
   else if grid_id
     class_name = Design.grid[grid_id]['class']
     tag_name   = Design.grid[grid_id]['tag']
-    if Design.grid[grid_id]['css'].hasOwnProperty 'margin' and Design.grid[grid_id]['css']['margin'] == '0 auto'
+    if centerAligned(Design.grid[grid_id])
        $("#center-align").attr('checked', true)
     else
        $("#center-align").attr('checked', false)
