@@ -97,13 +97,18 @@ class DesignController < ApplicationController
     @layers = {}
 
     @design.grids.each do |id, data|
-      @grids[id]  = {:class => data.style.generated_selector,
-                     :tag   => data.tag }
+      @grids[id]  = { :id    => id,
+                      :class => data.style.generated_selector,
+                      :type  => 'grid',
+                      :tag   => data.tag,
+                      :css   => data.style.normal_css }
     end
 
     @design.layers.each do |id, data|
-      @layers[id] = {:class => data.generated_selector,
-                     :tag   => data.tag_name }
+      @layers[id] = { :id    => id,
+                      :class => data.generated_selector,
+                      :type  => 'grid',
+                      :tag   => data.tag_name }
     end
   end
 
@@ -113,12 +118,11 @@ class DesignController < ApplicationController
     grids    = dom_json['grid']
     layers.each do |id, layer_data|
       @design.layers[id.to_i].generated_selector = layer_data['class']
-#      @design.layers[id.to_i].tag_name = layer_data['tag']
     end
 
     grids.each do |id, grid_data|
       @design.grids[id].style.generated_selector = grid_data['class']
-#      @design.grids[id].tag = grid_data['tag']
+      @design.grids[id].style.normal_css         = grid_data['css']
     end
 
     @design.save_sif!
