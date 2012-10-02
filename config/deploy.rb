@@ -61,6 +61,11 @@ namespace :deploy do
     run "cp #{shared_path}/staging_env #{current_path}/.env"
     run "if [ -f /tmp/unicorn.pid ]  ; then echo 'Restarting...'; kill -USR2 `cat /tmp/unicorn.pid`; else echo 'Starting...'; source /home/ubuntu/.rvm/scripts/rvm  && cd #{current_path} && foreman start web_daemon; fi"
   end
+  
+  task :complete do
+    set :shell_user, `whoami`
+    Helper.notify "#{shell_user} has completed push successfully"
+  end
 end
 
 # Heroku pushes

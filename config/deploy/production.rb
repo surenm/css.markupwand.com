@@ -6,8 +6,11 @@ set :deploy_to, "/opt/#{domain}"
 set :heroku_app, "markupwand"
 set :heroku_remote, "production"
 
+set :shell_user, `whoami`
+Helper.notify "#{shell_user} is pushing #{branch} to Production."
 
-server "ec2-23-22-97-138.compute-1.amazonaws.com", :web, :app
+server "prod-worker.markupwand.com", :web, :app, :resque_worker
+set :workers, { "worker" => 2 }
 
 namespace :deploy do  
   task :copy_prod_configs do 
@@ -16,3 +19,4 @@ namespace :deploy do
 end
 
 after 'deploy:create_symlink', 'deploy:copy_prod_configs'
+after 'deploy:copy_prod_configs', 'deploy:complete'
