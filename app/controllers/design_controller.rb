@@ -222,6 +222,11 @@ class DesignController < ApplicationController
     send_file temp_file, :disposition => "inline"
   end
   
+  def reprocess
+    @design.reprocess
+    redirect_to :action => :show, :id => @design.safe_name
+  end
+
   def reextract
     @design.reextract
     redirect_to :action => :show, :id => @design.safe_name
