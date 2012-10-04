@@ -28,35 +28,41 @@
 @import "compass/utilities";
 @import "compass/css3/transform";
 
-body {
-  font-family: "lemonde-sans", sans-serif;
-  background: #DCDFE6;
-  @include background-image(url('/assets/dust.png'));
+html, body {
+  height: 100%;
+}
 
+body {
+  font-family: "museo-sans", sans-serif;
+  background: url('/assets/bg.png');
   line-height: 25px;
   overflow: auto;
 }
 
+.wrapper {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin: 0 auto -50px;
+}
+
+#footer, .push {
+  height: 50px;
+}
+
+
 #header {
-  @include background-image(url('/assets/low_contrast_linen.png')); 
+  @include background-image(url('/assets/topbar.png')); 
+  height: 54px;
   margin-bottom:0;
-  border-bottom:1px solid #333; 
-  @include box-shadow(#1A1313 0px 3px 10px);
+  //border-bottom:2px solid #333; 
+  //@include box-shadow(#1A1313 0px 3px 10px);
   position: relative;
   z-index: 10;
 
   .container {
     width: 940px;
-    padding: 5px 0;
     margin: 0 auto;
-
-    .nav-item {
-      margin-top: 4px;
-    }
-
-    .navbar-buttons {
-      margin-top: 5px;
-    }
 
     .brand:hover {
       border-bottom: 0 none;
@@ -72,16 +78,10 @@ body {
 
 }
 
-.ampersand {
-  font-family: Baskerville, 'Goudy Old Style', Palatino, 'Book Antiqua', serif;
-  font-style: italic;
-  font-weight: lighter;
-}
-
 h1 {
   color: #333;
   margin: 30px;
-  font-family: 'Dancing Script', serif;
+  font-family: 'facitweb', serif;
 }
 
 h2 {
@@ -175,11 +175,13 @@ h1, h2, h3, h4, h5 {
 }
 
 .content-area-box {
-  text-align: center;
-  background-color: #fff;
-  margin-top: 30px;
-  border-radius: 20px;
-  @include box-shadow(0 18px 50px rgba(0, 0, 0, 0.2));
+  @include border-radius(4px);
+  background-color:#fff;
+  @include box-shadow(#a7a7a7 2px 2px 10px);
+  margin-top:10px;
+  padding:10px 20px;
+  width: 920px;
+  color: #666;
 
   .horizontal-separator {
     background: url(/assets/separator-down.png) no-repeat;
@@ -190,10 +192,9 @@ h1, h2, h3, h4, h5 {
 
 #footer {
   background: #686868 url("/assets/noise.png") repeat;
-  margin-top: 30px;
   border-top: 3px solid #575757;
-  height: 50px;
   color: #ffffff;
+  margin-top: 50px;
 
   a {
     color: #ffffff;

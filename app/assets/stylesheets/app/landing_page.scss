@@ -18,8 +18,13 @@
 
 #landing-page {
   h2, h3, h4 {
-    font-family: "ff-tisa-web-pro",serif;
-    font-weight: normal;
+    font-family: "facitweb", serif;
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+  
+  h3, h4 {
+    font-weight: 600;
   }
 
   .try-block {
@@ -42,21 +47,21 @@
 
 
   .statement {
-    padding: 75px 0 115px 0;
+    padding: 50px 0 115px 0;
     @include background-image(url('/assets/digital-banner2.png'));
 
     h2 {
-      font-size: 70px;
-      color: #fff;
+      font-size: 50px;
+      color: #FFF;
       line-height: 80px;
-      @include text-shadow(rgba(black, 0.6) 3px 3px 6px);
+      @include text-shadow(#111111 3px 3px 1px);
     }
 
     em {        
       display: inline-block;
       font-style: normal;
-      font-size: 30px;
-      color: #0FBAF3;
+      font-size: 25px;
+      color: #FFF;
     }
 
     font-weight: normal;
@@ -74,12 +79,9 @@
 
   .homepage-box {
     position: relative;
-    top: -65px;
     text-align: center;
-    background-color: #fff;
     margin-top: 10px;
-    border-radius: 20px;
-    @include box-shadow(0 18px 50px rgba(0, 0, 0, 0.2));
+    border-radius: 8px;
 
     .download-image {
       font-size: 10px;
@@ -93,7 +95,6 @@
       min-height:320px;
       background-image: url('/assets/transparent.png');
       text-align: center;
-      border:1px solid #aaa;
       border-radius: 4px;
       @include box-shadow(rgba(128, 128, 128, 0.5) 2px 2px 20px 6px inset);
 
@@ -111,13 +112,10 @@
 
     img {
       margin: 0 0 5px 0;
-      width: 400px;
     }
 
     .features-block {
-      padding-bottom: 50px;
-
-      background: transparent url('/assets/separator-down.png') no-repeat bottom center;
+      padding-bottom: 75px;
 
       .features {
         margin-top: 10px;
@@ -271,7 +269,6 @@ a.start-using-button {
 
     li {
       display: inline-block;
-      border: 1px solid rgba(238, 238, 238, 1); 
       width: 25%;
       margin: 10px;
       padding: 10px;
@@ -279,12 +276,11 @@ a.start-using-button {
       min-height: 250px;
 
       .imageholder {
-        width:100px;
-        height:100px;
         border-radius:4px;
         border-color:#000;
         display:inline-block;
         margin:0 auto;
+        padding-bottom: 20px;
       }
 
       h3 {
@@ -327,7 +323,7 @@ a.start-using-button:hover {
     @include box-shadow(#a7a7a7 2px 2px 10px);
     margin-top:10px;
     padding:10px 20px;
-    font-family: 'Droid Serif', serif;
+    font-family: 'museo-sans', serif;
     width: 920px;
 
 
@@ -337,7 +333,6 @@ a.start-using-button:hover {
     }
 
     p {
-      font-family: 'helvetica neue', helvetica, arial, sans-serif;
       font-size: 14px; 
     }
 
@@ -378,7 +373,6 @@ a.start-using-button:hover {
     }
 
     p {
-      font-family: 'helvetica neue', helvetica, arial, sans-serif;
       font-size: 14px; 
     }
 
