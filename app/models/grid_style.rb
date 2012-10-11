@@ -232,7 +232,7 @@ class GridStyle
     
     # Positioning - absolute is handled separately. Just find out if a grid has to be relatively positioned
     position_relatively = false
-    if self.grid.has_positioned_children? or self.grid.has_positioned_siblings?
+    if self.grid.has_positioned_children?
       position_relatively = true
     end
     
