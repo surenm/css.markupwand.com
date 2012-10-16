@@ -26,6 +26,7 @@ gem 'xml-simple'
 # Init command related gems
 gem 'foreman'
 gem 'unicorn'
+gem 'god'
 
 # Background processing libraries
 gem 'resque', '1.21.0'

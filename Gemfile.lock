@@ -127,6 +127,7 @@ GEM
       thor (>= 0.13.6)
     formatador (0.2.3)
     fssm (0.2.9)
+    god (0.13.1)
     hashie (1.2.0)
     highline (1.6.15)
     hike (1.2.1)
@@ -356,6 +357,7 @@ DEPENDENCIES
   factory_girl_rails (~> 3.0)
   flot-rails
   foreman
+  god
   hipchat
   jquery-rails (= 2.0.2)
   json
