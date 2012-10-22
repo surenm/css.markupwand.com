@@ -28,6 +28,7 @@ set :branch, "master" unless exists?(:branch)
 set :git_enable_submodules, 1
 set :deploy_via, :remote_cache
 
+before 'deploy:update_code', 'deploy:begin'
 before 'deploy:update_code', 'heroku:push'
 
 # After symlink is created, precompile assets
@@ -37,3 +38,4 @@ after 'deploy:create_symlink', 'deploy:assets:precompile_cached'
 after 'deploy:create_symlink', 'install:bundle'
 after 'deploy:create_symlink', 'install:npm'
 after 'deploy:create_symlink', 'install:setup_tmp_dir'
+after 'deploy:create_symlink', 'worker:force_restart'
