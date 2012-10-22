@@ -62,6 +62,7 @@ namespace :web do
     run "if [ -f /tmp/unicorn.pid ]  ; then echo 'Restarting...'; kill -USR2 `cat /tmp/unicorn.pid`; else echo 'Starting...'; source /home/ubuntu/.rvm/scripts/rvm  && cd #{current_path} && foreman start web_daemon; fi"
   end
 end
+
 namespace :worker do
   task :start do
     run "god start -c /opt/www.markupwand.com/current/script/worker.god"
@@ -75,20 +76,31 @@ namespace :worker do
     run "god restart workers"
   end
   
-  task :complete do
-    set :shell_user, `whoami`
-    Helper.notify "#{shell_user} has completed push successfully"
+  task :terminate do
+    run "god terminate"
+  end
+  
+  task :soft_terminate, :on_error => :continue do
+    run "god terminate"
+  end
+  
+  task :force_restart do
+    worker.soft_terminate
+    worker.start
+  end
+  
+  task :status do
+    run "god status"
   end
 end
 
 # Heroku pushes
 namespace :heroku do
   task :push do
-    Helper.notify "Heroku: pushing #{branch} to #{heroku_remote}."
     if branch == "master"
       system "git push -f #{heroku_remote} master" 
     else
       system "git push -f #{heroku_remote} #{branch}:master" 
     end
-  end  
+  end
 end
