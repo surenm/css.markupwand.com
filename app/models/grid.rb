@@ -362,7 +362,19 @@ class Grid
     Log.info "Getting subgrids (#{self.layers.length} layers in this grid)..."
 
     # list of layers in this grid
-    available_nodes = self.layers.dup
+    all_nodes_copy = self.layers.dup
+
+    # Filter out nodes that are inside the document
+    available_nodes = {}
+
+    all_nodes_copy.each do |id, layer|
+      if not layer.bounds.nil?
+        available_nodes[id] = layer
+      else
+        self.design.layers.delete id
+        self.layers.delete id
+      end
+    end
     
     layers_bounds = available_nodes.values.collect { |layer| layer.bounds }
     parent_box = BoundingBox.get_super_bounds layers_bounds
@@ -541,7 +553,7 @@ class Grid
       if intersect_percent_left > 95 or intersect_percent_right > 95
         corrected_layers = Grid.crop_inner_intersect intersecting_layers
       elsif intersect_percent_left < 5 and intersect_percent_right < 5
-        #corrected_layers = Grid.crop_outer_intersect intersecting_layers
+        corrected_layers = Grid.crop_outer_intersect intersecting_layers
       end
       
       if not corrected_layers.nil?

@@ -1,11 +1,10 @@
 <%= content_for :content do %>
-<div id="beta-ribbon"></div>
 <%= render 'shared/header' %>
 <div id="landing-page">
 
 
   <div class="statement">
-    <h2>Photoshop to HTML <span class="ampersand">&</span> CSS</h2>
+    <h2>Photoshop to HTML & CSS</h2>
   
     <div class="row container">
       <div class="span9 taglines">
@@ -26,35 +25,33 @@
   <div class="container homepage-box">
 
     <div class="row features-block">
-
-      <div></div>
       <ul class="row container">
         <li class="pull-left">
           <div class="imageholder">
           <%= image_tag "clean-code.png", {:alt => "Clean Code", :title => "Clean Code"} %>
           </div>
           <h3>Clean Code</h3>
-          <div class="feature-desc">No absolute positioning. Minimal Markup. Uses Compass/SASS.</div>
+          <div class="feature-desc">No absolute positioning. <br> Minimal Markup. <br> Uses Compass/SASS.</div>
         </li>
         <li class="pull-left">
           <div class="imageholder">
           <%= image_tag "iterate.png", {:alt => "Iterate", :title => "Iterate"} %>
           </div>
           <h3>Iterate faster</h3>
-          <div class="feature-desc">UI facelift in minutes, not days. Execute more A/B tests per week.</div>
+          <div class="feature-desc">UI iterations in minutes, not days. Execute more A/B tests per week.</div>
         </li>
         <li class="pull-left">
           <div class="imageholder">
           <%= image_tag "clock.png", {:alt => "Save dev time", :title => "Save dev time"} %>
           </div>
           <h3>Save dev time</h3>
-          <div class="feature-desc">Engineers work only logic, not trying to make their right brain work. Marketing wouldn't need dev time</div>
+          <div class="feature-desc">Engineers work only logic. Marketing wouldn't need dev time</div>
         </li>
       </ul>
     </div>
 
     <div class="row sample-block">
-      <h2>Sample HTML & CSS</h2>
+      <h3>Sample HTML & CSS</h3>
       <div class="sample-image-block">
       <h3>Input PSD <a href="http://markupwand-web.s3.amazonaws.com/firsttweet/assets/img/first-tweet.psd" class="download-image">(download)</a></h3>
         <div class="sample-image-embed">
@@ -369,8 +366,4 @@
   </div>
 
 </div>
-<%= content_for :javascript do %>
-<%= render 'shared/luckyorange' %>
-<%= render 'shared/olark' %>
-<% end %>
 <% end %>

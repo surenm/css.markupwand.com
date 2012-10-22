@@ -215,10 +215,14 @@ class Layer
     if not @image_path
       @image_path     = "./assets/images/#{image_name}"
       src_image_file  = Rails.root.join("tmp", "store", self.design.store_extracted_key, @image_path).to_s
-      generated       = File.join self.design.store_generated_key, "assets", "images", image_name
-      published       = File.join self.design.store_published_key, "assets", "images", image_name
-      Store::save_to_store src_image_file, generated
-      Store::save_to_store src_image_file, published
+      
+      # TODO: this is a temp fix so that parsing goes though instead of breaking!
+      if File.exists? src_image_file
+        generated       = File.join self.design.store_generated_key, "assets", "images", image_name
+        published       = File.join self.design.store_published_key, "assets", "images", image_name
+        Store::save_to_store src_image_file, generated
+        Store::save_to_store src_image_file, published
+      end
     end
 
     @image_path

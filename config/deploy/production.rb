@@ -6,13 +6,31 @@ set :deploy_to, "/opt/#{domain}"
 set :heroku_app, "markupwand"
 set :heroku_remote, "production"
 
+set :shell_user, `whoami`
 
-server "ec2-23-22-97-138.compute-1.amazonaws.com", :web, :app
+server "prod-worker.markupwand.com", :web, :app, :resque_worker
+set :workers, { "worker" => 2 }
 
-namespace :deploy do  
+namespace :deploy do
+  task :begin do
+    Helper.notify "#{shell_user} is pushing branch:#{branch} to Production..."
+  end
+    
   task :copy_prod_configs do 
     run "cp #{shared_path}/prod_env #{current_path}/.env"
+  end
+
+  task :complete do
+    set :shell_user, `whoami`
+    Helper.notify "#{shell_user} has completed production push successfully."
+  end
+end
+
+namespace :heroku do
+  task :status do
+    system "heroku ps --app markupwand"
   end
 end
 
 after 'deploy:create_symlink', 'deploy:copy_prod_configs'
+after 'deploy:copy_prod_configs', 'deploy:complete'

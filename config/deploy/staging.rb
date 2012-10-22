@@ -6,13 +6,32 @@ set :deploy_to, "/opt/#{domain}"
 set :heroku_app, "markupwand-beta"
 set :heroku_remote, "staging"
 
-# Servers list
-server "ec2-23-20-68-9.compute-1.amazonaws.com", :web, :app
+set :shell_user, `whoami`
 
-namespace :deploy do  
-  task :copy_staging_configs do 
+# Servers list
+server "beta-worker.markupwand.com", :web, :app, :resque_worker
+set :workers, { "worker" => 2 }
+
+namespace :deploy do
+  task :begin do
+    Helper.notify "#{shell_user} is pushing branch:#{branch} to Staging..."
+  end
+  
+  task :copy_staging_configs do
     run "cp #{shared_path}/staging_env #{current_path}/.env"
+  end
+  
+  task :complete do
+    set :shell_user, `whoami`
+    Helper.notify "#{shell_user} has completed staging push successfully."
+  end
+end
+
+namespace :heroku do
+  task :status do
+    system "heroku ps --app markupwand-beta"
   end
 end
 
 after 'deploy:create_symlink', 'deploy:copy_staging_configs'
+after 'deploy:copy_staging_configs', 'deploy:complete'

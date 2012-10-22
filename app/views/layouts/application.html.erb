@@ -4,7 +4,6 @@
   <%= raw analytical.head_prepend_javascript %>
   <title>Markupwand | Magically convert Photoshop designs to valid HTML markup</title>
   <%= stylesheet_link_tag "application", :media => "all" %>
-  <%= stylesheet_link_tag "http://fonts.googleapis.com/css?family=Ubuntu|Ubuntu+Condensed|Average|Asap:400,400italic,700,700italic|Merienda+One"    %>
   <%= yield :css %>
   <%= raw analytical.head_append_javascript %>
   <%= javascript_include_tag "application" %>
@@ -27,19 +26,22 @@
 <% else %>
 <body>
 <% end %>
-<%= raw analytical.body_prepend_javascript %>
+<div class="wrapper">
+  <%= raw analytical.body_prepend_javascript %>
 
-<% if not Rails.env.production? %>
-  <%= render 'shared/env' %>
-<% end %>
+  <% if not Rails.env.production? %>
+    <%= render 'shared/env' %>
+  <% end %>
 
-<% if current_user and current_user.admin? %>
-    <%= yield :admin_content %>
-<% end %>
+  <% if current_user and current_user.admin? %>
+      <%= yield :admin_content %>
+  <% end %>
 
-<%= yield :content %>
+  <%= yield :content %>
+  <div class="push"></div>
+</div>
 
-<%= render 'shared/luckyorange' %>
+<%= render 'shared/footer' %>
 <%= raw analytical.body_append_javascript %>
 </body>
 </html>

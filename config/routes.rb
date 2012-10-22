@@ -59,6 +59,7 @@ TransformersWeb::Application.routes.draw do
       match 'set-rating'       => 'design#set_rating'
       
       # admin actions to regenerate stuff
+      match 'reprocess'          => 'design#reprocess'
       match 'reextract'         => 'design#reextract'
       match 'reparse'           => 'design#reparse'
       match 'regenerate'        => 'design#regenerate'

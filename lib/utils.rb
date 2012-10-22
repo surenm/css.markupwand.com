@@ -34,7 +34,7 @@ module Utils
     Utils::post_to_chat("[Pagerduty] " + error_description, 'red')
   end
 
-  def Utils::post_to_chat(message, color = 'green', notify = true)
+  def Utils::post_to_chat(message, color = 'gray', notify = true)
     client = HipChat::Client.new(ENV['HIPCHAT_TOKEN'])
     client['Markupwand'].send('markupwand', message, :notify => notify, :color => color)
   end
