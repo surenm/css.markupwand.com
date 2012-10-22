@@ -7,14 +7,28 @@ set :heroku_app, "markupwand"
 set :heroku_remote, "production"
 
 set :shell_user, `whoami`
-Helper.notify "#{shell_user} is pushing #{branch} to Production."
 
 server "prod-worker.markupwand.com", :web, :app, :resque_worker
 set :workers, { "worker" => 2 }
 
-namespace :deploy do  
+namespace :deploy do
+  task :begin do
+    Helper.notify "#{shell_user} is pushing branch:#{branch} to Production..."
+  end
+    
   task :copy_prod_configs do 
     run "cp #{shared_path}/prod_env #{current_path}/.env"
+  end
+
+  task :complete do
+    set :shell_user, `whoami`
+    Helper.notify "#{shell_user} has completed production push successfully."
+  end
+end
+
+namespace :heroku do
+  task :status do
+    system "heroku ps --app markupwand"
   end
 end
 

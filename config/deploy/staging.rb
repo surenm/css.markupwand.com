@@ -7,15 +7,29 @@ set :heroku_app, "markupwand-beta"
 set :heroku_remote, "staging"
 
 set :shell_user, `whoami`
-Helper.notify "#{shell_user} is pushing #{branch} to Staging."
 
 # Servers list
 server "beta-worker.markupwand.com", :web, :app, :resque_worker
 set :workers, { "worker" => 2 }
 
-namespace :deploy do  
-  task :copy_staging_configs do 
+namespace :deploy do
+  task :begin do
+    Helper.notify "#{shell_user} is pushing branch:#{branch} to Staging..."
+  end
+  
+  task :copy_staging_configs do
     run "cp #{shared_path}/staging_env #{current_path}/.env"
+  end
+  
+  task :complete do
+    set :shell_user, `whoami`
+    Helper.notify "#{shell_user} has completed staging push successfully."
+  end
+end
+
+namespace :heroku do
+  task :status do
+    system "heroku ps --app markupwand-beta"
   end
 end
 
