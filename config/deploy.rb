@@ -47,19 +47,32 @@ namespace :install do
 end
 
 # overrides
-namespace :deploy do
-  task :web_start do
+namespace :web do
+  task :start do
     run "cp #{shared_path}/staging_env #{current_path}/.env"
     run "source /home/ubuntu/.rvm/scripts/rvm && cd #{current_path} && foreman start web_daemon"
   end
 
-  task :web_stop do
+  task :stop do
     run "kill -QUIT `cat /tmp/unicorn.pid`"
   end
   
-  task :web_restart do
+  task :restart do
     run "cp #{shared_path}/staging_env #{current_path}/.env"
     run "if [ -f /tmp/unicorn.pid ]  ; then echo 'Restarting...'; kill -USR2 `cat /tmp/unicorn.pid`; else echo 'Starting...'; source /home/ubuntu/.rvm/scripts/rvm  && cd #{current_path} && foreman start web_daemon; fi"
+  end
+end
+namespace :worker do
+  task :start do
+    run "god start -c /opt/www.markupwand.com/current/script/worker.god"
+  end
+  
+  task :stop do
+    run "god stop workers"
+  end
+  
+  task :restart do
+    run "god restart workers"
   end
   
   task :complete do
