@@ -29,13 +29,15 @@ class ExtractorJob
     screenshot_file  = Rails.root.join processed_folder, "#{design.safe_name_prefix}.png"
     fixed_width_file = Rails.root.join processed_folder, "#{design.safe_name_prefix}-fixed.png"
     thumbnail_file   = Rails.root.join processed_folder, "#{design.safe_name_prefix}-thumbnail.png"
+
     clipping_layer_check_file = Rails.root.join processed_folder, "has_clipping_layer"
     
-    psdjs_root_dir =  Rails.root.join 'lib', 'psd.js'
+    psdjs_root_dir   = Rails.root.join 'lib', 'psd.js'
     extractor_script = File.join psdjs_root_dir, 'tasks', 'extract.coffee'
-    coffee_script = 'coffee'
+
+    coffee_script_exe = Rails.root.join 'lib', 'psd.js', 'node_modules', '.bin', 'coffee'
     
-    extractor_command = "#{coffee_script} #{extractor_script} #{photoshop_file} #{processed_folder} #{design.safe_name_prefix}"
+    extractor_command = "#{coffee_script_exe} #{extractor_script} #{photoshop_file} #{processed_folder} #{design.safe_name_prefix}"
 
     Log.info extractor_command
     err = nil

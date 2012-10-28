@@ -37,19 +37,20 @@ NUM_WORKERS = 2
 NUM_WORKERS.times do |num|
   God.watch do |w|
     w.env = EnvironmentVariables.get_from_env_file
+    w.log = '/tmp/worker.log'
 
     if w.env["RAILS_ENV"] == :production
       w.uid = 'ubuntu'
       w.gid = 'ubuntu'
+      w.log = '/mnt/log/worker.log'
     end
-
-    w.log      = "/tmp/worker.log"
+    
     w.dir      = EnvironmentVariables.rails_root_directory
     w.name     = "worker-#{num}"
     w.group    = 'workers'
     w.interval = 30.seconds
     
-    w.start    ="rake -f #{EnvironmentVariables.rails_root_directory}/Rakefile environment resque:work"
+    w.start    = "rake -f #{EnvironmentVariables.rails_root_directory}/Rakefile environment resque:work --trace"
 
     # restart if memory gets too high
     w.transition(:up, :restart) do |on|
