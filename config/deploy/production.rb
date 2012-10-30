@@ -33,4 +33,5 @@ namespace :heroku do
 end
 
 after 'deploy:create_symlink', 'deploy:copy_prod_configs'
-after 'deploy:copy_prod_configs', 'deploy:complete'
+after 'deploy:copy_prod_configs', 'worker:force_restart'
+after 'worker:force_restart', 'deploy:complete'
