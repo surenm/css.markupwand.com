@@ -462,9 +462,9 @@ class Grid
       Log.info "Layers in #{grouping_box} are #{raw_grouping_box_layers}. Creating a new grid..."
 
       Log.info "Checking for error intersections in layers #{raw_grouping_box_layers}"
-      all_grouping_box_layers = Grid.fix_error_intersections raw_grouping_box_layers
+      #all_grouping_box_layers = Grid.fix_error_intersections raw_grouping_box_layers
       grouping_box_layers = Hash.new
-      all_grouping_box_layers.each do |layer| 
+      raw_grouping_box_layers.each do |layer| 
         grouping_box_layers[layer.uid] = layer
         available_nodes.delete layer.uid
       end   
@@ -572,7 +572,7 @@ class Grid
   
   def self.crop_inner_intersect(intersecting_nodes)
     Log.info "Intersecting nodes"
-    Log.info intersecting_nodes
+
     smaller_node = intersecting_nodes[0]
     bigger_node  = intersecting_nodes[1]
     if intersecting_nodes[0].bounds.area > intersecting_nodes[1].bounds.area
