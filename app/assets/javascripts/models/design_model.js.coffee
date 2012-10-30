@@ -1,7 +1,4 @@
 class DesignModel extends Backbone.Model
-  urlRoot: "/design"
-  
-  initialize: () ->
-    console.log this.attributes
+  urlRoot: "/design"  
 
 window.DesignModel = DesignModel

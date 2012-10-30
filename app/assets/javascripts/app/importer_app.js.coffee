@@ -6,11 +6,13 @@
 class ImporterApp
   constructor: () ->
     @router = new ImporterRouter
-    @design = new DesignModel(design)
+    #@design = new DesignModel(design)
+
+    @design_iframe = new EditorIframeView
   
   load_design_sidebar: (context) ->
     @sidebar_view.close() if @sidebar_view?
-    @sidebar_view = new SidebarView({model: @design, context: context})    
+    @sidebar_view = new SidebarView({model: @design, context: context})
     
 $(document).ready ->
   window.app = new ImporterApp()
