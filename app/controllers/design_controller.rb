@@ -259,6 +259,6 @@ class DesignController < ApplicationController
   end
   
   def import
+    @sif = @design.get_serialized_sif_data
   end
-
 end

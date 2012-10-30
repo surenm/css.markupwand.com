@@ -1,11 +1,21 @@
-<%= content_for :content do %>
+<%= content_for :css do %>
+<%= stylesheet_link_tag "app/import", :media => "all" %>
+<% end %>
 
-This is the importer page
+<%= content_for :content do %>
+<div class='ide'>
+  <iframe id='editor-iframe' src='/generated/<%= @design.safe_name %>/index.html'></iframe>
+</div>
+
+<div id="edit-panel">
+</div>
+
 <% end %>
 
 <%= content_for :javascript do %>
+  <%= render "shared/templates" %>
   <script type="text/javascript">
-    var design = <%= raw @design.to_json %>;
+    var sif = <%= raw @sif.to_json %>;
   </script>
   <%= javascript_include_tag "app/importer_app" %>
 <% end %>
