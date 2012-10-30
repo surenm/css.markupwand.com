@@ -1,3 +1,4 @@
+#= require ./generic_view
 
 class SidebarView extends GenericView
   design_sidebar_templates: {
@@ -20,7 +21,6 @@ class SidebarView extends GenericView
 
   initialize: () ->
     this.options.context = "default" if not this.options.context?
-
     this.render()
     
   render: () ->

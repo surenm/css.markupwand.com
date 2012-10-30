@@ -9,3 +9,5 @@ class GenericView extends Backbone.View
   close: () ->
     $(this.el).unbind()
     $(this.el).empty()
+
+window.GenericView = GenericView
