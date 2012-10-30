@@ -151,27 +151,32 @@ class Sif
     end
     self.save!
   end
-    
-  def save!
+
+  def get_serialized_data
     self.validate
-    
+
     serialized_layers = @layers.values.collect do |layer|
       layer.attribute_data
     end
+
+    serialized_grids = nil
 
     if not @grids.nil?
       serialized_grids = @grids.values.collect do |grid|
         grid.attribute_data
       end
     end
-    
+
     sif_document = {
-      :header => @header,
-      :layers => serialized_layers,
-      :grids  => serialized_grids,
+        :header => @header,
+        :layers => serialized_layers,
+        :grids  => serialized_grids,
     }
-    
-    Sif.write @design, sif_document
+  end
+
+  def save!
+    serialized_document = self.get_serialized_document
+    Sif.write @design, serialized_document
   end
   
   def get_grids_in_order
