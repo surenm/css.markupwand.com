@@ -257,5 +257,8 @@ class DesignController < ApplicationController
     @design.move_to_priority_queue
     redirect_to :action => :show, :id => @design.safe_name
   end
+  
+  def import
+  end
 
 end

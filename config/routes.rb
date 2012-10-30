@@ -70,6 +70,10 @@ TransformersWeb::Application.routes.draw do
       match 'view-logs'  => 'design#view_logs'
       match 'view-dom'   => 'design#view_dom'
       match 'view-json'  => 'design#view_json'
+      
+      
+      # Import related activities
+      match 'import' => 'design#import'
     end
 
   end
