@@ -236,6 +236,11 @@ class Design
   def get_sif_data
     Store::fetch_data_from_store(self.get_sif_file_path)
   end
+  
+  def get_serialized_sif_data
+    self.init_sif
+    @sif.get_serialized_data
+  end
 
   def save_sif!
     @sif.save! if @sif != nil
