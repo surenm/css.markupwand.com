@@ -1,0 +1,11 @@
+<%= content_for :content do %>
+
+This is the importer page
+<% end %>
+
+<%= content_for :javascript do %>
+  <script type="text/javascript">
+    var design = <%= raw @design.to_json %>;
+  </script>
+  <%= javascript_include_tag "app/importer_app" %>
+<% end %>
