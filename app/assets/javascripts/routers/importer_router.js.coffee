@@ -23,4 +23,4 @@ class ImporterRouter extends Backbone.Router
   defaultHandler: (args) ->
     window.app.load_design_sidebar()
 
-window.EditorRouter = EditorRouter
+window.ImporterRouter = ImporterRouter
