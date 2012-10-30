@@ -27,9 +27,5 @@
 //= require jquery.flot
 
 //= require twitter/bootstrap
-//= require models
-//= require collections
-//= require views
-//= require routers
 //= require app/landing_page
 //= require app/tutorial
