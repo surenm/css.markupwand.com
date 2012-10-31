@@ -38,7 +38,7 @@ class SidebarView extends GenericView
   render_dom_tree: () ->
     $(this.el).tree
       data: [tree_data]
-      autoOpen: 1
+      autoOpen: 0
       dragAndDrop: true
       selectable: true
       autoEscape: false
