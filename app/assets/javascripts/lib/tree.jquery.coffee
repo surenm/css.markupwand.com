@@ -989,7 +989,7 @@ class JqTreeWidget extends MouseWidget
 
                 e.preventDefault()
                 e.stopPropagation()
-        else if $target.is('div') or $target.is('span')
+        else
             node = @_getNode($target)
             if node
                 @_triggerEvent('tree.click', node: node)

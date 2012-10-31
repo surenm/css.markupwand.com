@@ -223,11 +223,10 @@ class Grid
   
   def get_tree
     tree = Hash.new
-    style_classes = nil
-    style_classes = self.style.selector_names.join(" ") if not self.style.selector_names.empty?
+
     
-    tree[:label]  = "#{self.tag}"
-    tree[:label] += "<i> #{style_classes} </i>" if not style_classes.nil?
+    tree[:label]  = "#{self.tag}  <small> .#{self.style.generated_selector} </small>"
+
     
     tree[:id] = self.id
     tree[:orientation] = self.orientation
