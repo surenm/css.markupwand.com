@@ -221,6 +221,25 @@ class Grid
     end
   end
   
+  def get_tree
+    tree = Hash.new
+    style_classes = nil
+    style_classes = self.style.selector_names.join(" ") if not self.style.selector_names.empty?
+    
+    tree[:label]  = "#{self.tag}"
+    tree[:label] += "<i> #{style_classes} </i>" if not style_classes.nil?
+    
+    tree[:id] = self.id
+    tree[:orientation] = self.orientation
+    
+    tree[:children] = []
+    self.children.each do |child_id, child|
+      tree[:children].push child.get_tree
+    end
+
+    return tree
+  end
+  
   ##########################################################
   # GRID GROUPING
   ##########################################################

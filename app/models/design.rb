@@ -94,6 +94,18 @@ class Design
     }
   end
   
+  def get_serialized_sif_data
+    self.init_sif
+    sif_serialized_data = @sif.get_serialized_data
+    return sif_serialized_data
+  end
+  
+  def get_grid_tree    
+    root_node = self.get_root_grid
+    dom = root_node.get_tree
+    return dom
+  end
+  
   def get_root_grid
     root_grids = []
     self.grids.each do |id, grid|
@@ -235,11 +247,6 @@ class Design
 
   def get_sif_data
     Store::fetch_data_from_store(self.get_sif_file_path)
-  end
-  
-  def get_serialized_sif_data
-    self.init_sif
-    @sif.get_serialized_data
   end
 
   def save_sif!
