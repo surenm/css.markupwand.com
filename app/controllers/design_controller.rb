@@ -260,5 +260,6 @@ class DesignController < ApplicationController
   
   def import
     @sif = @design.get_serialized_sif_data
+    @tree = @design.get_grid_tree
   end
 end
