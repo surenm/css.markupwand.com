@@ -6,7 +6,7 @@
 class ImporterApp
   constructor: () ->
     @router = new ImporterRouter
-    #@design = new DesignModel(design)
+    @design = new DesignModel(design)
 
     @design_iframe = new EditorIframeView
   

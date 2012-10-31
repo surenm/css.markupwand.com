@@ -3,12 +3,11 @@
 class SidebarView extends GenericView
   design_sidebar_templates: {
     default     : "#design-default-template"
-    identifiers : "#design-edit-identifiers-template",
-    classes     : "#design-edit-classes-template",
-    tags        : "#design-edit-tags-template"
+    dom         : "#design-dom-template"
   }
   grid_sidebar_template: "#grid-sidebar-template"
-  el: "#editor"
+
+  el: "#edit-panel"
 
   events: {
     "click .grid-sidebar .show": "editGrid"
@@ -26,8 +25,23 @@ class SidebarView extends GenericView
   render: () ->
     if this.model instanceof GridModel
       this.render_grid_sidebar()
-    else if this.model instanceof DesignModel
-      this.render_design_sidebar()
+    else
+      this.render_dom_tree()
+
+  render_grid_sidebar: () ->
+    template_string = $(this.grid_sidebar_template).html()
+    template_context = this.model.toJSON()
+    html = _.template(template_string, template_context)
+    
+    $(this.el).html html
+
+  render_dom_tree: () ->
+    $(this.el).tree
+      data: [tree_data]
+      autoOpen: 1
+      dragAndDrop: true
+      selectable: true
+      autoEscape: false
       
   render_design_sidebar: () ->
     template_id = this.design_sidebar_templates[this.options.context]
@@ -37,12 +51,6 @@ class SidebarView extends GenericView
 
     $(this.el).html html
 
-  render_grid_sidebar: () ->
-    template_string = $(this.grid_sidebar_template).html()
-    template_context = this.model.toJSON()
-    html = _.template(template_string, template_context)
-    
-    $(this.el).html html
     
   editGrid: (event) ->
     $(this.el).find(".form").show()
