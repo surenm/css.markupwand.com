@@ -36,12 +36,18 @@ class SidebarView extends GenericView
     $(this.el).html html
 
   render_dom_tree: () ->
+    $design = window.app.design
+
     $(this.el).tree
       data: [tree_data]
       autoOpen: 0
       dragAndDrop: true
       selectable: true
       autoEscape: false
+
+    $(this.el).bind 'tree.click', (event) ->
+      node = event.node
+      $design.handleSelection node.type, node.id
       
   render_design_sidebar: () ->
     template_id = this.design_sidebar_templates[this.options.context]
@@ -57,14 +63,14 @@ class SidebarView extends GenericView
     $(this.el).find(".show").hide()
     
   onSuccess: (event) ->
-    $editor = app.editor_iframe
+    $editor = app.design.editor_iframe
     $editor.show_loading()
     
     tag = $(this.el).find("#taginput").attr("value")
     this.model.set "tag", tag
     this.model.save({},{
       success: () ->
-        app.editor_iframe.reload()
+        app.design.editor_iframe.reload()
     })
     this.render()
 
@@ -74,7 +80,7 @@ class SidebarView extends GenericView
   
   onClose: (event) ->
     event.stopPropagation()
-    app.editor_iframe.release_focus()
+    app.design.editor_iframe.release_focus()
 
     # if the current model is GridModel then we have to load back the design sidebar
     if this.model instanceof GridModel
@@ -84,7 +90,7 @@ class SidebarView extends GenericView
     selected_obj = event.target
     classname = $(selected_obj).data('styleClass')
     grids = app.design.get("css_classes")[classname]
-    $editor_iframe = app.editor_iframe
+    $editor_iframe = app.design.editor_iframe
     $.each grids, (index, value) ->
       grid = $editor_iframe.iframe_dom.find("[data-grid-id=#{value}]")
       $.each grid, () ->

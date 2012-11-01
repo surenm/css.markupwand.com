@@ -46,7 +46,7 @@ class EditorIframeView extends Backbone.View
     @children = @iframe_dom.find("body").find("[data-grid-id]")
     
     # Binding to highlight a div when hovered
-    #this.enable_listeners()
+    this.enable_listeners()
           
   enable_listeners: () ->
     @children.click clickHandler
@@ -64,7 +64,7 @@ class EditorIframeView extends Backbone.View
     @loading_div.hide()
   
   clear_mouseover: () ->
-    @iframe_dom.find(".mouseoverlay").removeClass "mouseoverlay"
+    @iframe_dom.find(".mouse-overlay").removeClass "mouse-overlay"
 
   focus_selected_object: (selected_object) ->
     # Disable listening to events in the iframe 
@@ -75,7 +75,7 @@ class EditorIframeView extends Backbone.View
     
     # show overlay div and on focus bar
     #@overlay_div.show()
-    
+
     @selected_object = $(selected_object);
     @selected_object.addClass "selected"
     
@@ -87,7 +87,11 @@ class EditorIframeView extends Backbone.View
     @focus_overlay.height $(@selected_object).outerHeight() + 10
     @focus_overlay.width $(@selected_object).outerWidth() + 10
     @focus_overlay.show()
-    
+
+  focus_grid_object: (grid_id) ->
+    grid = @iframe_dom.find("[data-grid-id='#{grid_id}']")
+    this.focus_selected_object(grid)
+
   release_focus: () ->
     this.enable_listeners()
     this.clear_mouseover()
@@ -102,25 +106,19 @@ class EditorIframeView extends Backbone.View
     
   mouseEnterHandler = (event) ->
     event.stopPropagation()
-    app.editor_iframe.clear_mouseover()
+    app.design.editor_iframe.clear_mouseover()
     
-    $(this).addClass "mouseoverlay"
+    $(this).addClass "mouse-overlay"
+
 
   mouseLeaveHandler = (event) ->
     event.stopPropagation()
-    app.editor_iframe.clear_mouseover()
+    app.design.editor_iframe.clear_mouseover()
     
   clickHandler = (event) ->
     event.stopPropagation()
-    $editor = app.editor_iframe
-        
+    $editor = app.design.editor_iframe
     $editor.focus_selected_object(this)
-    
-    grid = $editor.get_grid_obj(this)
-    layer_id = $(this).data('layerId')
-    grid.set "layer_id", layer_id if layer_id?
-    
-    app.load_grid_sidebar grid
 
   append: (element) ->  
     $(@iframe_dom).find('body').append element
