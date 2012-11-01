@@ -224,12 +224,9 @@ class Grid
   def get_tree
     tree = Hash.new
 
-    
     tree[:label]  = "#{self.tag}  <small> .#{self.style.generated_selector} </small>"
-
-    
     tree[:id] = self.id
-    tree[:orientation] = self.orientation
+    tree[:type] = "grid"
     
     tree[:children] = []
     self.children.each do |child_id, child|
