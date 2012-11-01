@@ -46,7 +46,7 @@ class EditorIframeView extends Backbone.View
     @children = @iframe_dom.find("body").find("[data-grid-id]")
     
     # Binding to highlight a div when hovered
-   # this.enable_listeners()
+    # this.enable_listeners()
           
   enable_listeners: () ->
     @children.click clickHandler
@@ -80,12 +80,24 @@ class EditorIframeView extends Backbone.View
     @selected_object.addClass "selected"
     
     offset = $(@selected_object).offset()
-    
+
+    if not offset?
+      return
+
     @focus_overlay = @iframe_dom.find(".focus-overlay")
-    @focus_overlay.css "top", offset.top 
-    @focus_overlay.css "left", offset.left
-    @focus_overlay.height $(@selected_object).outerHeight() + 10
-    @focus_overlay.width $(@selected_object).outerWidth() + 10
+
+    top = offset.top - 10
+    if top <= 0
+      top = offset.top
+
+    left = offset.left - 10
+    if left <= 0
+      left = offset.left
+
+    @focus_overlay.css "top", top
+    @focus_overlay.css "left", left
+    @focus_overlay.height $(@selected_object).outerHeight() + 20
+    @focus_overlay.width $(@selected_object).outerWidth() + 20
     @focus_overlay.show()
 
   focus_grid_object: (grid_id) ->
