@@ -46,7 +46,7 @@ class EditorIframeView extends Backbone.View
     @children = @iframe_dom.find("body").find("[data-grid-id]")
     
     # Binding to highlight a div when hovered
-    this.enable_listeners()
+   # this.enable_listeners()
           
   enable_listeners: () ->
     @children.click clickHandler
