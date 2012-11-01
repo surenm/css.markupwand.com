@@ -5,9 +5,10 @@
 
 class ImporterApp
   constructor: () ->
-    @router = new ImporterRouter
-    @design = new DesignModel(design)
+    # design_data and sif_data are defined in import.html.erb
+    @design = new DesignModel(design_data, sif_data)
 
+    @router = new ImporterRouter
     @design_iframe = new EditorIframeView
   
   load_design_sidebar: (context) ->

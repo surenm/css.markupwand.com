@@ -15,8 +15,8 @@
 <%= content_for :javascript do %>
   <%= render "shared/templates" %>
   <script type="text/javascript">
-    var design = <%= raw @design.to_json %>;
-    var sif = <%= raw @sif.to_json %>;
+    var design_data = <%= raw @design.to_json %>;
+    var sif_data = <%= raw @sif.to_json %>;
     var tree_data = <%= raw @tree.to_json %>;
   </script>
   <%= javascript_include_tag "app/importer_app" %>
