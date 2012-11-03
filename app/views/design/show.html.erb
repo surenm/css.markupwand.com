@@ -31,11 +31,12 @@
       </div>
         
 
-      <div class="design-thumbnail">
-        <img src="/extracted/<%= @design.safe_name %>/<%= @design.safe_name_prefix %>-fixed.png"/>
-      </div>
-      
-    
+      <% if @completed %>
+        <div class="design-thumbnail">
+          <img src="/extracted/<%= @design.safe_name %>/<%= @design.safe_name_prefix %>-fixed.png"/>
+        </div>
+      <% end %>
+          
       <div class="status-box">
         <% if not @completed %>
         <h3 id="design-status"> Converting...</h3>
