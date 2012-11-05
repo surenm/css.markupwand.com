@@ -1,39 +1,184 @@
-class GroupingBox
-  attr_accessor :orientation, :children
+class GroupingBox < Tree::TreeNode
 
-  # orientation could be :normal, :left, :right
-  def initialize(orientation)
-    @orientation = orientation
-    @bounding_box = nil
-    @children = []
+  def self.get_bounds_from_layers(layers)
+    bounds_list = layers.collect do |layer| layer.bounds end  
+    bounds_list
   end
-  
-  def push(child)
-    @children.push child
-  end
-  
-  def to_s
-    "#{@orientation} - #{bounds} - #{@children}"
-  end
-  
-  def bounds
-    if @bounding_box.nil?
-      bounding_boxes = []
-      @children.each do |child| 
-        if child.kind_of? BoundingBox
-          bounding_boxes.push child
-        elsif child.kind_of? GroupingBox
-          bounding_boxes.push child.bounds
+
+  def self.get_vertical_gutters(bounding_boxes)
+    vertical_lines  = bounding_boxes.collect{|bb| bb.left}
+    vertical_lines += bounding_boxes.collect{|bb| bb.right}
+    vertical_lines.uniq!
+
+    vertical_gutters = []
+    vertical_lines.each do |vertical_line|
+      is_gutter = true
+      bounding_boxes.each do |bb|
+        if bb.left < vertical_line and vertical_line < bb.right
+          is_gutter = false
+          break
         end
       end
-      @bounding_box = BoundingBox.get_super_bounds bounding_boxes
+      vertical_gutters.push vertical_line if is_gutter
+    end
+    vertical_gutters.sort!
+  end
+
+
+  def self.get_horizontal_gutters(bounding_boxes)
+    horizontal_lines  = bounding_boxes.collect{|bb| bb.top}
+    horizontal_lines += bounding_boxes.collect{|bb| bb.bottom}
+    horizontal_lines.uniq!
+
+    horizontal_gutters = []
+    horizontal_lines.each do |horizontal_line|
+      is_gutter = true
+      bounding_boxes.each do |bb|
+        if bb.top < horizontal_line and horizontal_line < bb.bottom
+          is_gutter = false
+          break
+        end
+      end
+      horizontal_gutters.push horizontal_line if is_gutter
+    end
+    horizontal_gutters.sort!
+  end
+
+
+  def initialize(args)
+    layers = args.fetch :layers, []
+    orientation = args.fetch :orientation, Constants::GRID_ORIENT_NORMAL
+    bounds = args.fetch :bounds
+
+    super(bounds.to_s, {:bounds => bounds, :layers => layers, :orientation => orientation})
+  end
+
+  def layers
+    self.content[:layers]
+  end
+
+  def bounds
+    self.content[:bounds]
+  end
+
+  def non_style_layers
+    all_layers = self.layers
+    non_style_layers = all_layers.select do |layer|
+      layer.bounds != self.bounds
+    end
+  end
+
+  def style_layers
+    all_layers = self.layers
+    style_layers = all_layers.select do |layer|
+      layer.bounds == self.bounds
+    end
+  end
+
+  def get_layers_in_region(region_bounds)
+    layers_in_region = self.layers.select do |layer|
+      region_bounds.encloses? layer.bounds
+    end
+
+    layers_in_region
+  end
+
+  def groupify
+    # All layer boundaries to get the gutters
+    bounding_boxes = GroupingBox.get_bounds_from_layers self.non_style_layers
+
+    # Get the vertical and horizontal gutters at this level
+    vertical_gutters   = GroupingBox.get_vertical_gutters bounding_boxes
+    horizontal_gutters = GroupingBox.get_horizontal_gutters bounding_boxes
+    Log.debug "Vertical Gutters: #{vertical_gutters}"
+    Log.debug "Horizontal Gutters: #{horizontal_gutters}"
+
+    # if empty gutters, then there probably is no children here.
+    # TODO: Find out if this even happens?
+    if vertical_gutters.empty? or horizontal_gutters.empty?
+      return
     end
     
-    return @bounding_box
-  end
+    trailing_horizontal_gutters = horizontal_gutters
+    leading_horizontal_gutters  = horizontal_gutters.rotate
+
+    trailing_vertical_gutters = vertical_gutters
+    leading_vertical_gutters  = vertical_gutters.rotate
+
+    horizontal_bounds = trailing_horizontal_gutters.zip leading_horizontal_gutters
+    vertical_bounds   = trailing_vertical_gutters.zip leading_vertical_gutters
+
+    horizontal_bounds.pop
+    vertical_bounds.pop
+
+    # should i go normal orientation or left orientation
+    # there are 4 cases:
+    # 0. there are exactly 2 vertical gutters and 2 horizontal gutters. Things are intersecting. No more grouping
+    # 1. there are exactly 2 vertical gutters - which means all divs are in GRID_ORIENT_NORMAL. only row grids
+    # 2. there are exactly 2 horizontal gutters - which means all divs are in GRID_ORIENT_LEFT. only colum grids
+    # 3. there are multiple vertical and horizontal gutters. This has two scenarios
+    # => 3a. the grids are to be grouped first by horizontal gutters
+    # => 3b. the grids are to be grouped first by vertical gutters
+    
+    if vertical_bounds.size == 1 and horizontal_bounds.size == 1
+      # case 0
+      # set a flag or something to show layers are intersecting here
+      return
+
+    elsif vertical_bounds.size == 1 
+      # case 1
+      vertical_bound = vertical_bounds.first
+      horizontal_bounds.each do |horizontal_bound|
+        grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+        grouping_box_layers = self.get_layers_in_region grouping_box_bounds
+        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, 
+          :orientation => Constants::GRID_ORIENT_NORMAL
+
+        self.add child_grouping_box
+      end
+    elsif horizontal_bounds.size == 1 
+      # case 2
+      horizontal_bound = horizontal_bounds.first
+      vertical_bounds.each do |vertical_bound|
+        grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+        grouping_box_layers = self.get_layers_in_region grouping_box_bounds
+        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, 
+          :orientation => Constants::GRID_ORIENT_LEFT
+
+        self.add child_grouping_box
+      end
+      
+    else
+      # case 3
+      # TODO: figure out if normal first of left first orientation
+      #h_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, horizontal_bounds, :horizontal
+      #v_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, vertical_bounds, :vertical
   
-  def bounds=(bounding_box)
-    @bounding_box = bounding_box
+      # case 3a
+      vertical_bound = [vertical_gutters.first, vertical_gutters.last]
+      horizontal_bounds.each do |horizontal_bound|
+        grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+        grouping_box_layers = self.get_layers_in_region grouping_box_bounds
+        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds,
+          :orientation => Constants::GRID_ORIENT_NORMAL
+
+        self.add child_grouping_box
+      end
+
+      # case 3b
+      # horizontal_bound = [horizontal_gutters.first, horizontal_gutters.last]
+      # vertical_bounds.each do |vertical_bound|
+      #   grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+      #   grouping_box_layers = self.get_layers_in_region grouping_box_bounds
+      #   child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, 
+      #     :orientation => Constants::GRID_ORIENT_LEFT
+    end
+    
+    self.children.each do |child|
+      if not child.layers.empty?
+        child.groupify
+      end
+    end
+
   end
-  
 end
