@@ -258,17 +258,22 @@ class Design
   ##########################################################
   def init_sif
     @sif = Sif.new(self) if @sif == nil
-    return @sif
+    @sif
   end
   
   def grids
     self.init_sif
-    return @sif.grids
+    @sif.grids
   end
   
   def layers
     self.init_sif
-    return @sif.layers
+    @sif.layers
+  end
+
+  def root_grouping_box
+    self.init_sif
+    @sif.root_grouping_box
   end
   
   def save_grid(grid)
@@ -596,9 +601,21 @@ config
   end
 
   def get_grouping_boxes
+    self.init_sif
+
+    Log.info "Beginning to create grouping boxes for #{self.name}..."    
+    
+    # Layer descriptors of all photoshop layers
+    Log.info "Getting layers..."
     layers = self.layers.values
+    
+    Log.info "Creating root grouping box..."
     root_grouping_box = GroupingBox.new :layers => layers, :orientation => Constants::GRID_ORIENT_NORMAL, :bounds => self.bounds
     root_grouping_box.groupify
-    root_grouping_box.print_tree
+
+    @sif.root_grouping_box = root_grouping_box
+    @sif.save!
+
+    Log.info "Successfully created all grouping_boxes."
   end
 end
