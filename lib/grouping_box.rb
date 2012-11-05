@@ -54,6 +54,23 @@ class GroupingBox < Tree::TreeNode
     
   end
 
+  def attribute_data
+    layer_keys = self.layers.collect do |layer| layer.uid end
+    children_tree = []
+    
+    self.children.each do |child|
+      children_tree.push child.attribute_data
+    end
+        
+    attr_data = {
+      :name => self.name,
+      :bounds => self.bounds,
+      :orientation => self.orientation,
+      :layers => layer_keys,
+      :children => children_tree
+    }
+
+    attr_data
   end
 
   def to_s
