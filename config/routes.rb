@@ -74,6 +74,7 @@ TransformersWeb::Application.routes.draw do
       
       # Import related activities
       match 'import' => 'design#import'
+      match 'group' => 'design#group'
     end
 
   end

@@ -1,0 +1,12 @@
+<%= content_for :content do %>
+<img src='/extracted/<%= @design.safe_name %>/<%= @design.safe_name_prefix %>.png' >
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= render "shared/templates" %>
+  <script type="text/javascript">
+    var sif_data = <%= raw @sif.to_json %>;
+    var root_grouping_box = <%= raw @root_grouping_box.attribute_data.to_json %>;
+  </script>
+  <%= javascript_include_tag "app/grouper_app" %>
+<% end %>
