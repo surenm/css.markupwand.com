@@ -196,18 +196,18 @@ class GroupingBox < Tree::TreeNode
   end
 
   def print_tree(level = 0)
-  if is_root?
-    print "*"
-  else
-    print "|" unless parent.is_last_sibling?
-    print(' ' * (level - 1) * 4)
-    print(is_last_sibling? ? "+" : "|")
-    print "---"
-    print(has_children? ? "+" : ">")
+    if is_root?
+      print "*"
+    else
+      print "|" unless parent.is_last_sibling?
+      print(' ' * (level - 1) * 4)
+      print(is_last_sibling? ? "+" : "|")
+      print "---"
+      print(has_children? ? "+" : ">")
+    end
+
+    puts self.to_s
+
+    children { |child| child.print_tree(level + 1)}
   end
-
-  puts self.to_s
-
-  children { |child| child.print_tree(level + 1)}
-end
 end
