@@ -597,7 +597,7 @@ config
 
   def get_grouping_boxes
     layers = self.layers.values
-    root_grouping_box = GroupingBox.new :layers => layers, :orientation => Constants::GRID_ORIENT_NORMAL, :bounds => self.bounds
+    root_grouping_box = GroupingBox.new :layers => layers, :orientation => Constants::GRID_ORIENT_NORMAL, :bounds => self.bounds, :design => self
     root_grouping_box.groupify
     root_grouping_box.print_tree
   end

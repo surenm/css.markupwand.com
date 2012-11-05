@@ -50,7 +50,16 @@ class GroupingBox < Tree::TreeNode
     orientation = args.fetch :orientation, Constants::GRID_ORIENT_NORMAL
     bounds = args.fetch :bounds
 
-    super(bounds.to_s, {:bounds => bounds, :layers => layers, :orientation => orientation})
+    design = args.fetch :design, nil
+    if design.nil?
+      super(bounds.to_s, {:bounds => bounds, :layers => layers, :orientation => orientation})
+    else
+      super(bounds.to_s, {:bounds => bounds, :layers => layers, :orientation => orientation, :design => design.id})
+  end
+
+  def add(child_node)
+    child_node.content[:design] = self.content[:design]
+    super(child_node)
   end
 
   def to_s
