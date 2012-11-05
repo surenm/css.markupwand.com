@@ -59,6 +59,8 @@ class Design
   field :sif_file_path, :type => String, :default => nil
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
   field :softdelete, :type => Boolean, :default => false
+  field :width, :type => Integer
+  field :height, :type => Integer
   
   field :storage, :type => String, :default => "local"
   field :queue, :type => String, :default => Design::PRIORITY_NORMAL
@@ -70,8 +72,6 @@ class Design
   attr_accessor :class_edited
   
   # Document properties
-  attr_accessor :height
-  attr_accessor :width
   attr_accessor :resolution
 
   # Autoincrement counter

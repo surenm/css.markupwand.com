@@ -13,6 +13,10 @@ class SifBuilder
       :width  => psd_data[:header][:width],
       :mode   => psd_data[:header][:modename],
     }
+
+    design.height = design_metadata[:height].to_i
+    design.width = design_metadata[:width].to_i
+    design.save!
     
     user_metadata = {
       :user => design.user.email
