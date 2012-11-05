@@ -10,11 +10,14 @@ class Sif
 
 =end
   end
-
+  
+  attr_accessor :design
   attr_accessor :header
   attr_accessor :layers
   attr_accessor :grids
-  attr_accessor :design
+  attr_accessor :root_grid
+  attr_accessor :grouping_boxes
+  attr_accessor :root_grouping_box
   
   def self.write(design, sif_data)
     sif_file = design.get_sif_file_path
@@ -56,6 +59,7 @@ class Sif
     begin
       self.parse_header
       self.parse_layers
+      self.parse_grouping_boxes
       self.parse_grids
       self.set_layer_parent
       self.validate
@@ -85,6 +89,11 @@ class Sif
       layer = self.create_layer serialized_layer_data
       @layers[uid] = layer
     end
+  end
+
+  def parse_grouping_boxes
+    serialized_root_grouping_box = @sif_data[:root_grouping_box]
+    @root_grouping_box = self.create_grouping_box serialized_root_grouping_box
   end
   
   def parse_grids
@@ -168,14 +177,15 @@ class Sif
     end
 
     sif_document = {
-        :header => @header,
-        :layers => serialized_layers,
-        :grids  => serialized_grids,
+      :header => @header,
+      :layers => serialized_layers,
+      :grids  => serialized_grids,
+      :root_grouping_box => @root_grouping_box.attribute_data
     }
   end
 
   def save!
-    serialized_document = self.get_serialized_document
+    serialized_document = self.get_serialized_data
     Sif.write @design, serialized_document
   end
   
@@ -276,5 +286,24 @@ class Sif
     # We have not instantiated children alone. Because children grids would not have been instantiated properly
     grid = Grid.new args
     return grid
+  end
+
+  def create_grouping_box(serialized_data)
+    layer_keys = serialized_data[:layers]
+    orientation = serialized_data[:orientation]
+    bounds = BoundingBox.create_from_attribute_data serialized_data[:bounds]
+    
+    layers = layer_keys.collect do |layer_uid| 
+      @layers[layer_uid] 
+    end
+
+    grouping_box = GroupingBox.new :layers => layers, :bounds => bounds, :orientation => orientation
+
+    serialized_data[:children].each do |child_data|
+      child_grouping_box = self.create_grouping_box child_data
+      grouping_box.add child_grouping_box
+    end
+
+    grouping_box
   end
 end
