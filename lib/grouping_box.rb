@@ -53,6 +53,12 @@ class GroupingBox < Tree::TreeNode
     super(bounds.to_s, {:bounds => bounds, :layers => layers, :orientation => orientation})
   end
 
+  def to_s
+    layer_names = ''
+    self.layers.each { |layer| layer_names += layer.name + ', ' }
+    return "#{name} - [#{layer_names}]"
+  end
+
   def layers
     self.content[:layers]
   end
@@ -181,4 +187,20 @@ class GroupingBox < Tree::TreeNode
     end
 
   end
+
+  def print_tree(level = 0)
+  if is_root?
+    print "*"
+  else
+    print "|" unless parent.is_last_sibling?
+    print(' ' * (level - 1) * 4)
+    print(is_last_sibling? ? "+" : "|")
+    print "---"
+    print(has_children? ? "+" : ">")
+  end
+
+  puts self.to_s
+
+  children { |child| child.print_tree(level + 1)}
+end
 end
