@@ -70,6 +70,10 @@ class GroupingBox < Tree::TreeNode
     self.content[:bounds]
   end
 
+  def orientation
+    self.content[:orientation]
+  end
+
   def non_style_layers
     all_layers = self.layers
     non_style_layers = all_layers.select do |layer|
