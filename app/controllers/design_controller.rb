@@ -257,13 +257,8 @@ class DesignController < ApplicationController
     @design.move_to_priority_queue
     redirect_to :action => :show, :id => @design.safe_name
   end
-  
-  def import
-    @sif = @design.get_serialized_sif_data
-    @tree = @design.get_grid_tree
-  end
 
-  def group
+  def editor
     @sif = @design.get_serialized_sif_data
     @root_grouping_box = @design.root_grouping_box
   end

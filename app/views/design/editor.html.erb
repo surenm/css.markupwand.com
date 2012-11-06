@@ -1,0 +1,21 @@
+<%= content_for :css do %>
+  <%= stylesheet_link_tag "app/editor", :media => "all" %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= render "shared/templates" %>
+  <script type="text/javascript">
+    var design_data = <%= raw @design.attribute_data.to_json %>
+    var sif_data = <%= raw @sif.to_json %>;
+    var root_grouping_box = <%= raw @root_grouping_box.attribute_data.to_json %>;
+  </script>
+  <%= javascript_include_tag "app/editor_app" %>
+<% end %>
+
+
+<%= content_for :content do %>
+  <div id="app">
+    <div id="sidebar"> </div>
+    <iframe id="iframe" src="about:blank" />
+  </div>
+<% end %>

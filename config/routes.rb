@@ -72,9 +72,8 @@ TransformersWeb::Application.routes.draw do
       match 'view-json'  => 'design#view_json'
       
       
-      # Import related activities
-      match 'import' => 'design#import'
-      match 'group' => 'design#group'
+      # editor related activities
+      match 'editor' => 'design#editor'
     end
 
   end
