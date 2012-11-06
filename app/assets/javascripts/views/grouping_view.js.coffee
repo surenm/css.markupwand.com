@@ -3,12 +3,16 @@ class GroupingView extends Backbone.View
   sidebar: "#sidebar"
   iframe: "#iframe"
   
-  initialize: () ->
+  initialize: ->
     this.render()
 
-  render: () ->
-    $design = window.app.design
+  get_iframe_src: ->
+    $design = this.model
+    "/extracted/#{$design.get('safe_name')}/#{$design.get('safe_name_prefix')}.png"
+    
 
+  render: () ->
+    $design = this.model
     $(this.sidebar).tree
       data: [root_grouping_box]
       autoOpen: 0
@@ -19,6 +23,8 @@ class GroupingView extends Backbone.View
     $(this.sidebar).bind 'tree.click', (event) ->
       node = event.node
 
+    iframe_url = this.get_iframe_src()
+    $(this.iframe).attr 'src', iframe_url
 
 window.GroupingView = GroupingView
 

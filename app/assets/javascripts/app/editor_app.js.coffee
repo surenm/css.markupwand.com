@@ -9,7 +9,7 @@ class EditorApp
     @design = new DesignModel(design_data, sif_data)
     
   load_grouping_view: ->
-    @grouping_view = new GroupingView()
+    @grouping_view = new GroupingView({model: @design})
 
   load_layers_view: ->
     @layers_view = new LayersView()
