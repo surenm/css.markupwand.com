@@ -1,4 +1,6 @@
-class GroupingView extends Backbone.View
+#= require './view'
+
+class GroupingView extends View
   el: "#app"
   sidebar: "#sidebar"
   iframe: "#iframe"
@@ -9,7 +11,6 @@ class GroupingView extends Backbone.View
   get_iframe_src: ->
     $design = this.model
     "/extracted/#{$design.get('safe_name')}/#{$design.get('safe_name_prefix')}.png"
-    
 
   render: () ->
     $design = this.model
@@ -23,8 +24,7 @@ class GroupingView extends Backbone.View
     $(this.sidebar).bind 'tree.click', (event) ->
       node = event.node
 
-    iframe_url = this.get_iframe_src()
-    $(this.iframe).attr 'src', iframe_url
+    this.render_iframe()
 
 window.GroupingView = GroupingView
 
