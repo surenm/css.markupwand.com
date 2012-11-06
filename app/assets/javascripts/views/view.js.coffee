@@ -1,10 +1,11 @@
 class View extends Backbone.View
 
-  append_canvases: () ->
+  inject_editor_elements: () ->
     canvas_elements = ['main-canvas', 'mouseoverlay-canvas', 'ruler-canvas']
     for canvas_element in canvas_elements
       canvas_dom_element = document.createElement 'canvas'
       canvas_dom_element.id = canvas_element
+      $(canvas_dom_element).css('position', 'absolute').css('top', '0')
       $(@iframe_dom).find('body').append canvas_dom_element
 
   init_canvas_objects: () ->
@@ -25,7 +26,7 @@ class View extends Backbone.View
     
     $(this.iframe).load () ->
       $this.set_iframe_dom $(this).contents()
-      $this.append_canvases()
+      #$this.inject_editor_elements()
       $this.init_canvas_objects()
 
     $(this.iframe).attr 'src', iframe_url

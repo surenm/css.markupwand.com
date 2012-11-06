@@ -24,7 +24,9 @@
 //= require lib/tree.jquery
 //= require lib/jquery.jeditable
 //= require lib/bootstrap-modal
-//= requore lib/tree.jquery
+//= require lib/jcanvas
+//= require lib/editor_canvas
+
 //= require jquery.flot
 
 //= require twitter/bootstrap
