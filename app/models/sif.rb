@@ -93,6 +93,12 @@ class Sif
 
   def parse_grouping_boxes
     serialized_root_grouping_box = @sif_data[:root_grouping_box]
+    if serialized_root_grouping_box.nil?
+      # If there are serialized grids then most probably the design is not yet parsed
+      @grouping_boxes = nil
+      return
+    end
+
     @root_grouping_box = self.create_grouping_box serialized_root_grouping_box
   end
   
@@ -176,11 +182,15 @@ class Sif
       end
     end
 
+    if not @root_grouping_box.nil?
+      serialized_grouping_box = @root_grouping_box.attribute_data
+    end
+
     sif_document = {
       :header => @header,
       :layers => serialized_layers,
       :grids  => serialized_grids,
-      :root_grouping_box => @root_grouping_box.attribute_data
+      :root_grouping_box => serialized_grouping_box
     }
   end
 
