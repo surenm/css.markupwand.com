@@ -10,7 +10,7 @@ class GroupingView extends View
 
   get_iframe_src: ->
     $design = this.model
-    "/extracted/#{$design.get('safe_name')}/#{$design.get('safe_name_prefix')}.png"
+    "/design/#{$design.get('id')}/grouping"
 
   render: () ->
     $design = this.model

@@ -262,4 +262,7 @@ class DesignController < ApplicationController
     @sif = @design.get_serialized_sif_data
     @root_grouping_box = @design.root_grouping_box
   end
+
+  def grouping
+  end
 end

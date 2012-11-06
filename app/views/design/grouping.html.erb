@@ -1,0 +1,18 @@
+<%= content_for :css do %>
+<style>
+  canvas {
+    position: absolute;
+    top: 0;
+  }
+
+  img {
+    max-width: none;
+  }
+</style>
+<% end %>
+
+<%= content_for :content do %>
+<img src="/extracted/<%= @design.safe_name %>/<%= @design.safe_name_prefix %>.png">
+<canvas id="main-canvas" height="1500" width="1500" />
+<canvas id="mouseoverlay-canvas" />
+<% end %>
