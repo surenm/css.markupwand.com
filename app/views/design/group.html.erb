@@ -1,12 +1,22 @@
+<%= content_for :css do %>
+<%= stylesheet_link_tag "app/group", :media => "all" %>
+<% end %>
+
 <%= content_for :content do %>
-<img src='/extracted/<%= @design.safe_name %>/<%= @design.safe_name_prefix %>.png' >
+<div id="grouping-panel"></div>  
+<div>
+  <iframe id="grouping-iframe" src="/extracted/<%= @design.safe_name %>/<%= @design.safe_name_prefix %>.png">
+</div>
+
+
 <% end %>
 
 <%= content_for :javascript do %>
   <%= render "shared/templates" %>
   <script type="text/javascript">
+    var design_data = <%= raw @design.attribute_data.to_json %>
     var sif_data = <%= raw @sif.to_json %>;
     var root_grouping_box = <%= raw @root_grouping_box.attribute_data.to_json %>;
   </script>
-  <%= javascript_include_tag "app/grouper_app" %>
+  <%= javascript_include_tag "app/grouping_app" %>
 <% end %>

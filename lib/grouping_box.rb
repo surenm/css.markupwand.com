@@ -64,6 +64,7 @@ class GroupingBox < Tree::TreeNode
         
     attr_data = {
       :name => self.name,
+      :label => self.name,
       :bounds => self.bounds,
       :orientation => self.orientation,
       :layers => layer_keys,
