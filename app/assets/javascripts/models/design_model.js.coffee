@@ -9,8 +9,7 @@ class DesignModel extends Backbone.Model
     @grids = new GridCollection()
     @grids.reset sif_data['grids']
 
-    @editor_iframe = new EditorIframeView
-    console.log @editor_iframe
+    #@editor_iframe = new EditorIframeView
 
   handleSelection: (type, id) ->
     switch type

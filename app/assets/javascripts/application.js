@@ -28,5 +28,4 @@
 //= require jquery.flot
 
 //= require twitter/bootstrap
-//= require app/landing_page
 //= require app/tutorial
