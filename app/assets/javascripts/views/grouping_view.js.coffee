@@ -13,7 +13,10 @@ class GroupingView extends View
     "/design/#{$design.get('id')}/grouping"
 
   render: () ->
+    
     $design = this.model
+    $this = this
+
     $(this.sidebar).tree
       data: [root_grouping_box]
       autoOpen: 0
@@ -23,6 +26,7 @@ class GroupingView extends View
 
     $(this.sidebar).bind 'tree.click', (event) ->
       node = event.node
+      $this.main_canvas.drawBounds node.bounds
 
     this.render_iframe()
 
