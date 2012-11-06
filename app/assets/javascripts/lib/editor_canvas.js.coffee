@@ -1,6 +1,6 @@
 class EditorCanvas
   constructor: (@canvas_element) ->
-    this.drawDebugRectange()
+    
 
   drawDebugRectange: ->
     $(@canvas_element).drawRect 
@@ -11,16 +11,28 @@ class EditorCanvas
       height: 200,
       fromCenter: false
 
-  drawBounds: (bounds) ->
+  clear: ->
     $(@canvas_element).clearCanvas()
 
+  drawBounds: (bounds, stroke_color = "#33333") ->
     $(@canvas_element).drawRect
-      strokeStyle: "#333"
+      strokeStyle: stroke_color
       x: bounds.left
       y: bounds.top
       width: bounds.right - bounds.left,
       height: bounds.bottom - bounds.top,
       fromCenter: false
+
+  drawFilledRectangle: (bounds, fill_color = "rgba(0, 0, 0, 0.4)") ->
+    $(@canvas_element).drawRect
+      strokeStyle: "#333333"
+      fillStyle: fill_color
+      x: bounds.left
+      y: bounds.top
+      width: bounds.right - bounds.left,
+      height: bounds.bottom - bounds.top,
+      fromCenter: false
+
 
 
 window.EditorCanvas = EditorCanvas
