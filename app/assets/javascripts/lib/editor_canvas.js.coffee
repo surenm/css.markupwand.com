@@ -11,5 +11,16 @@ class EditorCanvas
       height: 200,
       fromCenter: false
 
+  drawBounds: (bounds) ->
+    $(@canvas_element).clearCanvas()
+
+    $(@canvas_element).drawRect
+      strokeStyle: "#333"
+      x: bounds.left
+      y: bounds.top
+      width: bounds.right - bounds.left,
+      height: bounds.bottom - bounds.top,
+      fromCenter: false
+
 
 window.EditorCanvas = EditorCanvas
