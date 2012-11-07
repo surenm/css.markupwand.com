@@ -190,17 +190,18 @@ class GroupingBox < Tree::TreeNode
         grouping_box_layers = self.get_layers_in_region grouping_box_bounds
         child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds,
           :orientation => Constants::GRID_ORIENT_NORMAL
-
         self.add child_grouping_box
       end
 
+      self.content[:alternate_grouping_boxes] = Array.new
       # case 3b
-      # horizontal_bound = [horizontal_gutters.first, horizontal_gutters.last]
-      # vertical_bounds.each do |vertical_bound|
-      #   grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
-      #   grouping_box_layers = self.get_layers_in_region grouping_box_bounds
-      #   child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, 
-      #     :orientation => Constants::GRID_ORIENT_LEFT
+      horizontal_bound = [horizontal_gutters.first, horizontal_gutters.last]
+
+      vertical_bounds.each do |vertical_bound|
+        grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+        grouping_box_layers = self.get_layers_in_region grouping_box_bounds
+        self.content[:alternate_grouping_boxes].push grouping_box_bounds
+      end
     end
     
     self.children.each do |child|
