@@ -149,7 +149,9 @@ class GroupingBox < Tree::TreeNode
     
     if vertical_bounds.size == 1 and horizontal_bounds.size == 1
       # case 0
-      # set a flag or something to show layers are intersecting here
+      if self.layers.size > 1 
+        self.content[:has_intersecting_layers] = true
+      end
       return
 
     elsif vertical_bounds.size == 1 
