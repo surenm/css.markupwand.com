@@ -209,7 +209,6 @@ class GroupingBox < Tree::TreeNode
         child.groupify
       end
     end
-
   end
 
   def print_tree(level = 0)
@@ -223,7 +222,7 @@ class GroupingBox < Tree::TreeNode
       print(has_children? ? "+" : ">")
     end
 
-    puts self.to_s
+    puts "#{self.to_s} - Root: #{self.is_root?}, Leaf: #{self.is_leaf?}"
 
     children { |child| child.print_tree(level + 1)}
   end
