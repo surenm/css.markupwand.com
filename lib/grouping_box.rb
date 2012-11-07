@@ -46,12 +46,8 @@ class GroupingBox < Tree::TreeNode
 
 
   def initialize(args)
-    layers = args.fetch :layers, []
-    orientation = args.fetch :orientation, Constants::GRID_ORIENT_NORMAL
     bounds = args.fetch :bounds
-
-    super(bounds.to_s, {:bounds => bounds, :layers => layers, :orientation => orientation})
-    
+    super(bounds.to_s, args)
   end
 
   def attribute_data
@@ -62,16 +58,16 @@ class GroupingBox < Tree::TreeNode
       children_tree.push child.attribute_data
     end
         
-    attr_data = {
+    {
       :name => self.name,
       :label => self.name,
       :bounds => self.bounds,
       :orientation => self.orientation,
       :layers => layer_keys,
-      :children => children_tree
+      :children => children_tree,
+      :alternate_grouping => self.content[:alternate_grouping_boxes],
+      :has_intersecting_layers => self.content[:has_intersecting_layers]
     }
-
-    attr_data
   end
 
   def to_s
