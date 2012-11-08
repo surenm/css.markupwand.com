@@ -5,11 +5,13 @@
   <title>Markupwand | Magically convert Photoshop designs to valid HTML markup</title>
   <%= stylesheet_link_tag "application", :media => "all" %>
   <%= yield :css %>
-  <%= raw analytical.head_append_javascript %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
-  <script type="text/javascript" src="//use.typekit.net/ssc7nzy.js"></script>
-  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+  <% if not Rails.env.development? %>
+  <%= raw analytical.head_append_javascript %>
+    <script type="text/javascript" src="//use.typekit.net/ssc7nzy.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+  <% end %>
   
   <%= yield :javascript %>
   <% if @pretty_print %>
@@ -27,7 +29,9 @@
 <body>
 <% end %>
 <div class="wrapper">
-  <%= raw analytical.body_prepend_javascript %>
+  <% if not Rails.env.development? %>
+    <%= raw analytical.body_prepend_javascript %>
+  <% end %>
 
   <% if not Rails.env.production? %>
     <%= render 'shared/env' %>
@@ -42,6 +46,8 @@
 </div>
 
 <%= render 'shared/footer' %>
-<%= raw analytical.body_append_javascript %>
+<% if not Rails.env.development? %>
+  <%= raw analytical.body_append_javascript %>
+<% end %>
 </body>
 </html>
