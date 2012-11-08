@@ -1,0 +1,24 @@
+<%= content_for :content do %>
+  <%= render 'shared/header' %>
+  <div class="container content-area-box" id="images-editor">
+  <% if @success %>
+    <div class="info"><%= debug params['layer'] %></div>
+  <% end %>
+  <%= form_tag("/design/#{@design.safe_name}/images", :method => "post") %>
+    <table class="table">
+    <tr><th>Image name</th><th>Thumbnail</th></tr>
+    <% @design.layers.each do |uid, layer| %>
+      <% if layer.type == Layer::LAYER_NORMAL %>
+        <tr><td><input class="layer-name" type="text" name="layer[<%= layer.uid %>]" value="<%= layer.image_name %>"></td><td><img class="layer-image" src="/published/<%= @design.safe_name %>/<%= layer.image_path %>"></td></tr>
+      <% end %>
+    <% end %>
+    </table>
+    <input type="submit" class="save-names btn btn-large btn-primary" value="Save image names">
+  </form>
+  </div>
+  <script type="text/javascript">
+  $('.layer-name').focus(function(e) {
+    $(this).select();
+  })
+  </script>
+<% end %>

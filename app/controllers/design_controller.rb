@@ -73,6 +73,14 @@ class DesignController < ApplicationController
     
     redirect_to :action => :show, :id => design.safe_name
   end
+
+  def images
+    if params['layer']
+      @success = true
+    end
+    remote_file_path = @design.get_sif_file_path
+    @sif_file = JSON.parse File.read Store::fetch_object_from_store remote_file_path
+  end
   
   def index
     @status_class = Design::STATUS_CLASS

@@ -50,6 +50,7 @@ class Layer
   attr_accessor :bounds #(BoundingBox)
   attr_accessor :smart_bounds #(BoundingBox)
   attr_accessor :tag_name # (Symbol)
+  attr_accessor :image_name # (String)
 
   attr_accessor :text
   attr_accessor :shape
@@ -79,17 +80,18 @@ class Layer
     parent_grid = self.parent_grid.nil? ? nil : self.parent_grid.id  
 
     attr_data = {
-      :uid     => self.uid,
-      :name    => self.name,
-      :type    => self.type,
-      :zindex  => self.zindex,
+      :uid        => self.uid,
+      :name       => self.name,
+      :type       => self.type,
+      :zindex     => self.zindex,
       :initial_bounds => self.initial_bounds.attribute_data,
-      :bounds  => self.bounds.attribute_data,
-      :opacity => self.opacity,
-      :text    => self.text,
-      :shape   => self.shape,
-      :styles  => self.styles,
-      :tag     => self.tag_name,
+      :bounds     => self.bounds.attribute_data,
+      :opacity    => self.opacity,
+      :text       => self.text,
+      :shape      => self.shape,
+      :styles     => self.styles,
+      :tag        => self.tag_name,
+      :image_name => self.image_name,
       :design  => self.design.id,
       :overlay => self.overlay,
       :style_layer        => self.style_layer,

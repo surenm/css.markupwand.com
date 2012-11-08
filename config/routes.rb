@@ -49,6 +49,7 @@ TransformersWeb::Application.routes.draw do
       # get, put and edit designs
       match ''                 => 'design#show'
       match 'edit'             => 'design#edit'
+      match 'images'           => 'design#images', :via => [:post, :get]
       match 'save_edits'       => 'design#save_edits', :via => :post
       match 'preview'          => 'design#preview'
       match 'download'         => 'design#download'
