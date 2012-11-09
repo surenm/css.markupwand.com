@@ -76,7 +76,22 @@ class DesignController < ApplicationController
 
   def images
     if params['layer']
+      @renamed_files = []
+      params['layer'].each do |uid, image_name|
+        if @design.layers[uid.to_i].image_name != image_name
+          original_name = @design.layers[uid.to_i].image_name
+          final_name    = image_name
+          @design.layers[uid.to_i].image_name = image_name
+          Store::rename_file File.join(@design.store_extracted_key, "assets", "images", original_name), File.join(@design.store_extracted_key, "assets", "images", final_name)
+          Store::rename_file File.join(@design.store_generated_key, "assets", "images", original_name), File.join(@design.store_generated_key, "assets", "images", final_name)
+          Store::rename_file File.join(@design.store_published_key, "assets", "images", original_name), File.join(@design.store_published_key, "assets", "images", final_name)
+          @renamed_files.push image_name
+        end
+      end
+  
+      @design.save_sif!
       @success = true
+      @design.reparse
     end
     remote_file_path = @design.get_sif_file_path
     @sif_file = JSON.parse File.read Store::fetch_object_from_store remote_file_path
