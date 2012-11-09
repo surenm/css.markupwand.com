@@ -284,7 +284,7 @@ module Store
 
   def Store::rename_in_remote(source_file_path, dest_file_path)
     Log.debug "Renaming remote file "
-    local_store = Store::get_remote_store
+    bucket = Store::get_remote_store
 
     file = bucket.objects[source_file_path]
     file.move_to dest_file_path
