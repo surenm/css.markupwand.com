@@ -28,7 +28,7 @@ class SifBuilder
       :layers => layers,
       :grids => nil,
     }
-    
+
     Sif::write(design, sif_data)
   end
   
@@ -49,7 +49,7 @@ class SifBuilder
       :text      => raw_layer_data[:text],
       :shape     => raw_layer_data[:shape],
       :styles    => raw_layer_data[:styles],
-      :imagename => raw_layer_data[:image_name]
+      :image_name => raw_layer_data[:image_name]
     }
   end
 end
