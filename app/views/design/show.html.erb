@@ -66,6 +66,7 @@
 <%= content_for :admin_content do %>
 <div id="admin-content">
   Admin Actions: 
+  <a class="btn btn-large btn-danger" href="/design/<%= @design.safe_name %>/images"> Rename images </a>
   <a class="btn btn-large btn-danger" href="/design/<%= @design.safe_name %>/reextract"> Re-extract PSD </a>
   <a class="btn btn-large btn-danger" href="/design/<%= @design.safe_name %>/reparse"> Reparse grids </a>
   <a class="btn btn-large btn-danger" href="/design/<%= @design.safe_name %>/regenerate"> Regenerate HTML </a> </a>
