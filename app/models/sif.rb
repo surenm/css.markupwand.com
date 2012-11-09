@@ -216,6 +216,7 @@ class Sif
     layer.style_layer  = sif_layer_data[:style_layer]
     layer.parent_grid  = sif_layer_data[:parent_grid]
     layer.tag_name     = sif_layer_data[:tag]
+    layer.image_name   = sif_layer_data[:image_name]
 
     layer.generated_selector  = sif_layer_data[:generated_selector]
     layer.computed_css = {}

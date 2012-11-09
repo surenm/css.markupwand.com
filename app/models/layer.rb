@@ -207,9 +207,12 @@ class Layer
   ########################################################## 
   
   def image_name
-    layer_safe_name = Store::get_safe_name(self.name)
-    image_base_name = "#{layer_safe_name.downcase}_#{self.uid}.png"
-    return image_base_name
+    if @image_name.nil? and self.type == LAYER_NORMAL
+      layer_safe_name = Store::get_safe_name(self.name)
+      "#{layer_safe_name.downcase}_#{self.uid}.png"
+    else
+      @image_name      
+    end
   end
 
   #TODO Requires cleanup
