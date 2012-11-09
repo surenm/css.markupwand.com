@@ -272,6 +272,34 @@ module Store
     abs_file_path = File.join local_store, file_path
     FileUtils.rm_r abs_file_path if File.exists? abs_file_path
   end
+
+  def Store::rename_file(source_file, dest_file)
+    if Constants::store_remote?
+      return Store::rename_in_remote source_file, dest_file
+    else 
+      return Store::rename_in_local source_file, dest_file
+    end    
+  end
+
+
+  def Store::rename_in_remote(source_file_path, dest_file_path)
+    Log.debug "Renaming remote file "
+    local_store = Store::get_remote_store
+
+    file = bucket.objects[source_file_path]
+    file.move_to dest_file_path
+  end
+
+  def Store::rename_in_local(source_file_path, dest_file_path)
+    Log.debug "Renaming local file "
+    local_store     = Store::get_local_store
+    abs_source      = File.join local_store, source_file_path
+    abs_destination = File.join local_store, dest_file_path
+
+    Log.info "Renaming #{abs_source} to #{abs_destination}"
+
+    FileUtils.mv abs_source, abs_destination if File.exists? abs_source
+  end
   
   def Store::delete_from_store(remote_file_path)
     if Constants::store_remote?
