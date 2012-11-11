@@ -1,7 +1,5 @@
 ul.jqtree-tree {
     margin-left: 12px;
-    font-size: 15px;
-    font-family: "museo-sans", sans-serif;
 }
 
 ul.jqtree-tree,
@@ -35,7 +33,6 @@ ul.jqtree-tree .jqtree-toggler {
     line-height: 12px;
     font-family: arial;  /* fix for ie9 */
     border-bottom: none;
-    color: #333;
 }
 
 ul.jqtree-tree .jqtree-toggler:hover {
@@ -124,7 +121,6 @@ ul.jqtree-tree div {
     padding: 5px 10px;
     position: relative;
     float: left;
-    color: #333;
 }
 
 ul.jqtree-tree li.jqtree-selected > div,
