@@ -13,7 +13,13 @@ class GroupingView extends View
 
   }
   
+  GroupingTypes = 
+    NEW_GROUPING_BOX: "new-grouping-box"
+    FLIP: "flip"
+    MOVE: "move"
+
   initialize: ->
+    @grouping_type = null
     this.render()
 
   get_iframe_src: ->
@@ -64,17 +70,32 @@ class GroupingView extends View
 
   add_grouping_box_handler: (event) ->
     event.stopPropagation()
-    selected_node = $(@tree_element).tree('getSelectedNode')
+    @grouping_type = GroupingTypes.NEW_GROUPING_BOX
+    $(@tree_element).tree('enableMultiSelectMode')
+
+    template = $("#grouping-right-sidebar-template").html()
+    $(this.right_sidebar).html(template)
+
+  done_handler: (event) ->
+    event.stopPropagation()
     
-    if not selected_node
-      # There is no node that has been selected. Have to get the root node
-      root_node_id = root_grouping_box.id
-      selected_node = $(@tree_element).tree('getNodeById', root_node_id)
-     
-    $(@tree_element).tree 'appendNode', { label: 'NEW GROUPING BOX', id: 1 }, selected_node
+    switch @grouping_type
+      when GroupingTypes.NEW_GROUPING_BOX
+        console.log $(@tree_element).tree('getSelectedNodes')
+      else
+        console.log "unhandled grouping type"
 
+    @grouping_type = null
 
+  cancel_handler: (event) ->
+    event.stopPropagation()
 
+    switch @grouping_type
+      when GroupingTypes.NEW_GROUPING_BOX
+        $(@tree_element).tree('disableMultiSelectMode')      
+      else 
+        console.log "unhandled grouping type"
+
+    @grouping_type = null
 
 window.GroupingView = GroupingView
-
