@@ -25,7 +25,7 @@ class EditorCanvas
 
   drawFilledRectangle: (bounds, fill_color = "rgba(0, 0, 0, 0.4)") ->
     $(@canvas_element).drawRect
-      strokeStyle: "#333333"
+      strokeStyle: "rgba(0, 0, 0, 0.3)"
       fillStyle: fill_color
       x: bounds.left
       y: bounds.top

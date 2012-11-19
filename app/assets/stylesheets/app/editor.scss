@@ -35,7 +35,7 @@ body {
       border-left: 1px solid #999;
 
       font-family: "museo-sans", sans-serif;
-      font-size: 12px;
+      font-size: 11px;
       z-index: 100;
     }
 
@@ -54,6 +54,12 @@ body {
       font-family: "museo-sans", sans-serif;
       font-size: 12px;
       z-index: 100; 
+    }
+
+    #action-panel {
+      width: 90%;
+      margin: 0 auto;
+      padding-top: 20px;
     }
   }
 }

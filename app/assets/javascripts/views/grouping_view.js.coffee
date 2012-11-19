@@ -58,15 +58,15 @@ class GroupingView extends View
     this.main_canvas.clear()
     for child in grouping_box.children
       if child.layers.length > 0
-        this.main_canvas.drawFilledRectangle child.bounds
+        this.main_canvas.drawFilledRectangle child.bounds, 'rgba(0, 0, 255, 0.2)'
       else 
-        this.main_canvas.drawFilledRectangle child.bounds, 'rgba(0, 0, 0, 0.1)'
+        this.main_canvas.drawFilledRectangle child.bounds, 'rgba(0, 0, 255, 0.1)'
     this.main_canvas.drawBounds grouping_box.bounds, "#0000ff"
 
   handle_multiple_grouping_box_selection: (grouping_boxes) ->
     this.main_canvas.clear()
     for grouping_box in grouping_boxes
-      this.main_canvas.drawBounds grouping_box.bounds, 'rgba(0, 0, 255, 0.3)'
+      this.main_canvas.drawFilledRectangle grouping_box.bounds, 'rgba(0, 0, 255, 0.1)'
 
   add_grouping_box_handler: (event) ->
     event.stopPropagation()
