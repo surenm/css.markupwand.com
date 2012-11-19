@@ -643,10 +643,22 @@ class JqTreeWidget extends MouseWidget
         return @tree
 
     selectNode: (node, must_open_parents) ->
+        @multi_select_node_handler.reset()
         @select_node_handler.selectNode(node, must_open_parents)
+
+    multiSelectNode: (node) ->
+        @multi_select_node_handler.addNodeToSelection(node)
 
     getSelectedNode: ->
         return @selected_node or false
+
+    getSelectedNodes: ->
+        multi_select_nodes = @multi_select_node_handler.getSelectedNodes()
+
+        if multi_select_nodes?
+            return multi_select_nodes
+        else 
+            return @selected_node or false
 
     toJson: ->
         return JSON.stringify(
@@ -824,6 +836,7 @@ class JqTreeWidget extends MouseWidget
 
         @save_state_handler = new SaveStateHandler(this)
         @select_node_handler = new SelectNodeHandler(this)
+        @multi_select_node_handler = new MultiSelectNodeHandler(this)
         @dnd_handler = new DragAndDropHandler(this)
 
         @_initData()
@@ -992,9 +1005,13 @@ class JqTreeWidget extends MouseWidget
         else
             node = @_getNode($target)
             if node
-                @_triggerEvent('tree.click', node: node)
-
-                @selectNode(node)
+                if e.shiftKey
+                    @multiSelectNode(node)
+                    nodes = @getSelectedNodes()
+                    @_triggerEvent('tree.multiclick', nodes: nodes)
+                else
+                    @_triggerEvent('tree.click', node: node)
+                    @selectNode(node)
 
     _getNode: ($element) ->
         $li = $element.closest('li')
