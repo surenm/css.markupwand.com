@@ -126,9 +126,10 @@ ul.jqtree-tree div {
 ul.jqtree-tree li.jqtree-selected > div,
 ul.jqtree-tree li.jqtree-selected > div:hover
 {
-    background: #333;
-    color: #fff;
-    border-radius: ;
+    background: #eee;
+    color: #222;
+    border-radius: 2px;
+    font-weight: bold;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
