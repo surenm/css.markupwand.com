@@ -1358,6 +1358,29 @@ class SelectNodeHandler
             if node_element
                 node_element.select()
 
+class MultiSelectNodeHandler
+    constructor: (tree_widget) ->
+        @tree_widget = tree_widget
+        @selected_nodes = null
+
+    reset: ->
+        return if not @selected_nodes? 
+        for node in @selected_nodes
+            @tree_widget._getNodeElementForNode(node).deselect()
+
+        @selected_nodes = null
+
+    addNodeToSelection: (node) ->
+        if not @selected_nodes?
+            @selected_nodes = []
+
+        @selected_nodes.push node
+        @selected_nodes = $.unique(@selected_nodes)
+
+        @tree_widget._getNodeElementForNode(node).select()
+
+    getSelectedNodes: ->
+        @selected_nodes
 
 class DragAndDropHandler
     constructor: (tree_widget) ->
