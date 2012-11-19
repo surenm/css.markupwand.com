@@ -1,3 +1,5 @@
+#= require '../lib/bounding_box'
+
 class View extends Backbone.View
 
   init_canvas_objects: () ->
