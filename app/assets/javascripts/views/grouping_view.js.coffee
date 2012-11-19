@@ -8,6 +8,9 @@ class GroupingView extends View
 
   events: {
     "click #add-new-grouping-box": "add_grouping_box_handler"
+    "click #done": "done_handler"
+    "click #cancel": "cancel_handler"
+
   }
   
   initialize: ->
