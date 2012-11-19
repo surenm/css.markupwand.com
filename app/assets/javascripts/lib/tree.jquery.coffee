@@ -632,6 +632,7 @@ class JqTreeWidget extends MouseWidget
         onCanMoveTo: null  # Can this node be moved to this position? function(moved_node, target_node, position)
         autoEscape: true
         dataUrl: null
+        multiSelectMode: false
 
     toggle: (node) ->
         if node.is_open
@@ -646,6 +647,13 @@ class JqTreeWidget extends MouseWidget
         @multi_select_node_handler.reset()
         @select_node_handler.selectNode(node, must_open_parents)
 
+    enableMultiSelectMode: () ->
+        this.options.multiSelectMode = true
+
+    disableMultiSelectMode: () ->
+        @multi_select_node_handler.reset()
+        this.options.multiSelectMode = false
+
     multiSelectNode: (node) ->
         @multi_select_node_handler.addNodeToSelection(node)
 
@@ -655,10 +663,7 @@ class JqTreeWidget extends MouseWidget
     getSelectedNodes: ->
         multi_select_nodes = @multi_select_node_handler.getSelectedNodes()
 
-        if multi_select_nodes?
-            return multi_select_nodes
-        else 
-            return @selected_node or false
+        return multi_select_nodes or false
 
     toJson: ->
         return JSON.stringify(
@@ -1005,7 +1010,7 @@ class JqTreeWidget extends MouseWidget
         else
             node = @_getNode($target)
             if node
-                if e.shiftKey
+                if this.options.multiSelectMode
                     @multiSelectNode(node)
                     nodes = @getSelectedNodes()
                     @_triggerEvent('tree.multiclick', nodes: nodes)
