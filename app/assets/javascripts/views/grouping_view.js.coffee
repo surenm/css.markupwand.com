@@ -7,7 +7,7 @@ class GroupingView extends View
   iframe: "#iframe"
 
   events: {
-    "click .action-panel #add-new-grouping-box": "add_grouping_box_handler"
+    "click #add-new-grouping-box": "add_grouping_box_handler"
   }
   
   initialize: ->
@@ -28,6 +28,7 @@ class GroupingView extends View
     $(this.left_sidebar).html(template)
 
     @tree_element = $(this.left_sidebar).find('#grouping-tree')
+    
     $(@tree_element).tree
       data: [root_grouping_box]
       autoOpen: 0
@@ -53,12 +54,23 @@ class GroupingView extends View
         this.main_canvas.drawFilledRectangle child.bounds, 'rgba(0, 0, 0, 0.1)'
     this.main_canvas.drawBounds grouping_box.bounds, "#0000ff"
 
-  add_grouping_box_handler: () ->
-    console.log "hello fucking world"
   handle_multiple_grouping_box_selection: (grouping_boxes) ->
     this.main_canvas.clear()
     for grouping_box in grouping_boxes
       this.main_canvas.drawBounds grouping_box.bounds, 'rgba(0, 0, 255, 0.3)'
+
+  add_grouping_box_handler: (event) ->
+    event.stopPropagation()
+    selected_node = $(@tree_element).tree('getSelectedNode')
+    
+    if not selected_node
+      # There is no node that has been selected. Have to get the root node
+      root_node_id = root_grouping_box.id
+      selected_node = $(@tree_element).tree('getNodeById', root_node_id)
+     
+    $(@tree_element).tree 'appendNode', { label: 'NEW GROUPING BOX', id: 1 }, selected_node
+
+
 
 
 window.GroupingView = GroupingView

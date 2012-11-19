@@ -49,6 +49,13 @@ class GroupingBox < Tree::TreeNode
     bounds = args.fetch :bounds
     super(bounds.to_s, args)
   end
+  
+  def unique_identifier
+    layer_keys = self.layers.collect do |layer| layer.uid end
+    raw_identifier = "#{layer_keys.join '-'}"
+    digest = Digest::MD5.hexdigest raw_identifier
+    return digest
+  end
 
   def attribute_data
     layer_keys = self.layers.collect do |layer| layer.uid end
@@ -61,6 +68,7 @@ class GroupingBox < Tree::TreeNode
     {
       :name => self.name,
       :label => self.name,
+      :id => self.unique_identifier,
       :bounds => self.bounds,
       :orientation => self.orientation,
       :layers => layer_keys,
