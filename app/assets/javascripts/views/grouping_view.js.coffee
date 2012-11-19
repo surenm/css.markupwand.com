@@ -37,7 +37,12 @@ class GroupingView extends View
 
     $(@tree_element).bind 'tree.click', (event) ->
       grouping_box = event.node
+      
       $this.handle_grouping_box_selection grouping_box
+
+    $(@tree_element).bind 'tree.multiclick', (event) ->
+      grouping_boxes = event.nodes
+      $this.handle_multiple_grouping_box_selection grouping_boxes
 
   handle_grouping_box_selection: (grouping_box) ->
     this.main_canvas.clear()
@@ -50,6 +55,10 @@ class GroupingView extends View
 
   add_grouping_box_handler: () ->
     console.log "hello fucking world"
+  handle_multiple_grouping_box_selection: (grouping_boxes) ->
+    this.main_canvas.clear()
+    for grouping_box in grouping_boxes
+      this.main_canvas.drawBounds grouping_box.bounds, 'rgba(0, 0, 255, 0.3)'
 
 
 window.GroupingView = GroupingView
