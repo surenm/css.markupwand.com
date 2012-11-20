@@ -652,14 +652,14 @@ config
     }
 
     new_grouping_box = GroupingBox.new :layers => layers, :bounds => super_bounds
+    insert_position = parent_grouping_box.get_child_index grouping_boxes.first
+    parent_grouping_box.add new_grouping_box, insert_position
 
     grouping_boxes.each do |grouping_box|
       parent_grouping_box.remove! grouping_box
       new_grouping_box.add grouping_box
     end
-    
-    parent_grouping_box.add new_grouping_box
-    self.root_grouping_box.print_tree
+
     @sif.root_grouping_box = self.root_grouping_box
     @sif.save!
   end
