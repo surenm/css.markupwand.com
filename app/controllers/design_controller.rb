@@ -265,4 +265,6 @@ class DesignController < ApplicationController
 
   def grouping
   end
+  def regroup
+  end
 end

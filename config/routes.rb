@@ -75,6 +75,7 @@ TransformersWeb::Application.routes.draw do
       # editor related activities
       match 'editor' => 'design#editor'
       match 'grouping' => 'design#grouping'
+      match 'regroup' => 'design#regroup', :via => :post
     end
 
   end

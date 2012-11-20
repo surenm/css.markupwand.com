@@ -101,8 +101,14 @@ class GroupingView extends View
     switch @grouping_type
       when GroupingTypes.NEW_GROUPING_BOX
         selected_nodes = $(@tree_element).tree('getSelectedNodes')
-        selected_bounding_boxes = (node.bounds for node in selected_nodes)
+        
+        serialized_nodes = (node.bounds for node in selected_nodes)
 
+        $design = this.model
+        $.post "/design/#{$design.get('id')}/regroup", {nodes: serialized_nodes}, (data) ->
+          console.log data
+
+        ###
         super_bounds = BoundingBox.getSuperBounds selected_bounding_boxes
         name = BoundingBox.toString super_bounds
 
@@ -138,15 +144,13 @@ class GroupingView extends View
         for node in selected_nodes
           $(@tree_element).tree 'removeNode', node
           $(@tree_element).tree 'appendNode', node, new_node
-
-        fixed_grouping_boxes = $(@tree_element).tree('toJson')
-
+      
 
         this.main_canvas.clear()
         $(@tree_element).tree('disableMultiSelectMode')
+        ###
       else
         console.log "unhandled grouping type"
-
 
     @reset_right_sidebar()
 
