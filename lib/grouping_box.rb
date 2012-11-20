@@ -90,6 +90,10 @@ class GroupingBox < Tree::TreeNode
     return "#{name} - [#{layer_names}]"
   end
 
+  def get_child_index(child_node)
+    self.children.to_a.find_index child_node
+  end
+
   def layers
     self.content[:layers]
   end
