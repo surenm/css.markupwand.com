@@ -269,7 +269,7 @@ class DesignController < ApplicationController
   def regroup
     raw_bounds = params[:nodes].values
     bounds = raw_bounds.collect do |raw_bound|
-      BoundingBox.new raw_bound["top"], raw_bound["left"], raw_bound["bottom"], raw_bound["right"]
+      BoundingBox.new raw_bound["top"].to_i, raw_bound["left"].to_i, raw_bound["bottom"].to_i, raw_bound["right"].to_i
     end
     
     @design.regroup_grouping_boxes bounds
