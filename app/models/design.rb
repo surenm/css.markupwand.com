@@ -647,7 +647,7 @@ config
       if orientation == Constants::GRID_ORIENT_NORMAL
         a.bounds.top <=> b.bounds.top
       else
-        a.bounds.left <=> b.bounds.lect
+        a.bounds.left <=> b.bounds.left
       end
     }
 
