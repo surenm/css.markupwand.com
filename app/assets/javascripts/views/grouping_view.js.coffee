@@ -51,7 +51,6 @@ class GroupingView extends View
 
     $(@tree_element).bind 'tree.click', (event) ->
       grouping_box = event.node
-      
       $this.handle_grouping_box_selection grouping_box
 
     $(@tree_element).bind 'tree.multiclick', (event) ->
@@ -89,7 +88,6 @@ class GroupingView extends View
 
     template = $("#grouping-context-area-template").html()
     $(this.context_area).html(template)
-
 
   move_grouping_box_handler: (event) ->
     event.stopPropagation()
@@ -129,13 +127,26 @@ class GroupingView extends View
         }
 
         new_node = $(@tree_element).tree 'addNodeAfter', new_node_data, first_node
-        
-        for node in selected_nodes
-          $(@tree_element).tree('moveNode', node, new_node, 'inside')
 
+        selected_nodes.sort ((a, b) ->
+          if orientation == "normal"
+            return a.bounds.top >= b.bounds.top
+          else
+            return a.bounds.left >= b.bounds.left
+        )
+
+        for node in selected_nodes
+          $(@tree_element).tree 'removeNode', node
+          $(@tree_element).tree 'appendNode', node, new_node
+
+        fixed_grouping_boxes = $(@tree_element).tree('toJson')
+
+
+        this.main_canvas.clear()
         $(@tree_element).tree('disableMultiSelectMode')
       else
         console.log "unhandled grouping type"
+
 
     @reset_right_sidebar()
 
@@ -144,6 +155,7 @@ class GroupingView extends View
 
     switch @grouping_type
       when GroupingTypes.NEW_GROUPING_BOX
+        this.main_canvas.clear()
         $(@tree_element).tree('disableMultiSelectMode')      
       else 
         console.log "unhandled grouping type"
