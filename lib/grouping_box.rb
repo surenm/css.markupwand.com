@@ -156,6 +156,7 @@ class GroupingBox < Tree::TreeNode
     # => 3b. the grids are to be grouped first by vertical gutters
     
     if vertical_bounds.size == 1 and horizontal_bounds.size == 1
+      self.content[:orientation] = Constants::GRID_ORIENT_NORMAL
       # case 0
       if self.layers.size > 1 
         self.content[:has_intersecting_layers] = true
@@ -165,23 +166,22 @@ class GroupingBox < Tree::TreeNode
     elsif vertical_bounds.size == 1 
       # case 1
       vertical_bound = vertical_bounds.first
+      self.content[:orientation] = Constants::GRID_ORIENT_NORMAL
       horizontal_bounds.each do |horizontal_bound|
         grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
         grouping_box_layers = self.get_layers_in_region grouping_box_bounds
-        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, 
-          :orientation => Constants::GRID_ORIENT_NORMAL
+        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds
 
         self.add child_grouping_box
       end
     elsif horizontal_bounds.size == 1 
       # case 2
       horizontal_bound = horizontal_bounds.first
+      self.content[:orientation] = Constants::GRID_ORIENT_LEFT
       vertical_bounds.each do |vertical_bound|
         grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
         grouping_box_layers = self.get_layers_in_region grouping_box_bounds
-        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, 
-          :orientation => Constants::GRID_ORIENT_LEFT
-
+        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds
         self.add child_grouping_box
       end
       
@@ -193,16 +193,16 @@ class GroupingBox < Tree::TreeNode
   
       # case 3a
       vertical_bound = [vertical_gutters.first, vertical_gutters.last]
+      self.content[:orientation] = Constants::GRID_ORIENT_NORMAL
       horizontal_bounds.each do |horizontal_bound|
         grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
         grouping_box_layers = self.get_layers_in_region grouping_box_bounds
-        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds,
-          :orientation => Constants::GRID_ORIENT_NORMAL
+        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds
         self.add child_grouping_box
       end
 
-      self.content[:alternate_grouping_boxes] = Array.new
       # case 3b
+      self.content[:alternate_grouping_boxes] = Array.new
       horizontal_bound = [horizontal_gutters.first, horizontal_gutters.last]
 
       vertical_bounds.each do |vertical_bound|

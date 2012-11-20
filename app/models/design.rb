@@ -612,7 +612,7 @@ config
     layers = self.layers.values
     
     Log.info "Creating root grouping box..."
-    root_grouping_box = GroupingBox.new :layers => layers, :orientation => Constants::GRID_ORIENT_NORMAL, :bounds => self.bounds
+    root_grouping_box = GroupingBox.new :layers => layers, :bounds => self.bounds
     root_grouping_box.groupify
 
     @sif.root_grouping_box = root_grouping_box
