@@ -115,12 +115,15 @@ class GroupingView extends View
         layer_keys = []
         for node in selected_nodes
           layer_keys = layer_keys.concat node.layers
+
+        parent = first_node.parent
+        orientation = parent.orientation
         
         new_node_data = {
           name: name
           label: name
           bounds: super_bounds,
-          orientation: 'normal'
+          orientation: orientation
           layers: layer_keys,
           children: []
         }
