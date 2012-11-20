@@ -44,6 +44,12 @@ class GroupingBox < Tree::TreeNode
     horizontal_gutters.sort!
   end
 
+  def self.get_node(root_node, node_name)
+    root_node.breadth_each do |node|
+      next if node[node_name].nil?
+      return node[node_name]
+    end
+  end
 
   def initialize(args)
     bounds = args.fetch :bounds

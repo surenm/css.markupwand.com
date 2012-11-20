@@ -620,4 +620,47 @@ config
 
     Log.info "Successfully created all grouping_boxes."
   end
+
+  def regroup_grouping_boxes(bounds)
+    self.init_sif
+    
+    grouping_boxes = bounds.collect do |bound|
+      GroupingBox.get_node self.root_grouping_box, bound.to_s
+    end
+
+    # Get the super bounds to be set as bounds for the new grouping box 
+    super_bounds = BoundingBox.get_super_bounds bounds
+
+    # Get the layers that belong to all the children
+    layers = grouping_boxes.collect do |grouping_box|
+      grouping_box.layers
+    end
+    layers.flatten!
+
+    # Assumption is that all the selected grouping boxes belong to the same parent
+    # TODO: Validate the assumption and throw the error if not the case
+    parent_grouping_box = grouping_boxes.first.parent
+    orientation = parent_grouping_box.orientation
+    
+    # Sort the children order depending upon orientation
+    grouping_boxes.sort! { |a, b| 
+      if orientation == Constants::GRID_ORIENT_NORMAL
+        a.bounds.top <=> b.bounds.top
+      else
+        a.bounds.left <=> b.bounds.lect
+      end
+    }
+
+    new_grouping_box = GroupingBox.new :layers => layers, :bounds => super_bounds
+
+    grouping_boxes.each do |grouping_box|
+      parent_grouping_box.remove! grouping_box
+      new_grouping_box.add grouping_box
+    end
+    
+    parent_grouping_box.add new_grouping_box
+    self.root_grouping_box.print_tree
+    @sif.root_grouping_box = self.root_grouping_box
+    @sif.save!
+  end
 end

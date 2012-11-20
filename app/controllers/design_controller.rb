@@ -265,6 +265,14 @@ class DesignController < ApplicationController
 
   def grouping
   end
+
   def regroup
+    raw_bounds = params[:nodes].values
+    bounds = raw_bounds.collect do |raw_bound|
+      BoundingBox.new raw_bound["top"], raw_bound["left"], raw_bound["bottom"], raw_bound["right"]
+    end
+    
+    @design.regroup_grouping_boxes bounds
+    render :json => {:status => :success}
   end
 end
