@@ -74,7 +74,7 @@ class GroupingView extends View
       this.main_canvas.drawFilledRectangle grouping_box.bounds, 'rgba(0, 0, 255, 0.1)'
       bounding_boxes.push grouping_box.bounds
 
-    super_bounds = BoundingBox.get_super_bounds bounding_boxes
+    super_bounds = BoundingBox.getSuperBounds bounding_boxes
     this.main_canvas.drawBounds super_bounds, '#ff0000'
 
   reset_right_sidebar: ->
@@ -103,7 +103,34 @@ class GroupingView extends View
     switch @grouping_type
       when GroupingTypes.NEW_GROUPING_BOX
         selected_nodes = $(@tree_element).tree('getSelectedNodes')
+        selected_bounding_boxes = (node.bounds for node in selected_nodes)
 
+        super_bounds = BoundingBox.getSuperBounds selected_bounding_boxes
+        name = BoundingBox.toString super_bounds
+
+        if selected_nodes.length == 0
+          return
+
+        first_node = selected_nodes[0]
+        layer_keys = []
+        for node in selected_nodes
+          layer_keys = layer_keys.concat node.layers
+        
+        new_node_data = {
+          name: name
+          label: name
+          bounds: super_bounds,
+          orientation: 'normal'
+          layers: layer_keys,
+          children: []
+        }
+
+        new_node = $(@tree_element).tree 'addNodeAfter', new_node_data, first_node
+        
+        for node in selected_nodes
+          $(@tree_element).tree('moveNode', node, new_node, 'inside')
+
+        $(@tree_element).tree('disableMultiSelectMode')
       else
         console.log "unhandled grouping type"
 
