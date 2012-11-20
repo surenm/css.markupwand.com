@@ -1,5 +1,5 @@
 class BoundingBox
-  @get_super_bounds: (bounding_boxes) ->
+  @getSuperBounds: (bounding_boxes) ->
     top = left = bottom = right = null
     for bounding_box in bounding_boxes 
       if not top? or bounding_box.top < top
@@ -15,5 +15,9 @@ class BoundingBox
         right = bounding_box.right
 
     return {top: top, bottom: bottom, right: right, left: left}
+
+  @toString: (bounding_box) ->
+    return "(#{bounding_box.top}, #{bounding_box.left}, #{bounding_box.bottom}, #{bounding_box.right})"
+  
 
 window.BoundingBox = BoundingBox
