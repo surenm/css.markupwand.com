@@ -13,6 +13,9 @@ module Constants
   Constants::GROUPING_MAX_RETRIES = 3
   
   # Disable mails if env variable is set
+
+  Constants::PAGERDUTY_TRANSFORMERS_WEB = "f36e4c80ab63012f5d3622000af84f12"
+  Constants::PAGERDUTY_WINDOWS_MACHINE_STUCK = "3fdd82b018390130a4ce22000afc4cb2"
   
   if ENV['DISABLE_MAILS'] == "true"
     Constants::DISABLE_MAILS = true
