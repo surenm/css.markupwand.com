@@ -433,6 +433,73 @@ class Design
   ##########################################################
   # Actual jobs to be run on designs
   ########################################################## 
+  def create_grouping_boxes
+    self.init_sif
+
+    Log.info "Beginning to create grouping boxes for #{self.name}..."    
+    
+    # Layer descriptors of all photoshop layers
+    Log.info "Getting layers..."
+    layers = self.layers.values
+    
+    Log.info "Creating root grouping box..."
+    root_grouping_box = GroupingBox.new :layers => layers, :bounds => self.bounds
+    root_grouping_box.groupify
+
+    @sif.root_grouping_box = root_grouping_box
+    @sif.save!
+
+    Log.info "Successfully created all grouping_boxes."
+  end
+
+  def merge_grouping_boxes(bounds)
+    self.init_sif
+    
+    grouping_boxes = bounds.collect do |bound|
+      GroupingBox.get_node self.root_grouping_box, bound.to_s
+    end
+
+    # Get the super bounds to be set as bounds for the new grouping box 
+    super_bounds = BoundingBox.get_super_bounds bounds
+
+    # Get the layers that belong to all the children
+    layers = grouping_boxes.collect do |grouping_box|
+      grouping_box.layers
+    end
+    layers.flatten!
+
+    # Assumption is that all the selected grouping boxes belong to the same parent
+    # TODO: Validate the assumption and throw the error if not the case
+    parent_grouping_box = grouping_boxes.first.parent
+    orientation = parent_grouping_box.orientation
+    
+    # Sort the children order depending upon orientation
+    grouping_boxes.sort! { |a, b| 
+      if orientation == Constants::GRID_ORIENT_NORMAL
+        a.bounds.top <=> b.bounds.top
+      else
+        a.bounds.left <=> b.bounds.left
+      end
+    }
+
+    new_grouping_box = GroupingBox.new :layers => layers, :bounds => super_bounds
+    insert_position = parent_grouping_box.get_child_index grouping_boxes.first
+    parent_grouping_box.add new_grouping_box, insert_position
+
+    grouping_boxes.each do |grouping_box|
+      parent_grouping_box.remove! grouping_box
+      new_grouping_box.add grouping_box
+    end
+
+    @sif.root_grouping_box = self.root_grouping_box
+    @sif.save!
+  end
+
+  def create_grids
+    self.init_sif
+
+    Log.info "Beginning to create grids for #{self.name}"
+  end
   
   # Parses the photoshop file json data and decomposes into grids
   def group_grids
@@ -600,67 +667,5 @@ config
     target_css   = File.join base_folder, "assets", "css", "bootstrap_override.css"
 
     Store.save_to_store override_css, target_css
-  end
-
-  def get_grouping_boxes
-    self.init_sif
-
-    Log.info "Beginning to create grouping boxes for #{self.name}..."    
-    
-    # Layer descriptors of all photoshop layers
-    Log.info "Getting layers..."
-    layers = self.layers.values
-    
-    Log.info "Creating root grouping box..."
-    root_grouping_box = GroupingBox.new :layers => layers, :bounds => self.bounds
-    root_grouping_box.groupify
-
-    @sif.root_grouping_box = root_grouping_box
-    @sif.save!
-
-    Log.info "Successfully created all grouping_boxes."
-  end
-
-  def regroup_grouping_boxes(bounds)
-    self.init_sif
-    
-    grouping_boxes = bounds.collect do |bound|
-      GroupingBox.get_node self.root_grouping_box, bound.to_s
-    end
-
-    # Get the super bounds to be set as bounds for the new grouping box 
-    super_bounds = BoundingBox.get_super_bounds bounds
-
-    # Get the layers that belong to all the children
-    layers = grouping_boxes.collect do |grouping_box|
-      grouping_box.layers
-    end
-    layers.flatten!
-
-    # Assumption is that all the selected grouping boxes belong to the same parent
-    # TODO: Validate the assumption and throw the error if not the case
-    parent_grouping_box = grouping_boxes.first.parent
-    orientation = parent_grouping_box.orientation
-    
-    # Sort the children order depending upon orientation
-    grouping_boxes.sort! { |a, b| 
-      if orientation == Constants::GRID_ORIENT_NORMAL
-        a.bounds.top <=> b.bounds.top
-      else
-        a.bounds.left <=> b.bounds.left
-      end
-    }
-
-    new_grouping_box = GroupingBox.new :layers => layers, :bounds => super_bounds
-    insert_position = parent_grouping_box.get_child_index grouping_boxes.first
-    parent_grouping_box.add new_grouping_box, insert_position
-
-    grouping_boxes.each do |grouping_box|
-      parent_grouping_box.remove! grouping_box
-      new_grouping_box.add grouping_box
-    end
-
-    @sif.root_grouping_box = self.root_grouping_box
-    @sif.save!
   end
 end

@@ -272,7 +272,7 @@ class DesignController < ApplicationController
       BoundingBox.new raw_bound["top"].to_i, raw_bound["left"].to_i, raw_bound["bottom"].to_i, raw_bound["right"].to_i
     end
     
-    @design.regroup_grouping_boxes bounds
+    @design.merge_grouping_boxes bounds
     render :json => {:status => :success}
   end
 end
