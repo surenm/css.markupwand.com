@@ -220,6 +220,60 @@ class Grid
       (self.render_layer.type == Layer::LAYER_TEXT)
     end
   end
+
+  ##########################################################
+  # Grid content replacement (DOM replacement)
+  ##########################################################
+
+  def replace_grid_contents(source_id)
+    # Remove all layers, grids inside this grid.
+    # Clone and paste all the layers from the source grid
+    # 
+    # Change the co-ordinates so that everything is relative to the 
+    # top level grid of the source
+    # Run grouping only on this grid.
+    bounds = self.bounds
+
+    source_grid   = self.design.grids[source_id]
+    source_bounds = source_grid.bounds
+    self_bounds        = self.bounds
+
+    # Positional difference
+    pos_diff = {
+      :top    => self_bounds.top    - source_bounds.top,
+      :left   => self_bounds.left   - source_bounds.left,
+      :bottom => self_bounds.bottom - source_bounds.bottom,
+      :right  => self_bounds.right  - source_bounds.right
+    }
+    
+    # Delete layers and grids from design
+    self.layers.keys.each do |layer_id|
+      self.design.layers.delete layer_id
+    end
+
+    self.children.keys.each do |grid_id|
+      self.design.grids.delete grid_id
+    end
+
+    self.layers       = {}
+    self.children     = {}
+    self.style_layers = {}
+    self.render_layer = nil
+
+    source_grid.layers.each do |_, layer|
+      new_layer = layer.clone(self)
+      Log.info "----------------------------#{layer.name}----------------"
+      Log.info "Old bounds = #{new_layer.bounds}"
+      new_layer.bounds.move(pos_diff[:top], pos_diff[:left], pos_diff[:bottom], pos_diff[:right])
+      Log.info "new bounds = #{new_layer.bounds}"
+      self.layers[new_layer.uid] = new_layer
+      self.design.layers[new_layer.uid] = new_layer
+    end
+
+    self.design.save_sif!
+    self.design.reparse
+  end
+
   
   ##########################################################
   # GRID GROUPING
