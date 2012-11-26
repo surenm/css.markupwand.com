@@ -2,7 +2,7 @@ require 'open3'
 class ExtractorJob
   extend Resque::Plugins::History
   
-  @queue = :extractor
+  @queue = :worker
   
   def self.perform(design_id)
     design = Design.find design_id
@@ -93,6 +93,6 @@ class ExtractorJob
     SifBuilder.build_from_extracted_file design, extracted_file
     Log.info "Successfully built SIF file."
     
-    Resque.enqueue GrouperJob, design.id
+    Resque.enqueue GroupingBoxJob, design.id
   end
 end
