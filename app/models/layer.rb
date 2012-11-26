@@ -102,37 +102,12 @@ class Layer
   end
 
   def clone(parent_grid)
-    attributes = self.attribute_data
+    new_sif_data = self.attribute_data
+    new_sif_data[:name] = new_sif_data[:name] + " copy"
+    new_sif_data[:uid]  = self.design.get_next_layer_uid
+    new_sif_data[:parent_grid] = parent_grid
 
-    layer = Layer.new
-    layer.name    = attributes[:name] + " copy"
-    layer.type    = attributes[:type]
-    layer.uid     = self.design.get_next_layer_uid
-    layer.zindex  = attributes[:zindex]
-
-    if attributes[:initial_bounds].nil?
-      layer.initial_bounds = BoundingBox.create_from_attribute_data attributes[:bounds]
-    else
-      layer.initial_bounds = BoundingBox.create_from_attribute_data attributes[:initial_bounds]
-    end
-    
-    design_bounds      = BoundingBox.new 0, 0, self.design.height, self.design.width
-    layer.bounds       = layer.initial_bounds.inner_crop(design_bounds)
-    layer.opacity      = attributes[:opacity]
-    layer.text         = attributes[:text]
-    layer.shape        = attributes[:shape]
-    layer.styles       = attributes[:styles]
-    layer.overlay      = attributes[:overlay]
-    layer.style_layer  = attributes[:style_layer]
-    layer.tag_name     = attributes[:tag]
-    layer.image_name   = attributes[:image_name]
-    layer.generated_selector  = attributes[:generated_selector]
-    layer.computed_css = {}
-    layer.design       = self.design
-
-    layer.parent_grid  = parent_grid
-
-    return layer
+    self.design.sif.create_layer new_sif_data
   end
   
   ##########################################################
