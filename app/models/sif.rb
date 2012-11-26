@@ -67,7 +67,7 @@ class Sif
   def parse_header
     @header = @sif_data[:header]
     @design_metadata = @header[:design_metadata]
-    @user_metadata = @header[:user_metada]
+    @user_metadata = @header[:user_metadata]
   end
   
   def parse_layers
