@@ -6,8 +6,6 @@ class ExtractorJob
   
   def self.perform(design_id)
     design = Design.find design_id
-    design.save!
-
     design.set_status Design::STATUS_EXTRACTING
 
     Log.info "Extracting design data from photoshop file #{design.name}..."
@@ -95,6 +93,6 @@ class ExtractorJob
     SifBuilder.build_from_extracted_file design, extracted_file
     Log.info "Successfully built SIF file."
     
-    Resque.enqueue ParserJob, design.id
+    Resque.enqueue GrouperJob, design.id
   end
 end
