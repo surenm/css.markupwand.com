@@ -80,6 +80,9 @@ class Design
   # Offset box buffer
   attr_accessor :row_offset_box
 
+  # Sif
+  attr_accessor :sif
+
   mount_uploader :file, DesignUploader
   
   ##########################################################
