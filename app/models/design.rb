@@ -143,6 +143,10 @@ class Design
     new_id = (time_micro + process_id + incremental).to_i.to_s(16)
     return new_id
   end
+
+  def get_next_layer_uid
+    self.layers.keys.sort.last + 1
+  end
   
   # FIXME PSDJS
   def webfonts_snippet
@@ -246,6 +250,8 @@ class Design
   ##########################################################
   def init_sif
     @sif = Sif.new(self) if @sif == nil
+    self.height = @sif.header[:design_metadata][:height]
+    self.width  = @sif.header[:design_metadata][:width]
     return @sif
   end
   
