@@ -409,14 +409,21 @@ class PSDLayer
       when 1, 2 then @isFolder = true
       when 3 then @isHidden = true
 
+  safe_name: ->
+    file_name = @name.replace(/[^a-zA-Z0-9]/g,"_").toLowerCase()
+    # Because of bug caused by PSDJS, layers can only have 32 character names.
+    file_name = file_name.slice(0,31)
+    safe_name = file_name + "_" + @layerId
+    return safe_name
+
   toJSON: ->
     data = {}
-    data.uid = @layerId
-    data.name = @name
-    data.height = @rows
-    data.width  = @cols
-    data.zindex = @idx
-
+    data.uid        = @layerId
+    data.name       = @name
+    data.height     = @rows
+    data.width      = @cols
+    data.zindex     = @idx
+    
     # Adjust opacity if there is a fill opacity
     if @fillOpacityPercentage?
       data.opacity = parseInt (@opacity * @fillOpacityPercentage)/100
@@ -459,6 +466,11 @@ class PSDLayer
   
     # Add style effects
     styles = {}
+
+    if data.type == LAYER_TYPES.NORMAL
+      data.image_name = @safe_name() + ".png"
+    else
+      data.image_name = null
 
     # Adjustments could be solid fill, gradient fill or pattern fill for now
     if @adjustments?

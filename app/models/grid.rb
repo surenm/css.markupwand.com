@@ -548,12 +548,24 @@ class Grid
       intersect_area = layer_one.intersect_area layer_two
       intersect_percent_left = (intersect_area * 100.0) / Float(layer_one.bounds.area)
       intersect_percent_right = (intersect_area * 100.0) / Float(layer_two.bounds.area)
-      
+
+      cross_intersection = false
+
+      if ((layer_one.bounds.left > layer_two.bounds.left) and (layer_one.bounds.right  < layer_two.bounds.right)) or
+         ((layer_one.bounds.left < layer_two.bounds.left) and (layer_one.bounds.right  > layer_two.bounds.right)) or
+         ((layer_one.bounds.top  < layer_two.bounds.top)  and (layer_one.bounds.bottom > layer_two.bounds.right)) or
+         ((layer_one.bounds.top  > layer_two.bounds.top)  and (layer_one.bounds.bottom < layer_two.bounds.bottom))
+
+        cross_intersection = true
+      end
+
       corrected_layers = nil
-      if intersect_percent_left > 95 or intersect_percent_right > 95
-        corrected_layers = Grid.crop_inner_intersect intersecting_layers
-      elsif intersect_percent_left < 5 and intersect_percent_right < 5
-        corrected_layers = Grid.crop_outer_intersect intersecting_layers
+      if not cross_intersection
+        if intersect_percent_left > 95 or intersect_percent_right > 95
+          corrected_layers = Grid.crop_inner_intersect intersecting_layers
+        elsif intersect_percent_left < 5 and intersect_percent_right < 5
+          corrected_layers = Grid.crop_outer_intersect intersecting_layers
+        end
       end
       
       if not corrected_layers.nil?

@@ -28,27 +28,28 @@ class SifBuilder
       :layers => layers,
       :grids => nil,
     }
-    
+
     Sif::write(design, sif_data)
   end
   
   def self.build_layer_from_psd_data(design, raw_layer_data)
     raw_bounds = raw_layer_data[:bounds]
     bounds     = BoundingBox.new raw_bounds[:top], raw_bounds[:left], raw_bounds[:bottom], raw_bounds[:right]
-    
+
     layer = {
-      :design  => design,
-      :name    => raw_layer_data[:name],
-      :type    => raw_layer_data[:type],
-      :uid     => raw_layer_data[:uid],
-      :zindex  => raw_layer_data[:zindex],
-      :bounds  => bounds.attribute_data,
-      :opacity => raw_layer_data[:opacity],
-      :height  => raw_layer_data[:height],
-      :width   => raw_layer_data[:width],
-      :text    => raw_layer_data[:text],
-      :shape   => raw_layer_data[:shape],
-      :styles  => raw_layer_data[:styles],
+      :design    => design,
+      :name      => raw_layer_data[:name],
+      :type      => raw_layer_data[:type],
+      :uid       => raw_layer_data[:uid],
+      :zindex    => raw_layer_data[:zindex],
+      :bounds    => bounds.attribute_data,
+      :opacity   => raw_layer_data[:opacity],
+      :height    => raw_layer_data[:height],
+      :width     => raw_layer_data[:width],
+      :text      => raw_layer_data[:text],
+      :shape     => raw_layer_data[:shape],
+      :styles    => raw_layer_data[:styles],
+      :image_name => raw_layer_data[:image_name]
     }
   end
 end

@@ -15,11 +15,10 @@ module Utils
     end
   end
 
-  def Utils::pager_duty_alert(error_description, args)
+  def Utils::pager_duty_alert(error_description, args, service_key = Constants::PAGERDUTY_TRANSFORMERS_WEB)
     return if Rails.env.development?
     
     Log.debug "Sending message to pager duty..."  
-    service_key = "f36e4c80ab63012f5d3622000af84f12"
     post_data = {
         "service_key" => service_key,
         "event_type"  => "trigger",
