@@ -70,6 +70,13 @@ class BoundingBox
     "(#{self.top}, #{self.left}, #{self.bottom}, #{self.right})"
   end
 
+  def move(top, left, bottom, right)
+    self.top    = self.top    + top
+    self.left   = self.left   + left
+    self.bottom = self.bottom + bottom
+    self.right  = self.right  + right
+  end
+
   def inner_crop(other_box)
     cropped_bounds = BoundingBox.new(self.top, self.left, self.bottom, self.right)
 
