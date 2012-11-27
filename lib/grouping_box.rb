@@ -260,8 +260,8 @@ class GroupingBox < Tree::TreeNode
       :style_layers => self.style_layers
 
     # For each child to this grouping box, recursively get its grid and add as child to this grid
-    self.children.each do |child|
-      child_grid = child.create_grid
+    self.children.each do |child_grouping_box|
+      child_grid = child_grouping_box.create_grid
       
       if child_grid.nil?
         # This means the child is an offset box, so add this grouping box as offset box
