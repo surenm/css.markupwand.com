@@ -513,6 +513,10 @@ class Design
     self.init_sif
 
     Log.info "Beginning to create grids for #{self.name}"
+    root_grid = self.root_grouping_box.create_grid
+    
+    root_grid.print_tree
+    return
   end
   
   # Parses the photoshop file json data and decomposes into grids
