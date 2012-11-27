@@ -1,3 +1,5 @@
+require 'zip/zip'
+
 class DesignController < ApplicationController
   before_filter :require_login, :except => [:upload_danger]
   before_filter :is_user_design, :except => [:new, :uploaded, :local_new, :local_uploaded, :index, :upload_danger]
@@ -206,11 +208,20 @@ class DesignController < ApplicationController
 
   def download
     tmp_folder = Store::fetch_from_store @design.store_published_key
-    tar_file   = Rails.root.join("tmp", "#{@design.safe_name}.tar.gz")
+    zip_file   = Rails.root.join("tmp", "#{@design.safe_name}.zip")
     analytical.track "design_download"
+    path = tmp_folder.to_s
 
-    system "cd #{tmp_folder} && tar -czvf #{tar_file} ."
-    send_file tar_file, :disposition => 'inline'
+    path.sub!(%r[/$],'')
+    FileUtils.rm zip_file, :force=>true
+
+    Zip::ZipFile.open(zip_file, 'w') do |zipfile|
+      Dir["#{path}/**/**"].reject{|f|f==zip_file}.each do |file|
+        zipfile.add(file.sub(path+'/',''),file)
+      end
+    end
+
+    send_file zip_file, :disposition => 'inline'
   end
   
   def download_psd

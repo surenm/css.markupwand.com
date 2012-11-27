@@ -384,6 +384,7 @@ DEPENDENCIES
   rpm_contrib
   rspec-rails
   ruby-prof
+  rubyzip
   rvm-capistrano
   sass-rails (~> 3.2.4)
   therubyracer
