@@ -34,24 +34,6 @@ class Grid < Tree::TreeNode
     return Utils::prune_null_items attr_data
   end
 
-  ###########################################################################
-  # SPECIAL FUNCTIONS THAT ARE NEED TO RESET GRID FROM ITS ATTRIBUTE DATA
-  ###########################################################################
-  
-  def add_style_layers(style_layers)
-    if self.content[:style_layers].nil?
-      self.content[:style_layers] = Hash.new
-    end
-
-    style_layers.each do |style_layer|
-      self.content[:style_layers][style_layer.uid] = style_layer
-    end
-  end
-  
-  def set_render_layer(render_layer)
-    self.content[:render_layer] = render_layer
-  end
-
   ##########################################################
   #  GRID OBJECT HELPERS
   ##########################################################
@@ -88,7 +70,6 @@ class Grid < Tree::TreeNode
   end
 
   def offset_box=(bounding_box)
-    Log.fatal "Setting bounding_box as #{bounding_box}"
     self.content[:offset_box] = bounding_box
   end
 
@@ -156,7 +137,7 @@ class Grid < Tree::TreeNode
   end
   
   def to_s
-    "bounds: #{self.grouping_box.bounds} offset_box: #{self.offset_box}"
+    "#{self.orientation} #{self.grouping_box.bounds} margin: #{self.offset_box}, style_layers: #{self.style_layers}"
   end
 
   def print_tree(level = 0)
