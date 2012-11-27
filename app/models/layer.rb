@@ -153,7 +153,7 @@ class Layer
   end
   
   def render_layer?
-    self.parent_grid.leaf?
+    self.parent_grid.is_leaf?
   end
   
 
@@ -313,7 +313,7 @@ class Layer
   def set_style_rules
     self.crop_objects_for_cropped_bounds
     grid_style = self.parent_grid.style
-    is_leaf    = grid_style.grid.leaf?
+    is_leaf    = grid_style.grid.is_leaf?
 
     self.extra_selectors = grid_style.extra_selectors
     
@@ -417,7 +417,7 @@ class Layer
 
   def tag_name
     chosen_tag = ""
-    is_leaf = (not self.parent_grid.nil?) and self.parent_grid.leaf?
+    is_leaf = (not self.parent_grid.nil?) and self.parent_grid.is_leaf?
     
     if not @tag_name.nil?
       @tag_name
