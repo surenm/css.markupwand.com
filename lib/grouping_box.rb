@@ -253,7 +253,11 @@ class GroupingBox < Tree::TreeNode
     return nil if self.layers.empty?
 
     # A grid is possible here. 
-    grid = Grid.new :layers => self.layers, :bounds => self.bounds, :orientation => self.orientation, :grouping_box => self
+    grid = Grid.new :layers => self.layers, 
+      :bounds => self.bounds, 
+      :orientation => self.orientation, 
+      :grouping_box => self,
+      :style_layers => self.style_layers
 
     # For each child to this grouping box, recursively get its grid and add as child to this grid
     self.children.each do |child|
