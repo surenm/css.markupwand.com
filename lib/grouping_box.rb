@@ -229,6 +229,53 @@ class GroupingBox < Tree::TreeNode
     end
   end
 
+  def add_to_offset_box(bounding_box)
+    new_offset_box = nil
+    if self.offset_box.nil?
+      new_offset_box = bounding_box
+    else 
+      new_offset_box = BoundingBox.get_super_bounds [bounding_box, self.offset_box]
+    end
+    
+    self.content[:grid_offset_box] = new_offset_box
+  end
+
+  def reset_offset_box
+    self.content[:grid_offset_box] = nil
+  end
+  
+  def offset_box
+    self.content[:grid_offset_box]
+  end
+
+  def create_grid
+    # If there are no layers in this grouping box, then this is an offset box
+    return nil if self.layers.empty?
+
+    # A grid is possible here. 
+    grid = Grid.new :layers => self.layers, :bounds => self.bounds, :orientation => self.orientation, :grouping_box => self
+
+    # For each child to this grouping box, recursively get its grid and add as child to this grid
+    self.children.each do |child|
+      child_grid = child.create_grid
+      
+      if child_grid.nil?
+        # This means the child is an offset box, so add this grouping box as offset box
+        self.add_to_offset_box child.bounds
+      else
+        # The child grid exists. If there is an non empty offset box, then add it to this grid
+        if not self.offset_box.nil?
+          child_grid.offset_box = self.offset_box
+          self.reset_offset_box
+        end
+        
+        grid.add child_grid  
+      end
+    end
+
+    return grid
+  end
+
   def print_tree(level = 0)
     if is_root?
       print "*"
