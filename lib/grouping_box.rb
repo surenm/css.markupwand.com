@@ -53,7 +53,7 @@ class GroupingBox < Tree::TreeNode
 
   def initialize(args)
     bounds = args.fetch :bounds
-    super(bounds.to_s, args)
+    super bounds.to_s, args
   end
   
   def unique_identifier
@@ -65,8 +65,8 @@ class GroupingBox < Tree::TreeNode
 
   def attribute_data
     layer_keys = self.layers.collect do |layer| layer.uid end
-    children_tree = []
     
+    children_tree = []
     self.children.each do |child|
       children_tree.push child.attribute_data
     end
@@ -240,7 +240,7 @@ class GroupingBox < Tree::TreeNode
       print(has_children? ? "+" : ">")
     end
 
-    puts "#{self.to_s} - Root: #{self.is_root?}, Leaf: #{self.is_leaf?}"
+    puts "#{self.to_s}"
 
     children { |child| child.print_tree(level + 1)}
   end
