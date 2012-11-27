@@ -206,11 +206,12 @@ class DesignController < ApplicationController
 
   def download
     tmp_folder = Store::fetch_from_store @design.store_published_key
-    tar_file   = Rails.root.join("tmp", "#{@design.safe_name}.tar.gz")
+    zip_file   = Rails.root.join("tmp", "#{@design.safe_name}.zip")
     analytical.track "design_download"
 
-    system "cd #{tmp_folder} && tar -czvf #{tar_file} ."
-    send_file tar_file, :disposition => 'inline'
+    system "cd #{tmp_folder}"
+    system "zip -r #{zip_file} #{tmp_folder}"
+    send_file zip_file, :disposition => 'inline'
   end
   
   def download_psd
