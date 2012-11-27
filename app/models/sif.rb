@@ -158,12 +158,13 @@ class Sif
     @grids[grid.id] = grid
     self.validate
   end
-  
-  def reset_grids
+
+  def reset_calculated_data
     @grids = nil
     @layers.each do |layer_id, layer|
       @layers[layer_id].parent_grid = nil
     end
+    @root_grouping_box = nil
     self.save!
   end
 
