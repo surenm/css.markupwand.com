@@ -76,6 +76,15 @@ class DesignController < ApplicationController
     redirect_to :action => :show, :id => design.safe_name
   end
 
+  def replace_dom
+    if params['source_node'] and params['target_node']
+      target_grid = @design.grids[params['target_node']]
+      target_grid.replace_grid_contents params['source_node']
+      redirect_to :action => :show, :id => @design.safe_name
+    end
+
+  end
+
   def images
     if params['layer']
       @renamed_files = []

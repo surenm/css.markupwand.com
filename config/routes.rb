@@ -50,6 +50,7 @@ TransformersWeb::Application.routes.draw do
       match ''                 => 'design#show'
       match 'edit'             => 'design#edit'
       match 'images'           => 'design#images', :via => [:post, :get]
+      match 'replace-dom'      => 'design#replace_dom', :via => [:post, :get]
       match 'save_edits'       => 'design#save_edits', :via => :post
       match 'preview'          => 'design#preview'
       match 'download'         => 'design#download'
