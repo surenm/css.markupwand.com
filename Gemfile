@@ -22,6 +22,7 @@ gem 'rmagick'
 gem 'tidy_ffi'
 gem 'therubyracer'
 gem 'xml-simple'
+gem 'rubyzip'
 
 # Init command related gems
 gem 'foreman'
