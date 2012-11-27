@@ -1,0 +1,18 @@
+<%= content_for :content do %>
+  <%= render 'shared/header' %>
+  <div class="container content-area-box" id="images-editor">
+  <div class="row">
+    <div class="span5">
+        <a class="btn pull-left back" href="/design/<%= @design.safe_name %>">← Back to Design page</a>
+    </div>
+  </div>
+  
+  <%= form_tag("/design/#{@design.safe_name}/replace-dom", :method => "post") %>
+    <table class="table">
+      <tr><td>Grid id of the source from where it should be copied</td><td> : <input type="text" name="source_node"></td></tr>
+      <tr><td>Grid id of the target node which should be replaced </td><td> : <input type="text" name="target_node"></td></tr>
+    </table>
+    <input type="submit" class="save-names btn btn-large btn-primary" value="Replace dom nodes">
+  </form>
+  </div>
+<% end %>
