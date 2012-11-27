@@ -105,7 +105,7 @@ class GroupingView extends View
         serialized_nodes = (node.bounds for node in selected_nodes)
 
         $design = this.model
-        $.post "/design/#{$design.get('id')}/regroup", {nodes: serialized_nodes}, (data) ->
+        $.post "/design/#{$design.get('id')}/merge", {nodes: serialized_nodes}, (data) ->
           console.log data
 
         ###

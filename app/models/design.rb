@@ -359,6 +359,20 @@ class Design
     self.push_to_processing_queue
   end
 
+  def regroup
+    self.init_sif
+    @sif.reset_calculated_data
+
+    generated_folder = self.store_generated_key
+    published_folder = self.store_published_key
+    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
+    FileUtils.rm_rf tmp_folder
+    Store.delete_from_store generated_folder
+    Store.delete_from_store published_folder
+
+    Resque.enqueue GroupingBoxJob, self.id
+  end
+
   def reparse
     # if sif files exist, remove grids from it and reparse
     #self.init_sif  

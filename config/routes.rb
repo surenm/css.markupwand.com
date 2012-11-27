@@ -59,8 +59,9 @@ TransformersWeb::Application.routes.draw do
       match 'set-rating'       => 'design#set_rating'
       
       # admin actions to regenerate stuff
-      match 'reprocess'          => 'design#reprocess'
+      match 'reprocess'         => 'design#reprocess'
       match 'reextract'         => 'design#reextract'
+      match 'regroup'           => 'design#regroup'
       match 'reparse'           => 'design#reparse'
       match 'regenerate'        => 'design#regenerate'
       match 'download-psd'      => 'design#download_psd'
@@ -75,7 +76,8 @@ TransformersWeb::Application.routes.draw do
       # editor related activities
       match 'editor' => 'design#editor'
       match 'grouping' => 'design#grouping'
-      match 'regroup' => 'design#regroup', :via => :post
+      match 'merge' => 'design#merge', :via => :post
+
     end
 
   end

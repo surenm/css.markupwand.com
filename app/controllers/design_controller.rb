@@ -231,6 +231,11 @@ class DesignController < ApplicationController
     @design.reextract
     redirect_to :action => :show, :id => @design.safe_name
   end
+
+  def regroup
+    @design.regroup
+    redirect_to :action => :show, :id => @design.safe_name
+  end
   
   def reparse
     @design.reparse
@@ -266,7 +271,7 @@ class DesignController < ApplicationController
   def grouping
   end
 
-  def regroup
+  def merge
     raw_bounds = params[:nodes].values
     bounds = raw_bounds.collect do |raw_bound|
       BoundingBox.new raw_bound["top"].to_i, raw_bound["left"].to_i, raw_bound["bottom"].to_i, raw_bound["right"].to_i
