@@ -259,21 +259,32 @@ class GroupingBox < Tree::TreeNode
       :grouping_box => self,
       :style_layers => self.style_layers
 
-    # For each child to this grouping box, recursively get its grid and add as child to this grid
-    self.children.each do |child_grouping_box|
-      child_grid = child_grouping_box.create_grid
-      
-      if child_grid.nil?
-        # This means the child is an offset box, so add this grouping box as offset box
-        self.add_to_offset_box child.bounds
-      else
-        # The child grid exists. If there is an non empty offset box, then add it to this grid
-        if not self.offset_box.nil?
-          child_grid.offset_box = self.offset_box
-          self.reset_offset_box
-        end
+    self.style_layers.each do |layer|
+      layer.style_layer = true
+      layer.parent_grid = grid
+    end
+
+    if grid.is_leaf?
+      self.layers.each do |layer|
+        layer.parent_grid = grid
+      end
+    else
+      # For each child to this grouping box, recursively get its grid and add as child to this grid
+      self.children.each do |child_grouping_box|
+        child_grid = child_grouping_box.create_grid
         
-        grid.add child_grid  
+        if child_grid.nil?
+          # This means the child is an offset box, so add this grouping box as offset box
+          self.add_to_offset_box child_grouping_box.bounds
+        else
+          # The child grid exists. If there is an non empty offset box, then add it to this grid
+          if not self.offset_box.nil?
+            child_grid.offset_box = self.offset_box
+            self.reset_offset_box
+          end
+          
+          grid.add child_grid  
+        end
       end
     end
 

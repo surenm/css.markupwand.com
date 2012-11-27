@@ -3,6 +3,8 @@ class Grid < Tree::TreeNode
   def initialize(args)
     bounds = args.fetch :bounds
     super bounds.to_s, args
+    
+    self.content[:style] = GridStyle.new :grid => self
   end
 
   def attribute_data
@@ -81,6 +83,19 @@ class Grid < Tree::TreeNode
     self.children.each { |child_grid| child_grid.positioned? }
   end
 
+  def positioned_siblings
+    self.siblings.each { |sibling_grid| sibling_grid.positioned? }
+
+  end
+
+  def has_positioned_children?
+    return self.positioned_children.size > 0
+  end
+
+  def has_positioned_siblings?
+    return self.positioned_siblings > 0
+  end
+
   def style
     self.content[:style]
   end
@@ -99,7 +114,7 @@ class Grid < Tree::TreeNode
     zindex = 0
     
     all_layers_z_indices = []
-    self.layers.each do |uid, layer|
+    self.layers.each do |layer|
       all_layers_z_indices.push layer.zindex
     end
 

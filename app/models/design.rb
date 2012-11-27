@@ -515,7 +515,8 @@ class Design
     Log.info "Beginning to create grids for #{self.name}"
     root_grid = self.root_grouping_box.create_grid
     
-    root_grid.print_tree
+    Log.info "Generating CSS Tree..."
+    root_grid.style.compute_css
     return
   end
   

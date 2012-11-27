@@ -49,7 +49,7 @@ class GridStyle
   ## Spacing and padding related method
   # Find out bounding box difference from it and its children.
   def get_padding
-    non_style_layers = self.grid.layers.values - self.grid.style_layers.values
+    non_style_layers = self.grid.layers - self.grid.style_layers
     
     children_bounds = non_style_layers.collect { |layer| layer.bounds }
     children_superbound = BoundingBox.get_super_bounds children_bounds
@@ -77,7 +77,7 @@ class GridStyle
     #TODO. Margin is not always from left and top. It is from all sides.
 
     margin = {:top => 0, :left => 0}
-    if self.grid.root?
+    if self.grid.is_root?
       margin[:top]  += self.grid.bounds.top
       margin[:left] += self.grid.bounds.left
     else
@@ -88,11 +88,11 @@ class GridStyle
       end
 
       if not self.grid.grouping_box.nil?
-        margin_boxes.push self.grid.grouping_box
+        margin_boxes.push self.grid.grouping_box.bounds
       end      
       
       if not margin_boxes.empty?
-        children_bounds     = self.grid.layers.values.collect { |layer| layer.bounds }
+        children_bounds     = self.grid.layers.collect { |layer| layer.bounds }
         children_superbound = BoundingBox.get_super_bounds children_bounds        
         margin_superbound   = BoundingBox.get_super_bounds margin_boxes
            
@@ -176,7 +176,7 @@ class GridStyle
     width = self.unpadded_width
 
     if not width.nil? and width != 0
-      grouping_box = self.grid.grouping_box
+      grouping_box = self.grid.grouping_box.bounds
       has_trailing_offset = false
       has_trailing_offset = (self.grid.bounds != grouping_box) unless grouping_box.nil? or self.grid.bounds.nil?
       return { :width => width.to_s + 'px' }
@@ -224,7 +224,12 @@ class GridStyle
     has_shape_layers = false
 
     # Checking if the style layers had a shape.
-    self.grid.style_layers.each do |_, layer|
+    self.grid.style_layers.each do |layer|
+      Log.fatal layer
+    end
+
+    self.grid.style_layers.each do |layer|
+      Log.fatal layer
       if layer.type == Layer::LAYER_SHAPE
         has_shape_layers = true
       end
@@ -250,7 +255,7 @@ class GridStyle
     end
     
     # float left class if parent is set to GRID_ORIENT_LEFT
-    if not self.grid.root? and (self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT)
+    if not self.grid.is_root? and (self.grid.parent.orientation == Constants::GRID_ORIENT_LEFT)
       self.extra_selectors.push 'pull-left'
     end
     
@@ -300,15 +305,15 @@ class GridStyle
   def compute_css
     self.set_style_rules
 
-    self.grid.style_layers.each do |_, layer|
+    self.grid.style_layers.each do |layer|
       layer.set_style_rules
     end
 
-
-    if self.grid.render_layer.nil?
-      self.grid.children.values.each { |child| child.style.compute_css }
+    if self.grid.is_leaf?
+      self.grid.layers.first.set_style_rules
     else
-      self.grid.render_layer.set_style_rules
+      Log.fatal self.grid.children
+      self.grid.children.each { |child| child.style.compute_css }
     end
   end
 
@@ -369,7 +374,7 @@ class GridStyle
     grid_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules, :children => children_nodes
     
     # if root node is also a leaf node? just one layer case
-    if self.grid.root? and self.grid.is_leaf?
+    if self.grid.is_root? and self.grid.is_leaf?
       grid_style_node = self.grid.render_layer.get_style_node
     end
     
