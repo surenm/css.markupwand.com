@@ -236,7 +236,7 @@ class Grid
 
     source_grid   = self.design.grids[source_id]
     source_bounds = source_grid.bounds
-    self_bounds        = self.bounds
+    self_bounds   = self.bounds
 
     # Positional difference
     pos_diff = {
@@ -255,6 +255,7 @@ class Grid
       self.design.grids.delete grid_id
     end
 
+
     self.layers       = {}
     self.children     = {}
     self.style_layers = {}
@@ -262,14 +263,13 @@ class Grid
 
     source_grid.layers.each do |_, layer|
       new_layer = layer.clone(self)
-      Log.info "----------------------------#{layer.name}----------------"
-      Log.info "Old bounds = #{new_layer.bounds}"
       new_layer.bounds.move(pos_diff[:top], pos_diff[:left], pos_diff[:bottom], pos_diff[:right])
-      Log.info "new bounds = #{new_layer.bounds}"
+      new_layer.initial_bounds.move(pos_diff[:top], pos_diff[:left], pos_diff[:bottom], pos_diff[:right])
       self.layers[new_layer.uid] = new_layer
       self.design.layers[new_layer.uid] = new_layer
     end
 
+    design.sif.reset_grids
     self.design.save_sif!
     self.design.reparse
   end
