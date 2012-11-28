@@ -517,6 +517,10 @@ class Design
     
     Log.info "Generating CSS Tree..."
     root_grid.style.compute_css
+
+    @sif.root_grid = root_grid
+    @sif.save!
+
     return
   end
   
