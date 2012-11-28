@@ -225,11 +225,6 @@ class GridStyle
 
     # Checking if the style layers had a shape.
     self.grid.style_layers.each do |layer|
-      Log.fatal layer
-    end
-
-    self.grid.style_layers.each do |layer|
-      Log.fatal layer
       if layer.type == Layer::LAYER_SHAPE
         has_shape_layers = true
       end
@@ -295,7 +290,6 @@ class GridStyle
 
   def crop_images
     Log.info "Style Layers"
-    Log.info self.grid.style_layers
     self.grid.style_layers.each do |_, layer|
       layer.crop_objects_for_cropped_bounds
     end
@@ -312,7 +306,6 @@ class GridStyle
     if self.grid.is_leaf?
       self.grid.layers.first.set_style_rules
     else
-      Log.fatal self.grid.children
       self.grid.children.each { |child| child.style.compute_css }
     end
   end
