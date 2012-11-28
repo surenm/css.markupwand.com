@@ -157,23 +157,21 @@ class Sif
       layer.attribute_data
     end
 
-    serialized_grids = nil
-
-    if not @grids.nil?
-      serialized_grids = @grids.values.collect do |grid|
-        grid.attribute_data
-      end
-    end
+    serialized_root_grid = nil
 
     if not @root_grouping_box.nil?
-      serialized_grouping_box = @root_grouping_box.attribute_data
+      serialized_root_grouping_box = @root_grouping_box.attribute_data
+    end
+
+    if not @root_grid.nil?
+      serialized_root_grid = @root_grid.attribute_data
     end
 
     sif_document = {
       :header => @header,
       :layers => serialized_layers,
-      :grids  => serialized_grids,
-      :root_grouping_box => serialized_grouping_box
+      :root_grouping_box => serialized_root_grouping_box,
+      :root_grid => serialized_root_grid,
     }
   end
 
