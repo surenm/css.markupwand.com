@@ -14,9 +14,7 @@ class Sif
   attr_accessor :design
   attr_accessor :header
   attr_accessor :layers
-  attr_accessor :grids
   attr_accessor :root_grid
-  attr_accessor :grouping_boxes
   attr_accessor :root_grouping_box
   
   def self.write(design, sif_data)
@@ -103,31 +101,15 @@ class Sif
   end
   
   def parse_grids
-    serialized_grids_arr = @sif_data[:grids]
-    if serialized_grids_arr.nil?
+    serialized_root_grid = @sif_data[:root_grid]
+    if serialized_root_grid.nil?
       # If there are serialized grids then most probably the design is not yet parsed
-      @grids = nil
+      @root_grid = nil
       return
     end
     
-    @serialized_grids = Hash.new
-    serialized_grids_arr.each { |grid_data| @serialized_grids[grid_data[:id]] = grid_data }
+    @root_grid = self.create_grid serialized_root_grid
     
-    @grids = Hash.new
-    ordered_grids = get_grids_in_order()
-    ordered_grids.each do |grid_id|
-      serialized_grid_data = @serialized_grids[grid_id]
-      @grids[grid_id] = self.create_grid serialized_grid_data
-    end
-
-    
-    @serialized_grids.values.each do |grid_data|
-      children = grid_data[:children]
-      grid_id = grid_data[:id]
-      children.each do |child_id|
-        @grids[grid_id].children[child_id] = @grids[child_id]
-      end
-    end
   end
 
   # Grids are not availabe when layers are created.
@@ -319,5 +301,34 @@ class Sif
     end
 
     grouping_box
+  end
+
+  def create_grid(serialized_data)
+    layer_keys = serialized_data[:layers]
+    style_layer_keys = serialized_data[:style_layers]
+
+    orientation = serialized_data[:orientation]
+    grouping_box = GroupingBox.get_node @root_grouping_box, serialized_data[:grouping_box]
+
+    if not serialized_data[:offset_box].nil?
+      offset_box = BoundingBox.create_from_attribute_data serialized_data[:offset_box]
+    end
+
+    layers = layer_keys.collect do |layer_uid| 
+      @layers[layer_uid] 
+    end
+
+    style_layers = style_layer_keys.collect do |style_layer_uid|
+      @layers[style_layer_uid]
+    end
+
+    grid = Grid.new :layers => layers, :style_layers => style_layers, :offset_box => offset_box, :grouping_box => grouping_box
+
+    serialized_data[:children].each do |child_data|
+      child_grid = self.create_grid child_data
+      grid.add child_grid
+    end
+
+    grid
   end
 end
