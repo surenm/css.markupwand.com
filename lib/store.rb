@@ -34,7 +34,7 @@ module Store
 
   def Store::fetch_extracted_folder(design)
     extracted_folder = Rails.root.join "tmp", "store", design.store_extracted_key
-    Log.info "Fetching #{extracted_folder}"
+    Log.debug "Fetching #{extracted_folder}"
     if not Dir.exists? extracted_folder.to_s
       fetch_from_store design.store_extracted_key
     end
@@ -106,7 +106,7 @@ module Store
       abs_src_file += '/.'
     end
     
-    Log.info "Copying locally from #{abs_src_file} to #{abs_destination_file}"
+    Log.debug "Copying locally from #{abs_src_file} to #{abs_destination_file}"
     FileUtils.cp_r abs_src_file, abs_destination_file
   end
   
