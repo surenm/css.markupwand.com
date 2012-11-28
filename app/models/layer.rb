@@ -240,40 +240,40 @@ class Layer
   end
 
   def crop_image(image_file)
-    Log.info "Checking whether to crop #{image_file}"
+    Log.debug "Checking whether to crop #{image_file}"
     if self.bounds == self.initial_bounds
-      Log.info "Decided not to crop"
+      Log.debug "Decided not to crop"
       return
     end
 
-    Log.info "Decided that it should be cropped"
+    Log.debug "Decided that it should be cropped"
 
     current_image_path = image_file
-    Log.info "Reading the image #{current_image_path}"
+    Log.debug  "Reading the image #{current_image_path}"
     current_image = Image.read(current_image_path).first
 
     image_width = current_image.columns
     image_height = current_image.rows
 
-    Log.info "Checking if the image in disk is bigger than the desired size"
+    Log.debug "Checking if the image in disk is bigger than the desired size"
 
     if image_width >= self.bounds.width and image_height >= self.bounds.height
-      Log.info "Yes it is! Cropping..."
+      Log.debug "Yes it is! Cropping..."
 
       top_offset = (self.bounds.top - self.initial_bounds.top).abs
       left_offset = (self.bounds.left - self.initial_bounds.left).abs
 
-      Log.info "Cropping #{current_image_path} at offsets - top: #{top_offset} left: #{left_offset}"
+      Log.debug "Cropping #{current_image_path} at offsets - top: #{top_offset} left: #{left_offset}"
       current_image.crop!(left_offset, top_offset, self.bounds.width, self.bounds.height)
       current_image.write(current_image_path)
 
-      Log.info "Saving to the store at - #{File.join(design.store_extracted_key, self.image_asset_path)}"
+      Log.debug "Saving to the store at - #{File.join(design.store_extracted_key, self.image_asset_path)}"
       return current_image
     elsif  image_width < self.bounds.width and image_height < self.bounds.height
-      Log.info "Looks like the image has been cropped to a smaller size than desired."
+      Log.debug "Looks like the image has been cropped to a smaller size than desired."
       return
     else
-      Log.info "Looks like someone beat me to cropping it. Not cropping again."
+      Log.debug "Looks like someone beat me to cropping it. Not cropping again."
       return
     end
   end
