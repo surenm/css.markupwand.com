@@ -1,10 +1,16 @@
 class Grid < Tree::TreeNode
 
   def initialize(args)
-    bounds = args.fetch :bounds
-    super bounds.to_s, args
-    
-    self.content[:style] = GridStyle.new :grid => self
+    @id = args.fetch :id, self.unique_identifier(args[:layers])
+    super @id, args
+    self.style = GridStyle.new :grid => self
+  end
+
+  def unique_identifier(layers)
+    layer_uids = layers.collect { |layer| layer.uid }
+    raw_identifier = "#{layer_uids.join '-'}"
+    digest = Digest::MD5.hexdigest raw_identifier
+    return digest
   end
 
   def attribute_data
@@ -13,24 +19,22 @@ class Grid < Tree::TreeNode
       children_tree.push child.attribute_data
     end
 
-    layer_ids       = self.layers.keys
-    style_layer_ids = self.style_layers.keys
+    layer_ids       = self.layers.collect { |layer| layer.uid }
+    style_layer_ids = self.style_layers.collect { |style_layer| style_layer.uid }
     render_layer_id = self.render_layer.uid if not self.render_layer.nil?
     
     offset_box_data = self.offset_box.attribute_data if not self.offset_box.nil?
-    grouping_box_data = self.grouping_box.attribute_data if not self.grouping_box.nil?
     
     attr_data = {
+      :id => @id,
       :layers => layer_ids,
-      :children => children_ids,
+      :children => children_tree,
       :style_layers => style_layer_ids,
       :render_layer => render_layer_id,
       :positioned => self.positioned?,
       :orientation => self.orientation,
-      :tag  => self.tag,
       :offset_box => offset_box_data,
-      :grouping_box => grouping_box_data,
-      :style => self.style.attribute_data
+      :grouping_box => self.grouping_box.name
     }   
 
     return Utils::prune_null_items attr_data
@@ -39,6 +43,10 @@ class Grid < Tree::TreeNode
   ##########################################################
   #  GRID OBJECT HELPERS
   ##########################################################
+  def id
+    self.content[:id]
+  end
+
   def layers
     self.content[:layers]
   end
@@ -61,10 +69,6 @@ class Grid < Tree::TreeNode
 
   def tag
     self.content[:tag]
-  end
-
-  def grouping_box=(bounding_box)
-    self.content[:grouping_box] = bounding_box
   end
 
   def grouping_box
@@ -94,6 +98,10 @@ class Grid < Tree::TreeNode
 
   def has_positioned_siblings?
     return self.positioned_siblings > 0
+  end
+
+  def style=(style_object)
+    self.content[:style] = style_object
   end
 
   def style
