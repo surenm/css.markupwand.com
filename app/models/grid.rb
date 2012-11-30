@@ -316,14 +316,30 @@ class Grid < Tree::TreeNode
 
     return layer_styles
   end
-    if self.has_positioned_children?
-      position_relatively = true
+
+  def grouping_box_styles
+    grouping_rules = Hash.new 
+
+    # set margin, padding
+    grouping_rules.update self.get_white_space
+    
+    # set width for the grid only if the parent is a left oriented grid
+    if not self.parent.nil? and self.parent.orientation == Constants::GRID_ORIENT_LEFT
+      grouping_rules.update self.get_width
     end
     
-    if not self.is_root?
-      if self.parent.computed_css.has_key? 'position' and parent.style.computed_css.fetch('position') == 'relative'
-        position_relatively = true
-      elsif parent.positioned?
+    # set height only if there are positioned children
+    if self.has_positioned_children?
+      grouping_rules.update self.get_height
+    end
+    
+    # minimum height and width for shapes in style layers
+    if self.has_shape_layers?
+      grouping_rules.update self.get_min_dimensions
+    end
+
+    return Compassify::styles_hash_to_array grouping_rules
+  end
         position_relatively = true
       end
     end
