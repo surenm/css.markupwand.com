@@ -45,6 +45,8 @@ class GroupingBox < Tree::TreeNode
   end
 
   def self.get_node(root_node, node_name)
+    return root_node if root_node.name == node_name
+
     root_node.breadth_each do |node|
       next if node[node_name].nil?
       return node[node_name]
