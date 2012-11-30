@@ -301,8 +301,6 @@ class Grid < Tree::TreeNode
     return spacing
   end
 
-  def positioning_rules
-    position_relatively = false
   def layer_styles
     layer_styles = Array.new
 
@@ -340,13 +338,40 @@ class Grid < Tree::TreeNode
 
     return Compassify::styles_hash_to_array grouping_rules
   end
+
+  def positioning_styles
+    positioning_rules = Hash.new
+
+    # If the grid is positioned absolutely then add absolute positioning styles
+    if grid.positioned?
+      top = "#{self.bounds.top - self.parent.bounds.top + 1}px"
+      left = "#{self.bounds.left - self.parent.bounds.left + 1}px"
+
+      positioning_rules.update :position => 'absolute', :top => top, :left => left, :"z-index" => self.zindex
+    else
+      position_relatively = false
+      if self.has_positioned_children?
         position_relatively = true
+      end
+      
+      if not self.is_root?
+        if self.parent.style_rules.has_key? 'position' and parent.style_rules.fetch('position') == 'relative'
+          position_relatively = true
+        elsif parent.positioned?
+          position_relatively = true
+        end
+      end
+
+      if position_relatively
+        positioning_rules.update  :position => 'relative', :'z-index' => self.zindex
       end
     end
 
-    if position_relatively
-      style_rules.update  :position => 'relative', :'z-index' => self.grid.zindex
+    positioning_styles_arr = self.positioning_styles.collect do |rule_key, rule_value| 
+      Compassify::get_scss rule_key, rule_value
     end
+
+    return Compassify::styles_hash_to_array positioning_rules
   end
 
   def compute_styles
