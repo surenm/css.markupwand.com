@@ -290,6 +290,8 @@ class GroupingBox < Tree::TreeNode
       end
     end
 
+    grid.compute_styles
+
     return grid
   end
 
