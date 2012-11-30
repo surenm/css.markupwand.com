@@ -277,6 +277,11 @@ class Design
     self.init_sif
     @sif.root_grouping_box
   end
+
+  def root_grid
+    self.init_sif
+    @sif.root_grid
+  end
   
   def save_grid(grid)
     self.init_sif
