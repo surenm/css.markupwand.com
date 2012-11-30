@@ -375,7 +375,7 @@ class Grid < Tree::TreeNode
   end
 
   def compute_styles
-
+    self.style_rules = self.layer_styles + self.positioning_styles + self.grouping_box_styles
   end
 
 
