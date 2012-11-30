@@ -1,4 +1,5 @@
 class Grid < Tree::TreeNode
+  include ActionView::Helpers::TagHelper
 
   def initialize(args)
     @id = args.fetch :id, self.unique_identifier(args[:layers])
