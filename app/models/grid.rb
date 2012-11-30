@@ -216,32 +216,23 @@ class Grid < Tree::TreeNode
   def get_margin
     #TODO. Margin is not always from left and top. It is from all sides.
 
-    margin = {:top => 0, :left => 0}
-    if self.is_root?
-      margin[:top]  += self.grid.bounds.top
-      margin[:left] += self.grid.bounds.left
-    else
-      
-      margin_boxes = []
+    margin = {:top => 0, :left => 0, :right => 0, :bottom => 0}
 
+    if self.is_root?
+      margin[:top]  += self.bounds.top
+      margin[:left] += self.bounds.left
+    else      
+      # All grids are going to have a grouping box which contributes to margin
+      margin_boxes = [self.grouping_box.bounds]
+
+      # But only a few of them are going to have an offset box
       if not self.offset_box.nil?
         margin_boxes.push self.grid.offset_box
       end
 
-      if not self.grid.grouping_box.nil?
-        margin_boxes.push self.grouping_box.bounds
-      end      
-      
-      if not margin_boxes.empty?
-        children_bounds     = self.layers.collect { |layer| layer.bounds }
-        children_superbound = BoundingBox.get_super_bounds children_bounds        
-        margin_superbound   = BoundingBox.get_super_bounds margin_boxes
-           
-        if not margin_superbound.nil? and not children_superbound.nil?
-          margin[:top] = children_superbound.top - margin_superbound.top
-          margin[:left] = children_superbound.left - margin_superbound.left
-        end
-      end
+      margin_superbound   = BoundingBox.get_super_bounds margin_boxes
+      margin[:top] = self.bounds.top - margin_superbound.top
+      margin[:left] = self.bounds.left - margin_superbound.left
     end
     
     return margin
@@ -299,6 +290,23 @@ class Grid < Tree::TreeNode
     width = self.unpadded_width
     height = self.unpadded_height
     return { :'min-height' => "#{height}px", :'min-width' => "#{width}px" }
+  def get_white_space
+    margin  = self.get_margin
+    padding = self.get_padding
+
+    positions = [:top, :left, :bottom, :right]
+
+    spacing = Hash.new
+
+    if Utils::non_zero_values? padding
+      spacing[:padding] = "#{padding[:top]}px #{padding[:right]}px #{padding[:bottom]}px #{padding[:left]}px"
+    end
+
+    if Utils::non_zero_values? margin
+      spacing[:margin] = "#{margin[:top]}px #{margin[:right]}px #{margin[:bottom]}px #{margin[:left]}px"
+    end
+
+    return spacing
   end
 
   def positioning_rules
