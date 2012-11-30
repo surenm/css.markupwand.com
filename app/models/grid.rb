@@ -157,6 +157,160 @@ class Grid < Tree::TreeNode
       (self.render_layer.type == Layer::LAYER_TEXT)
     end
   end
+
+  
+
+  ##########################################################
+  # STYLE CALCULATIONS METHODS
+  ##########################################################
+  def get_border_width
+    border_width = nil
+    if self.computed_css.has_key? :border
+      border_properties = self.computed_css.fetch(:border).split
+      border_width_str = border_properties[0].scan(/\d+/).first
+      if not border_width_str.nil?
+        border_width = border_width_str.to_i
+      end
+    end
+    return border_width
+  end
+
+  def get_padding
+    non_style_layers = self.layers - self.style_layers
+    
+    children_bounds = non_style_layers.collect { |layer| layer.bounds }
+    children_superbound = BoundingBox.get_super_bounds children_bounds
+    padding = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
+    
+    if not self.bounds.nil? and not children_superbound.nil?
+      padding[:top]    = (children_superbound.top  - self.bounds.top)
+      padding[:bottom] = (self.bounds.bottom - children_superbound.bottom)
+      padding[:left]   = (children_superbound.left - self.bounds.left) 
+      padding[:right]  = (self.bounds.right - children_superbound.right)
+      
+
+      border_width = self.get_border_width
+      if not border_width.nil?
+        padding[:top]    -= border_width
+        padding[:bottom] -= border_width
+        padding[:left]   -= border_width
+        padding[:right]  -= border_width
+      end
+    end
+    padding
+  end
+
+  
+  def get_margin
+    #TODO. Margin is not always from left and top. It is from all sides.
+
+    margin = {:top => 0, :left => 0}
+    if self.is_root?
+      margin[:top]  += self.grid.bounds.top
+      margin[:left] += self.grid.bounds.left
+    else
+      
+      margin_boxes = []
+
+      if not self.offset_box.nil?
+        margin_boxes.push self.grid.offset_box
+      end
+
+      if not self.grid.grouping_box.nil?
+        margin_boxes.push self.grouping_box.bounds
+      end      
+      
+      if not margin_boxes.empty?
+        children_bounds     = self.layers.collect { |layer| layer.bounds }
+        children_superbound = BoundingBox.get_super_bounds children_bounds        
+        margin_superbound   = BoundingBox.get_super_bounds margin_boxes
+           
+        if not margin_superbound.nil? and not children_superbound.nil?
+          margin[:top] = children_superbound.top - margin_superbound.top
+          margin[:left] = children_superbound.left - margin_superbound.left
+        end
+      end
+    end
+    
+    return margin
+  end
+
+  # Width subtracted by padding
+  def unpadded_width
+    width = 0
+
+    if not self.bounds.nil?
+      padding = self.get_padding
+
+      width += self.bounds.width
+      width -= padding[:left] + padding[:right]
+      
+    end
+    return width
+  end
+
+    # Height subtracted by padding
+  def unpadded_height
+    height = 0
+
+    if not self.bounds.nil?
+      padding = self.get_padding
+
+      height += self.bounds.height
+      height -= padding[:top] + padding[:bottom]
+    end
+    return height
+  end
+
+  # If the width has already not been set, set the width
+  def set_width
+    width = self.unpadded_width
+
+    if not width.nil? and width != 0
+      return { :width => width.to_s + 'px' }
+    else
+      return {}
+    end
+  end
+  
+  def set_height
+    height = self.unpadded_height
+    
+    if not height.nil? and height != 0
+      return :height => height.to_s + "px"
+    else
+      return {}
+    end
+  end
+
+  def set_min_dimensions
+    width = self.unpadded_width
+    height = self.unpadded_height
+    return { :'min-height' => "#{height}px", :'min-width' => "#{width}px" }
+  end
+
+  def positioning_rules
+    position_relatively = false
+    if self.has_positioned_children?
+      position_relatively = true
+    end
+    
+    if not self.is_root?
+      if self.parent.computed_css.has_key? 'position' and parent.style.computed_css.fetch('position') == 'relative'
+        position_relatively = true
+      elsif parent.positioned?
+        position_relatively = true
+      end
+    end
+
+    if position_relatively
+      style_rules.update  :position => 'relative', :'z-index' => self.grid.zindex
+    end
+  end
+
+  def compute_styles
+
+  end
   
   def to_s
     "#{self.orientation} #{self.grouping_box.bounds} margin: #{self.offset_box}, style_layers: #{self.style_layers}"
