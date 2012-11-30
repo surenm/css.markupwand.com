@@ -143,10 +143,10 @@ class Grid < Tree::TreeNode
   end
   
   def is_image_grid?
-    if not self.render_layer.nil?
-      false
-    else 
+    if self.is_leaf?
       return (self.render_layer.tag_name == 'img')
+    else
+      return false
     end
   end
 
