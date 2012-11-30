@@ -4,7 +4,7 @@ class Grid < Tree::TreeNode
   def initialize(args)
     @id = args.fetch :id, self.unique_identifier(args[:layers])
     super @id, args
-    self.style = GridStyle.new :grid => self
+
   end
 
   def unique_identifier(layers)
