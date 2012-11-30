@@ -22,7 +22,6 @@ class Grid < Tree::TreeNode
 
     layer_ids       = self.layers.collect { |layer| layer.uid }
     style_layer_ids = self.style_layers.collect { |style_layer| style_layer.uid }
-    render_layer_id = self.render_layer.uid if not self.render_layer.nil?
     
     offset_box_data = self.offset_box.attribute_data if not self.offset_box.nil?
     
@@ -31,7 +30,6 @@ class Grid < Tree::TreeNode
       :layers => layer_ids,
       :children => children_tree,
       :style_layers => style_layer_ids,
-      :render_layer => render_layer_id,
       :positioned => self.positioned?,
       :orientation => self.orientation,
       :offset_box => offset_box_data,
@@ -57,7 +55,7 @@ class Grid < Tree::TreeNode
   end
 
   def render_layer
-    self.content[:render_layer]
+    self.layers.first
   end
 
   def positioned?
