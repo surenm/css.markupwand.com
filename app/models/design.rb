@@ -520,9 +520,6 @@ class Design
     Log.info "Beginning to create grids for #{self.name}"
     root_grid = self.root_grouping_box.create_grid
     
-    Log.info "Generating CSS Tree..."
-    root_grid.style.compute_css
-
     @sif.root_grid = root_grid
     @sif.save!
 
@@ -566,13 +563,6 @@ class Design
     # TODO Fork out and parallel process
     self.parse_fonts(self.layers)
 
-    root_grid = self.get_root_grid
-
-    # Once grids are generated, run through the tree and find out style sheets.
-    # TODO Fork out and parallel process
-    Log.info "Generating CSS Tree..."
-    root_grid.style.compute_css
-
     Log.debug "Destroying design globals..."
     DesignGlobals.destroy
 
@@ -593,8 +583,7 @@ class Design
 
     # Set the root path for this design. That is where all the html and css is saved to.
     
-    root_grid    = self.get_root_grid
-    body_html    = root_grid.to_html
+    body_html    = self.root_grid.to_html
     compass_includes = <<COMPASS
 @import "compass";
 @import "compass/css3";
