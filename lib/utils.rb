@@ -76,6 +76,14 @@ module Utils
       new_object[key] = value if not value.nil?
     end
   end
+
+  def Utils::non_zero_values?(hash_object)
+    hash_object.each do |key, value|
+      return false if value != 0
+    end
+
+    return true
+  end
   
   def Utils::build_stylesheet_block(class_name, styles_array, children_tree_css="")
     styles_string = styles_array.join(";\n") + ";"
