@@ -286,6 +286,12 @@ class Sif
       grid.add child_grid
     end
 
+    style_layers.each { |style_layer| style_layer.parent_grid = grid }
+
+    if grid.is_leaf?
+      layers.each { |layer| layer.parent_grid = grid }
+    end
+
     grid
   end
 end
