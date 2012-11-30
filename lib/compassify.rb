@@ -88,5 +88,13 @@ module Compassify
        "-webkit-text-fill-color: transparent"]
 =end
     end
+
+    def styles_hash_to_array(styles_hash)
+      styles_array = styles_hash.collect do |rule_key, rule_value|
+        Compassify::get_scss rule_key, rule_value
+      end
+
+      return styles_array
+    end
   end
 end
