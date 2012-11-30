@@ -241,55 +241,47 @@ class Grid < Tree::TreeNode
   # Width subtracted by padding
   def unpadded_width
     width = 0
-
-    if not self.bounds.nil?
-      padding = self.get_padding
-
-      width += self.bounds.width
-      width -= padding[:left] + padding[:right]
-      
-    end
+    padding = self.get_padding
+    width = self.bounds.width - (padding[:left] + padding[:right])
     return width
   end
 
     # Height subtracted by padding
   def unpadded_height
-    height = 0
-
-    if not self.bounds.nil?
-      padding = self.get_padding
-
-      height += self.bounds.height
-      height -= padding[:top] + padding[:bottom]
-    end
+    width = 0
+    padding = self.get_padding
+    width = self.bounds.width - (padding[:top] + padding[:bottom])
     return height
   end
 
+  def set_min_dimensions
+    padding = self.padding
+    width = self.unpadded_width
+    height = self.unpadded_height
+    return { :'min-height' => "#{height}px", :'min-width' => "#{width}px" }
+  end
+
   # If the width has already not been set, set the width
-  def set_width
+  def get_width
     width = self.unpadded_width
 
     if not width.nil? and width != 0
-      return { :width => width.to_s + 'px' }
+      return { :width => "#{width}px" }
     else
       return {}
     end
   end
   
-  def set_height
+  def get_height
     height = self.unpadded_height
     
     if not height.nil? and height != 0
-      return :height => height.to_s + "px"
+      return :height => "#{height}px"
     else
       return {}
     end
   end
 
-  def set_min_dimensions
-    width = self.unpadded_width
-    height = self.unpadded_height
-    return { :'min-height' => "#{height}px", :'min-width' => "#{width}px" }
   def get_white_space
     margin  = self.get_margin
     padding = self.get_padding
