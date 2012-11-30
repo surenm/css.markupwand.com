@@ -312,8 +312,12 @@ class Grid < Tree::TreeNode
 
   end
   
+  ##########################################################
+  # DEBUG METHODS
+  ##########################################################
+
   def to_s
-    "#{self.orientation} #{self.grouping_box.bounds} margin: #{self.offset_box}, style_layers: #{self.style_layers}"
+    "#{self.orientation} GroupingBox: #{self.grouping_box.bounds} margin: #{self.offset_box}, style_layers: #{self.style_layers}"
   end
 
   def print_tree(level = 0)
