@@ -292,58 +292,26 @@ class Layer
   # Layer styles related functions
   ##########################################################
 
-  # Array of CSS rules, created using 
-  # computed using computed css and 
-  def css_rules
-    computed_css_array  = []
-    generated_css_array = []
-
-    self.computed_css.each do |rule_key, rule_object|
-      computed_css_array.concat Compassify::get_scss(rule_key, rule_object)
-    end
-
-    if self.render_layer?
-      computed_css_array.concat  self.parent_grid.style.css_rules
-    end
-
-    generated_css_array = StylesGenerator.get_styles self
-    generated_css_array + computed_css_array
-  end
-
-  def set_style_rules
+  def get_style_rules
     self.crop_objects_for_cropped_bounds
-    grid_style = self.parent_grid.style
-    is_leaf    = grid_style.grid.is_leaf?
 
-    self.extra_selectors = grid_style.extra_selectors
-    
-    if not is_leaf and self.type == Layer::LAYER_NORMAL
-      @computed_css[:background]        = "url('../../#{self.image_path}') no-repeat"
-      @computed_css[:'background-size'] = "100% 100%"
-      @computed_css[:'background-repeat'] = "no-repeat"
-
-      if grid_style
-        @computed_css[:'min-width']  = "#{grid_style.unpadded_width}px"
-        @computed_css[:'min-height'] = "#{grid_style.unpadded_height}px"
-      end
+    computed_style_rules = Hash.new
+    if not self.grid.is_leaf? and if self.type == Layer::LAYER_NORMAL
+      # this means its a style layer and it has image to be set as background  
+      computed_style_rules[:background] = "url('../../#{self.image_path}') no-repeat"
+      computed_style_rules[:'background-size'] = "100% 100%"
+      computed_style_rules[:'background-repeat'] = "no-repeat"
     end
 
-    if is_leaf and self.type == Layer::LAYER_SHAPE and grid_style
-      @computed_css[:'min-width']  = "#{grid_style.unpadded_width}px"
-      @computed_css[:'min-height'] = "#{grid_style.unpadded_height}px"
-    end
+    style_rules = Array.new
 
-    
-    if self.type == Layer::LAYER_TEXT
-      self.text_chunks.each_with_index do |_, index|
-        chunk_text_selector[index] = CssParser::create_incremental_selector('text-chunk')
-      end
-    end 
-    
-    if not self.style_layer and self.generated_selector.nil?
-      @generated_selector = CssParser::create_incremental_selector(self.readable_layer_type)
-    end
+    # Get the computed styles for background image for NORMAL layer
+    style_rules += Compassify::styles_hash_to_array computed_style_rules
 
+    # Get all the other css3 styles for the layer
+    style_rules += StylesGenerator.get_styles self
+
+    return style_rules
   end
 
   # Selector names (includes default selector and extra selectors)
