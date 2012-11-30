@@ -34,6 +34,7 @@ class Grid < Tree::TreeNode
       :orientation => self.orientation,
       :offset_box => offset_box_data,
       :grouping_box => self.grouping_box.name
+      :style_rules => self.style_rules
     }   
 
     return Utils::prune_null_items attr_data
@@ -99,12 +100,12 @@ class Grid < Tree::TreeNode
     return self.positioned_siblings > 0
   end
 
-  def style=(style_object)
-    self.content[:style] = style_object
+  def style_rules=(style_hash)
+    self.content[:style_rules] = style_object
   end
 
-  def style
-    self.content[:style]
+  def style_rules
+    self.content[:style_rules]
   end
 
   def bounds
