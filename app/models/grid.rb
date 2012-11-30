@@ -159,8 +159,19 @@ class Grid < Tree::TreeNode
     end
   end
 
-  
+  def has_shape_layers?
+    shape_layers = false
 
+    self.style_layers.each do |layer|
+      if layer.type == Layer::LAYER_SHAPE
+        shape_layers = true
+      end
+    end
+
+    return shape_layers
+  end
+
+  
   ##########################################################
   # STYLE CALCULATIONS METHODS
   ##########################################################
