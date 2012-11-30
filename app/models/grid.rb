@@ -311,7 +311,70 @@ class Grid < Tree::TreeNode
   def compute_styles
 
   end
+
+
+  ##########################################################
+  # HTML METHODS
+  ##########################################################
+  def positioned_grids_html(subgrid_args = {})
+    html = ''
+    self.children.each do |grid|
+      if grid.positioned?
+        html += grid.to_html(subgrid_args)
+      end
+    end
+    html
+  end
+
+  def to_html(args = {})
+    Log.info "[HTML] #{self.to_s}"
+    html = ''
+    
+    # Is this required for grids?
+    inner_html = args.fetch :inner_html, ''
   
+    attributes = Hash.new
+
+    if not self.is_leaf?
+
+      attributes[:class] = self.style.selector_names.join(" ") if not self.style.selector_names.empty?
+ 
+      sub_grid_args = Hash.new
+      positioned_html = positioned_grids_html sub_grid_args
+      if not positioned_html.empty?
+        inner_html += content_tag :div, '', :class => 'marginfix'
+      end
+      
+      child_nodes = self.children.select { |node| not node.positioned? }
+      child_nodes.each do |sub_grid|
+        inner_html += sub_grid.to_html sub_grid_args
+      end
+
+      inner_html += positioned_html
+      
+      if child_nodes.length > 0
+        html = content_tag self.tag, inner_html, attributes, false
+      end
+      
+    else
+      sub_grid_args      = attributes
+      sub_grid_args[tag] = self.tag
+
+      sub_grid_args[:inner_html] = self.positioned_grids_html
+
+      inner_html  += self.render_layer.to_html sub_grid_args
+      
+
+      if self.render_layer.tag_name == 'img'
+        html = content_tag 'div', inner_html, {}, false
+      else 
+        html = inner_html
+      end
+    end
+    
+    return html
+  end
+
   ##########################################################
   # DEBUG METHODS
   ##########################################################
