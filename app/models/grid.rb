@@ -303,6 +303,19 @@ class Grid < Tree::TreeNode
 
   def positioning_rules
     position_relatively = false
+  def layer_styles
+    layer_styles = Array.new
+
+    self.style_layers.each do |style_layer|
+      layer_styles += style_layer.get_style_rules
+    end
+
+    if self.is_leaf?
+      layer_styles += self.render_layer.get_style_rules
+    end
+
+    return layer_styles
+  end
     if self.has_positioned_children?
       position_relatively = true
     end
