@@ -141,13 +141,22 @@ class Sif
     self.validate
   end
 
-  def reset_calculated_data
+  def reset_grouping_boxes
+    @root_grouping_box = nil
+    self.save!
+  end
+
+  def reset_grids
     @grids = nil
     @layers.each do |layer_id, layer|
       @layers[layer_id].parent_grid = nil
     end
-    @root_grouping_box = nil
     self.save!
+  end
+
+  def reset_calculated_data
+    self.reset_grouping_boxes
+    self.reset_grids
   end
 
   def get_serialized_data
