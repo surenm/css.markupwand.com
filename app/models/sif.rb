@@ -279,7 +279,7 @@ class Sif
       @layers[style_layer_uid]
     end
 
-    grid = Grid.new :layers => layers, :style_layers => style_layers, :offset_box => offset_box, :grouping_box => grouping_box
+    grid = Grid.new :layers => layers, :style_layers => style_layers, :offset_box => offset_box, :grouping_box => grouping_box, :orientation => orientation
 
     serialized_data[:children].each do |child_data|
       child_grid = self.create_grid child_data
