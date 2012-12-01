@@ -33,7 +33,7 @@ class Grid < Tree::TreeNode
       :positioned => self.positioned?,
       :orientation => self.orientation,
       :offset_box => offset_box_data,
-      :grouping_box => self.grouping_box.name
+      :grouping_box => self.grouping_box.name,
       :style_rules => self.style_rules
     }   
 
