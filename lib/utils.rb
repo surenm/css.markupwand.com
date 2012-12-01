@@ -77,12 +77,12 @@ module Utils
     end
   end
 
-  def Utils::non_zero_values?(hash_object)
-    hash_object.each do |key, value|
-      return false if value != 0
+  def Utils::non_zero_spacing(spacing)
+    if spacing[:top] == 0 and spacing[:bottom] == 0 and spacing[:left] == 0 and spacing[:right] == 0
+      return false
+    else
+      return true
     end
-
-    return true
   end
   
   def Utils::build_stylesheet_block(class_name, styles_array, children_tree_css="")

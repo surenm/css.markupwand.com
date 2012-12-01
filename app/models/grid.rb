@@ -290,11 +290,11 @@ class Grid < Tree::TreeNode
 
     spacing = Hash.new
 
-    if Utils::non_zero_values? padding
+    if Utils::non_zero_spacing padding
       spacing[:padding] = "#{padding[:top]}px #{padding[:right]}px #{padding[:bottom]}px #{padding[:left]}px"
     end
 
-    if Utils::non_zero_values? margin
+    if Utils::non_zero_spacing margin
       spacing[:margin] = "#{margin[:top]}px #{margin[:right]}px #{margin[:bottom]}px #{margin[:left]}px"
     end
 
