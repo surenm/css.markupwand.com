@@ -343,7 +343,7 @@ class Grid < Tree::TreeNode
     positioning_rules = Hash.new
 
     # If the grid is positioned absolutely then add absolute positioning styles
-    if grid.positioned?
+    if self.positioned?
       top = "#{self.bounds.top - self.parent.bounds.top + 1}px"
       left = "#{self.bounds.left - self.parent.bounds.left + 1}px"
 
