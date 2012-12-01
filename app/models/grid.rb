@@ -367,15 +367,14 @@ class Grid < Tree::TreeNode
       end
     end
 
-    positioning_styles_arr = self.positioning_styles.collect do |rule_key, rule_value| 
-      Compassify::get_scss rule_key, rule_value
-    end
-
     return Compassify::styles_hash_to_array positioning_rules
   end
 
   def compute_styles
-    self.style_rules = self.layer_styles + self.positioning_styles + self.grouping_box_styles
+    style_rules = self.layer_styles + self.positioning_styles + self.grouping_box_styles
+    
+    self.style_rules = style_rules.flatten
+    Log.fatal self.style_rules
   end
 
 
