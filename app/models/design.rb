@@ -385,7 +385,7 @@ class Design
     #self.set_status Design::STATUS_PARSING
     #Resque.enqueue ParserJob, self.id
     self.init_sif  
-    @sif.reset_calculated_data
+    @sif.reset_grids
     generated_folder = self.store_generated_key
     published_folder = self.store_published_key
     tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
