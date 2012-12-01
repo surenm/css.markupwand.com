@@ -201,13 +201,13 @@ class Grid < Tree::TreeNode
       padding[:right]  = (self.bounds.right - children_superbound.right)
       
 
-      border_width = self.get_border_width
-      if not border_width.nil?
-        padding[:top]    -= border_width
-        padding[:bottom] -= border_width
-        padding[:left]   -= border_width
-        padding[:right]  -= border_width
-      end
+      #border_width = self.get_border_width
+      #if not border_width.nil?
+      #  padding[:top]    -= border_width
+      #  padding[:bottom] -= border_width
+      #  padding[:left]   -= border_width
+      #  padding[:right]  -= border_width
+      #end
     end
     padding
   end
