@@ -100,8 +100,8 @@ class Grid < Tree::TreeNode
     return self.positioned_siblings > 0
   end
 
-  def style_rules=(style_hash)
-    self.content[:style_rules] = style_object
+  def style_rules=(style_array)
+    self.content[:style_rules] = style_array
   end
 
   def style_rules
