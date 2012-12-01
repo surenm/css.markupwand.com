@@ -296,7 +296,7 @@ class Layer
     self.crop_objects_for_cropped_bounds
 
     computed_style_rules = Hash.new
-    if not self.grid.is_leaf? and if self.type == Layer::LAYER_NORMAL
+    if not self.parent_grid.is_leaf? and self.type == Layer::LAYER_NORMAL
       # this means its a style layer and it has image to be set as background  
       computed_style_rules[:background] = "url('../../#{self.image_path}') no-repeat"
       computed_style_rules[:'background-size'] = "100% 100%"
