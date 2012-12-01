@@ -248,14 +248,14 @@ class Grid < Tree::TreeNode
 
     # Height subtracted by padding
   def unpadded_height
-    width = 0
+    height = 0
     padding = self.get_padding
-    width = self.bounds.width - (padding[:top] + padding[:bottom])
+    height = self.bounds.width - (padding[:top] + padding[:bottom])
     return height
   end
 
-  def set_min_dimensions
-    padding = self.padding
+  def get_min_height_and_width
+    padding = self.get_padding
     width = self.unpadded_width
     height = self.unpadded_height
     return { :'min-height' => "#{height}px", :'min-width' => "#{width}px" }
@@ -333,7 +333,7 @@ class Grid < Tree::TreeNode
     
     # minimum height and width for shapes in style layers
     if self.has_shape_layers?
-      grouping_rules.update self.get_min_dimensions
+      grouping_rules.update self.get_min_height_and_width
     end
 
     return Compassify::styles_hash_to_array grouping_rules
