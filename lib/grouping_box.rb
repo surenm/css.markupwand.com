@@ -116,10 +116,14 @@ class GroupingBox < Tree::TreeNode
   end
 
   def style_layers
+    return [] if self.is_leaf?
+
     all_layers = self.layers
     style_layers = all_layers.select do |layer|
       layer.bounds == self.bounds
     end
+
+    style_layers
   end
 
   def get_layers_in_region(region_bounds)
