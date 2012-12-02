@@ -10,7 +10,7 @@ module Compassify
           return nil 
         end 
       else
-        ["#{key} : #{style_object}"]
+        ["#{key}: #{style_object}"]
       end
     end
 
