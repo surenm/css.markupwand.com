@@ -424,7 +424,6 @@ class Layer
     attributes[:"data-grid-id"]    = args.fetch :"data-grid-id", ""
     attributes[:"data-layer-id"]   = self.uid.to_s
     attributes[:"data-layer-name"] = self.name
-    attributes[:class] = self.selector_names.join(" ") if not self.selector_names.empty?
     
     if @tag_name == "img"
       attributes[:src] = self.image_path

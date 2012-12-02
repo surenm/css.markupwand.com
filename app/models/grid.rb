@@ -24,7 +24,7 @@ class Grid < Tree::TreeNode
     style_layer_ids = self.style_layers.collect { |style_layer| style_layer.uid }
     
     offset_box_data = self.offset_box.attribute_data if not self.offset_box.nil?
-    
+
     attr_data = {
       :id => @id,
       :layers => layer_ids,
@@ -374,7 +374,6 @@ class Grid < Tree::TreeNode
     style_rules = self.layer_styles + self.positioning_styles + self.grouping_box_styles
     
     self.style_rules = style_rules.flatten
-    Log.fatal self.style_rules
   end
 
 
@@ -401,8 +400,6 @@ class Grid < Tree::TreeNode
     attributes = Hash.new
 
     if not self.is_leaf?
-
-      attributes[:class] = self.style.selector_names.join(" ") if not self.style.selector_names.empty?
  
       sub_grid_args = Hash.new
       positioned_html = positioned_grids_html sub_grid_args
@@ -417,10 +414,7 @@ class Grid < Tree::TreeNode
 
       inner_html += positioned_html
       
-      if child_nodes.length > 0
-        html = content_tag self.tag, inner_html, attributes, false
-      end
-      
+      html = content_tag self.tag, inner_html, attributes, false
     else
       sub_grid_args      = attributes
       sub_grid_args[tag] = self.tag
@@ -445,7 +439,7 @@ class Grid < Tree::TreeNode
   ##########################################################
 
   def to_s
-    "#{self.orientation} GroupingBox: #{self.grouping_box.bounds} margin: #{self.offset_box}, style_layers: #{self.style_layers}"
+    "Orientation: #{self.orientation} GroupingBox: #{self.grouping_box.bounds} margin: #{self.offset_box}, style_layers: #{self.style_layers}"
   end
 
   def print_tree(level = 0)
