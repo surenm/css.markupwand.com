@@ -113,7 +113,8 @@
   </div>
   <div class = "clearfix"> </div>
   <!-- FIXME PSDJS -->
-  <% if @design.font_map.missing_fonts.length > 0 %>
+  <% #if @design.font_map.missing_fonts.length > 0 %>
+  <% if false %>
     <div class="font-error alert alert-error">
     We couldn't find few of your fonts. <a href="/design/<%= @design.safe_name %>/fonts">Upload your fonts</a> for better results
     </div>
