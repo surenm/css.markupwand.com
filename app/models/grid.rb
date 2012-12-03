@@ -60,7 +60,7 @@ class Grid < Tree::TreeNode
   end
 
   def positioned?
-    self.content[:positioned]
+    self.content[:positioned] == true
   end
 
   def orientation
@@ -84,12 +84,11 @@ class Grid < Tree::TreeNode
   end
 
   def positioned_children
-    self.children.each { |child_grid| child_grid.positioned? }
+    return []
   end
 
   def positioned_siblings
-    self.siblings.each { |sibling_grid| sibling_grid.positioned? }
-
+    self.siblings.select { |sibling_grid| sibling_grid.positioned? }
   end
 
   def has_positioned_children?
