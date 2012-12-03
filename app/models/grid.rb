@@ -353,14 +353,6 @@ class Grid < Tree::TreeNode
         position_relatively = true
       end
       
-      if not self.is_root?
-        if self.parent.style_rules.has_key? 'position' and parent.style_rules.fetch('position') == 'relative'
-          position_relatively = true
-        elsif parent.positioned?
-          position_relatively = true
-        end
-      end
-
       if position_relatively
         positioning_rules.update  :position => 'relative', :'z-index' => self.zindex
       end
