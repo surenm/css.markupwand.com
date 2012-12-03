@@ -226,10 +226,11 @@ class Grid < Tree::TreeNode
 
       # But only a few of them are going to have an offset box
       if not self.offset_box.nil?
-        margin_boxes.push self.grid.offset_box
+        margin_boxes.push self.offset_box
       end
 
       margin_superbound   = BoundingBox.get_super_bounds margin_boxes
+
       margin[:top] = self.bounds.top - margin_superbound.top
       margin[:left] = self.bounds.left - margin_superbound.left
     end
