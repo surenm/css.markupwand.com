@@ -265,6 +265,7 @@ class Sif
     style_layer_keys = serialized_data[:style_layers]
 
     orientation = serialized_data[:orientation]
+    style_rules = serialized_data[:style_rules]
     grouping_box = GroupingBox.get_node @root_grouping_box, serialized_data[:grouping_box]
 
     if not serialized_data[:offset_box].nil?
@@ -279,7 +280,12 @@ class Sif
       @layers[style_layer_uid]
     end
 
-    grid = Grid.new :layers => layers, :style_layers => style_layers, :offset_box => offset_box, :grouping_box => grouping_box, :orientation => orientation
+    grid = Grid.new :layers => layers, 
+      :style_layers => style_layers, 
+      :offset_box => offset_box, 
+      :grouping_box => grouping_box, 
+      :orientation => orientation, 
+      :style_rules => style_rules
 
     serialized_data[:children].each do |child_data|
       child_grid = self.create_grid child_data
