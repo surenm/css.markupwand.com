@@ -386,27 +386,23 @@ class Layer
   def tag_name
     chosen_tag = ""
     is_leaf = (not self.parent_grid.nil?) and self.parent_grid.is_leaf?
-    
-    if not @tag_name.nil?
-      @tag_name
-    else
-      if not self.override_tag.nil?
-        self.override_tag
-      elsif self.type == LAYER_NORMAL
-        if is_leaf
-          chosen_tag = 'img'
-        else
-          chosen_tag = 'div'
-        end
-      elsif self.type == LAYER_TEXT or self.type == LAYER_SHAPE
-        chosen_tag = 'div'
+      
+    if not self.override_tag.nil?
+      self.override_tag
+    elsif self.type == Layer::LAYER_NORMAL
+      if is_leaf
+        chosen_tag = 'img'
       else
-        Log.info "New layer found #{self.type} for layer #{self.name}"
         chosen_tag = 'div'
       end
-      @tag_name = chosen_tag
-      @tag_name
+    elsif self.type == LAYER_TEXT or self.type == LAYER_SHAPE
+      chosen_tag = 'div'
+    else
+      Log.info "New layer found #{self.type} for layer #{self.name}"
+      chosen_tag = 'div'
     end
+    @tag_name = chosen_tag
+    @tag_name
   end
 
   def to_html(args = {})
