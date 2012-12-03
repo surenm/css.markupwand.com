@@ -392,7 +392,8 @@ class Grid < Tree::TreeNode
     attributes = Hash.new
 
     if not self.is_leaf?
- 
+      attributes[:style] = self.style_rules.join ";"
+
       sub_grid_args = Hash.new
       positioned_html = positioned_grids_html sub_grid_args
       if not positioned_html.empty?
