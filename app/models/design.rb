@@ -74,9 +74,6 @@ class Design
   # Document properties
   attr_accessor :resolution
 
-  # Autoincrement counter
-  attr_accessor :incremental_counter
-
   # Offset box buffer
   attr_accessor :row_offset_box
 
@@ -138,26 +135,6 @@ class Design
     end
   end
 
-  def incremental_counter
-    if @incremental_counter.nil?
-      @incremental_counter = 1
-      return @incremental_counter
-    end
-    @incremental_counter = @incremental_counter + 1
-    return @incremental_counter
-  end
-  
-  def get_next_grid_id
-    # Minimal version of mongodb's object id.
-    # http://www.mongodb.org/display/DOCS/Object+IDs
-    # For incremental object ids.
-    process_id  = "%07d" % $$ #7 digits
-    time_micro  = ("%0.6f" % Time.now.to_f).gsub(".", "") #16 digits
-    incremental = "%04d" % self.incremental_counter #4 digits
-    new_id = (time_micro + process_id + incremental).to_i.to_s(16)
-    return new_id
-  end
-  
   # FIXME PSDJS
   def webfonts_snippet
     return ''
@@ -181,6 +158,7 @@ class Design
       return 'none'
     end
   end
+  
   ##########################################################
   # Store related functions
   ##########################################################
@@ -286,51 +264,6 @@ class Design
   def save_grid(grid)
     self.init_sif
     @sif.set_grid grid
-  end
-
-  ##########################################################
-  # Row grid and grid offset box related methods
-  ##########################################################
-  # Offset box is a box, that is an empty grid that appears before
-  # this current grid. The previous sibling being a empty box, it adds itself
-  # to a buffer. And the next item picks it up from buffer and takes it as its 
-  # own offset bounding box.
-  #
-  
-  @@grid_offset_box = nil
-  @@row_offset_box  = nil
-  
-  # This function is for serializing bounding box and storing it.
-  def add_offset_box(bounding_box)
-    new_offset_box = nil
-    if self.offset_box.nil?
-      new_offset_box = bounding_box
-    else 
-      new_offset_box = BoundingBox.get_super_bounds [bounding_box, self.offset_box]
-    end
-     @@grid_offset_box = new_offset_box
-  end
-  
-  # Accessor for offset bounding box
-  # De-serializes the offset box from mongo data.
-  def offset_box
-    @@grid_offset_box
-  end
-  
-  def reset_offset_box
-    @@grid_offset_box = nil
-  end
-  
-  def row_offset_box=(bounding_box)
-    @@row_offset_box = bounding_box
-  end
-  
-  def row_offset_box
-    @@row_offset_box
-  end
-  
-  def reset_row_offset_box
-    @@row_offset_box = nil
   end
   
   ##########################################################
@@ -524,31 +457,6 @@ class Design
     @sif.save!
 
     return
-  end
-  
-  # Parses the photoshop file json data and decomposes into grids
-  def group_grids
-    self.init_sif
-
-    Log.info "Beginning to group grids #{self.name}..."    
-    #TODO: Resolution information is hidden somewhere in the psd file. pick it up
-    #self.resolution = psd_data[:properties][:resolution]
-    
-    # Reset the global static classes to work for this PSD's data
-    Grid.reset_grouping_queue
-    
-    # Layer descriptors of all photoshop layers
-    Log.info "Getting nodes..."
-    @layers = @sif.layers.values
-    
-    Log.info "Creating root grid..."
-    grid = Grid.new :design => self, :parent => nil, :layers => @layers, :root => true
-
-    Log.info "Grouping the grids..."
-    Grid.group!
-    grid.print
-    @sif.save!
-    Log.info "Successfully grouped grids..."
   end
   
   def generate_markup(args={})
