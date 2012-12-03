@@ -250,15 +250,14 @@ class Grid < Tree::TreeNode
   def unpadded_height
     height = 0
     padding = self.get_padding
-    height = self.bounds.width - (padding[:top] + padding[:bottom])
+    height = self.bounds.height - (padding[:top] + padding[:bottom])
     return height
   end
 
   def get_min_height_and_width
-    padding = self.get_padding
     width = self.unpadded_width
     height = self.unpadded_height
-    return { :'min-height' => "#{height}px", :'min-width' => "#{width}px" }
+    return {:'min-height' => "#{height}px", :'min-width' => "#{width}px"}
   end
 
   # If the width has already not been set, set the width
