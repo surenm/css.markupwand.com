@@ -453,6 +453,10 @@ class Design
     Log.info "Beginning to create grids for #{self.name}"
     root_grid = self.root_grouping_box.create_grid
     
+    root_grid.each do |grid|
+      grid.compute_styles
+    end
+
     @sif.root_grid = root_grid
     @sif.save!
 

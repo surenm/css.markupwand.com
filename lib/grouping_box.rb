@@ -284,7 +284,7 @@ class GroupingBox < Tree::TreeNode
           self.reset_offset_box
         end
         
-        grid.add child_grid  
+        grid.add child_grid
       end
     end
     
@@ -293,8 +293,6 @@ class GroupingBox < Tree::TreeNode
         layer.parent_grid = grid
       end
     end
-
-    grid.compute_styles
 
     return grid
   end
