@@ -3,12 +3,13 @@ class EditorCanvas
     
 
   drawDebugRectange: ->
+    console.log @canvas_element
     $(@canvas_element).drawRect 
       strokeStyle: "#000"
       x: 20 
       y: 20
-      width: 300,
-      height: 200,
+      width: 300
+      height: 200
       fromCenter: false
 
   clear: ->

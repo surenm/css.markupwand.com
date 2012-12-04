@@ -3,15 +3,18 @@
 class View extends Backbone.View
 
   init_canvas_objects: () ->
-    @main_canvas = new EditorCanvas(this.get_canvas('main-canvas'))
-    @mouseoverlay_canvas = new EditorCanvas(this.get_canvas('mouseoverlay-canvas'))
+    @main_canvas = new EditorCanvas(this.get_canvas_from_iframe('main-canvas'))
+    @mouseoverlay_canvas = new EditorCanvas(this.get_canvas_from_iframe('mouseoverlay-canvas'))
 
   set_iframe_dom: (iframe_dom) ->
     @iframe_dom = iframe_dom
 
-  get_canvas: (canvas_name) ->
+  get_canvas_from_iframe: (canvas_name) ->
     canvas = $(@iframe_dom).find("##{canvas_name}").first()
     return canvas
+
+  get_canvas: (canvas_name) ->
+    canvas = $("##{canvas_name}").first()
 
   render_iframe: () ->
     $this = this

@@ -16,6 +16,14 @@ class BoundingBox
 
     return {top: top, bottom: bottom, right: right, left: left}
 
+  @scaled_to: (bounds, scaling_factor) ->
+    return {
+      top: bounds.top * scaling_factor
+      bottom: bounds.bottom * scaling_factor
+      right: bounds.right * scaling_factor
+      left: bounds.left * scaling_factor
+    }
+
   @toString: (bounding_box) ->
     return "(#{bounding_box.top}, #{bounding_box.left}, #{bounding_box.bottom}, #{bounding_box.right})"
   
