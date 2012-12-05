@@ -285,7 +285,8 @@ class Sif
       :offset_box => offset_box, 
       :grouping_box => grouping_box, 
       :orientation => orientation, 
-      :style_rules => style_rules
+      :style_rules => style_rules,
+      :design => @design
 
     serialized_data[:children].each do |child_data|
       child_grid = self.create_grid child_data

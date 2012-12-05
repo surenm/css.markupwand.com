@@ -264,7 +264,9 @@ class GroupingBox < Tree::TreeNode
       :bounds => self.bounds, 
       :orientation => self.orientation, 
       :grouping_box => self,
-      :style_layers => self.style_layers
+      :style_layers => self.style_layers,
+      :design => @design
+
 
     self.style_layers.each do |layer|
       layer.style_layer = true

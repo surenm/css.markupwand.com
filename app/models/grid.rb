@@ -3,6 +3,7 @@ class Grid < Tree::TreeNode
 
   def initialize(args)
     @id = args.fetch :id, self.unique_identifier(args[:layers])
+    @design = args[:design]
     super @id, args
 
   end
