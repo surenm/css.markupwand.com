@@ -78,8 +78,16 @@ class DesignController < ApplicationController
 
   def replace_dom
     if params['source_node'] and params['target_node']
-      target_grid = @design.grids[params['target_node']]
-      target_grid.replace_grid_contents params['source_node']
+      target_grids = params['target_node'].split ","
+      target_grids.each do |target_grid|
+        target_grid = @design.grids[target_grid]
+        target_grid.replace_grid_contents params['source_node']
+      end
+
+      # Pick any grid and finish the global grouping queue grouping
+      # and generate the markup.
+      @design.grids[target_grids.first].finish_grid_replacement
+
       redirect_to :action => :show, :id => @design.safe_name
     end
 

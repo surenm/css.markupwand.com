@@ -3,26 +3,35 @@
   table {
     width: 500px;
     margin: 0 auto;
-    tr:hover {
-      td,th {
-        background-color: inherit; 
-      }
-    } 
-
-    input[type="text"] {
-      color: #444;
-      background-color: #fff;
-    }
-
 
     img.layer-image {
        max-height:100px;
-    } 
-
+    }
   }
 
-    .save-names {
-      margin-left: 300px;
-      text-align: center;
+  .save-names {
+    margin-left: 300px;
+    text-align: center;
+  }
+}
+
+table {
+  tr:hover {
+    td,th {
+      background-color: inherit; 
     }
+  } 
+
+  input[type="text"] {
+    color: #444;
+    background-color: #fff;
+  }
+}
+
+
+#replace-dom {
+  table {
+    width: 700px;
+    margin: 10px auto;
+  }
 }
