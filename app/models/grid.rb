@@ -353,9 +353,8 @@ class Grid < Tree::TreeNode
   end
 
   def compute_styles
-    #style_rules = self.layer_styles + self.positioning_styles + self.grouping_box_styles
-    style_rules = self.positioning_styles + self.grouping_box_styles
-    
+    style_rules = self.layer_styles + self.positioning_styles + self.grouping_box_styles
+
     self.style_rules = style_rules.flatten
   end
 
