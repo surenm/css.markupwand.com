@@ -430,21 +430,8 @@ class Design
   
   def generate_markup(args={})
     Log.info "Beginning to generate markup and css for #{self.name}..."
-    
     self.init_sif
-    generated_folder = self.store_generated_key
-    
-    # Set the root path for this design. That is where all the html and css is saved to.
-    
-    Log.info "Parsing fonts..."
-    # TODO Fork out and parallel process
-    #self.parse_fonts(self.layers)
-
-    Log.debug "Destroying design globals..."
-
     self.write_html_and_css
-    
-    @sif.save!
     Log.info "Successfully completed generating #{self.name}"
     return
   end
@@ -458,7 +445,6 @@ class Design
     published_folder = self.store_published_key
 
     # Set the root path for this design. That is where all the html and css is saved to.
-    
     body_html    = self.root_grid.to_html
 =begin
     compass_includes = <<COMPASS

@@ -421,29 +421,35 @@ class Grid < Tree::TreeNode
 
   def to_html(args = {})
     Log.info "[HTML] #{self.to_s}"
+   
     html = ''
     
-    # Is this required for grids?
-    inner_html = args.fetch :inner_html, ''
-  
-    attributes = Hash.new
-
     if not self.is_leaf?
-      attributes[:style] = self.style_rules.join ";"
+      inner_html = ''
 
+      # Calculate HTML for non positioned children grids
       sub_grid_args = Hash.new
-      positioned_html = positioned_grids_html sub_grid_args
-      if not positioned_html.empty?
-        inner_html += content_tag :div, '', :class => 'marginfix'
-      end
-      
+      sub_grid_args[:css_classes] = 'pull-left'  if self.orientation == Constants::GRID_ORIENT_LEFT
       child_nodes = self.children.select { |node| not node.positioned? }
       child_nodes.each do |sub_grid|
-        inner_html += sub_grid.to_html sub_grid_args
+        inner_html += sub_grid.to_html(sub_grid_args)
       end
 
-      inner_html += positioned_html
+      # if oriented leftwards add a clearfix
+      if self.orientation == Constants::GRID_ORIENT_LEFT
+        inner_html += content_tag :div, '', :class => 'clearfix'
+      end
       
+      # Calculate and all positioned html for all positioned HTML
+      positioned_html = positioned_grids_html sub_grid_args
+      if not positioned_html.empty?
+        inner_html += positioned_html
+        inner_html += content_tag :div, '', :class => 'marginfix'
+      end
+
+      # calculate css_class_name for this grid
+      attributes = Hash.new
+      attributes[:css_classes] = "#{args[:css_classes]} #{self.get_css_class_name}"
       html = content_tag :div, inner_html, attributes, false
     else
       html += self.get_html_for_render_layer
