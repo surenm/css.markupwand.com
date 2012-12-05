@@ -366,6 +366,25 @@ class Grid < Tree::TreeNode
     html
   end
 
+  def get_html_for_render_layer
+    html = ""
+
+    case self.render_layer.type
+    
+    when Layer::LAYER_TEXT
+      html = content_tag :div, self.render_layer.full_text, {}, nil
+    
+    when Layer::LAYER_NORMAL
+      inner_html = tag :img, {:src => self.render_layer.image_path}, false
+      html = content_tag :div, inner_html, {}, false
+    
+    when Layer::LAYER_SHAPE
+      # Render layer could be a shape? What to do here? Nothing I suppose?
+    end
+
+    return html
+  end
+
   def to_html(args = {})
     Log.info "[HTML] #{self.to_s}"
     html = ''
@@ -391,21 +410,9 @@ class Grid < Tree::TreeNode
 
       inner_html += positioned_html
       
-      html = content_tag self.tag, inner_html, attributes, false
+      html = content_tag :div, inner_html, attributes, false
     else
-      sub_grid_args      = attributes
-      sub_grid_args[tag] = self.tag
-
-      sub_grid_args[:inner_html] = self.positioned_grids_html
-
-      inner_html  += self.render_layer.to_html sub_grid_args
-      
-
-      if self.render_layer.tag_name == 'img'
-        html = content_tag 'div', inner_html, {}, false
-      else 
-        html = inner_html
-      end
+      html += self.get_html_for_render_layer
     end
     
     return html
