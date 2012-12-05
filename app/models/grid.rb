@@ -92,7 +92,7 @@ class Grid
     style_args.update({:grid => self})
     @style = GridStyle.new(style_args)
     
-    @@grouping_queue.push self if @root
+    @@grouping_queue.push self if @root and (args.fetch :group, false)
   end
   
   def attribute_data
@@ -232,6 +232,8 @@ class Grid
     # Change the co-ordinates so that everything is relative to the 
     # top level grid of the source
     # Run grouping only on this grid.
+
+    Log.info "Copying #{source_id} to #{self.id}"
     bounds = self.bounds
 
     source_grid   = self.design.grids[source_id]
@@ -247,8 +249,20 @@ class Grid
     }
     
     # Delete layers and grids from design
+    removed_layers = self.layers.keys
+
     self.layers.keys.each do |layer_id|
       self.design.layers.delete layer_id
+    end
+
+    parent_grid = self.parent
+
+    while not parent_grid.nil?
+      removed_layers.each do |layer_id|
+        parent_grid.layers.delete layer_id 
+        Log.info "Deleting #{layer_id} from #{parent_grid.id} (#{parent_grid})"
+      end
+      parent_grid = parent_grid.parent
     end
 
     self.children.keys.each do |grid_id|
@@ -267,13 +281,19 @@ class Grid
       new_layer.initial_bounds.move(pos_diff[:top], pos_diff[:left], pos_diff[:bottom], pos_diff[:right])
       self.layers[new_layer.uid] = new_layer
       self.design.layers[new_layer.uid] = new_layer
+      Log.info "Copying new layer #{new_layer.uid}"
     end
 
-    design.sif.reset_grids
+    Log.info "Finished copying, grouping now"
+    self.group!
     self.design.save_sif!
-    self.design.reparse
   end
 
+  def finish_grid_replacement
+    Grid.group!
+    self.design.save_sif!
+    self.design.generate_markup :enable_data_attributes => true
+  end
   
   ##########################################################
   # GRID GROUPING
