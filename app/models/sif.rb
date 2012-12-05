@@ -286,6 +286,7 @@ class Sif
       :grouping_box => grouping_box, 
       :orientation => orientation, 
       :style_rules => style_rules,
+      :css_class_name => serialized_data[:css_class_name],
       :design => @design
 
     serialized_data[:children].each do |child_data|

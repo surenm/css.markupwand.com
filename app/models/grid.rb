@@ -16,15 +16,16 @@ class Grid < Tree::TreeNode
   end
 
   def attribute_data
+    layer_ids       = self.layers.collect { |layer| layer.uid }
+    style_layer_ids = self.style_layers.collect { |style_layer| style_layer.uid }
+    offset_box_data = self.offset_box.attribute_data if not self.offset_box.nil?
+    css_class_name = self.get_css_class_name
+
     children_tree = []
     self.children.each do |child|
       children_tree.push child.attribute_data
     end
 
-    layer_ids       = self.layers.collect { |layer| layer.uid }
-    style_layer_ids = self.style_layers.collect { |style_layer| style_layer.uid }
-    
-    offset_box_data = self.offset_box.attribute_data if not self.offset_box.nil?
 
     attr_data = {
       :id => @id,
@@ -35,7 +36,8 @@ class Grid < Tree::TreeNode
       :orientation => self.orientation,
       :offset_box => offset_box_data,
       :grouping_box => self.grouping_box.name,
-      :style_rules => self.style_rules
+      :style_rules => self.style_rules,
+      :css_class_name => css_class_name
     }   
 
     return Utils::prune_null_items attr_data
@@ -102,6 +104,10 @@ class Grid < Tree::TreeNode
 
   def style_rules
     self.content[:style_rules]
+  end
+
+  def css_class_name
+    self.content[:css_class_name]
   end
 
   def bounds
@@ -353,6 +359,34 @@ class Grid < Tree::TreeNode
     self.style_rules = style_rules.flatten
   end
 
+  def get_css_class_prefix
+    prefix = 'class'
+    
+    if self.has_shape_layers?
+      prefix = 'wrapper'
+    end
+
+    if self.is_leaf?
+      if self.render_layer.type == Layer::LAYER_TEXT
+        prefix = 'text'
+      elsif self.render_layer.type == Layer::LAYER_NORMAL
+        prefix = 'image'
+      end
+    end
+
+    return prefix
+  end
+
+  def get_css_class_name
+    if not self.grouping_box.css_class_name.nil?
+      return self.grouping_box.css_class_name
+    elsif not self.css_class_name.nil?
+      return self.css_class_name
+    else
+      counter = @design.get_css_counter
+      return "#{self.get_css_class_prefix}-#{counter}"
+    end
+  end
 
   ##########################################################
   # HTML METHODS

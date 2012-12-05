@@ -127,6 +127,10 @@ class GroupingBox < Tree::TreeNode
     style_layers
   end
 
+  def css_class_name
+    return nil
+  end
+
   def get_layers_in_region(region_bounds)
     layers_in_region = self.layers.select do |layer|
       region_bounds.encloses? layer.bounds
