@@ -50,9 +50,6 @@ class Design
   Design::ERROR_SCREENSHOT_FAILED  = "screenshot_failed"
   Design::ERROR_EXTRACTION_FAILED  = "extraction_failed"
 
-  Design::PRIORITY_NORMAL = :normal
-  Design::PRIORITY_HIGH   = :high
-
   # File meta data
   field :name, :type => String
   field :psd_file_path, :type => String
@@ -63,7 +60,6 @@ class Design
   field :height, :type => Integer
   
   field :storage, :type => String, :default => "local"
-  field :queue, :type => String, :default => Design::PRIORITY_NORMAL
 
   # Rating is Yes or No
   field :rating, :type => Boolean
@@ -310,29 +306,6 @@ class Design
 
     Resque.enqueue GroupingBoxJob, self.id
   end
-
-  def reparse
-    # if sif files exist, remove grids from it and reparse
-    #self.init_sif  
-    #@sif.reset_grids
-    #self.set_status Design::STATUS_PARSING
-    #Resque.enqueue ParserJob, self.id
-    self.init_sif  
-    @sif.reset_grids
-    generated_folder = self.store_generated_key
-    published_folder = self.store_published_key
-    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
-    FileUtils.rm_rf tmp_folder
-    Store.delete_from_store generated_folder
-    Store.delete_from_store published_folder
-    self.set_status Design::STATUS_EXTRACTED
-    
-    self.push_to_parsing_queue
-  end
-  
-  def regenerate
-    # TODO: If generated/published folders exist delete and remove those files and regenerate
-  end
   
   def get_processing_queue_message
     message = Hash.new
@@ -348,40 +321,20 @@ class Design
     message[:design] = self.safe_name
     message[:design_id] = self.id.to_s
 
-
     return message
   end
   
   def push_to_processing_queue
     self.set_status Design::STATUS_PROCESSING
-    self.queue = Design::PRIORITY_NORMAL
     self.save!
     
     message = self.get_processing_queue_message
     Resque.enqueue ProcessorJob, message
   end
 
-  def move_to_priority_queue
-    message = self.get_processing_queue_message
-    Resque.dequeue ProcessorJob, message
-    Resque.enqueue PriorityProcessorJob, message
-    self.queue = Design::PRIORITY_HIGH
-    self.save!
-  end
-
   def push_to_extraction_queue
     Resque.enqueue ExtractorJob, self.id
   end
-
-  def push_to_parsing_queue
-    Resque.enqueue ParserJob, self.id
-  end
-
-  def push_to_generation_queue
-    self.set_status Design::STATUS_GENERATING
-    Resque.enqueue GeneratorJob, self.id
-  end 
-  
   ##########################################################
   # Actual jobs to be run on designs
   ########################################################## 
