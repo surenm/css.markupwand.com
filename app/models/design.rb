@@ -73,6 +73,9 @@ class Design
   # Offset box buffer
   attr_accessor :row_offset_box
 
+  # CSS class counter
+  attr_accessor :css_counter
+
   mount_uploader :file, DesignUploader
   
   ##########################################################
@@ -153,6 +156,15 @@ class Design
     when nil
       return 'none'
     end
+  end
+
+  def get_css_counter
+    if self.css_counter.nil?
+      self.css_counter = 0
+    else
+      self.css_counter += 1
+    end
+    return self.css_counter
   end
   
   ##########################################################
