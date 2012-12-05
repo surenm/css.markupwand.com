@@ -338,35 +338,8 @@ class Layer
   end
 
   ##########################################################
-  # HTML generation related functions
+  # DEBUG HELPERS
   ##########################################################
-
-  def to_html(args = {})
-    Log.info "[HTML] Layer #{self.to_s}"
-    
-    generated_tag = self.tag_name
-    @tag_name = args.fetch :tag, generated_tag
-
-    inner_html = args.fetch :inner_html, ''
-    if inner_html.empty? and self.type == LAYER_TEXT
-      inner_html += self.text_content
-    end
-
-    attributes                     = Hash.new
-    attributes[:"data-grid-id"]    = args.fetch :"data-grid-id", ""
-    attributes[:"data-layer-id"]   = self.uid.to_s
-    attributes[:"data-layer-name"] = self.name
-    
-    if @tag_name == "img"
-      attributes[:src] = self.image_path
-      html = tag "img", attributes, false
-    else
-      html = content_tag @tag_name, inner_html, attributes, false
-    end
-
-    return html
-  end
-
   def to_s
     "#{self.name} - #{self.bounds} - #{self.type}"
   end
