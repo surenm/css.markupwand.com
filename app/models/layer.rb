@@ -314,21 +314,6 @@ class Layer
     return style_rules
   end
 
-  # Selector names (includes default selector and extra selectors)
-  def selector_names
-    all_selectors = self.extra_selectors
-    all_selectors.push self.generated_selector
-
-    if @tag_name != 'img'
-      if not self.parent_grid.nil?
-        all_selectors.concat parent_grid.style.extra_selectors
-      end
-    end
-
-    all_selectors.uniq!
-    all_selectors
-  end
-
   def get_raw_font_name(position = 0)
     font_name = nil
 
