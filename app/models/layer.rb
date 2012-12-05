@@ -337,58 +337,9 @@ class Layer
     return true
   end
 
-  def get_style_node
-    if self.type == Layer::LAYER_TEXT
-      chunk_nodes = []
-      
-      chunk_text_selector.each_with_index do |class_name, index|
-        chunk_styles = []
-        self.text_chunks[index][:styles].each do |rule_key, rule_object|
-          if self.allow_chunk_styles? rule_key
-            chunk_styles.concat Compassify::get_scss(rule_key, rule_object)
-          end
-        end
-        
-        chunk_nodes.push StyleNode.new :class => class_name, :style_rules => chunk_styles
-      end
-      
-      layer_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules, :children => chunk_nodes
-    else
-      layer_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules
-    end
-
-    return layer_style_node
-  end
-
-  def to_scss
-    self.get_style_node.to_scss
-  end
-
   ##########################################################
   # HTML generation related functions
   ##########################################################
-
-  def tag_name
-    chosen_tag = ""
-    is_leaf = (not self.parent_grid.nil?) and self.parent_grid.is_leaf?
-      
-    if not self.override_tag.nil?
-      self.override_tag
-    elsif self.type == Layer::LAYER_NORMAL
-      if is_leaf
-        chosen_tag = 'img'
-      else
-        chosen_tag = 'div'
-      end
-    elsif self.type == LAYER_TEXT or self.type == LAYER_SHAPE
-      chosen_tag = 'div'
-    else
-      Log.info "New layer found #{self.type} for layer #{self.name}"
-      chosen_tag = 'div'
-    end
-    @tag_name = chosen_tag
-    @tag_name
-  end
 
   def to_html(args = {})
     Log.info "[HTML] Layer #{self.to_s}"
