@@ -55,6 +55,7 @@ class GroupingBox < Tree::TreeNode
 
   def initialize(args)
     bounds = args.fetch :bounds
+    @design = args.fetch :design
     super bounds.to_s, args
   end
   
@@ -186,7 +187,7 @@ class GroupingBox < Tree::TreeNode
       horizontal_bounds.each do |horizontal_bound|
         grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
         grouping_box_layers = self.get_layers_in_region grouping_box_bounds
-        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds
+        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, :design => @design
 
         self.add child_grouping_box
       end
@@ -197,7 +198,7 @@ class GroupingBox < Tree::TreeNode
       vertical_bounds.each do |vertical_bound|
         grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
         grouping_box_layers = self.get_layers_in_region grouping_box_bounds
-        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds
+        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, :design => @design
         self.add child_grouping_box
       end
       
@@ -213,7 +214,7 @@ class GroupingBox < Tree::TreeNode
       horizontal_bounds.each do |horizontal_bound|
         grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
         grouping_box_layers = self.get_layers_in_region grouping_box_bounds
-        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds
+        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, :design => @design
         self.add child_grouping_box
       end
 
