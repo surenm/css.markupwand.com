@@ -67,10 +67,6 @@ class Grid < Tree::TreeNode
     self.content[:orientation]
   end
 
-  def tag
-    self.content[:tag]
-  end
-
   def grouping_box
     self.content[:grouping_box]
   end
@@ -129,19 +125,7 @@ class Grid < Tree::TreeNode
     
     return grid_zindex
   end
-  
-  def tag
-    if @tag.nil?
-      if self.is_image_grid?
-        @tag = 'img'
-      else
-        @tag = 'div'
-      end
-    end
-
-    return @tag
-  end
-  
+    
   def is_image_grid?
     if self.is_leaf?
       return (self.render_layer.tag_name == 'img')
