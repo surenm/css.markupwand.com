@@ -360,7 +360,7 @@ class Design
     layers = self.layers.values
     
     Log.info "Creating root grouping box..."
-    root_grouping_box = GroupingBox.new :layers => layers, :bounds => self.bounds
+    root_grouping_box = GroupingBox.new :layers => layers, :bounds => self.bounds, :design => self
     root_grouping_box.groupify
 
     @sif.root_grouping_box = root_grouping_box
@@ -399,7 +399,7 @@ class Design
       end
     }
 
-    new_grouping_box = GroupingBox.new :layers => layers, :bounds => super_bounds
+    new_grouping_box = GroupingBox.new :layers => layers, :bounds => super_bounds, :design => self
     insert_position = parent_grouping_box.get_child_index grouping_boxes.first
     parent_grouping_box.add new_grouping_box, insert_position
 
