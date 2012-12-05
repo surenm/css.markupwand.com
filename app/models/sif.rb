@@ -268,6 +268,7 @@ class Sif
     args[:positioned]   = sif_grid_data[:positioned]
     args[:tag]          = sif_grid_data[:tag]
     args[:style]        = sif_grid_data[:style]
+    args[:original_id]  = sif_grid_data[:original_id]
 
     # We have not instantiated children alone. Because children grids would not have been instantiated properly
     grid = Grid.new args

@@ -22,6 +22,10 @@ class Grid
   attr_accessor :root  #(Boolean)
   alias :root? :root
 
+  # If a grid is copied from some other grid, store the original id, to 
+  # re-use the class names
+  attr_accessor :original_id #(String)
+
   # True if the grid node is going to be positioned
   attr_accessor :positioned  #(Boolean)
   alias :positioned? :positioned
@@ -35,7 +39,7 @@ class Grid
   # Grouping related information for white spaces
   attr_accessor :offset_box  #(BoundingBox)
   attr_accessor :grouping_box  #(BoundingBox)
-  
+
   ##########################################################
   # GRID INSTANTIATE
   ##########################################################
@@ -65,6 +69,9 @@ class Grid
       # No need to reset parent relation as well as design relation
       @id = args[:id]
     end
+
+    #Original id
+    @original_id = args[:original_id]
     
     # Next all layers in this grid
     @layers = {}
@@ -119,7 +126,8 @@ class Grid
       :tag               => @tag,
       :offset_box        => offset_box_data,
       :grouping_box      => grouping_box_data,
-      :style             => @style.attribute_data
+      :style             => @style.attribute_data,
+      :original_id       => @original_id
     }   
 
     return Utils::prune_null_items attribute_data   
@@ -225,6 +233,10 @@ class Grid
   # Grid content replacement (DOM replacement)
   ##########################################################
 
+  def copied?
+    not self.original_id.nil?    
+  end
+
   def replace_grid_contents(source_id)
     # Remove all layers, grids inside this grid.
     # Clone and paste all the layers from the source grid
@@ -234,6 +246,7 @@ class Grid
     # Run grouping only on this grid.
 
     Log.info "Copying #{source_id} to #{self.id}"
+    self.original_id = source_id
     bounds = self.bounds
 
     source_grid   = self.design.grids[source_id]
@@ -280,6 +293,7 @@ class Grid
       new_layer.bounds.move(pos_diff[:top], pos_diff[:left], pos_diff[:bottom], pos_diff[:right])
       new_layer.initial_bounds.move(pos_diff[:top], pos_diff[:left], pos_diff[:bottom], pos_diff[:right])
       self.layers[new_layer.uid] = new_layer
+      new_layer.original_uid = layer.uid
       self.design.layers[new_layer.uid] = new_layer
       Log.info "Copying new layer #{new_layer.uid}"
     end
@@ -788,8 +802,12 @@ class Grid
 
     if self.render_layer.nil?
 
-      attributes[:class] = self.style.selector_names.join(" ") if not self.style.selector_names.empty?
- 
+      if self.copied?
+        attributes[:class] = self.design.grids[self.original_id].style.selector_names.join " "
+      elsif not self.style.selector_names.empty? 
+        attributes[:class] = self.style.selector_names.join(" ")
+      end
+
       sub_grid_args = Hash.new
       positioned_html = positioned_grids_html sub_grid_args
       if not positioned_html.empty?

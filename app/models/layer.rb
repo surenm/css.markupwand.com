@@ -52,6 +52,10 @@ class Layer
   attr_accessor :tag_name # (Symbol)
   attr_accessor :image_name # (String)
 
+  # If a grid is copied from some other grid, store the original id, to 
+  # re-use the class names
+  attr_accessor :original_uid #(String)
+
   attr_accessor :text
   attr_accessor :shape
   attr_accessor :styles
@@ -80,23 +84,24 @@ class Layer
     parent_grid = self.parent_grid.nil? ? nil : self.parent_grid.id  
 
     attr_data = {
-      :uid        => self.uid,
-      :name       => self.name,
-      :type       => self.type,
-      :zindex     => self.zindex,
-      :initial_bounds => self.initial_bounds.attribute_data,
-      :bounds     => self.bounds.attribute_data,
-      :opacity    => self.opacity,
-      :text       => self.text,
-      :shape      => self.shape,
-      :styles     => self.styles,
-      :tag        => self.tag_name,
-      :image_name => self.image_name,
-      :design  => self.design.id,
-      :overlay => self.overlay,
+      :uid                => self.uid,
+      :name               => self.name,
+      :type               => self.type,
+      :zindex             => self.zindex,
+      :initial_bounds     => self.initial_bounds.attribute_data,
+      :bounds             => self.bounds.attribute_data,
+      :opacity            => self.opacity,
+      :text               => self.text,
+      :shape              => self.shape,
+      :styles             => self.styles,
+      :tag                => self.tag_name,
+      :image_name         => self.image_name,
+      :design             => self.design.id,
+      :overlay            => self.overlay,
       :style_layer        => self.style_layer,
       :generated_selector => self.generated_selector,
-      :parent_grid        => parent_grid
+      :parent_grid        => parent_grid,
+      :original_uid       => self.original_uid
     }
     return Utils::prune_null_items attr_data
   end
@@ -127,6 +132,10 @@ class Layer
   def == (other_layer)
     return false if other_layer.nil?
     return (self.bounds == other_layer.bounds and self.name == other_layer.name)
+  end
+
+  def copied?
+    not self.original_uid.nil?    
   end
 
   def encloses?(other_layer)
@@ -470,8 +479,13 @@ class Layer
     attributes[:"data-grid-id"]    = args.fetch :"data-grid-id", ""
     attributes[:"data-layer-id"]   = self.uid.to_s
     attributes[:"data-layer-name"] = self.name
-    attributes[:class] = self.selector_names.join(" ") if not self.selector_names.empty?
-    
+
+    if self.copied?
+      attributes[:class] = self.design.layers[self.original_uid].selector_names.join(" ")
+    elsif not self.selector_names.empty?
+      attributes[:class] = self.selector_names.join(" ") 
+    end
+
     if @tag_name == "img"
       attributes[:src] = self.image_path
       html = tag "img", attributes, false
