@@ -404,7 +404,6 @@ class Grid < Tree::TreeNode
     html = ""
 
     case self.render_layer.type
-    
     when Layer::LAYER_TEXT
       html = content_tag :div, self.render_layer.full_text, {}, nil
     
@@ -429,7 +428,7 @@ class Grid < Tree::TreeNode
 
       # Calculate HTML for non positioned children grids
       sub_grid_args = Hash.new
-      sub_grid_args[:css_classes] = 'pull-left'  if self.orientation == Constants::GRID_ORIENT_LEFT
+      sub_grid_args[:class] = 'pull-left' if self.orientation == Constants::GRID_ORIENT_LEFT
       child_nodes = self.children.select { |node| not node.positioned? }
       child_nodes.each do |sub_grid|
         inner_html += sub_grid.to_html(sub_grid_args)
@@ -449,7 +448,8 @@ class Grid < Tree::TreeNode
 
       # calculate css_class_name for this grid
       attributes = Hash.new
-      attributes[:css_classes] = "#{args[:css_classes]} #{self.get_css_class_name}"
+      attributes[:class] = "#{self.get_css_class_name} #{args[:class]}"
+
       html = content_tag :div, inner_html, attributes, false
     else
       html += self.get_html_for_render_layer
