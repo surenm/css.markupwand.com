@@ -146,6 +146,43 @@ class Design
     self.font_map.save!
     self.save!
   end
+
+  def get_fonts_styles_hash
+    fonts = Hash.new
+    index = 1
+    self.layers.each do |uid, layer|
+      if layer.type == Layer::LAYER_TEXT
+        layer.text_chunks.each do |chunk|
+          key = chunk[:styles]
+          if not fonts.has_key? key
+            fonts[key] = ".font-#{index}"
+            index += 1
+          end
+        end
+      end
+    end
+
+    return fonts
+  end
+
+  def get_fonts_styles_scss
+    fonts = self.get_fonts_styles_hash
+    
+    fonts_css = ""
+    fonts.each do |font_styles, font_class_name|
+      font_properties = ""
+      font_styles.each do |key, value|
+        if key == :'font-family'
+          font_properties += "  #{key}: '#{value}';\n"
+        else
+          font_properties += "  #{key}: #{value};\n"
+        end
+      end
+      fonts_css += "#{font_class_name} { \n#{font_properties} }\n"
+    end
+
+    return fonts_css
+  end
   
   def vote_class
     case self.rating
