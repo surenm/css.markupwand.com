@@ -140,9 +140,9 @@ class Design
     self.font_map.google_webfonts_snippet
   end
   
-  def parse_fonts(layers)
+  def parse_fonts
     self.font_map = FontMap.new
-    self.font_map.find_web_fonts layers
+    self.font_map.find_web_fonts self.layers
     self.font_map.save!
     self.save!
   end
