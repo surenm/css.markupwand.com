@@ -483,7 +483,6 @@ class Design
 
     # Set the root path for this design. That is where all the html and css is saved to.
     body_html    = self.root_grid.to_html
-=begin
     compass_includes = <<COMPASS
 @import "compass";
 @import "compass/css3";
@@ -492,8 +491,9 @@ class Design
 
 
 COMPASS
-    scss_content = self.font_map.font_scss + compass_includes + root_grid.style.to_scss
-=end
+
+    self.parse_fonts
+    scss_content = self.font_map.font_scss + compass_includes  + self.get_fonts_styles_scss
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
@@ -504,11 +504,11 @@ COMPASS
 
     publish_html = Utils::strip_unwanted_attrs_from_html html
     self.write_html_files html, generated_folder
-    #self.write_css_files scss_content, generated_folder
+    self.write_css_files scss_content, generated_folder
     
     Store.copy_within_store_recursively generated_folder, published_folder
     self.write_html_files publish_html, published_folder
-    #self.write_css_files scss_content, published_folder
+    self.write_css_files scss_content, published_folder
   end
   
   def write_html_files(html_content, base_folder)
