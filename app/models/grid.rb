@@ -26,6 +26,11 @@ class Grid
   # re-use the class names
   attr_accessor :original_id #(String)
 
+  # Moved css. When two nodes under this grid are copied, the source grid's
+  # css would be moved to the common parent i.e., self.
+  attr_accessor :moved_css #(Array)
+
+
   # True if the grid node is going to be positioned
   attr_accessor :positioned  #(Boolean)
   alias :positioned? :positioned
@@ -70,8 +75,11 @@ class Grid
       @id = args[:id]
     end
 
-    #Original id
+    #Original id and moved css
     @original_id = args[:original_id]
+    
+    # Moved CSS for grids
+    @moved_css   = args.fetch :moved_css, []
     
     # Next all layers in this grid
     @layers = {}
@@ -127,7 +135,8 @@ class Grid
       :offset_box        => offset_box_data,
       :grouping_box      => grouping_box_data,
       :style             => @style.attribute_data,
-      :original_id       => @original_id
+      :original_id       => @original_id,
+      :moved_css         => []
     }   
 
     return Utils::prune_null_items attribute_data   
@@ -253,6 +262,17 @@ class Grid
     source_bounds = source_grid.bounds
     self_bounds   = self.bounds
 
+    source_parents = []
+    source_grid_parent = source_grid.parent
+
+    self_parents   = []
+
+    while not source_grid_parent.nil?
+      source_parents.push source_grid_parent.id
+      source_grid_parent = source_grid_parent.parent
+    end
+
+
     # Positional difference
     pos_diff = {
       :top    => self_bounds.top    - source_bounds.top,
@@ -271,6 +291,7 @@ class Grid
     parent_grid = self.parent
 
     while not parent_grid.nil?
+      self_parents.push  parent_grid.id
       removed_layers.each do |layer_id|
         parent_grid.layers.delete layer_id 
         Log.info "Deleting #{layer_id} from #{parent_grid.id} (#{parent_grid})"
@@ -297,6 +318,10 @@ class Grid
       self.design.layers[new_layer.uid] = new_layer
       Log.info "Copying new layer #{new_layer.uid}"
     end
+
+    # Find the common parent grid so that the css could be moved there
+    common_parent_grid = (source_parents & self_parents).first
+    self.design.grids[common_parent_grid].moved_css.push source_id
 
     Log.info "Finished copying, grouping now"
     self.group!

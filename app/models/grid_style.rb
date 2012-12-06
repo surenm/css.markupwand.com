@@ -365,7 +365,13 @@ class GridStyle
         end
       end
     end
-  
+
+    if not self.grid.moved_css.empty?
+      self.grid.moved_css.each do |grid_id|
+        children_nodes.push self.grid.design.grids[grid_id].style.get_style_node
+      end
+    end
+
     grid_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules, :children => children_nodes
     
     # if root node is also a leaf node? just one layer case

@@ -253,6 +253,12 @@ class Sif
     if not sif_grid_data[:offset_box].nil?
       offset_box = BoundingBox.create_from_attribute_data sif_grid_data[:offset_box]
     end
+
+    if sif_grid_data[:moved_css].nil?
+      moved_css = []
+    else
+      moved_css = sif_grid_data[:moved_css]
+    end
     
     args = Hash.new
     args[:id]           = sif_grid_data[:id]
@@ -269,6 +275,7 @@ class Sif
     args[:tag]          = sif_grid_data[:tag]
     args[:style]        = sif_grid_data[:style]
     args[:original_id]  = sif_grid_data[:original_id]
+    args[:moved_css]    = moved_css
 
     # We have not instantiated children alone. Because children grids would not have been instantiated properly
     grid = Grid.new args
