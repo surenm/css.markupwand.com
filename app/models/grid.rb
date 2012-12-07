@@ -405,8 +405,20 @@ class Grid < Tree::TreeNode
 
     case self.render_layer.type
     when Layer::LAYER_TEXT
-      html = content_tag :div, self.render_layer.full_text, args, nil
-    
+      font_styles = @design.get_fonts_styles_hash
+      
+      inner_html = ''
+      if self.render_layer.text_chunks.size == 1
+        inner_html = self.render_layer.full_text
+        font_class_name = font_styles.fetch self.render_layer.text_chunks.first[:styles]
+        args[:class] = "#{font_class_name} #{args[:class]}"
+      else
+        self.render_layer.text_chunks.each do |chunk|
+          font_class_name = font_styles.fetch chunk[:styles]
+          inner_html += content_tag :span, chunk[:text], {:class => font_class_name}, false
+        end
+      end
+      html = content_tag :div, inner_html, args, nil
     when Layer::LAYER_NORMAL
       inner_html = tag :img, {:src => self.render_layer.image_path}, false
       html = content_tag :div, inner_html, args, false

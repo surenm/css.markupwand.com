@@ -155,7 +155,7 @@ class Design
         layer.text_chunks.each do |chunk|
           key = chunk[:styles]
           if not fonts.has_key? key
-            fonts[key] = ".font-#{index}"
+            fonts[key] = "font-#{index}"
             index += 1
           end
         end
@@ -178,7 +178,7 @@ class Design
           font_properties += "  #{key}: #{value};\n"
         end
       end
-      fonts_css += "#{font_class_name} { \n#{font_properties} }\n"
+      fonts_css += ".#{font_class_name} { \n#{font_properties} }\n"
     end
 
     return fonts_css
