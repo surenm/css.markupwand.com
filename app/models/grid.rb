@@ -418,6 +418,17 @@ class Grid < Tree::TreeNode
     return html
   end
 
+  def to_scss
+    children_scss = ''
+    self.children.each {|child| children_scss += child.to_scss }
+    
+    styles = ''
+    self.style_rules.each { |style_rule| styles += "  " + style_rule + ";\n" }
+
+    scss = ".#{self.css_class_name} {\n #{styles} #{children_scss} }\n "
+    return scss
+  end
+
   def to_html(args = {})
     Log.info "[HTML] #{self.to_s}"
    
