@@ -119,9 +119,11 @@ class GroupingBox < Tree::TreeNode
   def style_layers
     return [] if self.is_leaf? and self.layers.size == 1
 
-    all_layers = self.layers
-    style_layers = all_layers.select do |layer|
-      layer.bounds == self.bounds
+    all_layers_bounds = self.layers.collect {|layer| layer.bounds}
+    layers_superbound = BoundingBox.get_super_bounds all_layers_bounds
+
+    style_layers = self.layers.select do |layer|
+      layer.bounds == layers_superbound
     end
 
     style_layers
