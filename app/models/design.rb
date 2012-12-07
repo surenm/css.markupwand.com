@@ -487,7 +487,7 @@ class Design
 COMPASS
 
     self.parse_fonts
-    scss_content = self.font_map.font_scss + compass_includes  + self.get_fonts_styles_scss
+    scss_content = self.font_map.font_scss + compass_includes  + self.get_fonts_styles_scss + self.root_grid.to_scss
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
