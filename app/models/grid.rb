@@ -400,16 +400,16 @@ class Grid < Tree::TreeNode
     html
   end
 
-  def get_html_for_render_layer
+  def get_html_for_render_layer(args)
     html = ""
 
     case self.render_layer.type
     when Layer::LAYER_TEXT
-      html = content_tag :div, self.render_layer.full_text, {}, nil
+      html = content_tag :div, self.render_layer.full_text, args, nil
     
     when Layer::LAYER_NORMAL
       inner_html = tag :img, {:src => self.render_layer.image_path}, false
-      html = content_tag :div, inner_html, {}, false
+      html = content_tag :div, inner_html, args, false
     
     when Layer::LAYER_SHAPE
       # Render layer could be a shape? What to do here? Nothing I suppose?
@@ -433,6 +433,9 @@ class Grid < Tree::TreeNode
     Log.info "[HTML] #{self.to_s}"
    
     html = ''
+
+    attributes = Hash.new
+    attributes[:class] = "#{self.get_css_class_name} #{args[:class]}"
     
     if not self.is_leaf?
       inner_html = ''
@@ -458,12 +461,9 @@ class Grid < Tree::TreeNode
       end
 
       # calculate css_class_name for this grid
-      attributes = Hash.new
-      attributes[:class] = "#{self.get_css_class_name} #{args[:class]}"
-
       html = content_tag :div, inner_html, attributes, false
     else
-      html += self.get_html_for_render_layer
+      html += self.get_html_for_render_layer(attributes)
     end
     
     return html
