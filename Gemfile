@@ -23,6 +23,7 @@ gem 'tidy_ffi'
 gem 'therubyracer'
 gem 'xml-simple'
 gem 'rubyzip'
+gem "bugsnag"
 
 # Init command related gems
 gem 'foreman'
