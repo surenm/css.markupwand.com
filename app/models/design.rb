@@ -274,15 +274,11 @@ class Design
     Store::fetch_data_from_store(self.get_sif_file_path)
   end
 
-  def save_sif!
-    @sif.save! if @sif != nil
-  end
-
   ##########################################################
   # SIF related functions
   ##########################################################
-  def init_sif
-    @sif = Sif.new(self) if @sif == nil
+  def init_sif(forced = false)
+    @sif = Sif.new(self) if @sif == nil or forced
     @sif
   end
   
