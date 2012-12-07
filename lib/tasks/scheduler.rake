@@ -9,7 +9,7 @@ task :windows_machine_stuck => :environment do
   current_time = Time.now
   time_difference = (current_time - create_time)/(3600)
 
-  if (time_difference > 1) and status == Design::STATUS_PROCESSING
+  if (time_difference > 0.5) and status == Design::STATUS_PROCESSING
     puts "Windows machine stuck"
     Utils::pager_duty_alert("Windows machine is stuck. Last item #{design.name} for #{design.user.email} is waiting", {}, Constants::PAGERDUTY_WINDOWS_MACHINE_STUCK)
   else
