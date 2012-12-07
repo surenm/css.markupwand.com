@@ -117,7 +117,7 @@ class GroupingBox < Tree::TreeNode
   end
 
   def style_layers
-    return [] if self.is_leaf?
+    return [] if self.is_leaf? and self.layers.size == 1
 
     all_layers = self.layers
     style_layers = all_layers.select do |layer|
