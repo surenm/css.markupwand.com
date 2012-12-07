@@ -306,7 +306,7 @@ class Design
     self.init_sif
     @sif.set_grid grid
   end
-  
+
   ##########################################################
   # Helper methods for running jobs on designs
   ##########################################################
@@ -446,7 +446,7 @@ class Design
   end
 
   def create_grids
-    self.init_sif
+    self.init_sif(true)
 
     Log.info "Beginning to create grids for #{self.name}"
     root_grid = self.root_grouping_box.create_grid
@@ -457,13 +457,11 @@ class Design
 
     @sif.root_grid = root_grid
     @sif.save!
-
-    return
   end
   
   def generate_markup(args={})
     Log.info "Beginning to generate markup and css for #{self.name}..."
-    self.init_sif
+    self.init_sif(true)
     self.write_html_and_css
     Log.info "Successfully completed generating #{self.name}"
     return
