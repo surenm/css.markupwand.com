@@ -23,4 +23,7 @@ class DesignModel extends Backbone.Model
   handleLayerSelection: (layer_id) ->
     console.log layer_id
 
+  get_assets_root: ->
+    return "published/#{this.get('safe_name')}/assets"
+
 window.DesignModel = DesignModel
