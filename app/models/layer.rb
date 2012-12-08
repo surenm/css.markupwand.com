@@ -96,6 +96,11 @@ class Layer
       :generated_selector => self.generated_selector,
       :parent_grid        => parent_grid
     }
+
+    if self.type == Layer::LAYER_NORMAL
+      attr_data[:image_name] = self.image_name
+    end
+    
     return Utils::prune_null_items attr_data
   end
   
