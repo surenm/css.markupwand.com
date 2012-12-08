@@ -75,6 +75,7 @@ module Utils
     object.each do |key, value|
       new_object[key] = value if not value.nil?
     end
+    return new_object
   end
 
   def Utils::non_zero_spacing(spacing)
