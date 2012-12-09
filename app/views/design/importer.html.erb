@@ -12,6 +12,12 @@
   <canvas id="main-canvas" height="1200" width="1500" style="border: 1px dotted #000"/>
 </div>
 <div id="layers" />
+<div id="images" style="display:none">
+  <% @sif[:layers].each do |layer| %>
+    <% if layer[:type] == 'normal' %>
+      <img src="/published/<%= @design.safe_name %>/assets/images/<%= layer[:image_name] %>" id="<%= layer[:uid] %>">
+    <% end %>
+  <% end %>
 <% end %>
 
 <%= content_for :javascript do %>
