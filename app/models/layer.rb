@@ -80,6 +80,7 @@ class Layer
 
     attr_data = {
       :uid     => self.uid,
+      :id      => self.uid,
       :name    => self.name,
       :type    => self.type,
       :zindex  => self.zindex,
@@ -100,7 +101,7 @@ class Layer
     if self.type == Layer::LAYER_NORMAL
       attr_data[:image_name] = self.image_name
     end
-    
+
     return Utils::prune_null_items attr_data
   end
   
