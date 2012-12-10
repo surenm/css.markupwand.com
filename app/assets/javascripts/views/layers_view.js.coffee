@@ -24,7 +24,7 @@ class LayersView extends View
     $canvas_element = @canvas_element
     switch layer.get('type')
       when 'text'
-        $(@canvas_element).addLayer
+        $($canvas_element).addLayer
           method: 'drawText'
           group: 'text'
           name: canvas_data.name
@@ -39,7 +39,7 @@ class LayersView extends View
       when 'shape'
         console.log ''
       when 'normal'
-        $(@canvas_element).addLayer
+        $($canvas_element).addLayer
           method: 'drawImage'
           group: 'image'
           name: canvas_data.name
@@ -47,6 +47,5 @@ class LayersView extends View
           x: canvas_data.bounds.left
           y: canvas_data.bounds.top
           fromCenter: false
-          index: 0
             
 window.LayersView = LayersView
