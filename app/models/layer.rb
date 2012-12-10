@@ -320,21 +320,6 @@ class Layer
     return style_rules
   end
 
-  # Selector names (includes default selector and extra selectors)
-  def selector_names
-    all_selectors = self.extra_selectors
-    all_selectors.push self.generated_selector
-
-    if @tag_name != 'img'
-      if not self.parent_grid.nil?
-        all_selectors.concat parent_grid.style.extra_selectors
-      end
-    end
-
-    all_selectors.uniq!
-    all_selectors
-  end
-
   def get_raw_font_name(position = 0)
     font_name = nil
 
@@ -358,85 +343,9 @@ class Layer
     return true
   end
 
-  def get_style_node
-    if self.type == Layer::LAYER_TEXT
-      chunk_nodes = []
-      
-      chunk_text_selector.each_with_index do |class_name, index|
-        chunk_styles = []
-        self.text_chunks[index][:styles].each do |rule_key, rule_object|
-          if self.allow_chunk_styles? rule_key
-            chunk_styles.concat Compassify::get_scss(rule_key, rule_object)
-          end
-        end
-        
-        chunk_nodes.push StyleNode.new :class => class_name, :style_rules => chunk_styles
-      end
-      
-      layer_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules, :children => chunk_nodes
-    else
-      layer_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules
-    end
-
-    return layer_style_node
-  end
-
-  def to_scss
-    self.get_style_node.to_scss
-  end
-
   ##########################################################
-  # HTML generation related functions
+  # DEBUG HELPERS
   ##########################################################
-
-  def tag_name
-    chosen_tag = ""
-    is_leaf = (not self.parent_grid.nil?) and self.parent_grid.is_leaf?
-      
-    if not self.override_tag.nil?
-      self.override_tag
-    elsif self.type == Layer::LAYER_NORMAL
-      if is_leaf
-        chosen_tag = 'img'
-      else
-        chosen_tag = 'div'
-      end
-    elsif self.type == LAYER_TEXT or self.type == LAYER_SHAPE
-      chosen_tag = 'div'
-    else
-      Log.info "New layer found #{self.type} for layer #{self.name}"
-      chosen_tag = 'div'
-    end
-    @tag_name = chosen_tag
-    @tag_name
-  end
-
-  def to_html(args = {})
-    Log.info "[HTML] Layer #{self.to_s}"
-    
-    generated_tag = self.tag_name
-    @tag_name = args.fetch :tag, generated_tag
-
-    inner_html = args.fetch :inner_html, ''
-    if inner_html.empty? and self.type == LAYER_TEXT
-      inner_html += self.text_content
-    end
-
-    attributes                     = Hash.new
-    attributes[:"data-grid-id"]    = args.fetch :"data-grid-id", ""
-    attributes[:"data-layer-id"]   = self.uid.to_s
-    attributes[:"data-layer-name"] = self.name
-    
-    if @tag_name == "img"
-      attributes[:src] = self.image_path
-      html = tag "img", attributes, false
-    else
-      html = content_tag @tag_name, inner_html, attributes, false
-    end
-
-    return html
-  end
-
   def to_s
     "#{self.name} - #{self.bounds} - #{self.type}"
   end

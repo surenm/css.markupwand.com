@@ -249,7 +249,7 @@ class Sif
       @layers[layer_uid] 
     end
 
-    grouping_box = GroupingBox.new :layers => layers, :bounds => bounds, :orientation => orientation,
+    grouping_box = GroupingBox.new :layers => layers, :bounds => bounds, :orientation => orientation, :design => @design,
       :has_intersecting_layers => has_intersecting_layers, :alternate_grouping_boxes => alternate_grouping_boxes
 
     serialized_data[:children].each do |child_data|
@@ -285,7 +285,9 @@ class Sif
       :offset_box => offset_box, 
       :grouping_box => grouping_box, 
       :orientation => orientation, 
-      :style_rules => style_rules
+      :style_rules => style_rules,
+      :css_class_name => serialized_data[:css_class_name],
+      :design => @design
 
     serialized_data[:children].each do |child_data|
       child_grid = self.create_grid child_data

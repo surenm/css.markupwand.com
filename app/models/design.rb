@@ -50,9 +50,6 @@ class Design
   Design::ERROR_SCREENSHOT_FAILED  = "screenshot_failed"
   Design::ERROR_EXTRACTION_FAILED  = "extraction_failed"
 
-  Design::PRIORITY_NORMAL = :normal
-  Design::PRIORITY_HIGH   = :high
-
   # File meta data
   field :name, :type => String
   field :psd_file_path, :type => String
@@ -63,7 +60,6 @@ class Design
   field :height, :type => Integer
   
   field :storage, :type => String, :default => "local"
-  field :queue, :type => String, :default => Design::PRIORITY_NORMAL
 
   # Rating is Yes or No
   field :rating, :type => Boolean
@@ -76,6 +72,9 @@ class Design
 
   # Offset box buffer
   attr_accessor :row_offset_box
+
+  # CSS class counter
+  attr_accessor :css_counter
 
   mount_uploader :file, DesignUploader
   
@@ -141,11 +140,48 @@ class Design
     self.font_map.google_webfonts_snippet
   end
   
-  def parse_fonts(layers)
+  def parse_fonts
     self.font_map = FontMap.new
-    self.font_map.find_web_fonts layers
+    self.font_map.find_web_fonts self.layers
     self.font_map.save!
     self.save!
+  end
+
+  def get_fonts_styles_hash
+    fonts = Hash.new
+    index = 1
+    self.layers.each do |uid, layer|
+      if layer.type == Layer::LAYER_TEXT
+        layer.text_chunks.each do |chunk|
+          key = chunk[:styles]
+          if not fonts.has_key? key
+            fonts[key] = "font-#{index}"
+            index += 1
+          end
+        end
+      end
+    end
+
+    return fonts
+  end
+
+  def get_fonts_styles_scss
+    fonts = self.get_fonts_styles_hash
+    
+    fonts_css = ""
+    fonts.each do |font_styles, font_class_name|
+      font_properties = ""
+      font_styles.each do |key, value|
+        if key == :'font-family'
+          font_properties += "  #{key}: '#{value}';\n"
+        else
+          font_properties += "  #{key}: #{value};\n"
+        end
+      end
+      fonts_css += ".#{font_class_name} { \n#{font_properties} }\n"
+    end
+
+    return fonts_css
   end
   
   def vote_class
@@ -157,6 +193,15 @@ class Design
     when nil
       return 'none'
     end
+  end
+
+  def get_css_counter
+    if self.css_counter.nil?
+      self.css_counter = 0
+    else
+      self.css_counter += 1
+    end
+    return self.css_counter
   end
   
   ##########################################################
@@ -229,15 +274,11 @@ class Design
     Store::fetch_data_from_store(self.get_sif_file_path)
   end
 
-  def save_sif!
-    @sif.save! if @sif != nil
-  end
-
   ##########################################################
   # SIF related functions
   ##########################################################
-  def init_sif
-    @sif = Sif.new(self) if @sif == nil
+  def init_sif(forced = false)
+    @sif = Sif.new(self) if @sif == nil or forced
     @sif
   end
   
@@ -265,7 +306,7 @@ class Design
     self.init_sif
     @sif.set_grid grid
   end
-  
+
   ##########################################################
   # Helper methods for running jobs on designs
   ##########################################################
@@ -310,29 +351,6 @@ class Design
 
     Resque.enqueue GroupingBoxJob, self.id
   end
-
-  def reparse
-    # if sif files exist, remove grids from it and reparse
-    #self.init_sif  
-    #@sif.reset_grids
-    #self.set_status Design::STATUS_PARSING
-    #Resque.enqueue ParserJob, self.id
-    self.init_sif  
-    @sif.reset_grids
-    generated_folder = self.store_generated_key
-    published_folder = self.store_published_key
-    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
-    FileUtils.rm_rf tmp_folder
-    Store.delete_from_store generated_folder
-    Store.delete_from_store published_folder
-    self.set_status Design::STATUS_EXTRACTED
-    
-    self.push_to_parsing_queue
-  end
-  
-  def regenerate
-    # TODO: If generated/published folders exist delete and remove those files and regenerate
-  end
   
   def get_processing_queue_message
     message = Hash.new
@@ -348,40 +366,20 @@ class Design
     message[:design] = self.safe_name
     message[:design_id] = self.id.to_s
 
-
     return message
   end
   
   def push_to_processing_queue
     self.set_status Design::STATUS_PROCESSING
-    self.queue = Design::PRIORITY_NORMAL
     self.save!
     
     message = self.get_processing_queue_message
     Resque.enqueue ProcessorJob, message
   end
 
-  def move_to_priority_queue
-    message = self.get_processing_queue_message
-    Resque.dequeue ProcessorJob, message
-    Resque.enqueue PriorityProcessorJob, message
-    self.queue = Design::PRIORITY_HIGH
-    self.save!
-  end
-
   def push_to_extraction_queue
     Resque.enqueue ExtractorJob, self.id
   end
-
-  def push_to_parsing_queue
-    Resque.enqueue ParserJob, self.id
-  end
-
-  def push_to_generation_queue
-    self.set_status Design::STATUS_GENERATING
-    Resque.enqueue GeneratorJob, self.id
-  end 
-  
   ##########################################################
   # Actual jobs to be run on designs
   ########################################################## 
@@ -395,7 +393,7 @@ class Design
     layers = self.layers.values
     
     Log.info "Creating root grouping box..."
-    root_grouping_box = GroupingBox.new :layers => layers, :bounds => self.bounds
+    root_grouping_box = GroupingBox.new :layers => layers, :bounds => self.bounds, :design => self
     root_grouping_box.groupify
 
     @sif.root_grouping_box = root_grouping_box
@@ -434,7 +432,7 @@ class Design
       end
     }
 
-    new_grouping_box = GroupingBox.new :layers => layers, :bounds => super_bounds
+    new_grouping_box = GroupingBox.new :layers => layers, :bounds => super_bounds, :design => self
     insert_position = parent_grouping_box.get_child_index grouping_boxes.first
     parent_grouping_box.add new_grouping_box, insert_position
 
@@ -448,7 +446,7 @@ class Design
   end
 
   def create_grids
-    self.init_sif
+    self.init_sif(true)
 
     Log.info "Beginning to create grids for #{self.name}"
     root_grid = self.root_grouping_box.create_grid
@@ -459,27 +457,12 @@ class Design
 
     @sif.root_grid = root_grid
     @sif.save!
-
-    return
   end
   
   def generate_markup(args={})
     Log.info "Beginning to generate markup and css for #{self.name}..."
-    
-    self.init_sif
-    generated_folder = self.store_generated_key
-    
-    # Set the root path for this design. That is where all the html and css is saved to.
-    
-    Log.info "Parsing fonts..."
-    # TODO Fork out and parallel process
-    #self.parse_fonts(self.layers)
-
-    Log.debug "Destroying design globals..."
-
+    self.init_sif(true)
     self.write_html_and_css
-    
-    @sif.save!
     Log.info "Successfully completed generating #{self.name}"
     return
   end
@@ -493,9 +476,7 @@ class Design
     published_folder = self.store_published_key
 
     # Set the root path for this design. That is where all the html and css is saved to.
-    
     body_html    = self.root_grid.to_html
-=begin
     compass_includes = <<COMPASS
 @import "compass";
 @import "compass/css3";
@@ -504,8 +485,9 @@ class Design
 
 
 COMPASS
-    scss_content = self.font_map.font_scss + compass_includes + root_grid.style.to_scss
-=end
+
+    self.parse_fonts
+    scss_content = self.font_map.font_scss + compass_includes  + self.get_fonts_styles_scss + self.root_grid.to_scss
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
@@ -516,11 +498,11 @@ COMPASS
 
     publish_html = Utils::strip_unwanted_attrs_from_html html
     self.write_html_files html, generated_folder
-    #self.write_css_files scss_content, generated_folder
+    self.write_css_files scss_content, generated_folder
     
     Store.copy_within_store_recursively generated_folder, published_folder
     self.write_html_files publish_html, published_folder
-    #self.write_css_files scss_content, published_folder
+    self.write_css_files scss_content, published_folder
   end
   
   def write_html_files(html_content, base_folder)

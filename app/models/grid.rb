@@ -3,6 +3,7 @@ class Grid < Tree::TreeNode
 
   def initialize(args)
     @id = args.fetch :id, self.unique_identifier(args[:layers])
+    @design = args[:design]
     super @id, args
 
   end
@@ -15,15 +16,16 @@ class Grid < Tree::TreeNode
   end
 
   def attribute_data
+    layer_ids       = self.layers.collect { |layer| layer.uid }
+    style_layer_ids = self.style_layers.collect { |style_layer| style_layer.uid }
+    offset_box_data = self.offset_box.attribute_data if not self.offset_box.nil?
+    css_class_name = self.get_css_class_name
+
     children_tree = []
     self.children.each do |child|
       children_tree.push child.attribute_data
     end
 
-    layer_ids       = self.layers.collect { |layer| layer.uid }
-    style_layer_ids = self.style_layers.collect { |style_layer| style_layer.uid }
-    
-    offset_box_data = self.offset_box.attribute_data if not self.offset_box.nil?
 
     attr_data = {
       :id => @id,
@@ -34,7 +36,8 @@ class Grid < Tree::TreeNode
       :orientation => self.orientation,
       :offset_box => offset_box_data,
       :grouping_box => self.grouping_box.name,
-      :style_rules => self.style_rules
+      :style_rules => self.style_rules,
+      :css_class_name => css_class_name
     }   
 
     return Utils::prune_null_items attr_data
@@ -65,10 +68,6 @@ class Grid < Tree::TreeNode
 
   def orientation
     self.content[:orientation]
-  end
-
-  def tag
-    self.content[:tag]
   end
 
   def grouping_box
@@ -107,6 +106,10 @@ class Grid < Tree::TreeNode
     self.content[:style_rules]
   end
 
+  def css_class_name
+    self.content[:css_class_name]
+  end
+
   def bounds
     if self.layers.empty?
       bounds = nil
@@ -129,19 +132,7 @@ class Grid < Tree::TreeNode
     
     return grid_zindex
   end
-  
-  def tag
-    if @tag.nil?
-      if self.is_image_grid?
-        @tag = 'img'
-      else
-        @tag = 'div'
-      end
-    end
-
-    return @tag
-  end
-  
+    
   def is_image_grid?
     if self.is_leaf?
       return (self.render_layer.tag_name == 'img')
@@ -362,12 +353,39 @@ class Grid < Tree::TreeNode
   end
 
   def compute_styles
-    #style_rules = self.layer_styles + self.positioning_styles + self.grouping_box_styles
-    style_rules = self.positioning_styles + self.grouping_box_styles
-    
+    style_rules = self.layer_styles + self.positioning_styles + self.grouping_box_styles
+
     self.style_rules = style_rules.flatten
   end
 
+  def get_css_class_prefix
+    prefix = 'class'
+    
+    if self.has_shape_layers?
+      prefix = 'wrapper'
+    end
+
+    if self.is_leaf?
+      if self.render_layer.type == Layer::LAYER_TEXT
+        prefix = 'text'
+      elsif self.render_layer.type == Layer::LAYER_NORMAL
+        prefix = 'image'
+      end
+    end
+
+    return prefix
+  end
+
+  def get_css_class_name
+    if not self.grouping_box.css_class_name.nil?
+      return self.grouping_box.css_class_name
+    elsif not self.css_class_name.nil?
+      return self.css_class_name
+    else
+      counter = @design.get_css_counter
+      return "#{self.get_css_class_prefix}-#{counter}"
+    end
+  end
 
   ##########################################################
   # HTML METHODS
@@ -382,46 +400,82 @@ class Grid < Tree::TreeNode
     html
   end
 
+  def get_html_for_render_layer(args)
+    html = ""
+
+    case self.render_layer.type
+    when Layer::LAYER_TEXT
+      font_styles = @design.get_fonts_styles_hash
+      
+      inner_html = ''
+      if self.render_layer.text_chunks.size == 1
+        inner_html = self.render_layer.full_text
+        font_class_name = font_styles.fetch self.render_layer.text_chunks.first[:styles]
+        args[:class] = "#{font_class_name} #{args[:class]}"
+      else
+        self.render_layer.text_chunks.each do |chunk|
+          font_class_name = font_styles.fetch chunk[:styles]
+          inner_html += content_tag :span, chunk[:text], {:class => font_class_name}, false
+        end
+      end
+      html = content_tag :div, inner_html, args, nil
+    when Layer::LAYER_NORMAL
+      inner_html = tag :img, {:src => self.render_layer.image_path}, false
+      html = content_tag :div, inner_html, args, false
+    
+    when Layer::LAYER_SHAPE
+      # Render layer could be a shape? What to do here? Nothing I suppose?
+    end
+
+    return html
+  end
+
+  def to_scss
+    children_scss = ''
+    self.children.each {|child| children_scss += child.to_scss }
+    
+    styles = ''
+    self.style_rules.each { |style_rule| styles += "  " + style_rule + ";\n" }
+
+    scss = ".#{self.css_class_name} {\n #{styles} #{children_scss} }\n "
+    return scss
+  end
+
   def to_html(args = {})
     Log.info "[HTML] #{self.to_s}"
+   
     html = ''
-    
-    # Is this required for grids?
-    inner_html = args.fetch :inner_html, ''
-  
+
     attributes = Hash.new
-
+    attributes[:class] = "#{self.get_css_class_name} #{args[:class]}"
+    
     if not self.is_leaf?
-      attributes[:style] = self.style_rules.join ";"
+      inner_html = ''
 
+      # Calculate HTML for non positioned children grids
       sub_grid_args = Hash.new
-      positioned_html = positioned_grids_html sub_grid_args
-      if not positioned_html.empty?
-        inner_html += content_tag :div, '', :class => 'marginfix'
-      end
-      
+      sub_grid_args[:class] = 'pull-left' if self.orientation == Constants::GRID_ORIENT_LEFT
       child_nodes = self.children.select { |node| not node.positioned? }
       child_nodes.each do |sub_grid|
-        inner_html += sub_grid.to_html sub_grid_args
+        inner_html += sub_grid.to_html(sub_grid_args)
       end
 
-      inner_html += positioned_html
+      # if oriented leftwards add a clearfix
+      if self.orientation == Constants::GRID_ORIENT_LEFT
+        inner_html += content_tag :div, '', :class => 'clearfix'
+      end
       
-      html = content_tag self.tag, inner_html, attributes, false
+      # Calculate and all positioned html for all positioned HTML
+      positioned_html = positioned_grids_html sub_grid_args
+      if not positioned_html.empty?
+        inner_html += positioned_html
+        inner_html += content_tag :div, '', :class => 'marginfix'
+      end
+
+      # calculate css_class_name for this grid
+      html = content_tag :div, inner_html, attributes, false
     else
-      sub_grid_args      = attributes
-      sub_grid_args[tag] = self.tag
-
-      sub_grid_args[:inner_html] = self.positioned_grids_html
-
-      inner_html  += self.render_layer.to_html sub_grid_args
-      
-
-      if self.render_layer.tag_name == 'img'
-        html = content_tag 'div', inner_html, {}, false
-      else 
-        html = inner_html
-      end
+      html += self.get_html_for_render_layer(attributes)
     end
     
     return html
@@ -432,7 +486,12 @@ class Grid < Tree::TreeNode
   ##########################################################
 
   def to_s
-    "Orientation: #{self.orientation} GroupingBox: #{self.grouping_box.bounds} margin: #{self.offset_box}, style_layers: #{self.style_layers}"
+    layer_names = ''
+    self.layers.each { |layer| layer_names += layer.name + ', ' }
+
+    style_layer_names = ''
+    self.style_layers.each {|style_layer| style_layer_names += style_layer.name + ', '}
+    return "#{self.css_class_name} - #{self.orientation}- [#{layer_names}], Style: [#{style_layer_names}]"
   end
 
   def print_tree(level = 0)
