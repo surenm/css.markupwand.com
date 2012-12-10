@@ -31,7 +31,7 @@ class LayerModel extends Backbone.Model
   normal_canvas_data: ->
     assets_path = window.app.design.get_assets_root()
     image_name = this.get('image_name')
-    image_src = "/#{assets_path}/images/#{image_name}"
+    image_src = $("##{this.get('uid')}")[0]
     
     bounds = this.get('bounds')
 
