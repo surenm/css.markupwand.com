@@ -35,9 +35,20 @@ class LayersView extends View
           font: canvas_data.font
           text: canvas_data.text
           fromCenter: false
-
       when 'shape'
-        console.log ''
+        $($canvas_element).addLayer
+          method: 'drawRect'
+          group: 'shape'
+          name: canvas_data.name
+          x: canvas_data.bounds.left
+          y: canvas_data.bounds.top
+          width: canvas_data.width
+          height: canvas_data.height
+          fillStyle: canvas_data.fillStyle
+          strokeStyle: canvas_data.strokeStyle
+          strokeWidth: canvas_data.strokeWidth
+          cornerRadius: canvas_data.cornerRadius
+          fromCenter: false
       when 'normal'
         $($canvas_element).addLayer
           method: 'drawImage'

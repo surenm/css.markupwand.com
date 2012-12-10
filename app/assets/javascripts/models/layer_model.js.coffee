@@ -32,7 +32,6 @@ class LayerModel extends Backbone.Model
     assets_path = window.app.design.get_assets_root()
     image_name = this.get('image_name')
     image_src = $("##{this.get('uid')}")[0]
-    
     bounds = this.get('bounds')
 
     canvas_data =
@@ -42,8 +41,37 @@ class LayerModel extends Backbone.Model
 
     return canvas_data
 
-  shape_canvas_data: ->
-    #console.log "ignore"
+  shape_canvas_data: (canvas_element) ->
+    bounds = this.get('bounds')
+    shape = this.get('shape')
+    styles = this.get('styles')
+
+    curvature = 0
+    
+    strokeStyle = null
+    strokeWidth = null 
+
+    if shape.curvature?
+      curvature = Helper.get_value_from_pixel_string shape.curvature
+      strokeStyle = '#fff'
+      strokeWidth = 0
+      
+    if styles.border?
+      strokeStyle = styles.border.color
+      strokeWidth = Helper.get_value_from_pixel_string styles.border.width
+
+    fillStyle = this.getShapeFillStyle(canvas_element)
+    
+
+    canvas_data = 
+      name: this.get('uid')
+      bounds: bounds
+      width: bounds.right - bounds.left
+      height: bounds.bottom - bounds.top
+      fillStyle: fillStyle
+      strokeStyle: strokeStyle
+      strokeWidth: strokeWidth
+      cornerRadius: curvature
 
   get_font_style_string: (text_object) ->
     # just render the first style
@@ -61,6 +89,23 @@ class LayerModel extends Backbone.Model
       style_string += "#{styles['font-family']}"
 
     return style_string
+
+  getShapeFillStyle: (canvas_element) ->
+    styles = this.get('styles')
+
+    fillStyle = null
+    if styles['solid_overlay']?
+      fillStyle = styles['solid_overlay']
+    else if styles['gradient_overlay']?
+      gradient_args = Helper.get_gradient_fill_style styles['gradient_overlay'], this.get('bounds')
+      fillStyle = $(canvas_element).createGradient gradient_args
+    else if styles['solid_fill']?
+      fillStyle = styles['solid_fill']
+    else if styles['gradient_fill']?
+      gradient_args = Helper.get_gradient_fill_style styles['gradient_fill'], this.get('bounds')
+      fillStyle = $(canvas_element).createGradient gradient_args
+
+    return fillStyle
 
     
 
