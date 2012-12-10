@@ -26,6 +26,7 @@
 //= require lib/bootstrap-modal
 //= require lib/jcanvas
 //= require lib/editor_canvas
+//= require lib/helper
 
 //= require jquery.flot
 
