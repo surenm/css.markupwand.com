@@ -12,10 +12,12 @@ class EditorApp
     @grouping_view = new GroupingView({model: @design})
 
   load_layers_view: ->
-    @layers_view = new LayersView(({model: @design}))
+    $this = this
+    $.doTimeout 5000, () ->
+      $this.layers_view = new LayersView(({model: $this.design}))
     
     
-$(document).ready ->
+$(window).load ->
   window.app = new EditorApp()
 
   # Initiate router 
