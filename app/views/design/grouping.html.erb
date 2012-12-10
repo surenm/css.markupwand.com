@@ -7,12 +7,15 @@
 
   img {
     max-width: none;
+    position: absolute;
   }
 </style>
 <% end %>
 
 <%= content_for :content do %>
-<img src="/extracted/<%= @design.safe_name %>/<%= @design.safe_name_prefix %>.png">
-<canvas id="main-canvas" height="1500" width="1500" />
+<center>
+  <img src="/extracted/<%= @design.safe_name %>/<%= @design.safe_name_prefix %>.png">
+  <canvas id="main-canvas" height="2000" width="2000" />
+</center>
 <canvas id="mouseoverlay-canvas" />
 <% end %>
