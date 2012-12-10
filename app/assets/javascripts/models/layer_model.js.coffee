@@ -1,12 +1,12 @@
 class LayerModel extends Backbone.Model
   initialize: ->
 
-  to_canvas_data: ->
+  to_canvas_data: (canvas_element) ->
     switch this.get('type')
       when 'text'
         return this.text_canvas_data()
       when 'shape'
-        return this.shape_canvas_data()
+        return this.shape_canvas_data(canvas_element)
       when 'normal'
         return this.normal_canvas_data()
 

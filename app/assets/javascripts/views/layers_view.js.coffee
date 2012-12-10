@@ -18,7 +18,7 @@ class LayersView extends View
     $canvas_element = @canvas_element
       
   render_layer: (layer) ->
-    canvas_data = layer.to_canvas_data()
+    canvas_data = layer.to_canvas_data(@canvas_element)
     $this = this
 
     $canvas_element = @canvas_element
