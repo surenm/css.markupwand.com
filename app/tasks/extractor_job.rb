@@ -47,16 +47,7 @@ class ExtractorJob
       design.save!
       raise err
     end
-    
-    # If there are clipping layers in design, then merge them using photoshop
-    if File.exists? clipping_layer_check_file
-      FileUtils.rm clipping_layer_check_file
-      Log.info "Clipping layers found, queuing up for photoshop processing"
-      design.set_status Design::STATUS_CLIPPING
-      Resque.enqueue PreProcessorJob, design.get_processing_queue_message
-      return
-    end
-    
+  
     # Build screenshot, thumbnail files
     fixed_width_cmd = "convert #{screenshot_file} -thumbnail '600x480>' -unsharp 0x.8 #{fixed_width_file}"
     thumbnail_cmd   = "convert #{screenshot_file} -thumbnail '180x240>' -unsharp 0x.8 #{thumbnail_file}"
