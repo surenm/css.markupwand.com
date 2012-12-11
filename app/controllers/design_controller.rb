@@ -69,7 +69,7 @@ class DesignController < ApplicationController
     design.psd_file_path = destination_file
     design.save!
     
-    design.push_to_processing_queue
+    design.push_to_extraction_queue
     
     redirect_to :action => :show, :id => design.safe_name
   end
