@@ -29,14 +29,13 @@ class Design
     Design::STATUS_UPLOADING    => 'label',
     Design::STATUS_UPLOADED     => 'label',
     Design::STATUS_PROCESSING   => 'label label-info',
-    Design::STATUS_PROCESSED    => 'label label-info',
     Design::STATUS_EXTRACTING   => 'label label-info',
-    Design::STATUS_EXTRACTED    => 'label label-info',
-    Design::STATUS_GROUPING     => 'label label-info'
-    Design::STATUS_GRIDS        => 'label label-info'
-    Design::STATUS_MARKUP       => 'label label-info'
-    Design::STATUS_COMPLETED    => 'label label-success'
+    Design::STATUS_GROUPING     => 'label label-info',
+    Design::STATUS_GRIDS        => 'label label-info',
+    Design::STATUS_MARKUP       => 'label label-info',
+    Design::STATUS_COMPLETED    => 'label label-success',
     Design::STATUS_FAILED       => 'label label-important'
+  }
     
   
   Design::ERROR_FILE_ABSENT        = "file_absent"
