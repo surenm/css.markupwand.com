@@ -64,15 +64,14 @@ class ExtractorJob
     Store.save_to_store thumbnail_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}-thumbnail.png")
 
     
-    #Dir.glob("#{assets_folder}/**/*").each do |asset_file_path|
-    #  next if File.directory? asset_file_path
-    #  asset_file_path_obj = Pathname.new asset_file_path
-    #  asset_relative_path = asset_file_path_obj.relative_path_from(Pathname.new assets_folder)
-    #  asset_destination_path = File.join design.store_extracted_key, "assets", asset_relative_path
-    #  Store.save_to_store(asset_file_path, asset_destination_path)
-    #end
+    Dir.glob("#{assets_folder}/**/*").each do |asset_file_path|
+      next if File.directory? asset_file_path
+      asset_file_path_obj = Pathname.new asset_file_path
+      asset_relative_path = asset_file_path_obj.relative_path_from(Pathname.new assets_folder)
+      asset_destination_path = File.join design.store_extracted_key, "assets", asset_relative_path
+      Store.save_to_store(asset_file_path, asset_destination_path)
+    end
 
-    design.set_status Design::STATUS_EXTRACTED
     Log.info "Sucessfully completed extracting from photoshop file #{design.name}."
 
     # Build sif file from extracted file    
