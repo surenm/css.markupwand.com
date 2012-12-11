@@ -10,32 +10,28 @@ class ExtractorJob
 
     Log.info "Extracting design data from photoshop file #{design.name}..."
     
-    exports_source = design.store_processed_key
-    exports_destination = File.join design.store_extracted_key, "assets", "images"
-    Store.copy_within_store_recursively exports_source, exports_destination
-
     design_folder  = Store.fetch_from_store design.store_key_prefix
     photoshop_file = Rails.root.join 'tmp', 'store', design.psd_file_path
     psd_file_root  = File.basename design.psd_file_path, '.psd'
     
-    processed_folder = Rails.root.join 'tmp', 'store', design.store_extracted_key
-    #assets_folder = File.join processed_folder, "assets"
-    #images_folder = File.join processed_folder, "assets", "images"
-    #FileUtils.mkdir_p images_folder if not Dir.exists? images_folder
+    extracted_folder = Rails.root.join 'tmp', 'store', design.store_extracted_key
+    assets_folder = File.join extracted_folder, "assets"
+    images_folder = File.join extracted_folder, "assets", "images"
+    FileUtils.mkdir_p images_folder if not Dir.exists? images_folder
 
-    extracted_file   = Rails.root.join processed_folder, "#{design.safe_name_prefix}.json"
-    screenshot_file  = Rails.root.join processed_folder, "#{design.safe_name_prefix}.png"
-    fixed_width_file = Rails.root.join processed_folder, "#{design.safe_name_prefix}-fixed.png"
-    thumbnail_file   = Rails.root.join processed_folder, "#{design.safe_name_prefix}-thumbnail.png"
+    extracted_file   = Rails.root.join extracted_folder, "#{design.safe_name_prefix}.json"
+    screenshot_file  = Rails.root.join extracted_folder, "#{design.safe_name_prefix}.png"
+    fixed_width_file = Rails.root.join extracted_folder, "#{design.safe_name_prefix}-fixed.png"
+    thumbnail_file   = Rails.root.join extracted_folder, "#{design.safe_name_prefix}-thumbnail.png"
 
-    clipping_layer_check_file = Rails.root.join processed_folder, "has_clipping_layer"
+    clipping_layer_check_file = Rails.root.join extracted_folder, "has_clipping_layer"
     
     psdjs_root_dir   = Rails.root.join 'lib', 'psd.js'
     extractor_script = File.join psdjs_root_dir, 'tasks', 'extract.coffee'
 
     coffee_script_exe = Rails.root.join 'lib', 'psd.js', 'node_modules', '.bin', 'coffee'
     
-    extractor_command = "#{coffee_script_exe} #{extractor_script} #{photoshop_file} #{processed_folder} #{design.safe_name_prefix}"
+    extractor_command = "#{coffee_script_exe} #{extractor_script} #{photoshop_file} #{extracted_folder} #{design.safe_name_prefix}"
 
     Log.info extractor_command
     err = nil
