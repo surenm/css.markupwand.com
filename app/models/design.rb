@@ -123,15 +123,6 @@ class Design
     Log.info "Setting status == #{status}"
     self.status = status
     self.save!
-
-    if self.status == Design::STATUS_COMPLETED
-      if not self.user.admin
-        to      = "#{self.user.name} <#{self.user.email}>"
-        subject = "#{self.name} generated"
-        text    = "Your HTML & CSS has been generated, click http://#{ENV['APP_URL']}/design/#{self.safe_name}/preview to download"
-        ApplicationHelper.post_simple_message to, subject, text
-      end
-    end
   end
 
   # FIXME PSDJS
