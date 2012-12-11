@@ -17,33 +17,27 @@ class Design
   Design::STATUS_UPLOADING    = :uploading
   Design::STATUS_UPLOADED     = :uploaded
   Design::STATUS_PROCESSING   = :processing
-  Design::STATUS_PROCESSED    = :processed
   Design::STATUS_EXTRACTING   = :extracting
-  Design::STATUS_EXTRACTED    = :extracted
-  Design::STATUS_CLIPPING     = :clipping
-  Design::STATUS_CLIPPED      = :clipped
-  Design::STATUS_PARSING      = :parsing
-  Design::STATUS_PARSED       = :parsed
-  Design::STATUS_GENERATING   = :generating
-  Design::STATUS_REGENERATING = :regenerating
+  Design::STATUS_GROUPING     = :grouping
+  Design::STATUS_GRIDS        = :grids
+  Design::STATUS_MARKUP       = :markup
   Design::STATUS_COMPLETED    = :completed
   Design::STATUS_FAILED       = :failed
 
   Design::STATUS_CLASS = {
-    Design::STATUS_QUEUED       => 'label label-info',
+    Design::STATUS_QUEUED       => 'label',
     Design::STATUS_UPLOADING    => 'label',
     Design::STATUS_UPLOADED     => 'label',
     Design::STATUS_PROCESSING   => 'label label-info',
     Design::STATUS_PROCESSED    => 'label label-info',
     Design::STATUS_EXTRACTING   => 'label label-info',
     Design::STATUS_EXTRACTED    => 'label label-info',
-    Design::STATUS_PARSING      => 'label label-info',
-    Design::STATUS_PARSED       => 'label label-info',
-    Design::STATUS_GENERATING   => 'label label-info',
-    Design::STATUS_REGENERATING => 'label label-info',
-    Design::STATUS_COMPLETED    => 'label label-success',
+    Design::STATUS_GROUPING     => 'label label-info'
+    Design::STATUS_GRIDS        => 'label label-info'
+    Design::STATUS_MARKUP       => 'label label-info'
+    Design::STATUS_COMPLETED    => 'label label-success'
     Design::STATUS_FAILED       => 'label label-important'
-  }
+    
   
   Design::ERROR_FILE_ABSENT        = "file_absent"
   Design::ERROR_NOT_PHOTOSHOP_FILE = "not_photoshop_file"
