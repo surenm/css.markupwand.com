@@ -211,9 +211,7 @@ class Layer
   ########################################################## 
   
   def image_name
-    layer_safe_name = Store::get_safe_name(self.name)
-    image_base_name = "#{layer_safe_name.downcase}_#{self.uid}.png"
-    return image_base_name
+    "#{self.uid}.png"
   end
 
   #TODO Requires cleanup
@@ -236,8 +234,6 @@ class Layer
 
   def extracted_image_path
     extracted_folder = Store::fetch_extracted_folder self.design
-    Log.debug extracted_folder
-    Log.debug image_asset_path
     current_image_path = File.join extracted_folder, image_asset_path
   end
 
