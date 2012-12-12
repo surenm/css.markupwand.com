@@ -86,7 +86,7 @@ class LayerModel extends Backbone.Model
       style_string += "bold "
 
     if styles['font-size']?
-      style_string += "#{styles['font-size']} "
+      style_string += "#{styles['font-size']} Times, sans-serif"
 
     return style_string
 
