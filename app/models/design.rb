@@ -432,11 +432,15 @@ class Design
   def get_intersecting_pairs
     intersecting_pairs = []
 
-    self.layers.each do |a_uid, layer_a|
-      self.layers.each do |b_uid, layer_b|
-        if a_uid != b_uid
-          if layer_a.bounds.intersect? layer_b.bounds
-            intersecting_pairs.push [self.layers[a_uid], self.layers[b_uid]]
+    self.layers.each do |left_uid, node_left|
+      self.layers.each do |right_uid, node_right|
+        if left_uid != right_uid
+          if node_left.bounds.intersect? node_right.bounds and !(node_left.bounds.encloses? node_right.bounds or node_right.bounds.encloses? node_left.bounds)
+            if node_left.zindex < node_right.zindex
+              intersecting_pairs.push [node_left, node_right]
+            else
+              intersecting_pairs.push [node_right, node_left]
+            end
           end
         end
       end
