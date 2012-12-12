@@ -15,6 +15,7 @@
 //= require lib/jquery.client
 //= require lib/jquery.formdefaults
 //= require lib/jquery.ba-dotimeout
+//= require lib/jquery.imagesloaded.js
 //= require lib/jquery-ui-1.8.20.min
 //= require lib/json2
 //= require lib/underscore
@@ -27,8 +28,6 @@
 //= require lib/jcanvas
 //= require lib/editor_canvas
 //= require lib/helper
-
-//= require jquery.flot
 
 //= require twitter/bootstrap
 //= require app/tutorial

@@ -9,8 +9,14 @@ class EditorApp
     @editor_canvas = new EditorCanvas()
 
     $this = this
-    $.doTimeout 5000, () ->
+
+    dfd = $("#design-images").imagesLoaded()
+    dfd.done (images) ->
       $this.render_design_layers()
+
+    dfd.progress (isBroken, $images, $proper, $broken) ->
+      console.log( 'Loading progress: ' + ( $proper.length + $broken.length ) + ' out of ' + $images.length );
+
 
   render_design_layers: () ->
     layers = @design.layers.toArray().reverse()
