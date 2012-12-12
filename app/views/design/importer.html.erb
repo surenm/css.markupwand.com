@@ -15,7 +15,7 @@
 <div id="images" style="display:none">
   <% @sif[:layers].each do |layer| %>
     <% if layer[:type] == 'normal' %>
-      <img src="/published/<%= @design.safe_name %>/assets/images/<%= layer[:image_name] %>" id="<%= layer[:uid] %>">
+      <img src="/extracted/<%= @design.safe_name %>/assets/images/<%= layer[:image_name] %>" id="<%= layer[:uid] %>">
     <% end %>
   <% end %>
 <% end %>
