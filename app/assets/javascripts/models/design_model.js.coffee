@@ -26,4 +26,7 @@ class DesignModel extends Backbone.Model
   get_assets_root: ->
     return "published/#{this.get('safe_name')}/assets"
 
+  get_layer: (layer_id) ->
+    return @layers.get(layer_id)
+
 window.DesignModel = DesignModel

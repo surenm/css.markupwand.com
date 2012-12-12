@@ -4,10 +4,13 @@ class EditorCanvas
     ORANGE: "#ff6723" 
     FILL_BLUE: "rgba(245, 245, 245, 0.2)"
     FILL_RED: "#d87272"
-    
-
-  constructor: (@design_canvas, @events_canvas) ->
+  
+  constructor: () ->
     $this = this
+
+    @design_canvas = this.get_canvas('design-canvas')
+    @events_canvas = this.get_canvas('events-canvas')
+    @animate_canvas = this.get_canvas('animate-canvas')
 
     $(@design_canvas).jCanvas
       fromCenter: false
@@ -20,6 +23,10 @@ class EditorCanvas
       fromCenter: false
       strokeWidth: 1
 
+  get_canvas: (canvas_name) ->
+    canvas = $("##{canvas_name}").first()
+    return canvas
+
   drawDebugRectange: ->
     $(@events_canvas).drawRect 
       strokeStyle: "#000"
@@ -31,17 +38,51 @@ class EditorCanvas
 
   clear: ->
     $(@events_canvas).clearCanvas()
+    $(@animate_canvas).clearCanvas()
 
-  drawBounds: (bounds, stroke_style = COLORS.BLUE) ->
-    $(@events_canvas).drawRect
+  drawBoundsMarkers: ( bounds, stroke_style, animate = false) ->
+    $canvas = @events_canvas
+    if animate
+      $canvas = @animate_canvas
+
+    points = [
+      {x: bounds.left-2, y:bounds.top-2}
+      {x: bounds.left-2, y:bounds.bottom+2}
+      {x: bounds.right+2, y: bounds.top-2}
+      {x: bounds.right+2, y: bounds.bottom+2}
+      {x: (bounds.right+bounds.left)/2, y: bounds.top - 2}
+      {x: (bounds.right+bounds.left)/2, y: bounds.bottom + 2}
+    ]
+
+    for point in points
+      $($canvas).drawRect
+        strokeStyle: stroke_style
+        x: point.x - 0.5
+        y: point.y - 0.5
+        width: 6
+        height: 6
+        fromCenter: true
+
+  drawBounds: (bounds, stroke_style = COLORS.BLUE, animate = false) ->
+    $canvas = @events_canvas
+    if animate
+      $canvas = @animate_canvas
+
+    $($canvas).drawRect
       strokeStyle: stroke_style
-      x: bounds.left
-      y: bounds.top
-      width: bounds.right - bounds.left,
-      height: bounds.bottom - bounds.top,
+      x: bounds.left - 2.5
+      y: bounds.top - 2.5
+      width: bounds.right - bounds.left + 4
+      height: bounds.bottom - bounds.top + 4
 
-  drawFilledRectangle: (bounds, fill_color = COLORS.FILL_BLUE) ->
-    $(@events_canvas).drawRect
+    this.drawBoundsMarkers bounds, stroke_style, animate
+
+  drawFilledRectangle: (bounds, fill_color = COLORS.FILL_BLUE, animate = false) ->
+    $canvas = @events_canvas
+    if animate
+      $canvas = @animate_canvas
+
+    $($canvas).drawRect
       fillStyle: fill_color
       x: bounds.left
       y: bounds.top
@@ -124,16 +165,22 @@ class EditorCanvas
 
     return
 
-  layerClickHandler: (layer) ->
-    
+  layerClickHandler: (canvas_layer) ->
+    layer = app.design.get_layer(canvas_layer.name)
+    $editor_canvas = app.editor_canvas
+    $editor_canvas.clear()
+    $editor_canvas.drawBounds layer.get('bounds')
 
   layerDoubleClickHandler: (layer) ->
     
 
-  layerMouseOverHandler: (layer) ->
+  layerMouseOverHandler: (canvas_layer) ->
+    layer = app.design.get_layer(canvas_layer.name)
+    $editor_canvas = app.editor_canvas
+    $editor_canvas.drawBounds layer.get('bounds'), COLORS.ORANGE, true
     
-
-  layerMouseOutHandler: (layer) ->
-    
+  layerMouseOutHandler: (canvas_layer) ->
+    $editor_canvas = app.editor_canvas
+    $editor_canvas.animate_canvas.clearCanvas()
 
 window.EditorCanvas = EditorCanvas

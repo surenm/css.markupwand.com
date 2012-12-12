@@ -25,10 +25,6 @@
     <%= link_to 'Uploading', params.merge( :status => Design::STATUS_UPLOADING), :class => "btn" %>
     <%= link_to 'Uploaded', params.merge( :status => Design::STATUS_UPLOADED), :class => "btn" %>
     <%= link_to 'Processing', params.merge( :status => Design::STATUS_PROCESSING), :class => "btn" %>
-    <%= link_to 'Parsing', params.merge( :status => Design::STATUS_PARSING), :class => "btn" %>
-    <%= link_to 'Parsed', params.merge( :status => Design::STATUS_PARSED), :class => "btn" %>
-    <%= link_to 'Generating', params.merge( :status => Design::STATUS_GENERATING), :class => "btn" %>
-    <%= link_to 'Regenerating', params.merge( :status => Design::STATUS_REGENERATING), :class => "btn" %>
     <%= link_to 'Completed', params.merge( :status => Design::STATUS_COMPLETED), :class => "btn" %>
     <%= link_to 'Failed', params.merge( :status => Design::STATUS_FAILED), :class => "btn" %>
   </div>

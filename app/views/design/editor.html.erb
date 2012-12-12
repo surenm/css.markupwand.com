@@ -19,7 +19,9 @@
     <div id="right-sidebar"> </div>
     <div>
       <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>"></canvas> 
-      <canvas id="events-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"/>
+      <canvas id="animate-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;">
+      </canvas>
+      <canvas id="events-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;">
       </canvas>
     </div>
     <div id="layers" />
