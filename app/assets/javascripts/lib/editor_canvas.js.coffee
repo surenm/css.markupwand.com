@@ -4,10 +4,13 @@ class EditorCanvas
     ORANGE: "#ff6723" 
     FILL_BLUE: "rgba(245, 245, 245, 0.2)"
     FILL_RED: "#d87272"
-    
-
-  constructor: (@design_canvas, @events_canvas) ->
+  
+  constructor: () ->
     $this = this
+
+    @design_canvas = this.get_canvas('design-canvas')
+    @events_canvas = this.get_canvas('events-canvas')
+    @animate_canvas = this.get_canvas('animate-canvas')
 
     $(@design_canvas).jCanvas
       fromCenter: false
@@ -19,6 +22,10 @@ class EditorCanvas
     $(@events_canvas).jCanvas
       fromCenter: false
       strokeWidth: 1
+
+  get_canvas: (canvas_name) ->
+    canvas = $("##{canvas_name}").first()
+    return canvas
 
   drawDebugRectange: ->
     $(@events_canvas).drawRect 

@@ -7,21 +7,16 @@ class EditorApp
   constructor: () ->
     # design_data and sif_data are defined in import.html.erb
     @design = new DesignModel(design_data, sif_data)
-    
-    this.init_editor_canvas()
+    @editor_canvas = new EditorCanvas()
 
     $this = this
     $.doTimeout 5000, () ->
       $this.render_design_layers()
 
-  get_canvas: (canvas_name) ->
-    canvas = $("##{canvas_name}").first()
-    return canvas
+  
 
   init_editor_canvas: () ->
-    design_canvas = this.get_canvas('design-canvas')
-    events_canvas = this.get_canvas('events-canvas')
-    @editor_canvas = new EditorCanvas(design_canvas, events_canvas)
+    
 
   render_design_layers: () ->
     layers = @design.layers.toArray().reverse()
