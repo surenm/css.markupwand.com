@@ -30,7 +30,7 @@ class EditorApp
     @intersecting_pairs.attr('design_id', @design.id)
     @intersecting_pairs.fetch({ 
       success: ()->
-        debugger
+        @intersection_view = new IntersectionView({model: @intersecting_pairs})
       })
     return
     
