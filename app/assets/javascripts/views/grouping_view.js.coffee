@@ -1,6 +1,6 @@
-#= require './view'
+#= require '../lib/bounding_box'
 
-class GroupingView extends View
+class GroupingView extends Backbone.View
   el: "#app"
   left_sidebar: "#left-sidebar"
   right_sidebar: "#right-sidebar"
@@ -22,6 +22,7 @@ class GroupingView extends View
 
   initialize: ->
     @grouping_type = null
+    @editor_canvas = window.app.editor_canvas
     this.render()
 
   get_iframe_src: ->
@@ -32,8 +33,6 @@ class GroupingView extends View
     
     $design = this.model
     $this = this
-
-    this.render_iframe()
 
     template = $("#grouping-left-sidebar-template").html()
     $(this.left_sidebar).html(template)
@@ -58,23 +57,23 @@ class GroupingView extends View
       $this.handle_multiple_grouping_box_selection grouping_boxes
 
   handle_grouping_box_selection: (grouping_box) ->
-    this.main_canvas.clear()
+    @editor_canvas.clear()
     for child in grouping_box.children
       if child.layers.length > 0
-        this.main_canvas.drawFilledRectangle child.bounds, 'rgba(0, 0, 255, 0.2)'
+        @editor_canvas.drawFilledRectangle child.bounds, 'rgba(0, 0, 255, 0.2)'
       else 
-        this.main_canvas.drawFilledRectangle child.bounds, 'rgba(0, 0, 255, 0.1)'
-    this.main_canvas.drawBounds grouping_box.bounds, "#0000ff"
+        @editor_canvas.drawFilledRectangle child.bounds, 'rgba(0, 0, 255, 0.1)'
+    @editor_canvas.drawBounds grouping_box.bounds, "#0000ff"
 
   handle_multiple_grouping_box_selection: (grouping_boxes) ->
-    this.main_canvas.clear()
+    @editor_canvas.clear()
     bounding_boxes = []
     for grouping_box in grouping_boxes
-      this.main_canvas.drawFilledRectangle grouping_box.bounds, 'rgba(0, 0, 255, 0.1)'
+      @editor_canvas.drawFilledRectangle grouping_box.bounds, 'rgba(0, 0, 255, 0.1)'
       bounding_boxes.push grouping_box.bounds
 
     super_bounds = BoundingBox.getSuperBounds bounding_boxes
-    this.main_canvas.drawBounds super_bounds, '#ff0000'
+    @editor_canvas.drawBounds super_bounds, '#ff0000'
 
   reset_right_sidebar: ->
     @grouping_type = null
@@ -159,7 +158,7 @@ class GroupingView extends View
 
     switch @grouping_type
       when GroupingTypes.NEW_GROUPING_BOX
-        this.main_canvas.clear()
+        @editor_canvas.clear()
         $(@tree_element).tree('disableMultiSelectMode')      
       else 
         console.log "unhandled grouping type"
