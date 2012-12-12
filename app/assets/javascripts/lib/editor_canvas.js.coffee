@@ -1,8 +1,7 @@
 class EditorCanvas
   constructor: (@design_canvas, @events_canvas) ->
     $this = this
-    console.log @design_canvas
-    console.log @events_canvas
+
     $(@design_canvas).jCanvas
       fromCenter: false
       click: $this.layerClickHandler
