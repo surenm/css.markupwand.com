@@ -15,7 +15,7 @@
 <%= content_for :content do %>
 <center>
   <img src="/extracted/<%= @design.safe_name %>/<%= @design.safe_name_prefix %>.png">
-  <canvas id="main-canvas" height="2000" width="2000" />
+  <canvas id="main-canvas" height="<%= @height %>" width="<%= @width %>" />
 </center>
 <canvas id="mouseoverlay-canvas" />
 <% end %>
