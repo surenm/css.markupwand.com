@@ -19,6 +19,9 @@ class LayersView extends View
       
   render_layer: (layer) ->
     canvas_data = layer.to_canvas_data(@canvas_element)
+    if not canvas_data?
+      return
+
     $this = this
 
     $canvas_element = @canvas_element
@@ -58,5 +61,7 @@ class LayersView extends View
           x: canvas_data.bounds.left
           y: canvas_data.bounds.top
           fromCenter: false
+
+    return
             
 window.LayersView = LayersView

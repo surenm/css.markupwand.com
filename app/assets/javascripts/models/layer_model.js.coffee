@@ -12,6 +12,9 @@ class LayerModel extends Backbone.Model
 
   text_canvas_data: ->
     text_content = this.get('text').full_text
+    if text_content == ""
+      return null
+
     bounds = this.get('bounds')
 
     font = this.get_font_style_string(this.get('text'))
