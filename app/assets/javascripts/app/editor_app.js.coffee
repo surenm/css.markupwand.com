@@ -18,6 +18,15 @@ class EditorApp
       this.editor_canvas.addLayer layers[i]
 
     this.editor_canvas.renderLayers()
+
+  load_intersection_view: ->
+    @intersecting_pairs = new IntersectingPairsCollection()
+    @intersecting_pairs.attr('design_id', @design.id)
+    @intersecting_pairs.fetch({ 
+      success: ()->
+        debugger
+      })
+    return
     
   load_grouping_view: ->
     @grouping_view = new GroupingView({model: @design})  

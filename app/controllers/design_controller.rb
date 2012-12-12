@@ -27,6 +27,15 @@ class DesignController < ApplicationController
     Resque.enqueue UploaderJob, design.id, design_data
     redirect_to :action => :show, :id => design.safe_name
   end
+
+  def intersecting_pairs
+    pairs = @design.get_intersecting_pairs
+    pairs_ids = []
+    pairs.each do |left, right|
+      pairs_ids.push({:left => left.uid, :right => right.uid})
+    end
+    render :json => pairs_ids.to_json
+  end
   
   def set_rating
     if params[:rate] == "true"
