@@ -17,6 +17,17 @@
   <div id="app">
     <div id="left-sidebar"> </div>
     <div id="right-sidebar"> </div>
-    <iframe id="iframe" src="about:blank" />
+    <center>
+      <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>" style="border: 1px dotted #000"/>
+      <canvas id="events-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none">
+    </center>
+    <div id="layers" />
+    <div id="images" style="display:none">
+      <% @sif[:layers].each do |layer| %>
+        <% if layer[:type] == 'normal' %>
+          <img src="/extracted/<%= @design.safe_name %>/assets/images/<%= layer[:image_name] %>" id="<%= layer[:uid] %>">
+        <% end %>
+      <% end %>
+    </div>
   </div>
 <% end %>
