@@ -214,19 +214,24 @@ class Layer
     "#{self.uid}.png"
   end
 
+  def copy_layer_image_to_store
+    image_path = "./assets/images/#{self.image_name}"
+    src_image_file = Rails.root.join("tmp", "store", self.design.store_extracted_key, image_path).to_s
+    Log.fatal src_image_file
+    if File.exists? src_image_file
+      generated       = File.join self.design.store_generated_key, "assets", "images", self.image_name
+      published       = File.join self.design.store_published_key, "assets", "images", self.image_name
+      Store::save_to_store src_image_file, generated
+      Store::save_to_store src_image_file, published
+    else
+      Log.fatal "#{src_image_file} Missing"
+    end
+  end
+
   #TODO Requires cleanup
   def image_path
     if not @image_path
       @image_path     = "./assets/images/#{image_name}"
-      src_image_file  = Rails.root.join("tmp", "store", self.design.store_extracted_key, @image_path).to_s
-      
-      # TODO: this is a temp fix so that parsing goes though instead of breaking!
-      if File.exists? src_image_file
-        generated       = File.join self.design.store_generated_key, "assets", "images", image_name
-        published       = File.join self.design.store_published_key, "assets", "images", image_name
-        Store::save_to_store src_image_file, generated
-        Store::save_to_store src_image_file, published
-      end
     end
 
     @image_path
@@ -296,6 +301,10 @@ class Layer
 
   def get_style_rules
     self.crop_objects_for_cropped_bounds
+
+    if self.type == Layer::LAYER_NORMAL
+      self.copy_layer_image_to_store
+    end
 
     computed_style_rules = Hash.new
     if not self.parent_grid.is_leaf? and self.type == Layer::LAYER_NORMAL
