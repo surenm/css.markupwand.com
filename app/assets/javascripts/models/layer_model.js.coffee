@@ -85,9 +85,6 @@ class LayerModel extends Backbone.Model
     if styles['font-size']?
       style_string += "#{styles['font-size']} "
 
-    if styles['font-family']?
-      style_string += "#{styles['font-family']}"
-
     return style_string
 
   getShapeFillStyle: (canvas_element) ->
