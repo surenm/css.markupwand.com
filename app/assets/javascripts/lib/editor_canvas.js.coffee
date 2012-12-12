@@ -1,9 +1,7 @@
 class EditorCanvas
   constructor: (@canvas_element) ->
     
-
   drawDebugRectange: ->
-    console.log @canvas_element
     $(@canvas_element).drawRect 
       strokeStyle: "#000"
       x: 20 
