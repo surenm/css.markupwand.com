@@ -64,7 +64,7 @@ class GroupingView extends Backbone.View
     @editor_canvas.clear()
     bounding_boxes = []
     for grouping_box in grouping_boxes
-      @editor_canvas.drawFilledRectangle grouping_box.bounds, 'rgba(0, 0, 255, 0.1)'
+      @editor_canvas.drawFilledRectangle grouping_box.bounds
       bounding_boxes.push grouping_box.bounds
 
     super_bounds = BoundingBox.getSuperBounds bounding_boxes

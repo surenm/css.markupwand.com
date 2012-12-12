@@ -5,18 +5,12 @@
 
 class EditorApp
   constructor: () ->
-    # design_data and sif_data are defined in import.html.erb
-    @design = new DesignModel(design_data, sif_data)
+    @design = window.design
     @editor_canvas = new EditorCanvas()
 
     $this = this
     $.doTimeout 5000, () ->
       $this.render_design_layers()
-
-  
-
-  init_editor_canvas: () ->
-    
 
   render_design_layers: () ->
     layers = @design.layers.toArray().reverse()
@@ -29,6 +23,10 @@ class EditorApp
     @grouping_view = new GroupingView({model: @design})  
     
 $(window).load ->
+  # design_data and sif_data are defined in import.html.erb
+  window.design = new DesignModel(design_data, sif_data)
+
+  # initiate editor app
   window.app = new EditorApp()
 
   # Initiate router 

@@ -8,6 +8,8 @@ class EditorCanvas
   constructor: () ->
     $this = this
 
+    @design = window.design
+
     @design_canvas = this.get_canvas('design-canvas')
     @events_canvas = this.get_canvas('events-canvas')
     @animate_canvas = this.get_canvas('animate-canvas')
@@ -26,15 +28,6 @@ class EditorCanvas
   get_canvas: (canvas_name) ->
     canvas = $("##{canvas_name}").first()
     return canvas
-
-  drawDebugRectange: ->
-    $(@events_canvas).drawRect 
-      strokeStyle: "#000"
-      x: 20 
-      y: 20
-      width: 300
-      height: 200
-      fromCenter: false
 
   clear: ->
     $(@events_canvas).clearCanvas()
