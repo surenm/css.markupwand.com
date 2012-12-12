@@ -265,16 +265,6 @@ class DesignController < ApplicationController
 
   def editor
     @sif = @design.get_serialized_sif_data
-    @root_grouping_box = @design.root_grouping_box
-  end
-
-  def importer
-    @sif = @design.get_serialized_sif_data
-    @width = ((@design.width + 100) / 100) * 100
-    @height = ((@design.height + 100) / 100) * 100
-  end
-
-  def grouping
     @width = ((@design.width + 100) / 100) * 100
     @height = ((@design.height + 100) / 100) * 100
   end
