@@ -3,9 +3,8 @@
 class GroupingView extends Backbone.View
   el: "#app"
   left_sidebar: "#left-sidebar"
-  right_sidebar: "#right-sidebar"
-  iframe: "#iframe"
   context_area: "#context-area"
+  action_panel: "#action-panel"
 
   events: {
     "click #add-new-grouping-box": "add_grouping_box_handler"
@@ -37,7 +36,7 @@ class GroupingView extends Backbone.View
     template = $("#grouping-left-sidebar-template").html()
     $(this.left_sidebar).html(template)
 
-    this.reset_right_sidebar()
+    this.reset_context_area()
 
     @tree_element = $(this.left_sidebar).find('#grouping-tree')
     
@@ -70,10 +69,9 @@ class GroupingView extends Backbone.View
     super_bounds = BoundingBox.getSuperBounds bounding_boxes
     @editor_canvas.drawBounds super_bounds
 
-  reset_right_sidebar: ->
+  reset_context_area: ->
     @grouping_type = null
-    template = $("#right-sidebar-template").html()
-    $(this.right_sidebar).html(template)
+    $(this.context_area).html("")
 
   add_grouping_box_handler: (event) ->
     event.stopPropagation()
@@ -146,7 +144,7 @@ class GroupingView extends Backbone.View
       else
         console.log "unhandled grouping type"
 
-    @reset_right_sidebar()
+    this.reset_context_area()
 
   cancel_handler: (event) ->
     event.stopPropagation()
@@ -158,6 +156,6 @@ class GroupingView extends Backbone.View
       else 
         console.log "unhandled grouping type"
 
-    @reset_right_sidebar()
+    this.reset_context_area()
 
 window.GroupingView = GroupingView
