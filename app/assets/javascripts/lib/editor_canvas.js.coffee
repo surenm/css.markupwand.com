@@ -29,15 +29,6 @@ class EditorCanvas
     canvas = $("##{canvas_name}").first()
     return canvas
 
-  drawDebugRectange: ->
-    $(@events_canvas).drawRect 
-      strokeStyle: "#000"
-      x: 20 
-      y: 20
-      width: 300
-      height: 200
-      fromCenter: false
-
   clear: ->
     $(@events_canvas).clearCanvas()
     $(@animate_canvas).clearCanvas()
