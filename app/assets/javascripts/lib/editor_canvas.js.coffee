@@ -31,7 +31,6 @@ class EditorCanvas
       y: bounds.top
       width: bounds.right - bounds.left,
       height: bounds.bottom - bounds.top,
-      fromCenter: false
 
   drawFilledRectangle: (bounds, fill_color = "rgba(0, 0, 0, 0.4)") ->
     $(@events_canvas).drawRect
@@ -40,8 +39,7 @@ class EditorCanvas
       x: bounds.left
       y: bounds.top
       width: bounds.right - bounds.left,
-      height: bounds.bottom - bounds.top,
-      fromCenter: false
+      height: bounds.bottom - bounds.top
 
   createGradient: (gradient, bounds) ->
     fillStyle = null
