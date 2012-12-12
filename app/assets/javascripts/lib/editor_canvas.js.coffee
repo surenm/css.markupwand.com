@@ -14,7 +14,7 @@ class EditorCanvas
       fromCenter: false
 
   drawDebugRectange: ->
-    $(@canvas_element).drawRect 
+    $(@events_canvas).drawRect 
       strokeStyle: "#000"
       x: 20 
       y: 20
@@ -23,10 +23,10 @@ class EditorCanvas
       fromCenter: false
 
   clear: ->
-    $(@canvas_element).clearCanvas()
+    $(@events_canvas).clearCanvas()
 
   drawBounds: (bounds, stroke_color = "#33333") ->
-    $(@canvas_element).drawRect
+    $(@events_canvas).drawRect
       strokeStyle: stroke_color
       x: bounds.left
       y: bounds.top
@@ -35,7 +35,7 @@ class EditorCanvas
       fromCenter: false
 
   drawFilledRectangle: (bounds, fill_color = "rgba(0, 0, 0, 0.4)") ->
-    $(@canvas_element).drawRect
+    $(@events_canvas).drawRect
       strokeStyle: "rgba(0, 0, 0, 0.3)"
       fillStyle: fill_color
       x: bounds.left
@@ -68,12 +68,12 @@ class EditorCanvas
         gradient_args["s#{pos}"] = stop
         pos++
 
-      fillStyle = $(@canvas_element).createGradient gradient_args
+      fillStyle = $(@design_canvas).createGradient gradient_args
 
     return fillStyle
 
   renderLayers: () ->
-    $(@canvas_element).drawLayers()
+    $(@design_canvas).drawLayers()
 
   addLayer: (layer) ->
     canvas_data = layer.to_canvas_data this
@@ -82,7 +82,7 @@ class EditorCanvas
       return
 
     $this = this
-    $canvas_element = @canvas_element
+    $canvas_element = @design_canvas
 
     switch layer.get('type')
       when 'text'
@@ -96,8 +96,6 @@ class EditorCanvas
           y: canvas_data.bounds.top
           font: canvas_data.font
           text: canvas_data.text
-          fromCenter: false
-          click: $this.layerClickHandler
       when 'shape'
         $($canvas_element).addLayer
           method: 'drawRect'
@@ -111,8 +109,6 @@ class EditorCanvas
           strokeStyle: canvas_data.strokeStyle
           strokeWidth: canvas_data.strokeWidth
           cornerRadius: canvas_data.cornerRadius
-          fromCenter: false
-          click: $this.layerClickHandler
       when 'normal'
         $($canvas_element).addLayer
           method: 'drawImage'
@@ -121,13 +117,20 @@ class EditorCanvas
           source: canvas_data.src
           x: canvas_data.bounds.left
           y: canvas_data.bounds.top
-          fromCenter: false
-          click: $this.layerClickHandler
 
     return
 
   layerClickHandler: (layer) ->
     console.log layer
+    
 
+  layerDoubleClickHandler: (layer) ->
+    
+
+  layerMouseOverHandler: (layer) ->
+    
+
+  layerMouseOutHandler: (layer) ->
+    
 
 window.EditorCanvas = EditorCanvas
