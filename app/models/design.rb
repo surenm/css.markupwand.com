@@ -429,6 +429,22 @@ class Design
     @sif.save!
   end
 
+  def get_intersecting_pairs
+    intersecting_pairs = []
+
+    self.layers.each do |a_uid, layer_a|
+      self.layers.each do |b_uid, layer_b|
+        if a_uid != b_uid
+          if layer_a.bounds.intersect? layer_b.bounds
+            intersecting_pairs.push [self.layers[a_uid], self.layers[b_uid]]
+          end
+        end
+      end
+    end
+
+    intersecting_pairs.uniq
+  end
+
   def create_grids
     self.init_sif(true)
 
@@ -538,6 +554,7 @@ config
 
     css_contents
   end
+
 
   def write_css_files(scss_content, base_folder)
     Log.info "Writing css (compass) file..."    
