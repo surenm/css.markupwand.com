@@ -17,10 +17,11 @@
   <div id="app">
     <div id="left-sidebar"> </div>
     <div id="right-sidebar"> </div>
-    <center>
-      <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>" style="border: 1px dotted #000"/>
-      <canvas id="events-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none">
-    </center>
+    <div>
+      <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>"></canvas> 
+      <canvas id="events-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"/>
+      </canvas>
+    </div>
     <div id="layers" />
     <div id="images" style="display:none">
       <% @sif[:layers].each do |layer| %>
