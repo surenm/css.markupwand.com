@@ -1,6 +1,18 @@
 class EditorCanvas
-  constructor: (@canvas_element) ->
-    
+  constructor: (@design_canvas, @events_canvas) ->
+    $this = this
+    console.log @design_canvas
+    console.log @events_canvas
+    $(@design_canvas).jCanvas
+      fromCenter: false
+      click: $this.layerClickHandler
+      dblclick: $this.layerDoubleClickHandler
+      mouseover: $this.layerMouseOverHandler
+      mouseout: $this.layerMouseOutHandler
+
+    $(@events_canvas).jCanvas
+      fromCenter: false
+
   drawDebugRectange: ->
     $(@canvas_element).drawRect 
       strokeStyle: "#000"
