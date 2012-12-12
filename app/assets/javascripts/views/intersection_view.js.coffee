@@ -1,13 +1,18 @@
 class IntersectionView extends Backbone.View
   el: "#app"
   left_sidebar: "#left-sidebar"
-  right_sidebar: "#right-sidebar"
- 
+  intersections_sidebar: "#intersections-sidebar"
+  intersections_list: "#intersections-list"
+  
   initialize: ->
     this.render()
 
   render_no_intersections: ->
     template = $("#no-intersections").html()
+    $(this.left_sidebar).html(template)
+
+  render_wrapper: ->
+    template = $('#intersections-sidebar').html()
     $(this.left_sidebar).html(template)
 
   render: ->
@@ -16,7 +21,9 @@ class IntersectionView extends Backbone.View
     if @intersecting_pairs.length == 0
       this.render_no_intersections()
     else
-      list_node = $('<ul></ul>')
+      this.render_wrapper()
+      list_node = $(this.intersections_list)
+
       for intersecting_pair in @intersecting_pairs.models
         left = intersecting_pair.get('left')
         right = intersecting_pair.get('right')
@@ -25,7 +32,7 @@ class IntersectionView extends Backbone.View
         left_name = window.design.layers.get(left).get('name')
         node.html "#{right_name}(#{right}) and #{left_name}(#{left})"
         list_node.append(node)
-      $(this.left_sidebar).append(list_node)
+
 
 
 window.IntersectionView = IntersectionView
