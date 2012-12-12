@@ -11,10 +11,8 @@ class EditorApp
   load_grouping_view: ->
     @grouping_view = new GroupingView({model: @design})
 
-  load_layers_view: ->
     $this = this
     $.doTimeout 5000, () ->
-      $this.layers_view = new LayersView(({model: $this.design}))
     
     
 $(window).load ->
