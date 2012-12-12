@@ -8,6 +8,7 @@
     var design_data = <%= raw @design.attribute_data.to_json %>
     var sif_data = <%= raw @sif.to_json %>;
     var root_grouping_box = <%= raw @sif[:root_grouping_box].to_json %>;
+    var scaling = <%= @scaling %>;
   </script>
   <%= javascript_include_tag "app/editor_app" %>
 <% end %>
@@ -17,14 +18,15 @@
   <div id="app">
     <div id="left-sidebar"> </div>
     <div id="right-sidebar"> </div>
-  <div id="app" style="height: <%= @height %>px">
-    <div>
-      <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>"></canvas> 
-      <canvas id="animate-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;">
-      </canvas>
-      <canvas id="events-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;">
-      </canvas>
+    <div class="canvases" style="height: <%= @height %>px">
+      <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>"></canvas>
+      <canvas id="animate-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>
+      <canvas id="events-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>
     </div>
+    
+    <div class="clearfix"> </div>
+  </div>
+  <div class="extra">
     <div id="layers" />
     <div id="design-images" style="display:none">
       <% @sif[:layers].each do |layer| %>

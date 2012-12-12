@@ -10,58 +10,37 @@ body {
 
   canvas {
     position: absolute;
-    top: 0;
-    left: 0;
+
   }
 
   #app {
-    #iframe {
-      position: absolute;
-      overflow: auto;
-      
-      width: 100%;
-      border: 0px inset;
-      border-right: 1px solid #106AA3;
+    background: url('/assets/low_contrast_linen.png');
+
+    .canvases {
+      float: right;
+      margin: 25px 10px;
+      width: 1200px;
+      border: 1px solid #ccc;
+      @include box-shadow(rgba(white, 0.4) 0 0px 15px, rgba(white, 0.4) 0 0 25px inset);
     }
 
     #left-sidebar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 12%;
-      height: 100%;
+      float: left;
+      width: 200px;
+      height: 800px;
       overflow: auto;
       
-      background: #383838 url("/assets/noise.png") repeat;
       color: #fff;
       border-left: 1px solid #999;
 
       font-family: "museo-sans", sans-serif;
       font-size: 11px;
-      z-index: 100;
-    }
 
-    #right-sidebar {
-     position: absolute;
-      top: 0;
-      right: 0;
-      width: 12%;
-      height: 100%;
-      overflow: auto;
-      
-      background: #383838 url("/assets/noise.png") repeat;
-      color: #fff;
-      border-left: 1px solid #999;
-
-      font-family: "museo-sans", sans-serif;
-      font-size: 12px;
-      z-index: 100; 
-    }
-
-    #action-panel {
-      width: 90%;
-      margin: 0 auto;
-      padding-top: 20px;
+      #action-panel {
+        margin:0 auto;
+        margin-top: 100px;
+        width: 175px;
+      }
     }
   }
 }

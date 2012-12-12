@@ -14,6 +14,12 @@ class EditorCanvas
     @events_canvas = this.get_canvas('events-canvas')
     @animate_canvas = this.get_canvas('animate-canvas')
 
+    $('canvas').scaleCanvas 
+      x: 0
+      y: 0
+      scaleX: window.scaling
+      scaleY: window.scaling
+
     $(@design_canvas).jCanvas
       fromCenter: false
       click: $this.layerClickHandler
