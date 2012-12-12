@@ -26,7 +26,7 @@
       </canvas>
     </div>
     <div id="layers" />
-    <div id="images" style="display:none">
+    <div id="design-images" style="display:none">
       <% @sif[:layers].each do |layer| %>
         <% if layer[:type] == 'normal' %>
           <img src="/extracted/<%= @design.safe_name %>/assets/images/<%= layer[:image_name] %>" id="<%= layer[:uid] %>">
