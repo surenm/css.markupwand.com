@@ -58,12 +58,7 @@ class GroupingView extends Backbone.View
 
   handle_grouping_box_selection: (grouping_box) ->
     @editor_canvas.clear()
-    for child in grouping_box.children
-      if child.layers.length > 0
-        @editor_canvas.drawFilledRectangle child.bounds, 'rgba(0, 0, 255, 0.2)'
-      else 
-        @editor_canvas.drawFilledRectangle child.bounds, 'rgba(0, 0, 255, 0.1)'
-    @editor_canvas.drawBounds grouping_box.bounds, "#0000ff"
+    @editor_canvas.drawBounds grouping_box.bounds
 
   handle_multiple_grouping_box_selection: (grouping_boxes) ->
     @editor_canvas.clear()
@@ -73,7 +68,7 @@ class GroupingView extends Backbone.View
       bounding_boxes.push grouping_box.bounds
 
     super_bounds = BoundingBox.getSuperBounds bounding_boxes
-    @editor_canvas.drawBounds super_bounds, '#ff0000'
+    @editor_canvas.drawBounds super_bounds
 
   reset_right_sidebar: ->
     @grouping_type = null

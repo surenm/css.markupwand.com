@@ -1,4 +1,11 @@
 class EditorCanvas
+  COLORS = 
+    BLUE: "#0000ff"
+    ORANGE: "#ff6723" 
+    FILL_BLUE: "rgba(245, 245, 245, 0.2)"
+    FILL_RED: "#d87272"
+    
+
   constructor: (@design_canvas, @events_canvas) ->
     $this = this
 
@@ -11,6 +18,7 @@ class EditorCanvas
 
     $(@events_canvas).jCanvas
       fromCenter: false
+      strokeWidth: 1
 
   drawDebugRectange: ->
     $(@events_canvas).drawRect 
@@ -24,17 +32,16 @@ class EditorCanvas
   clear: ->
     $(@events_canvas).clearCanvas()
 
-  drawBounds: (bounds, stroke_color = "#33333") ->
+  drawBounds: (bounds, stroke_style = COLORS.BLUE) ->
     $(@events_canvas).drawRect
-      strokeStyle: stroke_color
+      strokeStyle: stroke_style
       x: bounds.left
       y: bounds.top
       width: bounds.right - bounds.left,
       height: bounds.bottom - bounds.top,
 
-  drawFilledRectangle: (bounds, fill_color = "rgba(0, 0, 0, 0.4)") ->
+  drawFilledRectangle: (bounds, fill_color = COLORS.FILL_BLUE) ->
     $(@events_canvas).drawRect
-      strokeStyle: "rgba(0, 0, 0, 0.3)"
       fillStyle: fill_color
       x: bounds.left
       y: bounds.top
@@ -118,7 +125,6 @@ class EditorCanvas
     return
 
   layerClickHandler: (layer) ->
-    console.log layer
     
 
   layerDoubleClickHandler: (layer) ->
