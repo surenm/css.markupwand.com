@@ -28,9 +28,10 @@ class EditorApp
   load_intersection_view: ->
     @intersecting_pairs = new IntersectingPairsCollection()
     @intersecting_pairs.attr('design_id', @design.id)
+    $app = this
     @intersecting_pairs.fetch({ 
       success: ()->
-        @intersection_view = new IntersectionView({model: @intersecting_pairs})
+        @intersection_view = new IntersectionView({model: $app.intersecting_pairs})
       })
     return
     
