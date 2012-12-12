@@ -8,6 +8,8 @@ class EditorCanvas
   constructor: () ->
     $this = this
 
+    @design = window.design
+
     @design_canvas = this.get_canvas('design-canvas')
     @events_canvas = this.get_canvas('events-canvas')
     @animate_canvas = this.get_canvas('animate-canvas')
