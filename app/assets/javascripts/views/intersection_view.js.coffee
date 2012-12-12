@@ -23,7 +23,7 @@ class IntersectionView extends Backbone.View
         node = $('<li></li>')
         right_name = window.design.layers.get(right).get('name')
         left_name = window.design.layers.get(left).get('name')
-        node.html "#{right_name} and #{left_name}"
+        node.html "#{right_name}(#{right}) and #{left_name}(#{left})"
         list_node.append(node)
       $(this.left_sidebar).append(list_node)
 
