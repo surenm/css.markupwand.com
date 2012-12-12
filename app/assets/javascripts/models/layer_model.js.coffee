@@ -1,12 +1,12 @@
 class LayerModel extends Backbone.Model
   initialize: ->
 
-  to_canvas_data: (canvas_element) ->
+  to_canvas_data: (editor_canvas) ->
     switch this.get('type')
       when 'text'
         return this.text_canvas_data()
       when 'shape'
-        return this.shape_canvas_data(canvas_element)
+        return this.shape_canvas_data(editor_canvas)
       when 'normal'
         return this.normal_canvas_data()
 
@@ -90,24 +90,19 @@ class LayerModel extends Backbone.Model
 
     return style_string
 
-  getShapeFillStyle: (canvas_element) ->
+  getShapeFillStyle: (editor_canvas) ->
+
     styles = this.get('styles')
 
     fillStyle = null
     if styles['solid_overlay']?
       fillStyle = styles['solid_overlay']
     else if styles['gradient_overlay']?
-      gradient_args = Helper.get_gradient_fill_style styles['gradient_overlay'], this.get('bounds')
-      fillStyle = $(canvas_element).createGradient gradient_args
+      fillStyle = editor_canvas.createGradient styles['gradient_overlay'], this.get('bounds')
     else if styles['solid_fill']?
       fillStyle = styles['solid_fill']
     else if styles['gradient_fill']?
-      gradient_args = Helper.get_gradient_fill_style styles['gradient_fill'], this.get('bounds')
-      fillStyle = $(canvas_element).createGradient gradient_args
-
+      fillStyle = editor_canvas.createGradient styles['gradient_fill'], this.get('bounds')
     return fillStyle
-
-    
-
 
 window.LayerModel = LayerModel
