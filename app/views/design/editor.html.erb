@@ -7,7 +7,7 @@
   <script type="text/javascript">
     var design_data = <%= raw @design.attribute_data.to_json %>
     var sif_data = <%= raw @sif.to_json %>;
-    var root_grouping_box = <%= raw @root_grouping_box.attribute_data.to_json %>;
+    var root_grouping_box = <%= raw @sif[:root_grouping_box].to_json %>;
   </script>
   <%= javascript_include_tag "app/editor_app" %>
 <% end %>

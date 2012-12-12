@@ -10,9 +10,15 @@ class EditorApp
     
   load_grouping_view: ->
     @grouping_view = new GroupingView({model: @design})
+    this.init_editor_canvas()
 
     $this = this
     $.doTimeout 5000, () ->
+      $this.render_design_layers()
+  init_editor_canvas: () ->
+    layers_canvas = this.get_canvas('design-canvas')
+    events_canvas = this.get_canvas('events-canvas')
+    @editor_canvas = new EditorCanvas(layers_canvas, events_canvas)
     
     
 $(window).load ->
