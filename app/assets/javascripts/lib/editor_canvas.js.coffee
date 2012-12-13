@@ -119,6 +119,27 @@ class EditorCanvas
   renderLayers: () ->
     $(@design_canvas).drawLayers()
 
+  addGroupingBox: (grouping_box) ->
+    canvas_data = grouping_box.to_canvas_data()
+    
+    if not canvas_data?
+      return
+    
+    $this = this
+    $canvas_element = @design_canvas
+    $($canvas_element).addLayer
+      method: 'drawRect'
+      group: 'groupingBox'
+      name: canvas_data.name
+      x: canvas_data.bounds.left
+      y: canvas_data.bounds.top
+      width: canvas_data.width
+      height: canvas_data.height
+      click: $this.dummyHandler
+      dblclick: $this.dummyHandler
+      mouseover: $this.dummyHandler
+      mouseout: $this.dummyHandler
+
   addLayer: (layer) ->
     canvas_data = layer.to_canvas_data this
     
@@ -191,5 +212,8 @@ class EditorCanvas
   layerMouseOutHandler: (canvas_layer) ->
     $editor_canvas = app.editor_canvas
     $editor_canvas.animate_canvas.clearCanvas()
+
+  dummyHandler: (canvas_layer) ->
+    
 
 window.EditorCanvas = EditorCanvas
