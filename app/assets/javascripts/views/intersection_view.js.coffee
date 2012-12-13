@@ -28,7 +28,7 @@ class IntersectionView extends Backbone.View
   delete_layer: (e)->
     if confirm('Delete layer?')
       layer_uid = $(e.target).parent().parent().data('layer-uid')
-      @design_canvas.removeLayer(String(layer_uid))      
+      @design_canvas.removeLayer("l_" + layer_uid)      
       @design_canvas.drawLayers()
       @editor_canvas.clear()
       this.delete_layer_sync(layer_uid)
