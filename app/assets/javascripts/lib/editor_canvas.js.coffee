@@ -22,10 +22,10 @@ class EditorCanvas
 
     $(@design_canvas).jCanvas
       fromCenter: false
-      click: $this.layerClickHandler
-      dblclick: $this.layerDoubleClickHandler
-      mouseover: $this.layerMouseOverHandler
-      mouseout: $this.layerMouseOutHandler
+      click: $this.clickHandler
+      dblclick: $this.doubleClickHandler
+      mouseover: $this.mouseOverHandler
+      mouseout: $this.mouseOutHandler
 
     $(@events_canvas).jCanvas
       fromCenter: false
@@ -195,25 +195,24 @@ class EditorCanvas
       when 'g'
         object = app.design.get_grouping_box(id)
 
-  layerClickHandler: (canvas_layer) ->
+  clickHandler: (canvas_layer) ->
     layer = EditorCanvas.get_object_from_name canvas_layer.name
     $editor_canvas = app.editor_canvas
     $editor_canvas.clear()
     $editor_canvas.drawBounds layer.get('bounds')
 
-  layerDoubleClickHandler: (layer) ->
+  doubleClickHandler: (layer) ->
     
 
-  layerMouseOverHandler: (canvas_layer) ->
+  mouseOverHandler: (canvas_layer) ->
     layer = EditorCanvas.get_object_from_name canvas_layer.name
     $editor_canvas = app.editor_canvas
     $editor_canvas.drawBounds layer.get('bounds'), COLORS.ORANGE, true
     
-  layerMouseOutHandler: (canvas_layer) ->
+  mouseOutHandler: (canvas_layer) ->
     $editor_canvas = app.editor_canvas
     $editor_canvas.animate_canvas.clearCanvas()
 
   dummyHandler: (canvas_layer) ->
-    
 
 window.EditorCanvas = EditorCanvas
