@@ -77,8 +77,11 @@ TransformersWeb::Application.routes.draw do
       match 'editor' => 'design#editor'
       match 'grouping' => 'design#grouping'
       match 'importer' => 'design#importer'
-      match 'intersecting-pairs' => 'design#intersecting_pairs'
       match 'merge' => 'design#merge', :via => :post
+
+      # intersections
+      match 'intersecting-pairs' => 'design#intersecting_pairs'
+      match 'delete-layer' => 'design#delete_layer', :via => :post
 
     end
 
