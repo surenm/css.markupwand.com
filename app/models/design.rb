@@ -69,6 +69,9 @@ class Design
   # CSS class counter
   attr_accessor :css_counter
 
+  # SIF accessor
+  attr_accessor :sif
+
   mount_uploader :file, DesignUploader
   
   ##########################################################
