@@ -66,11 +66,7 @@ class LayerModel extends Backbone.Model
     fillStyle = this.getShapeFillStyle(canvas_element)
     
     canvas_data = 
-<<<<<<< HEAD
-      name: String(this.get('uid'))
-=======
       name: "l_#{this.get('uid')}"
->>>>>>> grouping
       bounds: bounds
       width: bounds.right - bounds.left
       height: bounds.bottom - bounds.top
