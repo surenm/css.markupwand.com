@@ -192,8 +192,8 @@ class EditorCanvas
     switch type
       when 'l'
         object = app.design.get_layer(id)
-      else 
-        console.log "unknown object"
+      when 'g'
+        object = app.design.get_grouping_box(id)
 
   layerClickHandler: (canvas_layer) ->
     layer = EditorCanvas.get_object_from_name canvas_layer.name
