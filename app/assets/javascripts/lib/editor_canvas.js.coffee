@@ -164,8 +164,18 @@ class EditorCanvas
 
     return
 
+  @get_object_from_name: (object_name) ->
+    tokens = object_name.split '_'
+    type = tokens[0]
+    id = tokens[1]
+    switch type
+      when 'l'
+        object = app.design.get_layer(id)
+      else 
+        console.log "unknown object"
+
   layerClickHandler: (canvas_layer) ->
-    layer = app.design.get_layer(canvas_layer.name)
+    layer = EditorCanvas.get_object_from_name canvas_layer.name
     $editor_canvas = app.editor_canvas
     $editor_canvas.clear()
     $editor_canvas.drawBounds layer.get('bounds')
@@ -174,7 +184,7 @@ class EditorCanvas
     
 
   layerMouseOverHandler: (canvas_layer) ->
-    layer = app.design.get_layer(canvas_layer.name)
+    layer = EditorCanvas.get_object_from_name canvas_layer.name
     $editor_canvas = app.editor_canvas
     $editor_canvas.drawBounds layer.get('bounds'), COLORS.ORANGE, true
     
