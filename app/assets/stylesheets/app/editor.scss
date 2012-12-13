@@ -14,7 +14,7 @@ body {
   }
 
   #app {
-    background: url('/assets/low_contrast_linen.png');
+    background: url('/assets/low_contrast_linen.jpg');
 
     .canvases {
       float: right;
@@ -26,15 +26,16 @@ body {
 
     #left-sidebar {
       float: left;
-      width: 200px;
+      width: 190px;
       height: 800px;
       overflow: auto;
+      margin: 50px 5px;
       
       color: #fff;
       border-left: 1px solid #999;
 
       font-family: "museo-sans", sans-serif;
-      font-size: 11px;
+      font-size: 12px;
 
       #action-panel {
         margin:0 auto;
