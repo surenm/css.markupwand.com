@@ -1639,7 +1639,7 @@ function wrapText(ctx, params) {
 		lines = [],
 		line = '';
 	
-	if (ctx.measureText(text).width < maxWidth) {
+	if (ctx.measureText(text).width < maxWidth || words.length == 1) {
 		// If text is short enough initially, do nothing else
 		lines = [text];
 	} else {
