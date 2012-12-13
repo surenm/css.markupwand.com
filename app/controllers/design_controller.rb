@@ -265,10 +265,16 @@ class DesignController < ApplicationController
 
   def editor
     @sif = @design.get_serialized_sif_data
-    @scaling = Float(1200)/@design.width
-    
-    @width = 1200
-    @height = @design.height * @scaling
+    if @design.width < 1200
+      @scaling = 1
+      @width = @design.width
+      @height = @design.height
+    else
+      @scaling = Float(1200)/@design.width
+      
+      @width = 1200
+      @height = (@design.height * @scaling).round
+    end
   end
 
   def merge
