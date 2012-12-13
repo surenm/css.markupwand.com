@@ -307,7 +307,7 @@ class Layer
     end
 
     computed_style_rules = Hash.new
-    if not self.parent_grid.is_leaf? and self.type == Layer::LAYER_NORMAL
+    if self.style_layer and self.type == Layer::LAYER_NORMAL
       # this means its a style layer and it has image to be set as background  
       computed_style_rules[:background] = "url('../../#{self.image_path}') no-repeat"
       computed_style_rules[:'background-size'] = "100% 100%"
