@@ -108,4 +108,9 @@ CSS
     end
     return scss_code
   end
+
+  def Utils::get_value_from_pixel_string(pixel_string)
+    tokens = pixel_string.split 'p'
+    return tokens[0].to_i
+  end
 end

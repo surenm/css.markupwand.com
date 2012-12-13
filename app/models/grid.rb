@@ -166,15 +166,14 @@ class Grid < Tree::TreeNode
   # STYLE CALCULATIONS METHODS
   ##########################################################
   def get_border_width
-    border_width = nil
-    if self.computed_css.has_key? :border
-      border_properties = self.computed_css.fetch(:border).split
-      border_width_str = border_properties[0].scan(/\d+/).first
-      if not border_width_str.nil?
-        border_width = border_width_str.to_i
+    self.layers.each do |layer|
+      if layer.styles.has_key? :border
+        border_width_str = layer.styles[:border][:width]
+        return Utils::get_value_from_pixel_string(border_width_str)
       end
     end
-    return border_width
+
+    return
   end
 
   def get_padding
@@ -191,13 +190,13 @@ class Grid < Tree::TreeNode
       padding[:right]  = (self.bounds.right - children_superbound.right)
       
 
-      #border_width = self.get_border_width
-      #if not border_width.nil?
-      #  padding[:top]    -= border_width
-      #  padding[:bottom] -= border_width
-      #  padding[:left]   -= border_width
-      #  padding[:right]  -= border_width
-      #end
+      border_width = self.get_border_width
+      if not border_width.nil?
+        padding[:top]    -= border_width
+        padding[:bottom] -= border_width
+        padding[:left]   -= border_width
+        padding[:right]  -= border_width
+      end
     end
     padding
   end
