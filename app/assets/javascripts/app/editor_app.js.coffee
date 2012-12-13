@@ -14,6 +14,7 @@ class EditorApp
     dfd.done (images) ->
       # Load all grouping boxes, layers and intersections all at once
       $this.add_canvas_layers()
+      $this.editor_canvas.renderLayers()
 
     dfd.progress (isBroken, $images, $proper, $broken) ->
       console.log( 'Loading progress: ' + ( $proper.length + $broken.length ) + ' out of ' + $images.length );
@@ -25,12 +26,13 @@ class EditorApp
       this.editor_canvas.addLayer layers[i]  
 
     # Second show all grouping boxes
-    
+    grouping_boxes = @design.grouping_boxes.toArray()
+    #for i in [0..grouping_boxes.length-1]
+    #  this.editor_canvas.addGroupingBox grouping_boxes[i]
+
     
   load_grouping_view: ->
-    
     @grouping_view = new GroupingView({model: @design})
-    this.editor_canvas.renderLayers()
     
 $(window).load ->
   meny = Meny.create
