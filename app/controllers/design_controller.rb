@@ -39,8 +39,8 @@ class DesignController < ApplicationController
 
   def delete_layer
     uid = params[:uid]
-    Log.info "Deleting #{uid}"
-    @design.layers.delete uid
+    @design.init_sif
+    @design.sif.layers.delete uid.to_i
     @design.sif.save!
     @design.regroup
     render :json => {:status => 'OK'}
