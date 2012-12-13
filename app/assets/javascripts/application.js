@@ -15,8 +15,10 @@
 //= require lib/jquery.client
 //= require lib/jquery.formdefaults
 //= require lib/jquery.ba-dotimeout
-//= require lib/jquery.imagesloaded.js
+//= require lib/jquery.imagesloaded
 //= require lib/jquery-ui-1.8.20.min
+//= require lib/avgrund
+//= require lib/meny
 //= require lib/json2
 //= require lib/underscore
 //= require lib/backbone

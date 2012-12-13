@@ -11,7 +11,8 @@
  *= require lib/ie
  *= require lib/bootstrap_and_overrides
  *= require lib/jquery-ui-1.8.20
- *= require lib/jqtree.css
+ *= require lib/jqtree
+ *= require lib/avgrund
  *= require app/scaffolds
  *= require app/buttons
  *= require app/designs
@@ -329,3 +330,36 @@ small {
     }
   }
 }
+
+.meny {
+  display: none;
+  padding: 20px;
+  overflow: auto;
+  background: #333;
+  color: #eee;
+  font-size: 20px;
+
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+   
+  ul {
+    margin-top: 10px;
+    li {
+      display: inline-block;
+      width: 200px;
+      list-style: none;
+      font-size: 20px;
+      padding: 3px 10px;
+      a {
+        color: #C2575B;
+      }
+
+      &:before {
+        content: '-';
+        margin-right: 5px;
+        color: rgba( 255, 255, 255, 0.2 );
+      }
+    }
+  }
+}  
