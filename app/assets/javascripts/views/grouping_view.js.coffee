@@ -98,49 +98,7 @@ class GroupingView extends Backbone.View
 
         $design = this.model
         $.post "/design/#{$design.get('id')}/merge", {nodes: serialized_nodes}, (data) ->
-          console.log data
-
-        ###
-        super_bounds = BoundingBox.getSuperBounds selected_bounding_boxes
-        name = BoundingBox.toString super_bounds
-
-        if selected_nodes.length == 0
-          return
-
-        first_node = selected_nodes[0]
-        layer_keys = []
-        for node in selected_nodes
-          layer_keys = layer_keys.concat node.layers
-
-        parent = first_node.parent
-        orientation = parent.orientation
-        
-        new_node_data = {
-          name: name
-          label: name
-          bounds: super_bounds,
-          orientation: orientation
-          layers: layer_keys,
-          children: []
-        }
-
-        new_node = $(@tree_element).tree 'addNodeAfter', new_node_data, first_node
-
-        selected_nodes.sort ((a, b) ->
-          if orientation == "normal"
-            return a.bounds.top >= b.bounds.top
-          else
-            return a.bounds.left >= b.bounds.left
-        )
-
-        for node in selected_nodes
-          $(@tree_element).tree 'removeNode', node
-          $(@tree_element).tree 'appendNode', node, new_node
-      
-
-        this.main_canvas.clear()
-        $(@tree_element).tree('disableMultiSelectMode')
-        ###
+          window.location.reload()
       else
         console.log "unhandled grouping type"
 
