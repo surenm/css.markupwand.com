@@ -50,6 +50,25 @@ body {
         color: #fff;
         font-size: 15px;
       }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .intersection-item {
+        margin-left: 10px;
+        font-size: 15px;
+        margin-bottom:10px;
+        cursor: pointer;
+
+        .actions {
+          display: none;
+          font-size: 10px;
+        }        
+      }
+
     }
   }
 }
