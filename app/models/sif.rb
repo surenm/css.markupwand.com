@@ -142,7 +142,7 @@ class Sif
   end
 
   def reset_grids
-    @grids = nil
+    @root_grid = nil
     @layers.each do |layer_id, layer|
       @layers[layer_id].parent_grid = nil
     end
@@ -151,8 +151,7 @@ class Sif
 
   def reset_calculated_data
     @root_grouping_box = nil
-
-    @grids = nil
+    @root_grid = nil
     @layers.each do |layer_id, layer|
       @layers[layer_id].parent_grid = nil
     end
