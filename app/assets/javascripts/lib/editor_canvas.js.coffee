@@ -119,6 +119,27 @@ class EditorCanvas
   renderLayers: () ->
     $(@design_canvas).drawLayers()
 
+  addGroupingBox: (grouping_box) ->
+    canvas_data = grouping_box.to_canvas_data()
+    
+    if not canvas_data?
+      return
+    
+    $this = this
+    $canvas_element = @design_canvas
+    $($canvas_element).addLayer
+      method: 'drawRect'
+      group: 'groupingBox'
+      name: canvas_data.name
+      x: canvas_data.bounds.left
+      y: canvas_data.bounds.top
+      width: canvas_data.width
+      height: canvas_data.height
+      click: $this.dummyHandler
+      dblclick: $this.dummyHandler
+      mouseover: $this.dummyHandler
+      mouseout: $this.dummyHandler
+
   addLayer: (layer) ->
     canvas_data = layer.to_canvas_data this
     
@@ -164,8 +185,18 @@ class EditorCanvas
 
     return
 
+  @get_object_from_name: (object_name) ->
+    tokens = object_name.split '_'
+    type = tokens[0]
+    id = tokens[1]
+    switch type
+      when 'l'
+        object = app.design.get_layer(id)
+      when 'g'
+        object = app.design.get_grouping_box(id)
+
   layerClickHandler: (canvas_layer) ->
-    layer = app.design.get_layer(canvas_layer.name)
+    layer = EditorCanvas.get_object_from_name canvas_layer.name
     $editor_canvas = app.editor_canvas
     $editor_canvas.clear()
     $editor_canvas.drawBounds layer.get('bounds')
@@ -174,12 +205,15 @@ class EditorCanvas
     
 
   layerMouseOverHandler: (canvas_layer) ->
-    layer = app.design.get_layer(canvas_layer.name)
+    layer = EditorCanvas.get_object_from_name canvas_layer.name
     $editor_canvas = app.editor_canvas
     $editor_canvas.drawBounds layer.get('bounds'), COLORS.ORANGE, true
     
   layerMouseOutHandler: (canvas_layer) ->
     $editor_canvas = app.editor_canvas
     $editor_canvas.animate_canvas.clearCanvas()
+
+  dummyHandler: (canvas_layer) ->
+    
 
 window.EditorCanvas = EditorCanvas

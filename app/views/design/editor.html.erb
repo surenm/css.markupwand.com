@@ -15,16 +15,26 @@
 
 
 <%= content_for :content do %>
-  <div id="app">
-    <div id="left-sidebar"> </div>
-    <div id="right-sidebar"> </div>
-    <div class="canvases" style="height: <%= @height %>px">
-      <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>"></canvas>
-      <canvas id="animate-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>
-      <canvas id="events-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>
+  <div class="meny">
+    <ul>
+      <li> <a href="#/grouping"> Grouping editor </a> </li>
+      <li> <a href="#/layers"> Remove layers </a> </li>
+      <li> <a href="#/intersection"> Intersection editor </a> </li>
+      <li> <a href="#/fonts"> Fonts upload </a> </li>
+    </ul>
+  </div>
+  <div class="contents">
+    <div id="app">
+      <div id="left-sidebar"> </div>
+      <div id="right-sidebar"> </div>
+      <div class="canvases" style="height: <%= @height %>px">
+        <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>"></canvas>
+        <canvas id="animate-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>
+        <canvas id="events-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>
+      </div>
+      
+      <div class="clearfix"> </div>
     </div>
-    
-    <div class="clearfix"> </div>
   </div>
   <div class="extra">
     <div id="layers" />

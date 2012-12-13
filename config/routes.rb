@@ -71,8 +71,8 @@ TransformersWeb::Application.routes.draw do
       match 'view-logs'  => 'design#view_logs'
       match 'view-dom'   => 'design#view_dom'
       match 'view-json'  => 'design#view_json'
-      
-      
+      match 'view-serialized-data' => 'design#view_serialized_data'
+
       # editor related activities
       match 'editor' => 'design#editor'
       match 'grouping' => 'design#grouping'
