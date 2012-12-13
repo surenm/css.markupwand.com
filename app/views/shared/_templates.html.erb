@@ -31,3 +31,12 @@
 </ul>
 </div>
 </script>
+<script id="intersection-item" type="text/template">
+  <div class="intersection-item" data-left-uid="{{ left_uid }}" data-right-uid="{{ right_uid }}">
+  <div class="top-head-item">{{ left_layer }} ∩ {{ right_layer }}</div>
+    <table class="actions">
+      <tr data-layer-uid="{{ left_uid }}"><td class="layer-item">{{ left_layer }}</td><td><img class="remove-layer" width="24" src="/assets/remove.png"></td></tr>
+      <tr data-layer-uid="{{ right_uid }}"><td class="layer-item">{{ right_layer }}</td><td><img class="remove-layer" width="24" src="/assets/remove.png"></td></tr>
+    </table>
+  </div>
+</script>
