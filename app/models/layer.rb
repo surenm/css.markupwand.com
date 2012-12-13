@@ -72,7 +72,6 @@ class Layer
   # Layer initialize and serialize functions
   ##########################################################
   def initialize
-    @chunk_text_selector = []
   end
 
   def attribute_data
@@ -177,33 +176,6 @@ class Layer
 
   def is_empty_text_layer?
     return self.full_text.size == 0
-  end
-
-  def has_multifont?
-    self.type == Layer::LAYER_TEXT and self.text_chunks.size > 0
-  end
-
-  def text_content
-    if self.type == LAYER_TEXT
-      original_text = self.full_text
-
-      if has_multifont?
-
-        multifont_text = ''
-
-        self.text_chunks.each_with_index do |chunk, index|
-          newlined_chunk = ActiveSupport::SafeBuffer.new(chunk[:text].gsub("\n", "<br>").gsub("\r\r", "<br>").gsub("\r", "<br>"))
-          attributes = { :class => self.chunk_text_selector[index] }
-          multifont_text +=  content_tag :span, newlined_chunk, attributes
-        end
-
-        multifont_text
-      else
-        original_text
-      end
-    else
-      ''
-    end
   end
 
   ##########################################################
