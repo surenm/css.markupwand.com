@@ -36,6 +36,15 @@ class DesignController < ApplicationController
     end
     render :json => pairs_ids.to_json
   end
+
+  def delete_layer
+    uid = params[:uid]
+    Log.info "Deleting #{uid}"
+    @design.layers.delete uid
+    @design.sif.save!
+    @design.regroup
+    render :json => {:status => 'OK'}
+  end
   
   def set_rating
     if params[:rate] == "true"

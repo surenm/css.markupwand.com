@@ -31,6 +31,12 @@ class IntersectionView extends Backbone.View
       @design_canvas.removeLayer(String(layer_uid))      
       @design_canvas.drawLayers()
       @editor_canvas.clear()
+      this.delete_layer_sync(layer_uid)
+
+  delete_layer_sync: (uid)->
+    url = '/design/' + @design.id + '/delete-layer'
+    $.post url, {uid : uid}, ->
+      console.log("Posted") 
 
   draw_layer_bounds: (uid)->
     bounds = @design.layers.get(uid).get('bounds')
