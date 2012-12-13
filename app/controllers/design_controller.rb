@@ -263,6 +263,10 @@ class DesignController < ApplicationController
     redirect_to :action => :show, :id => @design.safe_name
   end
 
+  def view_serialized_data
+    render :json => @design.get_serialized_sif_data
+  end
+
   def editor
     @sif = @design.get_serialized_sif_data
     if @design.width < 1200
