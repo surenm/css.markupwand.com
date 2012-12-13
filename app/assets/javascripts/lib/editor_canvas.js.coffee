@@ -165,7 +165,7 @@ class EditorCanvas
     return
 
   layerClickHandler: (canvas_layer) ->
-    layer = app.design.get_layer(Integer(canvas_layer.name))
+    layer = app.design.get_layer(canvas_layer.name)
     $editor_canvas = app.editor_canvas
     $editor_canvas.clear()
     $editor_canvas.drawBounds layer.get('bounds')
@@ -174,7 +174,7 @@ class EditorCanvas
     
 
   layerMouseOverHandler: (canvas_layer) ->
-    layer = app.design.get_layer(Integer(canvas_layer.name))
+    layer = app.design.get_layer(canvas_layer.name)
     $editor_canvas = app.editor_canvas
     $editor_canvas.drawBounds layer.get('bounds'), COLORS.ORANGE, true
     
