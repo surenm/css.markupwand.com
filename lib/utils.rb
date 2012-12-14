@@ -74,6 +74,15 @@ module Utils
     object.each do |key, value|
       new_object[key] = value if not value.nil?
     end
+    return new_object
+  end
+
+  def Utils::non_zero_spacing(spacing)
+    if spacing[:top] == 0 and spacing[:bottom] == 0 and spacing[:left] == 0 and spacing[:right] == 0
+      return false
+    else
+      return true
+    end
   end
   
   def Utils::build_stylesheet_block(class_name, styles_array, children_tree_css="")
@@ -97,5 +106,10 @@ CSS
       tabs = tabs + 1 if line.include? '{'
     end
     return scss_code
+  end
+
+  def Utils::get_value_from_pixel_string(pixel_string)
+    tokens = pixel_string.split 'p'
+    return tokens[0].to_i
   end
 end

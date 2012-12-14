@@ -29,6 +29,24 @@ class DesignController < ApplicationController
     Resque.enqueue UploaderJob, design.id, design_data
     redirect_to :action => :show, :id => design.safe_name
   end
+
+  def intersecting_pairs
+    pairs = @design.get_intersecting_pairs
+    pairs_ids = []
+    pairs.each do |left, right|
+      pairs_ids.push({:left => left.uid, :right => right.uid})
+    end
+    render :json => pairs_ids.to_json
+  end
+
+  def delete_layer
+    uid = params[:uid]
+    @design.init_sif
+    @design.sif.layers.delete uid.to_i
+    @design.sif.save!
+    @design.regroup
+    render :json => {:status => 'OK'}
+  end
   
   def set_rating
     if params[:rate] == "true"
@@ -282,6 +300,11 @@ class DesignController < ApplicationController
     @design.reextract
     redirect_to :action => :show, :id => @design.safe_name
   end
+
+  def regroup
+    @design.regroup
+    redirect_to :action => :show, :id => @design.safe_name
+  end
   
   def reparse
     @design.reparse
@@ -309,4 +332,31 @@ class DesignController < ApplicationController
     redirect_to :action => :show, :id => @design.safe_name
   end
 
+  def view_serialized_data
+    render :json => @design.get_serialized_sif_data
+  end
+
+  def editor
+    @sif = @design.get_serialized_sif_data
+    if @design.width < 1200
+      @scaling = 1
+      @width = @design.width
+      @height = @design.height
+    else
+      @scaling = Float(1200)/@design.width
+      
+      @width = 1200
+      @height = (@design.height * @scaling).round
+    end
+  end
+
+  def merge
+    raw_bounds = params[:nodes].values
+    bounds = raw_bounds.collect do |raw_bound|
+      BoundingBox.new raw_bound["top"].to_i, raw_bound["left"].to_i, raw_bound["bottom"].to_i, raw_bound["right"].to_i
+    end
+    
+    @design.merge_grouping_boxes bounds
+    render :json => {:status => :success}
+  end
 end

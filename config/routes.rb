@@ -61,8 +61,9 @@ TransformersWeb::Application.routes.draw do
       match 'set-rating'       => 'design#set_rating'
       
       # admin actions to regenerate stuff
-      match 'reprocess'          => 'design#reprocess'
+      match 'reprocess'         => 'design#reprocess'
       match 'reextract'         => 'design#reextract'
+      match 'regroup'           => 'design#regroup'
       match 'reparse'           => 'design#reparse'
       match 'regenerate'        => 'design#regenerate'
       match 'download-psd'      => 'design#download_psd'
@@ -72,6 +73,18 @@ TransformersWeb::Application.routes.draw do
       match 'view-logs'  => 'design#view_logs'
       match 'view-dom'   => 'design#view_dom'
       match 'view-json'  => 'design#view_json'
+      match 'view-serialized-data' => 'design#view_serialized_data'
+
+      # editor related activities
+      match 'editor' => 'design#editor'
+      match 'grouping' => 'design#grouping'
+      match 'importer' => 'design#importer'
+      match 'merge' => 'design#merge', :via => :post
+
+      # intersections
+      match 'intersecting-pairs' => 'design#intersecting_pairs'
+      match 'delete-layer' => 'design#delete_layer', :via => :post
+
     end
 
   end

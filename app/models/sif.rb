@@ -10,11 +10,12 @@ class Sif
 
 =end
   end
-
+  
+  attr_accessor :design
   attr_accessor :header
   attr_accessor :layers
-  attr_accessor :grids
-  attr_accessor :design
+  attr_accessor :root_grid
+  attr_accessor :root_grouping_box
   
   def self.write(design, sif_data)
     sif_file = design.get_sif_file_path
@@ -56,8 +57,8 @@ class Sif
     begin
       self.parse_header
       self.parse_layers
+      self.parse_grouping_boxes
       self.parse_grids
-      self.set_layer_parent
       self.validate
     rescue Exception => e
       raise e 
@@ -86,199 +87,173 @@ class Sif
       @layers[uid] = layer
     end
   end
+
+  def parse_grouping_boxes
+    serialized_root_grouping_box = @sif_data[:root_grouping_box]
+    if serialized_root_grouping_box.nil?
+      # If there are serialized grids then most probably the design is not yet parsed
+      @grouping_boxes = nil
+      return
+    end
+
+    @root_grouping_box = self.create_grouping_box serialized_root_grouping_box
+  end
   
   def parse_grids
-    serialized_grids_arr = @sif_data[:grids]
-    if serialized_grids_arr.nil?
+    serialized_root_grid = @sif_data[:root_grid]
+    if serialized_root_grid.nil?
       # If there are serialized grids then most probably the design is not yet parsed
-      @grids = nil
+      @root_grid = nil
       return
     end
     
-    @serialized_grids = Hash.new
-    serialized_grids_arr.each { |grid_data| @serialized_grids[grid_data[:id]] = grid_data }
+    @root_grid = self.create_grid serialized_root_grid
     
-    @grids = Hash.new
-    ordered_grids = get_grids_in_order()
-    ordered_grids.each do |grid_id|
-      serialized_grid_data = @serialized_grids[grid_id]
-      @grids[grid_id] = self.create_grid serialized_grid_data
-    end
-
-    
-    @serialized_grids.values.each do |grid_data|
-      children = grid_data[:children]
-      grid_id = grid_data[:id]
-      children.each do |child_id|
-        @grids[grid_id].children[child_id] = @grids[child_id]
-      end
-    end
   end
 
   # Grids are not availabe when layers are created.
   # Once both Grids and Layers are created, create parent values for layers
-  def set_layer_parent
-    if @grids.nil?
-      return
-    end
-
-    @layers.each do |_, layer|
-      # The string id just becomes grid object.
-      if not layer.parent_grid.nil?
-        layer.parent_grid = @grids[layer.parent_grid]
-      end
-    end
-  end
-  
   def get_layer(layer_id)
     return @layers[layer_id]
   end
   
-  def get_grid(grid_id)
-    return @grids[grid_id]
-  end
-  
-  def set_grid(grid)
-    @grids = {} if @grids.nil?
-    @grids[grid.id] = grid
-    self.validate
-  end
-  
   def reset_grids
-    @grids = nil
+    @root_grid = nil
+    self.save!
+  end
+
+  def reset_calculated_data
+    @root_grouping_box = nil
+    @root_grid = nil
     @layers.each do |layer_id, layer|
-      @layers[layer_id].parent_grid = nil
+      @layers[layer_id].grouping_box = nil
     end
     self.save!
   end
-    
-  def save!
+
+  def get_serialized_data
     self.validate
-    
+
+    if not @root_grouping_box.nil?
+      serialized_root_grouping_box = @root_grouping_box.attribute_data
+      # Set the grouping box for layers. 
+      @root_grouping_box.each do |grouping_box|
+        if grouping_box.is_leaf?
+          # If leaf node all this layers belong to this grouping box
+          grouping_box.layers.each do |layer|
+            @layers[layer.uid].grouping_box = grouping_box.bounds
+          end
+        else
+          # If not leaf node, only style nodes belong to this grouping box
+          grouping_box.style_layers.each do |style_layer|
+            @layers[style_layer.uid].grouping_box = grouping_box.bounds
+          end
+        end
+      end
+    end
+
+    if not @root_grid.nil?
+      serialized_root_grid = @root_grid.attribute_data
+    end
+
     serialized_layers = @layers.values.collect do |layer|
       layer.attribute_data
     end
 
-    if not @grids.nil?
-      serialized_grids = @grids.values.collect do |grid|
-        grid.attribute_data
-      end
-    end
-    
     sif_document = {
       :header => @header,
       :layers => serialized_layers,
-      :grids  => serialized_grids,
+      :root_grouping_box => serialized_root_grouping_box,
+      :root_grid => serialized_root_grid,
     }
-    
-    Sif.write @design, sif_document
   end
-  
-  def get_grids_in_order
-    ordered_grids = []
 
-    start_grid_id = nil
-    @serialized_grids.values.each do |grid_data|
-      start_grid_id = grid_data[:id] if grid_data[:root]
-    end
-    
-    ordering_queue = Queue.new
-    ordering_queue.push start_grid_id
-    
-    while not ordering_queue.empty?
-      grid_id = ordering_queue.pop
-      ordered_grids.push grid_id
-      
-      children = @serialized_grids[grid_id][:children]
-      children.each { |child_id| ordering_queue.push child_id }
-    end
-    return ordered_grids
+  def save!
+    serialized_document = self.get_serialized_data
+    Sif.write @design, serialized_document
   end
   
   def create_layer(sif_layer_data)
     layer = Layer.new
-    layer.name    = sif_layer_data[:name]
-    layer.type    = sif_layer_data[:type]
-    layer.uid     = sif_layer_data[:uid]
-    layer.zindex  = sif_layer_data[:zindex]
+    layer.name = sif_layer_data[:name]
+    layer.type = sif_layer_data[:type]
+    layer.uid = sif_layer_data[:uid]
+    layer.zindex = sif_layer_data[:zindex]
     if sif_layer_data[:initial_bounds].nil?
       layer.initial_bounds = BoundingBox.create_from_attribute_data sif_layer_data[:bounds]
     else
       layer.initial_bounds = BoundingBox.create_from_attribute_data sif_layer_data[:initial_bounds]
     end
-    design_bounds      = BoundingBox.new 0, 0, @header[:design_metadata][:height], @header[:design_metadata][:width]
-    layer.bounds       = layer.initial_bounds.inner_crop(design_bounds)
-    layer.opacity      = sif_layer_data[:opacity]
-    layer.text         = sif_layer_data[:text]
-    layer.shape        = sif_layer_data[:shape]
-    layer.styles       = sif_layer_data[:styles]
-    layer.overlay      = sif_layer_data[:overlay]
-    layer.style_layer  = sif_layer_data[:style_layer]
-    layer.parent_grid  = sif_layer_data[:parent_grid]
-    layer.tag_name     = sif_layer_data[:tag]
-    layer.image_name   = sif_layer_data[:image_name]
-
-    layer.generated_selector  = sif_layer_data[:generated_selector]
-    layer.computed_css = {}
-    layer.design       = @design
+    design_bounds = BoundingBox.new 0, 0, @header[:design_metadata][:height], @header[:design_metadata][:width]
+    layer.bounds = layer.initial_bounds.inner_crop(design_bounds)
+    layer.opacity = sif_layer_data[:opacity]
+    layer.text = sif_layer_data[:text]
+    layer.shape = sif_layer_data[:shape]
+    layer.styles = sif_layer_data[:styles]
+    layer.style_layer = sif_layer_data[:style_layer]
+    if not sif_layer_data[:grouping_box].nil?
+      layer.grouping_box = BoundingBox.create_from_attribute_data sif_layer_data[:grouping_box]
+    end
+    layer.design = @design
     return layer
   end
-  
-  def create_grid(sif_grid_data)
-    # Parent grid information. 
-    # Because we are parsing grids in order, these grids would have been already instantiated
-    if not sif_grid_data[:root]
-      parent_grid = self.get_grid sif_grid_data[:parent]
+
+  def create_grouping_box(serialized_data)
+    layer_keys = serialized_data[:layers]
+    orientation = serialized_data[:orientation]
+    bounds = BoundingBox.create_from_attribute_data serialized_data[:bounds]
+    has_intersecting_layers = serialized_data.fetch :has_intersecting_layers, false
+    alternate_grouping_boxes = serialized_data.fetch :alternate_grouping_boxes, nil
+    
+    layers = layer_keys.collect do |layer_uid| 
+      @layers[layer_uid] 
     end
 
-    # create grid layers hash for all layers, style layers and render layer
-    grid_layers = {}
-    sif_grid_data[:layers].each do |layer_id|
-      grid_layers[layer_id] = self.get_layer(layer_id)
-    end
-    
-    style_layers = {}
-    sif_grid_data[:style_layers].each do |layer_id|
-      style_layers[layer_id] = self.get_layer(layer_id)
-    end
-    
-    if not sif_grid_data[:render_layer].nil?
-      render_layer = self.get_layer(sif_grid_data[:render_layer]) 
-    end
-    
-    if not sif_grid_data[:grouping_box].nil?
-      grouping_box = BoundingBox.create_from_attribute_data sif_grid_data[:grouping_box]
-    end
-    
-    if not sif_grid_data[:offset_box].nil?
-      offset_box = BoundingBox.create_from_attribute_data sif_grid_data[:offset_box]
+    grouping_box = GroupingBox.new :layers => layers, :bounds => bounds, :orientation => orientation, :design => @design,
+      :has_intersecting_layers => has_intersecting_layers, :alternate_grouping_boxes => alternate_grouping_boxes
+
+    serialized_data[:children].each do |child_data|
+      child_grouping_box = self.create_grouping_box child_data
+      grouping_box.add child_grouping_box
     end
 
-    if sif_grid_data[:moved_css].nil?
-      moved_css = []
-    else
-      moved_css = sif_grid_data[:moved_css]
-    end
-    
-    args = Hash.new
-    args[:id]           = sif_grid_data[:id]
-    args[:parent]       = parent_grid
-    args[:design]       = @design
-    args[:layers]       = grid_layers.values
-    args[:style_layers] = style_layers
-    args[:render_layer] = render_layer
-    args[:grouping_box] = grouping_box
-    args[:offset_box]   = offset_box
-    args[:orientation]  = sif_grid_data[:orientation]
-    args[:root]         = sif_grid_data[:root]
-    args[:positioned]   = sif_grid_data[:positioned]
-    args[:tag]          = sif_grid_data[:tag]
-    args[:style]        = sif_grid_data[:style]
-    args[:original_id]  = sif_grid_data[:original_id]
-    args[:moved_css]    = moved_css
+    grouping_box
+  end
 
-    # We have not instantiated children alone. Because children grids would not have been instantiated properly
-    grid = Grid.new args
-    return grid
+  def create_grid(serialized_data)
+    layer_keys = serialized_data[:layers]
+    style_layer_keys = serialized_data[:style_layers]
+
+    orientation = serialized_data[:orientation]
+    style_rules = serialized_data[:style_rules]
+    grouping_box = GroupingBox.get_node @root_grouping_box, serialized_data[:grouping_box]
+
+    if not serialized_data[:offset_box].nil?
+      offset_box = BoundingBox.create_from_attribute_data serialized_data[:offset_box]
+    end
+
+    layers = layer_keys.collect do |layer_uid| 
+      @layers[layer_uid] 
+    end
+
+    style_layers = style_layer_keys.collect do |style_layer_uid|
+      @layers[style_layer_uid]
+    end
+
+    grid = Grid.new :layers => layers, 
+      :style_layers => style_layers, 
+      :offset_box => offset_box, 
+      :grouping_box => grouping_box, 
+      :orientation => orientation, 
+      :style_rules => style_rules,
+      :css_class_name => serialized_data[:css_class_name],
+      :design => @design
+
+    serialized_data[:children].each do |child_data|
+      child_grid = self.create_grid child_data
+      grid.add child_grid
+    end
+
+    grid
   end
 end

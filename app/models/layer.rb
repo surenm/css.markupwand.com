@@ -33,12 +33,11 @@ class Layer
  
 
   ### Relational references ###
-
-  # Belongs to multiple grids
-  attr_accessor :parent_grid #(Grid object)
-
   # Belongs to a design
   attr_accessor :design
+
+  # Belongs to a grouping box
+  attr_accessor :grouping_box
 
   # Layer's imported data
   attr_accessor :uid # (String)
@@ -48,61 +47,42 @@ class Layer
   attr_accessor :opacity #(Integer)
   attr_accessor :initial_bounds #(BoundingBox)
   attr_accessor :bounds #(BoundingBox)
-  attr_accessor :smart_bounds #(BoundingBox)
-  attr_accessor :tag_name # (Symbol)
-  attr_accessor :image_name # (String)
-
-  # If a grid is copied from some other grid, store the original id, to 
-  # re-use the class names
-  attr_accessor :original_uid #(String)
 
   attr_accessor :text
   attr_accessor :shape
   attr_accessor :styles
 
-  attr_accessor :overlay # (Boolean)
   attr_accessor :style_layer # (Boolean)
-  attr_accessor :override_tag # (String)
-
-  # CSS Rules
-  attr_accessor :computed_css # (Hash)
-  attr_reader   :css_rules # (Array)
-  attr_accessor :chunk_text_selector # (Array)
-  attr_accessor :extra_selectors # (Array)
-  attr_accessor :generated_selector # (String)
-
-  attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
   
   ##########################################################
   # Layer initialize and serialize functions
   ##########################################################
   def initialize
-    @chunk_text_selector = []
   end
 
   def attribute_data
-    parent_grid = self.parent_grid.nil? ? nil : self.parent_grid.id  
-
+    grouping_box_data = self.grouping_box.attribute_data if not self.grouping_box.nil?
     attr_data = {
-      :uid                => self.uid,
-      :name               => self.name,
-      :type               => self.type,
-      :zindex             => self.zindex,
-      :initial_bounds     => self.initial_bounds.attribute_data,
-      :bounds             => self.bounds.attribute_data,
-      :opacity            => self.opacity,
-      :text               => self.text,
-      :shape              => self.shape,
-      :styles             => self.styles,
-      :tag                => self.tag_name,
-      :image_name         => self.image_name,
-      :design             => self.design.id,
-      :overlay            => self.overlay,
-      :style_layer        => self.style_layer,
-      :generated_selector => self.generated_selector,
-      :parent_grid        => parent_grid,
-      :original_uid       => self.original_uid
+      :uid     => self.uid,
+      :id      => self.uid,
+      :name    => self.name,
+      :type    => self.type,
+      :zindex  => self.zindex,
+      :initial_bounds => self.initial_bounds.attribute_data,
+      :bounds  => self.bounds.attribute_data,
+      :opacity => self.opacity,
+      :text    => self.text,
+      :shape   => self.shape,
+      :styles  => self.styles,
+      :design  => self.design.id,
+      :style_layer => self.style_layer,
+      :grouping_box => grouping_box_data
     }
+
+    if self.type == Layer::LAYER_NORMAL
+      attr_data[:image_name] = self.image_name
+    end
+
     return Utils::prune_null_items attr_data
   end
 
@@ -170,12 +150,7 @@ class Layer
 
   def styleable_layer?
     (self.type != Layer::LAYER_TEXT)
-  end
-  
-  def render_layer?
-    self.parent_grid.leaf?
-  end
-  
+  end  
 
   ##########################################################
   # Text Layer helper functions
@@ -193,43 +168,25 @@ class Layer
     return self.full_text.size == 0
   end
 
-  def has_multifont?
-    self.type == Layer::LAYER_TEXT and self.text_chunks.size > 0
-  end
-
-  def text_content
-    if self.type == LAYER_TEXT
-      original_text = self.full_text
-
-      if has_multifont?
-
-        multifont_text = ''
-
-        self.text_chunks.each_with_index do |chunk, index|
-          newlined_chunk = ActiveSupport::SafeBuffer.new(chunk[:text].gsub("\n", "<br>").gsub("\r\r", "<br>").gsub("\r", "<br>"))
-          attributes = { :class => self.chunk_text_selector[index] }
-          multifont_text +=  content_tag :span, newlined_chunk, attributes
-        end
-
-        multifont_text
-      else
-        original_text
-      end
-    else
-      ''
-    end
-  end
-
   ##########################################################
   # Normal Layer helper functions
   ########################################################## 
   
   def image_name
-    if @image_name.nil? and self.type == LAYER_NORMAL
-      layer_safe_name = Store::get_safe_name(self.name)
-      "#{layer_safe_name.downcase}_#{self.uid}.png"
+    "#{self.uid}.png"
+  end
+
+  def copy_layer_image_to_store
+    image_path = "./assets/images/#{self.image_name}"
+    src_image_file = Rails.root.join("tmp", "store", self.design.store_extracted_key, image_path).to_s
+    Log.fatal src_image_file
+    if File.exists? src_image_file
+      generated       = File.join self.design.store_generated_key, "assets", "images", self.image_name
+      published       = File.join self.design.store_published_key, "assets", "images", self.image_name
+      Store::save_to_store src_image_file, generated
+      Store::save_to_store src_image_file, published
     else
-      @image_name      
+      Log.fatal "#{src_image_file} Missing"
     end
   end
 
@@ -237,15 +194,6 @@ class Layer
   def image_path
     if not @image_path
       @image_path     = "./assets/images/#{image_name}"
-      src_image_file  = Rails.root.join("tmp", "store", self.design.store_extracted_key, @image_path).to_s
-      
-      # TODO: this is a temp fix so that parsing goes though instead of breaking!
-      if File.exists? src_image_file
-        generated       = File.join self.design.store_generated_key, "assets", "images", image_name
-        published       = File.join self.design.store_published_key, "assets", "images", image_name
-        Store::save_to_store src_image_file, generated
-        Store::save_to_store src_image_file, published
-      end
     end
 
     @image_path
@@ -253,8 +201,6 @@ class Layer
 
   def extracted_image_path
     extracted_folder = Store::fetch_extracted_folder self.design
-    Log.debug extracted_folder
-    Log.debug image_asset_path
     current_image_path = File.join extracted_folder, image_asset_path
   end
 
@@ -263,40 +209,40 @@ class Layer
   end
 
   def crop_image(image_file)
-    Log.info "Checking whether to crop #{image_file}"
+    Log.debug "Checking whether to crop #{image_file}"
     if self.bounds == self.initial_bounds
-      Log.info "Decided not to crop"
+      Log.debug "Decided not to crop"
       return
     end
 
-    Log.info "Decided that it should be cropped"
+    Log.debug "Decided that it should be cropped"
 
     current_image_path = image_file
-    Log.info "Reading the image #{current_image_path}"
+    Log.debug  "Reading the image #{current_image_path}"
     current_image = Image.read(current_image_path).first
 
     image_width = current_image.columns
     image_height = current_image.rows
 
-    Log.info "Checking if the image in disk is bigger than the desired size"
+    Log.debug "Checking if the image in disk is bigger than the desired size"
 
     if image_width >= self.bounds.width and image_height >= self.bounds.height
-      Log.info "Yes it is! Cropping..."
+      Log.debug "Yes it is! Cropping..."
 
       top_offset = (self.bounds.top - self.initial_bounds.top).abs
       left_offset = (self.bounds.left - self.initial_bounds.left).abs
 
-      Log.info "Cropping #{current_image_path} at offsets - top: #{top_offset} left: #{left_offset}"
+      Log.debug "Cropping #{current_image_path} at offsets - top: #{top_offset} left: #{left_offset}"
       current_image.crop!(left_offset, top_offset, self.bounds.width, self.bounds.height)
       current_image.write(current_image_path)
 
-      Log.info "Saving to the store at - #{File.join(design.store_extracted_key, self.image_asset_path)}"
+      Log.debug "Saving to the store at - #{File.join(design.store_extracted_key, self.image_asset_path)}"
       return current_image
     elsif  image_width < self.bounds.width and image_height < self.bounds.height
-      Log.info "Looks like the image has been cropped to a smaller size than desired."
+      Log.debug "Looks like the image has been cropped to a smaller size than desired."
       return
     else
-      Log.info "Looks like someone beat me to cropping it. Not cropping again."
+      Log.debug "Looks like someone beat me to cropping it. Not cropping again."
       return
     end
   end
@@ -315,73 +261,30 @@ class Layer
   # Layer styles related functions
   ##########################################################
 
-  # Array of CSS rules, created using 
-  # computed using computed css and 
-  def css_rules
-    computed_css_array  = []
-    generated_css_array = []
-
-    self.computed_css.each do |rule_key, rule_object|
-      computed_css_array.concat Compassify::get_scss(rule_key, rule_object)
-    end
-
-    if self.render_layer?
-      computed_css_array.concat  self.parent_grid.style.css_rules
-    end
-
-    generated_css_array = StylesGenerator.get_styles self
-    generated_css_array + computed_css_array
-  end
-
-  def set_style_rules
+  def get_style_rules
     self.crop_objects_for_cropped_bounds
-    grid_style = self.parent_grid.style
-    is_leaf    = grid_style.grid.leaf?
 
-    self.extra_selectors = grid_style.extra_selectors
-    
-    if not is_leaf and self.type == Layer::LAYER_NORMAL
-      @computed_css[:background]        = "url('../../#{self.image_path}') no-repeat"
-      @computed_css[:'background-size'] = "100% 100%"
-      @computed_css[:'background-repeat'] = "no-repeat"
-
-      if grid_style
-        @computed_css[:'min-width']  = "#{grid_style.unpadded_width}px"
-        @computed_css[:'min-height'] = "#{grid_style.unpadded_height}px"
-      end
+    if self.type == Layer::LAYER_NORMAL
+      self.copy_layer_image_to_store
     end
 
-    if is_leaf and self.type == Layer::LAYER_SHAPE and grid_style
-      @computed_css[:'min-width']  = "#{grid_style.unpadded_width}px"
-      @computed_css[:'min-height'] = "#{grid_style.unpadded_height}px"
+    computed_style_rules = Hash.new
+    if self.style_layer and self.type == Layer::LAYER_NORMAL
+      # this means its a style layer and it has image to be set as background  
+      computed_style_rules[:background] = "url('../../#{self.image_path}') no-repeat"
+      computed_style_rules[:'background-size'] = "100% 100%"
+      computed_style_rules[:'background-repeat'] = "no-repeat"
     end
 
-    
-    if self.type == Layer::LAYER_TEXT
-      self.text_chunks.each_with_index do |_, index|
-        chunk_text_selector[index] = CssParser::create_incremental_selector('text-chunk')
-      end
-    end 
-    
-    if not self.style_layer and self.generated_selector.nil?
-      @generated_selector = CssParser::create_incremental_selector(self.readable_layer_type)
-    end
+    style_rules = Array.new
 
-  end
+    # Get the computed styles for background image for NORMAL layer
+    style_rules += Compassify::styles_hash_to_array computed_style_rules
 
-  # Selector names (includes default selector and extra selectors)
-  def selector_names
-    all_selectors = self.extra_selectors
-    all_selectors.push self.generated_selector
+    # Get all the other css3 styles for the layer
+    style_rules += StylesGenerator.get_styles self
 
-    if @tag_name != 'img'
-      if not self.parent_grid.nil?
-        all_selectors.concat parent_grid.style.extra_selectors
-      end
-    end
-
-    all_selectors.uniq!
-    all_selectors
+    return style_rules
   end
 
   def get_raw_font_name(position = 0)
@@ -407,94 +310,9 @@ class Layer
     return true
   end
 
-  def get_style_node
-    if self.type == Layer::LAYER_TEXT
-      chunk_nodes = []
-      
-      chunk_text_selector.each_with_index do |class_name, index|
-        chunk_styles = []
-        self.text_chunks[index][:styles].each do |rule_key, rule_object|
-          if self.allow_chunk_styles? rule_key
-            chunk_styles.concat Compassify::get_scss(rule_key, rule_object)
-          end
-        end
-        
-        chunk_nodes.push StyleNode.new :class => class_name, :style_rules => chunk_styles
-      end
-      
-      layer_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules, :children => chunk_nodes
-    else
-      layer_style_node = StyleNode.new :class => self.generated_selector, :style_rules => self.css_rules
-    end
-
-    return layer_style_node
-  end
-
-  def to_scss
-    self.get_style_node.to_scss
-  end
-
   ##########################################################
-  # HTML generation related functions
+  # DEBUG HELPERS
   ##########################################################
-
-  def tag_name
-    chosen_tag = ""
-    is_leaf = (not self.parent_grid.nil?) and self.parent_grid.leaf?
-    
-    if not @tag_name.nil?
-      @tag_name
-    else
-      if not self.override_tag.nil?
-        self.override_tag
-      elsif self.type == LAYER_NORMAL
-        if is_leaf
-          chosen_tag = 'img'
-        else
-          chosen_tag = 'div'
-        end
-      elsif self.type == LAYER_TEXT or self.type == LAYER_SHAPE
-        chosen_tag = 'div'
-      else
-        Log.info "New layer found #{self.type} for layer #{self.name}"
-        chosen_tag = 'div'
-      end
-      @tag_name = chosen_tag
-      @tag_name
-    end
-  end
-
-  def to_html(args = {})
-    Log.info "[HTML] Layer #{self.to_s}"
-    
-    generated_tag = self.tag_name
-    @tag_name = args.fetch :tag, generated_tag
-
-    inner_html = args.fetch :inner_html, ''
-    if inner_html.empty? and self.type == LAYER_TEXT
-      inner_html += self.text_content
-    end
-
-    attributes                     = Hash.new
-    attributes[:"data-grid-id"]    = args.fetch :"data-grid-id", ""
-    attributes[:"data-layer-id"]   = self.uid.to_s
-    attributes[:"data-layer-name"] = self.name
-
-    if self.copied?
-      attributes[:class] = self.design.layers[self.original_uid].selector_names.join(" ")
-    elsif not self.selector_names.empty?
-      attributes[:class] = self.selector_names.join(" ") 
-    end
-
-    if @tag_name == "img"
-      attributes[:src] = self.image_path
-      html = tag "img", attributes, false
-    else
-      html = content_tag @tag_name, inner_html, attributes, false
-    end
-
-    return html
-  end
 
   def to_s
     "#{self.name} - #{self.bounds} - #{self.type}"

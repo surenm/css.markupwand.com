@@ -1,85 +1,69 @@
-ul.tree {
+ul.jqtree-tree {
     margin-left: 12px;
 }
 
-ul.tree,
-ul.tree ul {
+ul.jqtree-tree,
+ul.jqtree-tree ul {
     list-style: none outside;
     margin-bottom: 0;
+    padding: 0;
 }
 
-ul.tree ul {
+ul.jqtree-tree ul {
     display: block;
     margin-left: 12px;
     margin-right: 0;
 }
 
-ul.tree li.closed > ul {
+ul.jqtree-tree li.jqtree-closed > ul {
     display: none;
 }
 
-ul.tree li {
+ul.jqtree-tree li {
     clear: both;
 }
 
-ul.tree .toggler {
-    background-image: url(/assets/jqtree-icons.png);
-    background-repeat: no-repeat;
-    background-position: -8px 0;
-    width: 8px;
-    height: 8px;
+ul.jqtree-tree .jqtree-toggler {
     display: block;
     position: absolute;
-    left: -12px;
+    left: -1.0em;
     top: 30%;
-    text-indent: -9999px;
+    *top: 0;  /* fix for ie7 */
+    font-size: 12px;
+    line-height: 12px;
+    font-family: arial;  /* fix for ie9 */
     border-bottom: none;
-    margin: 5px 0px;
 }
 
-ul.tree li > div {
-    float: left;
+ul.jqtree-tree .jqtree-toggler:hover {
+    color: #000;
+}
+
+ul.jqtree-tree div {
     cursor: pointer;
 }
 
-ul.tree .title {
-    color: #1C4257;
+ul.jqtree-tree .jqtree-title {
     vertical-align: middle;
 }
 
-ul.tree .title .editable-grid {
-  padding: 5px 10px 5px 5px;
-}
-
-ul.tree .title .editable-grid .editable-tag {
-  color: #333;
-  font-size: 1.2em;
-}
-
-ul.tree .title .editable-grid .editable-class {
-  color: #666;
-  font-size: 1.1em;
-  font-style: italic;
-}
-
-
-ul.tree li.folder {
+ul.jqtree-tree li.jqtree-folder {
     margin-bottom: 4px;
 }
 
-ul.tree li.folder.closed {
+ul.jqtree-tree li.jqtree-folder.jqtree-closed {
     margin-bottom: 1px;
 }
 
-ul.tree li.folder .title {
+ul.jqtree-tree li.jqtree-folder .jqtree-title {
     margin-left: 0;
 }
 
-ul.tree .toggler.closed {
+ul.jqtree-tree .jqtree-toggler.jqtree-closed {
     background-position: 0 0;
 }
 
-span.tree-dragging {
+span.jqtree-dragging {
     color: #fff;
     background: #000;
     opacity: 0.6;
@@ -87,20 +71,19 @@ span.tree-dragging {
     padding: 2px 8px;
 }
 
-ul.tree li.ghost {
+ul.jqtree-tree li.jqtree-ghost {
     position: relative;
     z-index: 10;
     margin-right: 10px;
 }
 
-ul.tree li.ghost span {
+ul.jqtree-tree li.jqtree-ghost span {
     display: block;
 }
 
-ul.tree li.ghost span.circle {
-    background-image: url(jqtree-icons.png);
+ul.jqtree-tree li.jqtree-ghost span.jqtree-circle {
+    background-image: url('/assets/jqtree-circle.png');
     background-repeat: no-repeat;
-    background-position: 0 -8px;
     height: 8px;
     width: 8px;
     position: absolute;
@@ -108,7 +91,7 @@ ul.tree li.ghost span.circle {
     left: 2px;
 }
 
-ul.tree li.ghost span.line {
+ul.jqtree-tree li.jqtree-ghost span.jqtree-line {
     background-color: #0000ff;
     height: 2px;
     padding: 0;
@@ -118,16 +101,11 @@ ul.tree li.ghost span.line {
     width: 100%;
 }
 
-ul.tree li.ghost.inside {
+ul.jqtree-tree li.jqtree-ghost.jqtree-inside {
     margin-left: 48px;
 }
 
-ul.tree span.tree-hit {
-    position: absolute;
-    display: block;
-}
-
-ul.tree span.border {
+ul.jqtree-tree span.jqtree-border {
     position: absolute;
     display: block;
     left: -2px;
@@ -139,26 +117,22 @@ ul.tree span.border {
     margin: 0;
 }
 
-ul.tree div {
+ul.jqtree-tree div {
+    padding: 5px 10px;
     position: relative;
+    float: left;
 }
 
-ul.tree li.selected > div {
-  -webkit-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
-  -moz-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
-  box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
-  background: #202020;
-  border-radius: 4px;
+ul.jqtree-tree li.jqtree-selected > div,
+ul.jqtree-tree li.jqtree-selected > div:hover
+{
+    background: #eee;
+    color: #222;
+    border-radius: 2px;
+    font-weight: bold;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
-ul.tree li.selected > div .editable-grid {
-  padding: 5px 10px;
-}
-
-ul.tree li.selected > div .editable-grid .editable-tag {
-  color: #eee;
-}
-
-ul.tree .moving > div .title {
+ul.jqtree-tree .jqtree-moving > div .jqtree-title {
     outline: dashed 1px #0000ff;
 }

@@ -7,204 +7,69 @@
 body {
   background: #ffffff;
   padding: 0;
-  min-height: 100%;
-  height: 100%;
-  overflow: hidden;
 
-  .usage-info {
-    margin: 0 auto;
-    margin-left: 40%;
-    display: inline-block;
-
-    .msg {
-    }
-  }
-
-  .alert {
-    font-size: 11px;
-    margin: 0px 20px 10px 0;
-    font-family: 'Helvetica Neue';
-    padding: 3px;
-    width: 212px;
-    line-height: 12px;
-    background-color: transparent;
-    color: #444;
-
-    .label {
-      font-size: 9px;
-      font-weight: normal;
-      font-family: Ubuntu;
-    }
-  }
-
-  .alert-info {
-    background-color: white;
-    margin: 10px 25px;
-    border: 1px solid #ccc;
-    width: 192px;
-  }
-
-
-  #widget-class-name {
-    .modal-header {
-      font-size: 19px;
-    }
-    width: 195px;
-    input#widget-name {
-      width: 150px;
-    }
-
-    .btn-primary {
-      width:160px;
-    }
-  }
-
-  .modal-backdrop {
-    opacity: 0.4;
-  }
-
-  #css_prefix { 
-    margin-left: 20px;
-
-    input {
-      width:70px;
-      margin-bottom: 0;
-    }
-
-    button {
-      width:70px;
-    }
-  }
-
-  .edit-block {
-    margin-left: 24px;
-    margin-top: 10px;
-
-    .row {
-      margin-left: 0;
-    }
-
-    .big-box {
-      font-size: 18px;
-      padding: 10px;
-      height: 18px;
-      width: 180px;
-      margin: 0;
-    }
-
-    .edit-prev,
-    .edit-next {
-      display: inline-block;
-      margin-bottom: 2px;
-      background-color: #eee;
-      padding: 3px;
-      border: 1px solid #888;
-      border-radius: 3px;
-    }
-
-    input {
-      background-color: white;
-      color: #444;
-    }
-
-    input[disabled], select[disabled] {
-      background-color: #ccc;
-      border:1px solid #ccc;
-    }
-
-    select {
-      font-size: 18px;
-    }
-
-  }
-
-  .saveclasses {
-    margin-left: 80px;
-  }
-
-  #edit-panel {
+  canvas {
     position: absolute;
-    top: 44px;
-    right: 0;
-    bottom: 0;
-    height: 100%;
-    overflow: auto;
-    z-index: 100;
-    
-    background: white url("/assets/noise.png") repeat;
-    color: #333;
-    border-left: 1px solid #999;
 
-    width: 300px;
-    font-family: "Ubuntu";
-    font-size: 14px;
+  }
 
-    h1 {
-      font-size: 15px;
+  #app {
+    background: url('/assets/low_contrast_linen.jpg');
+
+    .canvases {
+      float: right;
+      margin: 25px 10px;
+      width: 1200px;
+      border: 1px solid #ccc;
+      @include box-shadow(rgba(white, 0.4) 0 0px 15px, rgba(white, 0.4) 0 0 25px inset);
     }
 
-    h3 {
-      font-size: 18px;
-      font-family: "lemonde-sans", sans-serif;
-      text-align: center;
-      border-bottom: 1px solid #666;
-      padding: 30px 0 0 0;
-      margin-bottom: 10px;
+    #left-sidebar {
+      float: left;
+      width: 190px;
+      height: 800px;
+      overflow: auto;
+      margin: 50px 5px;
+      
+      color: #fff;
+      border-left: 1px solid #999;
+
+      font-family: "museo-sans", sans-serif;
+      font-size: 12px;
+
+      #action-panel {
+        margin:0 auto;
+        margin-top: 100px;
+        width: 175px;
+      }
     }
 
-    h4 {
-      font-family: 'Helvetica Neue', sans-serif;
-      padding: 2px 0;
+    #intersections-sidebar {
+      margin-top: 25px;
+
+      h1 {
+        color: #fff;
+        font-size: 15px;
+      }
+
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .intersection-item {
+        margin-left: 10px;
+        font-size: 15px;
+        margin-bottom:10px;
+        cursor: pointer;
+
+        .actions {
+          display: none;
+          font-size: 10px;
+        }        
+      }
+
     }
-
-  
-    label {
-      color: #1D2A5B;
-      font-family: 'lucida grande', tahoma, verdana, arial, sans-serif;
-      font-weight: bold;
-    }
   }
-
-  #unsaved-changes {
-    background-color: orange;
-    margin-left: 30px;
-  }
-  
-  #editor-iframe {
-    position: absolute;
-    top: 53px;
-    left: 0;
-    height: 100%;
-    overflow: auto;
-    
-    width: 100%;
-    height: 99%;
-    min-height: 99%;
-    border: 0px inset;
-    border-right: 1px solid #106AA3 ;
-
-  }
-
-  .multiselect {
-    visibility: hidden;
-    position: absolute;
-    bottom: 0;
-    left: 45%;
-    padding: 10px;
-    display: inline-block;
-    border-top: 2px solid #DD3C10;
-    border-left: 2px solid #DD3C10;
-    border-right: 2px solid #DD3C10;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
-    background: #fff;
-  }
-
-  .grouptags {
-    display: none;
-  }
-}
-
-.typeahead {
-  width: 220px;
 }

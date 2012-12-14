@@ -10,7 +10,7 @@ module Compassify
           return nil 
         end 
       else
-        ["#{key} : #{style_object}"]
+        ["#{key}: #{style_object}"]
       end
     end
 
@@ -87,6 +87,14 @@ module Compassify
        "-webkit-background-clip: text",
        "-webkit-text-fill-color: transparent"]
 =end
+    end
+
+    def styles_hash_to_array(styles_hash)
+      styles_array = styles_hash.collect do |rule_key, rule_value|
+        Compassify::get_scss rule_key, rule_value
+      end
+
+      return styles_array
     end
   end
 end

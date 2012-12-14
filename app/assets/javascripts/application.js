@@ -15,7 +15,10 @@
 //= require lib/jquery.client
 //= require lib/jquery.formdefaults
 //= require lib/jquery.ba-dotimeout
+//= require lib/jquery.imagesloaded
 //= require lib/jquery-ui-1.8.20.min
+//= require lib/avgrund
+//= require lib/meny
 //= require lib/json2
 //= require lib/underscore
 //= require lib/backbone
@@ -24,12 +27,9 @@
 //= require lib/tree.jquery
 //= require lib/jquery.jeditable
 //= require lib/bootstrap-modal
-//= require jquery.flot
+//= require lib/jcanvas
+//= require lib/editor_canvas
+//= require lib/helper
 
 //= require twitter/bootstrap
-//= require models
-//= require collections
-//= require views
-//= require routers
-//= require app/landing_page
 //= require app/tutorial

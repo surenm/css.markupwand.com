@@ -17,41 +17,31 @@ class Design
   Design::STATUS_UPLOADING    = :uploading
   Design::STATUS_UPLOADED     = :uploaded
   Design::STATUS_PROCESSING   = :processing
-  Design::STATUS_PROCESSED    = :processed
   Design::STATUS_EXTRACTING   = :extracting
-  Design::STATUS_EXTRACTED    = :extracted
-  Design::STATUS_CLIPPING     = :clipping
-  Design::STATUS_CLIPPED      = :clipped
-  Design::STATUS_PARSING      = :parsing
-  Design::STATUS_PARSED       = :parsed
-  Design::STATUS_GENERATING   = :generating
-  Design::STATUS_REGENERATING = :regenerating
+  Design::STATUS_GROUPING     = :grouping
+  Design::STATUS_GRIDS        = :grids
+  Design::STATUS_MARKUP       = :markup
   Design::STATUS_COMPLETED    = :completed
   Design::STATUS_FAILED       = :failed
 
   Design::STATUS_CLASS = {
-    Design::STATUS_QUEUED       => 'label label-info',
+    Design::STATUS_QUEUED       => 'label',
     Design::STATUS_UPLOADING    => 'label',
     Design::STATUS_UPLOADED     => 'label',
     Design::STATUS_PROCESSING   => 'label label-info',
-    Design::STATUS_PROCESSED    => 'label label-info',
     Design::STATUS_EXTRACTING   => 'label label-info',
-    Design::STATUS_EXTRACTED    => 'label label-info',
-    Design::STATUS_PARSING      => 'label label-info',
-    Design::STATUS_PARSED       => 'label label-info',
-    Design::STATUS_GENERATING   => 'label label-info',
-    Design::STATUS_REGENERATING => 'label label-info',
+    Design::STATUS_GROUPING     => 'label label-info',
+    Design::STATUS_GRIDS        => 'label label-info',
+    Design::STATUS_MARKUP       => 'label label-info',
     Design::STATUS_COMPLETED    => 'label label-success',
     Design::STATUS_FAILED       => 'label label-important'
   }
+    
   
   Design::ERROR_FILE_ABSENT        = "file_absent"
   Design::ERROR_NOT_PHOTOSHOP_FILE = "not_photoshop_file"
   Design::ERROR_SCREENSHOT_FAILED  = "screenshot_failed"
   Design::ERROR_EXTRACTION_FAILED  = "extraction_failed"
-
-  Design::PRIORITY_NORMAL = :normal
-  Design::PRIORITY_HIGH   = :high
 
   # File meta data
   field :name, :type => String
@@ -59,9 +49,10 @@ class Design
   field :sif_file_path, :type => String, :default => nil
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
   field :softdelete, :type => Boolean, :default => false
+  field :width, :type => Integer
+  field :height, :type => Integer
   
   field :storage, :type => String, :default => "local"
-  field :queue, :type => String, :default => Design::PRIORITY_NORMAL
 
   # Rating is Yes or No
   field :rating, :type => Boolean
@@ -70,17 +61,15 @@ class Design
   attr_accessor :class_edited
   
   # Document properties
-  attr_accessor :height
-  attr_accessor :width
   attr_accessor :resolution
-
-  # Autoincrement counter
-  attr_accessor :incremental_counter
 
   # Offset box buffer
   attr_accessor :row_offset_box
 
-  # Sif
+  # CSS class counter
+  attr_accessor :css_counter
+
+  # SIF accessor
   attr_accessor :sif
 
   mount_uploader :file, DesignUploader
@@ -90,11 +79,38 @@ class Design
   ##########################################################
   def attribute_data(minimal=false)
     return {
-      :name          => self.name,
+      :name => self.name,
       :psd_file_path => self.psd_file_path,
-      :id            => self.safe_name,
-      :status        => self.status,
+      :id => self.safe_name,
+      :status => self.status,
+      :safe_name => self.safe_name,
+      :safe_name_prefix => self.safe_name_prefix,
+      :height => self.height,
+      :width => self.width
     }
+  end
+  
+  def get_serialized_sif_data
+    self.init_sif
+    sif_serialized_data = @sif.get_serialized_data
+
+    # Get grouping boxes in an array as well
+    grouping_boxes = Hash.new
+    self.root_grouping_box.each do |grouping_box|
+      grouping_box_data = grouping_box.attribute_data
+      children_ids = grouping_box.children.collect { |child| child.unique_identifier }
+      grouping_box_data[:children] = children_ids
+      grouping_boxes[grouping_box.unique_identifier] = grouping_box_data
+    end
+
+    sif_serialized_data[:grouping_boxes] = grouping_boxes.values
+    return sif_serialized_data
+  end
+  
+  def get_grid_tree    
+    root_node = self.get_root_grid
+    dom = root_node.get_tree
+    return dom
   end
   
   def get_root_grid
@@ -116,52 +132,56 @@ class Design
     Log.info "Setting status == #{status}"
     self.status = status
     self.save!
-
-    if self.status == Design::STATUS_COMPLETED
-      if not self.user.admin
-        to      = "#{self.user.name} <#{self.user.email}>"
-        subject = "#{self.name} generated"
-        text    = "Your HTML & CSS has been generated, click http://#{ENV['APP_URL']}/design/#{self.safe_name}/preview to download"
-        ApplicationHelper.post_simple_message to, subject, text
-      end
-    end
   end
 
-  def incremental_counter
-    if @incremental_counter.nil?
-      @incremental_counter = 1
-      return @incremental_counter
-    end
-    @incremental_counter = @incremental_counter + 1
-    return @incremental_counter
-  end
-  
-  def get_next_grid_id
-    # Minimal version of mongodb's object id.
-    # http://www.mongodb.org/display/DOCS/Object+IDs
-    # For incremental object ids.
-    process_id  = "%07d" % $$ #7 digits
-    time_micro  = ("%0.6f" % Time.now.to_f).gsub(".", "") #16 digits
-    incremental = "%04d" % self.incremental_counter #4 digits
-    new_id = (time_micro + process_id + incremental).to_i.to_s(16)
-    return new_id
-  end
-
-  def get_next_layer_uid
-    self.layers.keys.sort.last + 1
-  end
-  
   # FIXME PSDJS
   def webfonts_snippet
     return ''
     self.font_map.google_webfonts_snippet
   end
   
-  def parse_fonts(layers)
+  def parse_fonts
     self.font_map = FontMap.new
-    self.font_map.find_web_fonts layers
+    self.font_map.find_web_fonts self.layers
     self.font_map.save!
     self.save!
+  end
+
+  def get_fonts_styles_hash
+    fonts = Hash.new
+    index = 1
+    self.layers.each do |uid, layer|
+      if layer.type == Layer::LAYER_TEXT
+        layer.text_chunks.each do |chunk|
+          key = chunk[:styles]
+          if not fonts.has_key? key
+            fonts[key] = "font-#{index}"
+            index += 1
+          end
+        end
+      end
+    end
+
+    return fonts
+  end
+
+  def get_fonts_styles_scss
+    fonts = self.get_fonts_styles_hash
+    
+    fonts_css = ""
+    fonts.each do |font_styles, font_class_name|
+      font_properties = ""
+      font_styles.each do |key, value|
+        if key == :'font-family'
+          font_properties += "  #{key}: '#{value}';\n"
+        else
+          font_properties += "  #{key}: #{value};\n"
+        end
+      end
+      fonts_css += ".#{font_class_name} { \n#{font_properties} }\n"
+    end
+
+    return fonts_css
   end
   
   def vote_class
@@ -174,6 +194,16 @@ class Design
       return 'none'
     end
   end
+
+  def get_css_counter
+    if self.css_counter.nil?
+      self.css_counter = 0
+    else
+      self.css_counter += 1
+    end
+    return self.css_counter
+  end
+  
   ##########################################################
   # Store related functions
   ##########################################################
@@ -244,28 +274,35 @@ class Design
     Store::fetch_data_from_store(self.get_sif_file_path)
   end
 
-  def save_sif!
-    @sif.save! if @sif != nil
-  end
-
   ##########################################################
   # SIF related functions
   ##########################################################
-  def init_sif
-    @sif = Sif.new(self) if @sif == nil
+
+  def init_sif(forced = false)
+    @sif = Sif.new(self) if @sif == nil or forced
     self.height = @sif.header[:design_metadata][:height]
     self.width  = @sif.header[:design_metadata][:width]
-    return @sif
+    @sif
   end
   
   def grids
     self.init_sif
-    return @sif.grids
+    @sif.grids
   end
   
   def layers
     self.init_sif
-    return @sif.layers
+    @sif.layers
+  end
+
+  def root_grouping_box
+    self.init_sif
+    @sif.root_grouping_box
+  end
+
+  def root_grid
+    self.init_sif
+    @sif.root_grid
   end
   
   def save_grid(grid)
@@ -273,51 +310,6 @@ class Design
     @sif.set_grid grid
   end
 
-  ##########################################################
-  # Row grid and grid offset box related methods
-  ##########################################################
-  # Offset box is a box, that is an empty grid that appears before
-  # this current grid. The previous sibling being a empty box, it adds itself
-  # to a buffer. And the next item picks it up from buffer and takes it as its 
-  # own offset bounding box.
-  #
-  
-  @@grid_offset_box = nil
-  @@row_offset_box  = nil
-  
-  # This function is for serializing bounding box and storing it.
-  def add_offset_box(bounding_box)
-    new_offset_box = nil
-    if self.offset_box.nil?
-      new_offset_box = bounding_box
-    else 
-      new_offset_box = BoundingBox.get_super_bounds [bounding_box, self.offset_box]
-    end
-     @@grid_offset_box = new_offset_box
-  end
-  
-  # Accessor for offset bounding box
-  # De-serializes the offset box from mongo data.
-  def offset_box
-    @@grid_offset_box
-  end
-  
-  def reset_offset_box
-    @@grid_offset_box = nil
-  end
-  
-  def row_offset_box=(bounding_box)
-    @@row_offset_box = bounding_box
-  end
-  
-  def row_offset_box
-    @@row_offset_box
-  end
-  
-  def reset_row_offset_box
-    @@row_offset_box = nil
-  end
-  
   ##########################################################
   # Helper methods for running jobs on designs
   ##########################################################
@@ -349,27 +341,18 @@ class Design
     self.push_to_processing_queue
   end
 
-  def reparse
-    # if sif files exist, remove grids from it and reparse
-    #self.init_sif  
-    #@sif.reset_grids
-    #self.set_status Design::STATUS_PARSING
-    #Resque.enqueue ParserJob, self.id
-    self.init_sif  
-    @sif.reset_grids
+  def regroup
+    self.init_sif
+    @sif.reset_calculated_data
+
     generated_folder = self.store_generated_key
     published_folder = self.store_published_key
     tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
     FileUtils.rm_rf tmp_folder
     Store.delete_from_store generated_folder
     Store.delete_from_store published_folder
-    self.set_status Design::STATUS_EXTRACTED
-    
-    self.push_to_parsing_queue
-  end
-  
-  def regenerate
-    # TODO: If generated/published folders exist delete and remove those files and regenerate
+
+    Resque.enqueue GroupingBoxJob, self.id
   end
   
   def get_processing_queue_message
@@ -386,94 +369,123 @@ class Design
     message[:design] = self.safe_name
     message[:design_id] = self.id.to_s
 
-
     return message
   end
   
   def push_to_processing_queue
     self.set_status Design::STATUS_PROCESSING
-    self.queue = Design::PRIORITY_NORMAL
     self.save!
     
     message = self.get_processing_queue_message
     Resque.enqueue ProcessorJob, message
   end
 
-  def move_to_priority_queue
-    message = self.get_processing_queue_message
-    Resque.dequeue ProcessorJob, message
-    Resque.enqueue PriorityProcessorJob, message
-    self.queue = Design::PRIORITY_HIGH
-    self.save!
-  end
-
   def push_to_extraction_queue
     Resque.enqueue ExtractorJob, self.id
   end
-
-  def push_to_parsing_queue
-    Resque.enqueue ParserJob, self.id
-  end
-
-  def push_to_generation_queue
-    self.set_status Design::STATUS_GENERATING
-    Resque.enqueue GeneratorJob, self.id
-  end 
-  
   ##########################################################
   # Actual jobs to be run on designs
   ########################################################## 
-  
-  # Parses the photoshop file json data and decomposes into grids
-  def group_grids
+  def create_grouping_boxes
     self.init_sif
 
-    Log.info "Beginning to group grids #{self.name}..."    
-    #TODO: Resolution information is hidden somewhere in the psd file. pick it up
-    #self.resolution = psd_data[:properties][:resolution]
-    
-    # Reset the global static classes to work for this PSD's data
-    Grid.reset_grouping_queue
+    Log.info "Beginning to create grouping boxes for #{self.name}..."    
     
     # Layer descriptors of all photoshop layers
-    Log.info "Getting nodes..."
-    @layers = @sif.layers.values
+    Log.info "Getting layers..."
+    layers = self.layers.values
     
-    Log.info "Creating root grid..."
-    grid = Grid.new :design => self, :parent => nil, :layers => @layers, :root => true, :group => true
+    Log.info "Creating root grouping box..."
+    root_grouping_box = GroupingBox.new :layers => layers, :bounds => self.bounds, :design => self
+    root_grouping_box.groupify
 
-    Log.info "Grouping the grids..."
-    Grid.group!
-    grid.print
+    @sif.root_grouping_box = root_grouping_box
     @sif.save!
-    Log.info "Successfully grouped grids..."
+
+    Log.info "Successfully created all grouping_boxes."
+  end
+
+  def merge_grouping_boxes(bounds)
+    self.init_sif
+    
+    grouping_boxes = bounds.collect do |bound|
+      GroupingBox.get_node self.root_grouping_box, bound.to_s
+    end
+
+    # Get the super bounds to be set as bounds for the new grouping box 
+    super_bounds = BoundingBox.get_super_bounds bounds
+
+    # Get the layers that belong to all the children
+    layers = grouping_boxes.collect do |grouping_box|
+      grouping_box.layers
+    end
+    layers.flatten!
+
+    # Assumption is that all the selected grouping boxes belong to the same parent
+    # TODO: Validate the assumption and throw the error if not the case
+    parent_grouping_box = grouping_boxes.first.parent
+    orientation = parent_grouping_box.orientation
+    
+    # Sort the children order depending upon orientation
+    grouping_boxes.sort! { |a, b| 
+      if orientation == Constants::GRID_ORIENT_NORMAL
+        a.bounds.top <=> b.bounds.top
+      else
+        a.bounds.left <=> b.bounds.left
+      end
+    }
+
+    new_grouping_box = GroupingBox.new :layers => layers, :bounds => super_bounds, :design => self
+    insert_position = parent_grouping_box.get_child_index grouping_boxes.first
+    parent_grouping_box.add new_grouping_box, insert_position
+
+    grouping_boxes.each do |grouping_box|
+      parent_grouping_box.remove! grouping_box
+      new_grouping_box.add grouping_box
+    end
+
+    @sif.root_grouping_box = self.root_grouping_box
+    @sif.save!
+  end
+
+  def get_intersecting_pairs
+    intersecting_pairs = []
+
+    self.layers.each do |left_uid, node_left|
+      self.layers.each do |right_uid, node_right|
+        if left_uid != right_uid
+          if node_left.bounds.intersect? node_right.bounds and !(node_left.bounds.encloses? node_right.bounds or node_right.bounds.encloses? node_left.bounds)
+            if node_left.zindex < node_right.zindex
+              intersecting_pairs.push [node_left, node_right]
+            else
+              intersecting_pairs.push [node_right, node_left]
+            end
+          end
+        end
+      end
+    end
+
+    intersecting_pairs.uniq
+  end
+
+  def create_grids
+    self.init_sif(true)
+
+    Log.info "Beginning to create grids for #{self.name}"
+    root_grid = self.root_grouping_box.create_grid
+    
+    root_grid.each do |grid|
+      grid.compute_styles
+    end
+
+    @sif.root_grid = root_grid
+    @sif.save!
   end
   
   def generate_markup(args={})
     Log.info "Beginning to generate markup and css for #{self.name}..."
-    
-    self.init_sif
-    generated_folder = self.store_generated_key
-    
-    # Set the root path for this design. That is where all the html and css is saved to.
-    
-    Log.info "Parsing fonts..."
-    # TODO Fork out and parallel process
-    self.parse_fonts(self.layers)
-
-    root_grid = self.get_root_grid
-
-    # Once grids are generated, run through the tree and find out style sheets.
-    # TODO Fork out and parallel process
-    Log.info "Generating CSS Tree..."
-    root_grid.style.compute_css
-
-    Log.debug "Destroying design globals..."
-    DesignGlobals.destroy
-
+    self.init_sif(true)
     self.write_html_and_css
-    
-    @sif.save!
     Log.info "Successfully completed generating #{self.name}"
     return
   end
@@ -487,9 +499,7 @@ class Design
     published_folder = self.store_published_key
 
     # Set the root path for this design. That is where all the html and css is saved to.
-    
-    root_grid    = self.get_root_grid
-    body_html    = root_grid.to_html
+    body_html    = self.root_grid.to_html
     compass_includes = <<COMPASS
 @import "compass";
 @import "compass/css3";
@@ -498,7 +508,9 @@ class Design
 
 
 COMPASS
-    scss_content = self.font_map.font_scss + compass_includes + root_grid.style.to_scss
+
+    self.parse_fonts
+    scss_content = self.font_map.font_scss + compass_includes  + self.get_fonts_styles_scss + self.root_grid.to_scss
 
     wrapper = File.new Rails.root.join('app', 'assets', 'wrapper_templates', 'bootstrap_wrapper.html'), 'r'
     html    = wrapper.read
@@ -565,6 +577,7 @@ config
 
     css_contents
   end
+
 
   def write_css_files(scss_content, base_folder)
     Log.info "Writing css (compass) file..."    

@@ -13,6 +13,10 @@ class SifBuilder
       :width  => psd_data[:header][:width],
       :mode   => psd_data[:header][:modename],
     }
+
+    design.height = design_metadata[:height].to_i
+    design.width = design_metadata[:width].to_i
+    design.save!
     
     user_metadata = {
       :user => design.user.email
@@ -37,20 +41,19 @@ class SifBuilder
     bounds     = BoundingBox.new raw_bounds[:top], raw_bounds[:left], raw_bounds[:bottom], raw_bounds[:right]
 
     layer = {
-      :design       => design,
-      :name         => raw_layer_data[:name],
-      :type         => raw_layer_data[:type],
-      :uid          => raw_layer_data[:uid],
-      :zindex       => raw_layer_data[:zindex],
-      :bounds       => bounds.attribute_data,
-      :opacity      => raw_layer_data[:opacity],
-      :height       => raw_layer_data[:height],
-      :width        => raw_layer_data[:width],
-      :text         => raw_layer_data[:text],
-      :shape        => raw_layer_data[:shape],
-      :styles       => raw_layer_data[:styles],
-      :image_name   => raw_layer_data[:image_name],
-      :original_uid => raw_layer_data[:original_uid]
+      :design  => design,
+      :name    => raw_layer_data[:name],
+      :type    => raw_layer_data[:type],
+      :uid     => raw_layer_data[:uid],
+      :zindex  => raw_layer_data[:zindex],
+      :bounds  => bounds.attribute_data,
+      :opacity => raw_layer_data[:opacity],
+      :height  => raw_layer_data[:height],
+      :width   => raw_layer_data[:width],
+      :text    => raw_layer_data[:text],
+      :shape   => raw_layer_data[:shape],
+      :styles  => raw_layer_data[:styles],
+      :grouping_box => nil
     }
   end
 end

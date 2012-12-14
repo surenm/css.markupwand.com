@@ -24,6 +24,7 @@ gem 'therubyracer'
 gem 'xml-simple'
 gem 'rubyzip'
 gem "bugsnag"
+gem 'rubytree', '~> 0.8.3'
 
 # Init command related gems
 gem 'foreman'
