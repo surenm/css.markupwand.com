@@ -44,25 +44,12 @@ class Layer
   attr_accessor :opacity #(Integer)
   attr_accessor :initial_bounds #(BoundingBox)
   attr_accessor :bounds #(BoundingBox)
-  attr_accessor :smart_bounds #(BoundingBox)
-  attr_accessor :tag_name # (Symbol)
 
   attr_accessor :text
   attr_accessor :shape
   attr_accessor :styles
 
-  attr_accessor :overlay # (Boolean)
   attr_accessor :style_layer # (Boolean)
-  attr_accessor :override_tag # (String)
-
-  # CSS Rules
-  attr_accessor :computed_css # (Hash)
-  attr_reader   :css_rules # (Array)
-  attr_accessor :chunk_text_selector # (Array)
-  attr_accessor :extra_selectors # (Array)
-  attr_accessor :generated_selector # (String)
-
-  attr_accessor :layer_object, :intersect_count, :overlays, :invalid_layer
   
   ##########################################################
   # Layer initialize and serialize functions
@@ -83,11 +70,8 @@ class Layer
       :text    => self.text,
       :shape   => self.shape,
       :styles  => self.styles,
-      :tag     => self.tag_name,
       :design  => self.design.id,
-      :overlay => self.overlay,
-      :style_layer        => self.style_layer,
-      :generated_selector => self.generated_selector,
+      :style_layer => self.style_layer,
     }
 
     if self.type == Layer::LAYER_NORMAL
