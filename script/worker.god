@@ -10,7 +10,7 @@ class EnvironmentVariables
     env_lines = IO.readlines ENV_FILE
 
     env_vars = Hash.new
-    env_vars["QUEUE"] = "uploader,extractor,parser,generator,misc_tasks"
+    env_vars["QUEUE"] = "worker"
 
     for line in env_lines
       tokens = line.split "="
