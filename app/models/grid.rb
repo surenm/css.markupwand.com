@@ -58,8 +58,12 @@ class Grid < Tree::TreeNode
     self.content[:style_layers]
   end
 
+  def non_style_layers
+    self.layers - self.style_layers
+  end
+
   def render_layer
-    self.layers.first
+    self.non_style_layers.first
   end
 
   def positioned?
@@ -177,9 +181,7 @@ class Grid < Tree::TreeNode
   end
 
   def get_padding
-    non_style_layers = self.layers - self.style_layers
-    
-    children_bounds = non_style_layers.collect { |layer| layer.bounds }
+    children_bounds = self.non_style_layers.collect { |layer| layer.bounds }
     children_superbound = BoundingBox.get_super_bounds children_bounds
     padding = { :top => 0, :left => 0, :bottom => 0, :right => 0 }
     
