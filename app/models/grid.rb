@@ -423,11 +423,13 @@ class Grid < Tree::TreeNode
     when Layer::LAYER_NORMAL
       inner_html = tag :img, {:src => self.render_layer.image_path}, false
       html = content_tag :div, inner_html, args, false
-    
-    when Layer::LAYER_SHAPE
-      # Render layer could be a shape? What to do here? Nothing I suppose?
-    end
 
+    else
+      # It is possible that there is no render layer but a style layer at this level
+      # Or, just a shape as a render layer
+      html = content_tag :div, '', args, false
+  
+    end
     return html
   end
 
