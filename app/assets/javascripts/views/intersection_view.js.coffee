@@ -5,11 +5,13 @@ class IntersectionView extends Backbone.View
   intersections_list: "#intersections-list"
   
   initialize: ->
-    this.render()
     @editor_canvas = window.app.editor_canvas
     @design_canvas = @editor_canvas.design_canvas
     @design        = window.design
+    @intersecting_pairs = this.model
     $("#animate-canvas").css("display", "none")
+    this.render()
+
 
   events:
     "click .top-head-item": "focus_intersection_item"
@@ -25,6 +27,15 @@ class IntersectionView extends Backbone.View
     this.draw_layer_bounds layer_uid
     e.stopPropagation()
 
+  delete_involving_intersections: (layer_uid)->
+    for intersecting_pair in @intersecting_pairs.models
+      if intersecting_pair && (intersecting_pair.get('left') == layer_uid || intersecting_pair.get('right') == layer_uid)
+        intersecting_pair.destroy()
+        @intersecting_pairs.remove(intersecting_pair)
+
+    $('#intersections-list .intersection-item[data-left-uid="' + layer_uid + '"]').remove()
+    $('#intersections-list .intersection-item[data-right-uid="' + layer_uid + '"]').remove()
+
   delete_layer: (e)->
     if confirm('Delete layer?')
       layer_uid = $(e.target).parent().parent().data('layer-uid')
@@ -32,6 +43,7 @@ class IntersectionView extends Backbone.View
       @design_canvas.drawLayers()
       @editor_canvas.clear()
       this.delete_layer_sync(layer_uid)
+      this.delete_involving_intersections(layer_uid)
 
   delete_layer_sync: (uid)->
     url = '/design/' + @design.id + '/delete-layer'
@@ -59,7 +71,6 @@ class IntersectionView extends Backbone.View
     $(this.left_sidebar).html(template)
 
   render: ->
-    @intersecting_pairs = this.model
     _.templateSettings = {
       interpolate : /\{\{(.+?)\}\}/g
     };
