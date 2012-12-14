@@ -131,6 +131,7 @@ class EditorCanvas
       method: 'drawRect'
       group: 'groupingBox'
       name: canvas_data.name
+      index: 0
       x: canvas_data.bounds.left
       y: canvas_data.bounds.top
       width: canvas_data.width
