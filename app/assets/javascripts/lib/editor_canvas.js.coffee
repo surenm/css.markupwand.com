@@ -51,6 +51,8 @@ class EditorCanvas
       {x: bounds.right+2, y: bounds.bottom+2}
       {x: (bounds.right+bounds.left)/2, y: bounds.top - 2}
       {x: (bounds.right+bounds.left)/2, y: bounds.bottom + 2}
+      {x: bounds.right+2, y: (bounds.top + bounds.bottom)/ 2}
+      {x: bounds.left-2, y: (bounds.top + bounds.bottom)/ 2}
     ]
 
     for point in points
