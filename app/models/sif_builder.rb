@@ -53,6 +53,7 @@ class SifBuilder
       :text    => raw_layer_data[:text],
       :shape   => raw_layer_data[:shape],
       :styles  => raw_layer_data[:styles],
+      :grouping_box => nil
     }
   end
 end
