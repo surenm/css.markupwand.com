@@ -33,6 +33,6 @@ class UploaderJob
     Log.info "Done uploading successfully!"
     
     design.set_status Design::STATUS_UPLOADED
-    design.push_to_extraction_queue
+    design.push_to_processing_queue
   end
 end
