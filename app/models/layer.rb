@@ -36,6 +36,9 @@ class Layer
   # Belongs to a design
   attr_accessor :design
 
+  # Belongs to a grouping box
+  attr_accessor :grouping_box
+
   # Layer's imported data
   attr_accessor :uid # (String)
   attr_accessor :name # (String)
@@ -58,6 +61,7 @@ class Layer
   end
 
   def attribute_data
+    grouping_box_data = self.grouping_box.attribute_data if not self.grouping_box.nil?
     attr_data = {
       :uid     => self.uid,
       :id      => self.uid,
@@ -72,6 +76,7 @@ class Layer
       :styles  => self.styles,
       :design  => self.design.id,
       :style_layer => self.style_layer,
+      :grouping_box => grouping_box_data
     }
 
     if self.type == Layer::LAYER_NORMAL

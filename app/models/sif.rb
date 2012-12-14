@@ -126,6 +126,7 @@ class Sif
     @root_grouping_box = nil
     @root_grid = nil
     @layers.each do |layer_id, layer|
+      @layers[layer_id].grouping_box = nil
     end
     self.save!
   end
@@ -133,18 +134,30 @@ class Sif
   def get_serialized_data
     self.validate
 
-    serialized_layers = @layers.values.collect do |layer|
-      layer.attribute_data
-    end
-
-    serialized_root_grid = nil
-
     if not @root_grouping_box.nil?
       serialized_root_grouping_box = @root_grouping_box.attribute_data
+      # Set the grouping box for layers. 
+      @root_grouping_box.each do |grouping_box|
+        if grouping_box.is_leaf?
+          # If leaf node all this layers belong to this grouping box
+          grouping_box.layers.each do |layer|
+            @layers[layer.uid].grouping_box = grouping_box.bounds
+          end
+        else
+          # If not leaf node, only style nodes belong to this grouping box
+          grouping_box.style_layers.each do |style_layer|
+            @layers[style_layer.uid].grouping_box = grouping_box.bounds
+          end
+        end
+      end
     end
 
     if not @root_grid.nil?
       serialized_root_grid = @root_grid.attribute_data
+    end
+
+    serialized_layers = @layers.values.collect do |layer|
+      layer.attribute_data
     end
 
     sif_document = {
@@ -160,32 +173,28 @@ class Sif
     Sif.write @design, serialized_document
   end
   
-  
   def create_layer(sif_layer_data)
     layer = Layer.new
-    layer.name    = sif_layer_data[:name]
-    layer.type    = sif_layer_data[:type]
-    layer.uid     = sif_layer_data[:uid]
-    layer.zindex  = sif_layer_data[:zindex]
+    layer.name = sif_layer_data[:name]
+    layer.type = sif_layer_data[:type]
+    layer.uid = sif_layer_data[:uid]
+    layer.zindex = sif_layer_data[:zindex]
     if sif_layer_data[:initial_bounds].nil?
       layer.initial_bounds = BoundingBox.create_from_attribute_data sif_layer_data[:bounds]
     else
       layer.initial_bounds = BoundingBox.create_from_attribute_data sif_layer_data[:initial_bounds]
     end
-    design_bounds      = BoundingBox.new 0, 0, @header[:design_metadata][:height], @header[:design_metadata][:width]
-    layer.bounds       = layer.initial_bounds.inner_crop(design_bounds)
-    layer.opacity      = sif_layer_data[:opacity]
-    layer.text         = sif_layer_data[:text]
-    layer.shape        = sif_layer_data[:shape]
-    layer.styles       = sif_layer_data[:styles]
-    layer.overlay      = sif_layer_data[:overlay]
-    layer.style_layer  = sif_layer_data[:style_layer]
-    layer.tag_name     = sif_layer_data[:tag]
-    layer.style_layer  = sif_layer_data[:style_layer]
-
-    layer.generated_selector  = sif_layer_data[:generated_selector]
-    layer.computed_css = {}
-    layer.design       = @design
+    design_bounds = BoundingBox.new 0, 0, @header[:design_metadata][:height], @header[:design_metadata][:width]
+    layer.bounds = layer.initial_bounds.inner_crop(design_bounds)
+    layer.opacity = sif_layer_data[:opacity]
+    layer.text = sif_layer_data[:text]
+    layer.shape = sif_layer_data[:shape]
+    layer.styles = sif_layer_data[:styles]
+    layer.style_layer = sif_layer_data[:style_layer]
+    if not sif_layer_data[:grouping_box].nil?
+      layer.grouping_box = BoundingBox.create_from_attribute_data sif_layer_data[:grouping_box]
+    end
+    layer.design = @design
     return layer
   end
 
