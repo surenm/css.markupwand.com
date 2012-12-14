@@ -27,6 +27,9 @@
             <a href="#" id="design-preview-button" class="btn btn-large btn-secondary forward">
               View Design
             </a>
+            <a href="#" id="view-intersections" class="btn btn-large btn-secondary">
+              Intersections
+            </a>
           </span>
 
           <span class="left btn-group vote-actions">
@@ -81,7 +84,24 @@
               else
                 $("#design-preview-dialog").dialog("open");
             }
+
+            var intersections = function () {
+                els = $($("#preview-iframe").contents()).find("body *");
+              
+                for (var a = 0; a < els.length; a++) {
+                    position = $(els[a]).css("position");
+                    if (position == "relative") {
+                        $(els[a]).css("border", "2px solid #f00")
+                    } else if (position == "absolute") {
+                        $(els[a]).css("border", "2px solid #0f0")
+                    }
+                }
+                return false;
+            };
+
+
             $('#design-preview-button').click(designToggleView);
+            $('#view-intersections').click(intersections);
 
 
             Mousetrap.bind('j', function() {
@@ -105,6 +125,7 @@
             });
 
             Mousetrap.bind('v', designToggleView);
+            Mousetrap.bind('i', intersections);
 
           </script>
         <% end %>
