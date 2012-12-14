@@ -59,7 +59,6 @@ class Sif
       self.parse_layers
       self.parse_grouping_boxes
       self.parse_grids
-      self.set_layer_parent
       self.validate
     rescue Exception => e
       raise e 
@@ -114,38 +113,12 @@ class Sif
 
   # Grids are not availabe when layers are created.
   # Once both Grids and Layers are created, create parent values for layers
-  def set_layer_parent
-    if @grids.nil?
-      return
-    end
-
-    @layers.each do |_, layer|
-      # The string id just becomes grid object.
-      if not layer.parent_grid.nil?
-        layer.parent_grid = @grids[layer.parent_grid]
-      end
-    end
-  end
-  
   def get_layer(layer_id)
     return @layers[layer_id]
   end
   
-  def get_grid(grid_id)
-    return @grids[grid_id]
-  end
-  
-  def set_grid(grid)
-    @grids = {} if @grids.nil?
-    @grids[grid.id] = grid
-    self.validate
-  end
-
   def reset_grids
     @root_grid = nil
-    @layers.each do |layer_id, layer|
-      @layers[layer_id].parent_grid = nil
-    end
     self.save!
   end
 
@@ -153,7 +126,6 @@ class Sif
     @root_grouping_box = nil
     @root_grid = nil
     @layers.each do |layer_id, layer|
-      @layers[layer_id].parent_grid = nil
     end
     self.save!
   end
@@ -188,26 +160,6 @@ class Sif
     Sif.write @design, serialized_document
   end
   
-  def get_grids_in_order
-    ordered_grids = []
-
-    start_grid_id = nil
-    @serialized_grids.values.each do |grid_data|
-      start_grid_id = grid_data[:id] if grid_data[:root]
-    end
-    
-    ordering_queue = Queue.new
-    ordering_queue.push start_grid_id
-    
-    while not ordering_queue.empty?
-      grid_id = ordering_queue.pop
-      ordered_grids.push grid_id
-      
-      children = @serialized_grids[grid_id][:children]
-      children.each { |child_id| ordering_queue.push child_id }
-    end
-    return ordered_grids
-  end
   
   def create_layer(sif_layer_data)
     layer = Layer.new
@@ -228,7 +180,6 @@ class Sif
     layer.styles       = sif_layer_data[:styles]
     layer.overlay      = sif_layer_data[:overlay]
     layer.style_layer  = sif_layer_data[:style_layer]
-    layer.parent_grid  = sif_layer_data[:parent_grid]
     layer.tag_name     = sif_layer_data[:tag]
     layer.style_layer  = sif_layer_data[:style_layer]
 
@@ -292,12 +243,6 @@ class Sif
     serialized_data[:children].each do |child_data|
       child_grid = self.create_grid child_data
       grid.add child_grid
-    end
-
-    style_layers.each { |style_layer| style_layer.parent_grid = grid }
-
-    if grid.is_leaf?
-      layers.each { |layer| layer.parent_grid = grid }
     end
 
     grid

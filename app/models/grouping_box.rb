@@ -276,7 +276,6 @@ class GroupingBox < Tree::TreeNode
 
     self.style_layers.each do |layer|
       layer.style_layer = true
-      layer.parent_grid = grid
     end
 
     # For each child to this grouping box, recursively get its grid and add as child to this grid
@@ -294,12 +293,6 @@ class GroupingBox < Tree::TreeNode
         end
         
         grid.add child_grid
-      end
-    end
-    
-    if grid.is_leaf?
-      self.layers.each do |layer|
-        layer.parent_grid = grid
       end
     end
 

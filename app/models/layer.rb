@@ -33,10 +33,6 @@ class Layer
  
 
   ### Relational references ###
-
-  # Belongs to multiple grids
-  attr_accessor :parent_grid #(Grid object)
-
   # Belongs to a design
   attr_accessor :design
 
@@ -75,8 +71,6 @@ class Layer
   end
 
   def attribute_data
-    parent_grid = self.parent_grid.nil? ? nil : self.parent_grid.id  
-
     attr_data = {
       :uid     => self.uid,
       :id      => self.uid,
@@ -94,7 +88,6 @@ class Layer
       :overlay => self.overlay,
       :style_layer        => self.style_layer,
       :generated_selector => self.generated_selector,
-      :parent_grid        => parent_grid
     }
 
     if self.type == Layer::LAYER_NORMAL
@@ -155,12 +148,7 @@ class Layer
 
   def styleable_layer?
     (self.type != Layer::LAYER_TEXT)
-  end
-  
-  def render_layer?
-    self.parent_grid.is_leaf?
-  end
-  
+  end  
 
   ##########################################################
   # Text Layer helper functions
