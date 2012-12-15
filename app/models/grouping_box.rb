@@ -77,7 +77,6 @@ class GroupingBox < Tree::TreeNode
     {
       :name => self.name,
       :label => self.name,
-      :id => self.unique_identifier,
       :bounds => self.bounds,
       :orientation => self.orientation,
       :layers => layer_keys,
