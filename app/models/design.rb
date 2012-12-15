@@ -95,15 +95,13 @@ class Design
     sif_serialized_data = @sif.get_serialized_data
 
     # Get grouping boxes in an array as well
-    grouping_boxes = Hash.new
+    grouping_boxes = Array.new
     self.root_grouping_box.each do |grouping_box|
       grouping_box_data = grouping_box.attribute_data
-      children_ids = grouping_box.children.collect { |child| child.unique_identifier }
-      grouping_box_data[:children] = children_ids
-      grouping_boxes[grouping_box.unique_identifier] = grouping_box_data
+      grouping_box_data[:children] = nil
+      grouping_boxes.push grouping_box_data
     end
-
-    sif_serialized_data[:grouping_boxes] = grouping_boxes.values
+    sif_serialized_data[:grouping_boxes] = grouping_boxes
     return sif_serialized_data
   end
   
