@@ -104,6 +104,10 @@ GEM
       railties (~> 3.1)
       warden (~> 1.2.1)
     diff-lcs (1.1.3)
+    dropbox-api (0.3.2)
+      hashie
+      multi_json
+      oauth
     erubis (2.7.0)
     excon (0.16.2)
     execjs (1.4.0)
@@ -182,6 +186,7 @@ GEM
       net-ssh (>= 1.99.1)
     newrelic_rpm (3.4.2.1)
     nokogiri (1.5.5)
+    oauth (0.4.7)
     omniauth (1.1.1)
       hashie (~> 1.2)
       rack
@@ -361,6 +366,7 @@ DEPENDENCIES
   compass (>= 0.12.alpha.4)
   compass-rails
   devise
+  dropbox-api
   execjs
   factory_girl_rails (~> 3.0)
   flot-rails
