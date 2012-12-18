@@ -204,13 +204,19 @@ class Sif
     bounds = BoundingBox.create_from_attribute_data serialized_data[:bounds]
     has_intersecting_layers = serialized_data.fetch :has_intersecting_layers, false
     has_alternate_grouping = serialized_data.fetch :has_alternate_grouping, false
+    enable_alternate_grouping = serialized_data.fetch :enable_alternate_grouping, false
     
     layers = layer_keys.collect do |layer_uid| 
       @layers[layer_uid] 
     end
 
-    grouping_box = GroupingBox.new :layers => layers, :bounds => bounds, :orientation => orientation, :design => @design,
-      :has_intersecting_layers => has_intersecting_layers, :has_alternate_grouping => has_alternate_grouping
+    grouping_box = GroupingBox.new :layers => layers, 
+      :bounds => bounds, 
+      :orientation => orientation, 
+      :design => @design,
+      :has_intersecting_layers => has_intersecting_layers, 
+      :has_alternate_grouping => has_alternate_grouping,
+      :enable_alternate_grouping => enable_alternate_grouping
 
     serialized_data[:children].each do |child_data|
       child_grouping_box = self.create_grouping_box child_data
