@@ -80,6 +80,7 @@ TransformersWeb::Application.routes.draw do
       match 'grouping' => 'design#grouping'
       match 'importer' => 'design#importer'
       match 'merge' => 'design#merge', :via => :post
+      match 'flip' => 'design#flip', :via => :post
 
       # intersections
       match 'intersecting-pairs' => 'design#intersecting_pairs'

@@ -359,4 +359,10 @@ class DesignController < ApplicationController
     @design.merge_grouping_boxes bounds
     render :json => {:status => :success}
   end
+
+  def flip
+    node_name = params[:node]
+    @design.flip_grouping_box node_name
+    render :json => {:status => :success}
+  end
 end
