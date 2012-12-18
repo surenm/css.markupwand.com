@@ -15,11 +15,12 @@ class IntersectionView extends Backbone.View
 
   events:
     "click .top-head-item": "focus_intersection_item"
-    "click .remove-layer" : "delete_layer"
+    "click .remove-layer-btn" : "delete_layer_panel"
     "click .layer-item"   : "focus_deletable_item"
 
   collapse_all: ->
-    $('.intersection-item .actions').hide()
+    $('.intersection-item .actions').hide("fast")
+    $('.focused-item').removeClass('focused-item')
 
   focus_deletable_item: (e)->
     layer_uid = $(e.target).parent().data('layer-uid')
@@ -35,6 +36,9 @@ class IntersectionView extends Backbone.View
 
     $('#intersections-list .intersection-item[data-left-uid="' + layer_uid + '"]').remove()
     $('#intersections-list .intersection-item[data-right-uid="' + layer_uid + '"]').remove()
+
+  delete_layer_panel: (e)->
+    $(e.target).parent().parent()
 
   delete_layer: (e)->
     if confirm('Delete layer?')
@@ -55,8 +59,14 @@ class IntersectionView extends Backbone.View
     @editor_canvas.drawBounds bounds, "#ff0000"
 
   focus_intersection_item: (e)->
+    if($(e.target).parent().hasClass('focused-item'))
+      this.collapse_all()
+      return
+    
+
     this.collapse_all()
-    $(e.target).parent().find('.actions').show()
+    $(e.target).parent().find('.actions').show("fast")
+    $(e.target).parent().addClass('focused-item')
     
     @editor_canvas.clear()
     this.draw_layer_bounds $(e.target).parent().data('left-uid')
