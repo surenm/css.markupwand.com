@@ -56,6 +56,11 @@ class GroupingView extends Backbone.View
       $this.handle_multiple_grouping_box_selection grouping_boxes
 
   handle_grouping_box_selection: (grouping_box) ->
+    if grouping_box.has_alternate_grouping
+      console.log "possible"
+      $("#flip-grouping-box").removeClass 'disabled'
+    else
+      $("#flip-grouping-box").addClass 'disabled'
     @editor_canvas.clear()
     @editor_canvas.drawBounds grouping_box.bounds
 
