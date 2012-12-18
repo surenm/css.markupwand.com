@@ -30,18 +30,14 @@ body {
       height: 800px;
       overflow: auto;
       margin: 50px 5px;
+      position: fixed;
+      max-height: 700px;
       
       color: #fff;
       border-left: 1px solid #999;
 
       font-family: "museo-sans", sans-serif;
       font-size: 12px;
-
-      #action-panel {
-        margin:0 auto;
-        margin-top: 100px;
-        width: 175px;
-      }
     }
 
     #intersections-sidebar {
@@ -62,10 +58,17 @@ body {
         padding: 0;
       }
 
+      .focused-item {
+        background: #222;
+        border-radius: 3px;
+      }
+
       .intersection-item {
-        margin-left: 10px;
+        $selected_panel : #555;
+
+        padding-left: 10px;
         font-size: 15px;
-        margin-bottom:10px;
+        padding-bottom:10px;
         cursor: pointer;
         font-family: "museo-sans", sans-serif;
 
@@ -75,8 +78,27 @@ body {
 
         .actions {
           display: none;
+          font-size: 10px; 
+          margin-bottom: 0;
+          padding-left: 10px;
+
+          a {
+            display: inline-block;
+            padding: 0px 3px;
+            border-top-left-radius: 2px;
+            border-top-right-radius: 2px;
+          }
+
+          a.selected {
+            background-color: $selected_panel;
+          }
+        }  
+
+        .action-panel {
           font-size: 10px;
-        }        
+          background-color: $selected_panel;
+          padding-left: 10px;
+        }
       }
 
     }

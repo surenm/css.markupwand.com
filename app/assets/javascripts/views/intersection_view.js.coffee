@@ -5,6 +5,10 @@ class IntersectionView extends Backbone.View
   intersections_list: "#intersections-list"
   
   initialize: ->
+    _.templateSettings = {
+      interpolate : /\{\{(.+?)\}\}/g
+    };
+
     @editor_canvas = window.app.editor_canvas
     @design_canvas = @editor_canvas.design_canvas
     @design        = window.design
@@ -19,8 +23,10 @@ class IntersectionView extends Backbone.View
     "click .layer-item"   : "focus_deletable_item"
 
   collapse_all: ->
-    $('.intersection-item .actions').hide("fast")
+    $('.intersection-item .actions').hide()
+    $('.intersection-item .action-panel').hide()
     $('.focused-item').removeClass('focused-item')
+    $('.intersection-item a.selected').removeClass('selected')
 
   focus_deletable_item: (e)->
     layer_uid = $(e.target).parent().data('layer-uid')
@@ -38,7 +44,20 @@ class IntersectionView extends Backbone.View
     $('#intersections-list .intersection-item[data-right-uid="' + layer_uid + '"]').remove()
 
   delete_layer_panel: (e)->
-    $(e.target).parent().parent()
+    parent = $(e.target).parent().parent().parent()
+    data  = 
+      left_uid    : parent.data('left-uid')
+      right_uid   : parent.data('right-uid')
+      left_layer  : parent.data('left-name')
+      right_layer : parent.data('right-name')
+
+    content = _.template($('#delete-panel').html(), data)
+    $(parent).find('.action-panel').html(content)
+    $(parent).find('.action-panel').show()
+    if data['left_uid'] == undefined
+      debugger
+    $(e.target).parent().addClass('selected')
+    return false
 
   delete_layer: (e)->
     if confirm('Delete layer?')
@@ -62,7 +81,6 @@ class IntersectionView extends Backbone.View
     if($(e.target).parent().hasClass('focused-item'))
       this.collapse_all()
       return
-    
 
     this.collapse_all()
     $(e.target).parent().find('.actions').show("fast")
@@ -81,9 +99,6 @@ class IntersectionView extends Backbone.View
     $(this.left_sidebar).html(template)
 
   render: ->
-    _.templateSettings = {
-      interpolate : /\{\{(.+?)\}\}/g
-    };
 
     if @intersecting_pairs.length == 0
       this.render_no_intersections()
