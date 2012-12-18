@@ -73,6 +73,17 @@ class GroupingBox < Tree::TreeNode
     self.children.each do |child|
       children_tree.push child.attribute_data
     end
+    if self.content[:has_alternate_grouping].nil?
+      has_alternate_grouping = false
+    else
+      has_alternate_grouping = self.content[:has_alternate_grouping]
+    end
+
+    if self.content[:has_intersecting_layers].nil?
+      has_intersecting_layers = false
+    else
+      has_intersecting_layers = self.content[:has_intersecting_layers]
+    end
         
     {
       :name => self.name,
@@ -81,8 +92,8 @@ class GroupingBox < Tree::TreeNode
       :orientation => self.orientation,
       :layers => layer_keys,
       :children => children_tree,
-      :alternate_grouping => self.content[:alternate_grouping_boxes],
-      :has_intersecting_layers => self.content[:has_intersecting_layers]
+      :has_alternate_grouping => has_alternate_grouping,
+      :has_intersecting_layers => has_intersecting_layers
     }
   end
 
@@ -224,14 +235,13 @@ class GroupingBox < Tree::TreeNode
       end
 
       # case 3b
-      self.content[:alternate_grouping_boxes] = Array.new
-      horizontal_bound = [horizontal_gutters.first, horizontal_gutters.last]
-
-      vertical_bounds.each do |vertical_bound|
-        grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
-        grouping_box_layers = self.get_layers_in_region grouping_box_bounds
-        self.content[:alternate_grouping_boxes].push grouping_box_bounds
-      end
+      self.content[:has_alternate_grouping] = true
+      #horizontal_bound = [horizontal_gutters.first, horizontal_gutters.last]
+      #vertical_bounds.each do |vertical_bound|
+      #  grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+      #  grouping_box_layers = self.get_layers_in_region grouping_box_bounds
+      #  self.content[:alternate_grouping_boxes].push grouping_box_bounds
+      #end
     end
     
     self.children.each do |child|
