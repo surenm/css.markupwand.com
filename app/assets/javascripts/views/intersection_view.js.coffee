@@ -65,16 +65,28 @@ class IntersectionView extends Backbone.View
     link_node = this.get_link_node(target)
     $(link_node).parent().parent()
 
+  fill_show_action_panel: (container, content)->
+    $(container).find('.action-panel').html(content)
+    $(container).find('.action-panel').show()
+
   crop_panel: (e)->
     this.clear_selected()
-    console.log this.get_template_data(e.target)
-    $(e.target).parent().addClass('selected')
+    content = _.template($('#crop-panel').html(), this.get_template_data(e.target))
+    container = this.get_container(e.target)
+    link      = this.get_link_node(e.target)
+    this.fill_show_action_panel(container, content)
+
+    $(link).addClass('selected')
     return false
 
   visibility_panel: (e)->
     this.clear_selected()
-    console.log this.get_template_data(e.target)
-    this.get_link_node(e.target).addClass('selected')
+    content = _.template($('#visibility-panel').html(), this.get_template_data(e.target))
+    container = this.get_container(e.target)
+    link      = this.get_link_node(e.target)
+    this.fill_show_action_panel(container, content)
+
+    $(link).addClass('selected')
     return false    
 
   delete_layer_panel: (e)->
@@ -82,9 +94,8 @@ class IntersectionView extends Backbone.View
     content = _.template($('#delete-panel').html(), this.get_template_data(e.target))
     container = this.get_container(e.target)
     link      = this.get_link_node(e.target)
+    this.fill_show_action_panel(container, content)
 
-    $(container).find('.action-panel').html(content)
-    $(container).find('.action-panel').show()
     $(link).addClass('selected')
     return false
 
