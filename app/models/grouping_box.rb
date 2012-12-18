@@ -73,18 +73,7 @@ class GroupingBox < Tree::TreeNode
     self.children.each do |child|
       children_tree.push child.attribute_data
     end
-    if self.content[:has_alternate_grouping].nil?
-      has_alternate_grouping = false
-    else
-      has_alternate_grouping = self.content[:has_alternate_grouping]
-    end
 
-    if self.content[:has_intersecting_layers].nil?
-      has_intersecting_layers = false
-    else
-      has_intersecting_layers = self.content[:has_intersecting_layers]
-    end
-        
     {
       :name => self.name,
       :label => self.name,
@@ -92,8 +81,9 @@ class GroupingBox < Tree::TreeNode
       :orientation => self.orientation,
       :layers => layer_keys,
       :children => children_tree,
-      :has_alternate_grouping => has_alternate_grouping,
-      :has_intersecting_layers => has_intersecting_layers
+      :has_alternate_grouping => self.has_alternate_grouping,
+      :has_intersecting_layers => self.has_intersecting_layers,
+      :enable_alternate_grouping => self.enable_alternate_grouping
     }
   end
 
@@ -117,6 +107,30 @@ class GroupingBox < Tree::TreeNode
 
   def orientation
     self.content[:orientation]
+  end
+
+  def has_alternate_grouping
+    if self.content[:has_alternate_grouping].nil?
+      return false
+    else 
+      return self.content[:has_alternate_grouping]
+    end
+  end
+
+  def has_intersecting_layers
+    if self.content[:has_intersecting_layers].nil?
+      return false
+    else
+      return self.content[:has_intersecting_layers]
+    end
+  end
+
+  def enable_alternate_grouping
+    if self.content[:enable_alternate_grouping].nil?
+      return false
+    else 
+      return self.content[:enable_alternate_grouping]
+    end
   end
 
   def non_style_layers
@@ -220,28 +234,29 @@ class GroupingBox < Tree::TreeNode
       
     else
       # case 3
-      # TODO: figure out if normal first of left first orientation
-      #h_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, horizontal_bounds, :horizontal
-      #v_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, vertical_bounds, :vertical
-  
-      # case 3a
-      vertical_bound = [vertical_gutters.first, vertical_gutters.last]
-      self.content[:orientation] = Constants::GRID_ORIENT_NORMAL
-      horizontal_bounds.each do |horizontal_bound|
-        grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
-        grouping_box_layers = self.get_layers_in_region grouping_box_bounds
-        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, :design => @design
-        self.add child_grouping_box
-      end
-
-      # case 3b
       self.content[:has_alternate_grouping] = true
-      #horizontal_bound = [horizontal_gutters.first, horizontal_gutters.last]
-      #vertical_bounds.each do |vertical_bound|
-      #  grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
-      #  grouping_box_layers = self.get_layers_in_region grouping_box_bounds
-      #  self.content[:alternate_grouping_boxes].push grouping_box_bounds
-      #end
+
+      if not self.enable_alternate_grouping
+        # case 3a
+        vertical_bound = [vertical_gutters.first, vertical_gutters.last]
+        self.content[:orientation] = Constants::GRID_ORIENT_NORMAL
+        horizontal_bounds.each do |horizontal_bound|
+          grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+          grouping_box_layers = self.get_layers_in_region grouping_box_bounds
+          child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, :design => @design
+          self.add child_grouping_box
+        end
+      else
+        # case 3b
+        horizontal_bound = [horizontal_gutters.first, horizontal_gutters.last]
+        self.content[:orientation] = Constants::GRID_ORIENT_LEFT
+        vertical_bounds.each do |vertical_bound|
+          grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+          grouping_box_layers = self.get_layers_in_region grouping_box_bounds
+          child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, :design => @design
+          self.add child_grouping_box
+        end
+      end
     end
     
     self.children.each do |child|
