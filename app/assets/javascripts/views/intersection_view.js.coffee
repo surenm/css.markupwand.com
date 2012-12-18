@@ -18,9 +18,11 @@ class IntersectionView extends Backbone.View
 
 
   events:
-    "click .top-head-item": "focus_intersection_item"
+    "click .top-head-item"    : "focus_intersection_item"
     "click .remove-layer-btn" : "delete_layer_panel"
-    "click .layer-item"   : "focus_deletable_item"
+    "click .visibility-btn"   : "visibility_panel"
+    "click .crop-btn"         : "crop_panel"
+    "click .layer-item"       : "focus_deletable_item"
 
   collapse_all: ->
     $('.intersection-item .actions').hide()
@@ -43,19 +45,28 @@ class IntersectionView extends Backbone.View
     $('#intersections-list .intersection-item[data-left-uid="' + layer_uid + '"]').remove()
     $('#intersections-list .intersection-item[data-right-uid="' + layer_uid + '"]').remove()
 
+
+  get_template_data: (node)->
+    left_uid:    node.data('left-uid')
+    right_uid:   node.data('right-uid')
+    left_layer:  node.data('left-name')
+    right_layer: node.data('right-name')
+
+  crop_panel: (e)->
+    parent = $(e.target).parent().parent().parent()
+    console.log this.get_template_data(parent)
+    return false
+
+  visibility_panel: (e)->
+    parent = $(e.target).parent().parent().parent()
+    console.log this.get_template_data(parent)
+    return false    
+
   delete_layer_panel: (e)->
     parent = $(e.target).parent().parent().parent()
-    data  = 
-      left_uid    : parent.data('left-uid')
-      right_uid   : parent.data('right-uid')
-      left_layer  : parent.data('left-name')
-      right_layer : parent.data('right-name')
-
-    content = _.template($('#delete-panel').html(), data)
+    content = _.template($('#delete-panel').html(), this.get_template_data(parent))
     $(parent).find('.action-panel').html(content)
     $(parent).find('.action-panel').show()
-    if data['left_uid'] == undefined
-      debugger
     $(e.target).parent().addClass('selected')
     return false
 
