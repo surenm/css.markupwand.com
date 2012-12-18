@@ -18,16 +18,18 @@ class IntersectionView extends Backbone.View
 
 
   events:
-    "click .top-head-item"    : "focus_intersection_item"
-    "click .remove-layer-btn" : "delete_layer_panel"
-    "click .visibility-btn"   : "visibility_panel"
-    "click .crop-btn"         : "crop_panel"
-    "click .layer-item"       : "focus_deletable_item"
+    "click .top-head-item"     : "focus_intersection_item"
+    "click a.remove-layer-btn" : "delete_layer_panel"
+    "click a.visibility-btn"   : "visibility_panel"
+    "click a.crop-btn"         : "crop_panel"
+    "click .layer-item"        : "focus_deletable_item"
 
   collapse_all: ->
     $('.intersection-item .actions').hide()
     $('.intersection-item .action-panel').hide()
     $('.focused-item').removeClass('focused-item')
+
+  clear_selected: ->
     $('.intersection-item a.selected').removeClass('selected')
 
   focus_deletable_item: (e)->
@@ -45,29 +47,45 @@ class IntersectionView extends Backbone.View
     $('#intersections-list .intersection-item[data-left-uid="' + layer_uid + '"]').remove()
     $('#intersections-list .intersection-item[data-right-uid="' + layer_uid + '"]').remove()
 
+  get_template_data: (target)->
+    container_node = this.get_container(target) 
 
-  get_template_data: (node)->
-    left_uid:    node.data('left-uid')
-    right_uid:   node.data('right-uid')
-    left_layer:  node.data('left-name')
-    right_layer: node.data('right-name')
+    left_uid:    container_node.data('left-uid')
+    right_uid:   container_node.data('right-uid')
+    left_layer:  container_node.data('left-name')
+    right_layer: container_node.data('right-name')
+
+  get_link_node: (target)->
+    if target.nodeName.toLowerCase() == "a"
+      return target
+    else
+      return $(target).parent()
+
+  get_container: (target)->
+    link_node = this.get_link_node(target)
+    $(link_node).parent().parent()
 
   crop_panel: (e)->
-    parent = $(e.target).parent().parent().parent()
-    console.log this.get_template_data(parent)
+    this.clear_selected()
+    console.log this.get_template_data(e.target)
+    $(e.target).parent().addClass('selected')
     return false
 
   visibility_panel: (e)->
-    parent = $(e.target).parent().parent().parent()
-    console.log this.get_template_data(parent)
+    this.clear_selected()
+    console.log this.get_template_data(e.target)
+    this.get_link_node(e.target).addClass('selected')
     return false    
 
   delete_layer_panel: (e)->
-    parent = $(e.target).parent().parent().parent()
-    content = _.template($('#delete-panel').html(), this.get_template_data(parent))
-    $(parent).find('.action-panel').html(content)
-    $(parent).find('.action-panel').show()
-    $(e.target).parent().addClass('selected')
+    this.clear_selected()
+    content = _.template($('#delete-panel').html(), this.get_template_data(e.target))
+    container = this.get_container(e.target)
+    link      = this.get_link_node(e.target)
+
+    $(container).find('.action-panel').html(content)
+    $(container).find('.action-panel').show()
+    $(link).addClass('selected')
     return false
 
   delete_layer: (e)->
