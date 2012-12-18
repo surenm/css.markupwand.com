@@ -398,6 +398,7 @@ class Design
     root_grouping_box.groupify
 
     @sif.root_grouping_box = root_grouping_box
+    @sif.reset_grids
     @sif.save!
 
     Log.info "Successfully created all grouping_boxes."
@@ -443,6 +444,18 @@ class Design
     end
 
     @sif.root_grouping_box = self.root_grouping_box
+    @sif.save!
+  end
+
+  def flip_grouping_box(grouping_box_name)
+    grouping_box = GroupingBox.get_node self.root_grouping_box, grouping_box_name
+    grouping_box.content[:enable_alternate_grouping] = true
+
+    grouping_box.remove_all!
+    grouping_box.groupify
+
+    @sif.root_grouping_box = self.root_grouping_box
+    @sif.reset_grids
     @sif.save!
   end
 
