@@ -57,7 +57,6 @@ class GroupingView extends Backbone.View
 
   handle_grouping_box_selection: (grouping_box) ->
     if grouping_box.has_alternate_grouping
-      console.log "possible"
       $("#flip-grouping-box").removeClass 'disabled'
     else
       $("#flip-grouping-box").addClass 'disabled'
@@ -91,6 +90,10 @@ class GroupingView extends Backbone.View
 
   flip_grouping_box_handler: (event) ->
     event.stopPropagation()
+    $design = this.model
+    selected_node = $(@tree_element).tree('getSelectedNode')
+    $.post "/design/#{$design.get('id')}/flip", {node: selected_node.name}, (data) ->
+      window.location.reload()
 
   done_handler: (event) ->
     event.stopPropagation()
