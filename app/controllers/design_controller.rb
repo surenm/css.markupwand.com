@@ -43,6 +43,7 @@ class DesignController < ApplicationController
     uid = params[:uid]
     @design.init_sif
     @design.sif.layers.delete uid.to_i
+    @design.sif.reset_calculated_data
     @design.sif.save!
     @design.regroup
     render :json => {:status => 'OK'}
