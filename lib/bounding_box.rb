@@ -77,6 +77,28 @@ class BoundingBox
     self.right  = self.right  + right
   end
 
+  def is_point_inside?(box, point)
+    point[0] > box.top and point[0] < box.bottom and
+    point[1] > box.left and point[1] < box.right
+  end
+
+  def points_inside(other_box)
+    nodes = [self.top, self.bottom].product [self.left, self.right]
+    no_points = 0
+    nodes.each do |node|
+      if is_point_inside?(other_box, node)
+        no_points = no_points + 1
+      end
+    end
+
+    no_points
+  end
+
+  def crop_type(other_box)
+    # If there is only one point inside the bound, it is multi-dimension intersect.
+
+  end
+
   def inner_crop(other_box)
     cropped_bounds = BoundingBox.new(self.top, self.left, self.bottom, self.right)
 
