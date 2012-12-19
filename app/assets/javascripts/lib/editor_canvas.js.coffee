@@ -22,10 +22,10 @@ class EditorCanvas
 
     $(@design_canvas).jCanvas
       fromCenter: false
-      click: $this.clickHandler
-      dblclick: $this.doubleClickHandler
-      mouseover: $this.mouseOverHandler
-      mouseout: $this.mouseOutHandler
+      click: $this.click_handler
+      dblclick: $this.double_click_handler
+      mouseover: $this.mouse_over_handler
+      mouseout: $this.mouse_out_handler
 
     $(@events_canvas).jCanvas
       fromCenter: false
@@ -39,7 +39,7 @@ class EditorCanvas
     $(@events_canvas).clearCanvas()
     $(@animate_canvas).clearCanvas()
 
-  drawBoundsMarkers: ( bounds, stroke_style, animate = false) ->
+  draw_bounds_markers: ( bounds, stroke_style, animate = false) ->
     $canvas = @events_canvas
     if animate
       $canvas = @animate_canvas
@@ -64,7 +64,7 @@ class EditorCanvas
         height: 6
         fromCenter: true
 
-  drawBounds: (bounds, stroke_style = COLORS.BLUE, animate = false) ->
+  draw_bounds: (bounds, stroke_style = COLORS.BLUE, animate = false) ->
     $canvas = @events_canvas
     if animate
       $canvas = @animate_canvas
@@ -76,9 +76,9 @@ class EditorCanvas
       width: bounds.right - bounds.left + 4
       height: bounds.bottom - bounds.top + 4
 
-    this.drawBoundsMarkers bounds, stroke_style, animate
+    this.draw_bounds_markers bounds, stroke_style, animate
 
-  drawFilledRectangle: (bounds, fill_color = COLORS.FILL_BLUE, animate = false) ->
+  draw_filled_rectangle: (bounds, fill_color = COLORS.FILL_BLUE, animate = false) ->
     $canvas = @events_canvas
     if animate
       $canvas = @animate_canvas
@@ -90,7 +90,7 @@ class EditorCanvas
       width: bounds.right - bounds.left,
       height: bounds.bottom - bounds.top
 
-  createGradient: (gradient, bounds) ->
+  create_gradient: (gradient, bounds) ->
     fillStyle = null
     if gradient.type == 'linear'
       y2 = bounds.top * Math.sin(gradient.angle * 3.14 / 180)
@@ -118,10 +118,10 @@ class EditorCanvas
 
     return fillStyle
 
-  renderLayers: () ->
+  render_layers: () ->
     $(@design_canvas).drawLayers()
 
-  addGroupingBox: (grouping_box) ->
+  add_grouping_box: (grouping_box) ->
     canvas_data = grouping_box.to_canvas_data()
     
     if not canvas_data?
@@ -143,7 +143,7 @@ class EditorCanvas
       mouseover: $this.dummyHandler
       mouseout: $this.dummyHandler
 
-  addLayer: (layer) ->
+  add_layer: (layer) ->
     canvas_data = layer.to_canvas_data this
     
     if not canvas_data?
@@ -198,24 +198,24 @@ class EditorCanvas
       when 'g'
         object = app.design.get_grouping_box(id)
 
-  clickHandler: (canvas_layer) ->
+  click_handler: (canvas_layer) ->
     layer = EditorCanvas.get_object_from_name canvas_layer.name
     $editor_canvas = app.editor_canvas
     $editor_canvas.clear()
-    $editor_canvas.drawBounds layer.get('bounds')
+    $editor_canvas.draw_bounds layer.get('bounds')
 
-  doubleClickHandler: (layer) ->
+  double_click_handler: (layer) ->
     
 
-  mouseOverHandler: (canvas_layer) ->
+  mouse_over_handler: (canvas_layer) ->
     layer = EditorCanvas.get_object_from_name canvas_layer.name
     $editor_canvas = app.editor_canvas
-    $editor_canvas.drawBounds layer.get('bounds'), COLORS.ORANGE, true
+    $editor_canvas.draw_bounds layer.get('bounds'), COLORS.ORANGE, true
     
-  mouseOutHandler: (canvas_layer) ->
+  mouse_out_handler: (canvas_layer) ->
     $editor_canvas = app.editor_canvas
     $editor_canvas.animate_canvas.clearCanvas()
 
-  dummyHandler: (canvas_layer) ->
+  dummy_handler: (canvas_layer) ->
 
 window.EditorCanvas = EditorCanvas

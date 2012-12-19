@@ -61,17 +61,17 @@ class GroupingView extends Backbone.View
     else
       $("#flip-grouping-box").addClass 'disabled'
     @editor_canvas.clear()
-    @editor_canvas.drawBounds grouping_box.bounds
+    @editor_canvas.draw_bounds grouping_box.bounds
 
   handle_multiple_grouping_box_selection: (grouping_boxes) ->
     @editor_canvas.clear()
     bounding_boxes = []
     for grouping_box in grouping_boxes
-      @editor_canvas.drawFilledRectangle grouping_box.bounds
+      @editor_canvas.draw_filled_rectangle grouping_box.bounds
       bounding_boxes.push grouping_box.bounds
 
     super_bounds = BoundingBox.getSuperBounds bounding_boxes
-    @editor_canvas.drawBounds super_bounds
+    @editor_canvas.draw_bounds super_bounds
 
   reset_context_area: ->
     @grouping_type = null

@@ -14,7 +14,7 @@ class EditorApp
     dfd.done (images) ->
       # Load all grouping boxes, layers and intersections all at once
       $this.add_canvas_layers()
-      $this.editor_canvas.renderLayers()
+      $this.editor_canvas.render_layers()
 
     dfd.progress (isBroken, $images, $proper, $broken) ->
       console.log( 'Loading progress: ' + ( $proper.length + $broken.length ) + ' out of ' + $images.length );
@@ -23,7 +23,7 @@ class EditorApp
     # first of all show all photoshop layers
     layers = @design.layers.toArray().reverse()
     for i in [0..layers.length-1]
-      this.editor_canvas.addLayer layers[i]  
+      this.editor_canvas.add_layer layers[i]  
 
     # Second show all grouping boxes
     grouping_boxes = @design.grouping_boxes.toArray()
