@@ -65,48 +65,41 @@ class IntersectionView extends Backbone.View
     link_node = this.get_link_node(target)
     $(link_node).parent().parent()
 
-  fill_show_action_panel: (container, content)->
+  fill_show_action_panel: (target, panel)->
+    this.clear_selected()
+    content   = _.template($(panel).html(), this.get_template_data(target))
+    container = this.get_container(target)
+    link      = this.get_link_node(target)
     $(container).find('.action-panel').html(content)
     $(container).find('.action-panel').show()
+    $(link).addClass('selected')
+
 
   crop_panel: (e)->
-    this.clear_selected()
-    content = _.template($('#crop-panel').html(), this.get_template_data(e.target))
-    container = this.get_container(e.target)
-    link      = this.get_link_node(e.target)
-    this.fill_show_action_panel(container, content)
-
-    $(link).addClass('selected')
+    this.fill_show_action_panel(e.target, "#crop-panel")
     return false
 
   visibility_panel: (e)->
-    this.clear_selected()
-    content = _.template($('#visibility-panel').html(), this.get_template_data(e.target))
-    container = this.get_container(e.target)
-    link      = this.get_link_node(e.target)
-    this.fill_show_action_panel(container, content)
-
-    $(link).addClass('selected')
+    this.fill_show_action_panel(e.target, "#visibility-panel")
     return false    
 
   delete_layer_panel: (e)->
-    this.clear_selected()
-    content = _.template($('#delete-panel').html(), this.get_template_data(e.target))
-    container = this.get_container(e.target)
-    link      = this.get_link_node(e.target)
-    this.fill_show_action_panel(container, content)
+    this.fill_show_action_panel(e.target, "#delete-panel")
 
-    $(link).addClass('selected')
+    container    = this.get_container(e.target)
+    delete_nodes = $(container).find('.action-panel td img')
+    intersection_view = this
+    $(delete_nodes).click(this.delete_layer) 
     return false
 
   delete_layer: (e)->
     if confirm('Delete layer?')
       layer_uid = $(e.target).parent().parent().data('layer-uid')
-      @design_canvas.removeLayer("l_" + layer_uid)      
-      @design_canvas.drawLayers()
-      @editor_canvas.clear()
-      this.delete_layer_sync(layer_uid)
-      this.delete_involving_intersections(layer_uid)
+      window.app.editor_canvas.design_canvas.removeLayer("l_" + layer_uid)      
+      window.app.editor_canvas.design_canvas.drawLayers()
+      window.app.editor_canvas.clear()
+      intersection_view.delete_layer_sync(layer_uid)
+      intersection_view.delete_involving_intersections(layer_uid)
 
   delete_layer_sync: (uid)->
     url = '/design/' + @design.id + '/delete-layer'
