@@ -35,9 +35,9 @@
   <div class="intersection-item" data-left-uid="{{ left_uid }}" data-right-uid="{{ right_uid }}" data-right-name="{{ right_layer }}" data-left-name="{{ left_layer }}">
   <div class="top-head-item">{{ left_layer }} ∩ {{ right_layer }}</div>
   <div class="actions">
-    <a href="#" class="remove-layer-btn" alt="Remove layer" title="Remove layer"><%= image_tag("remove-small.png") %></a>
-    <a href="#" class="visibility-btn" alt="Toggle layer visibility" title="Toggle layer visibility"><%= image_tag("visibility-small.png") %></a>
-    <a href="#" class="crop-btn" alt="Crop layers" title="Crop layers"><%= image_tag("crop-small.png") %></a>
+    <a href="#" class="remove-panel-btn" alt="Remove layer" title="Remove layer"><%= image_tag("remove-small.png") %></a>
+    <a href="#" class="crop-panel-btn" alt="Crop layers" title="Crop layers"><%= image_tag("crop-small.png") %></a>
+    <a href="#" class="visibility-panel-btn" alt="Toggle layer visibility" title="Toggle layer visibility"><%= image_tag("visibility-small.png") %></a>
   </div>
   <div class="action-panel">
   </div>
@@ -45,15 +45,15 @@
 
 <script id="delete-panel" type="text/template">
   <table>
-    <tr data-layer-uid="{{ left_uid }}"><td>{{ left_layer }}</td><td><%= image_tag("remove-small.png", {:width => 10}) %></td></tr>
-    <tr data-layer-uid="{{ right_uid }}"><td>{{ right_layer }}</td><td><%= image_tag("remove-small.png", {:width => 10}) %></td></tr>
+    <tr data-layer-uid="{{ left_uid }}"> <td class="select-layer">{{ left_layer }}</td> <td><%= image_tag("remove-small.png", {:width => 10, :class => "delete-btn"}) %></td></tr>
+    <tr data-layer-uid="{{ right_uid }}"><td class="select-layer">{{ right_layer }}</td><td><%= image_tag("remove-small.png", {:width => 10, :class => "delete-btn"}) %></td></tr>
   </table>
 </script>
 
 <script id="visibility-panel" type="text/template">
   <table>
-    <tr data-layer-uid="{{ left_uid }}"><td>{{ left_layer }}</td><td><%= image_tag("visibility-small.png", {:width => 10}) %></td></tr>
-    <tr data-layer-uid="{{ right_uid }}"><td>{{ right_layer }}</td><td><%= image_tag("visibility-small.png", {:width => 10}) %></td></tr>
+    <tr data-layer-uid="{{ left_uid }}"> <td class="select-layer">{{ left_layer }}</td> <td><%= image_tag("visibility-small.png", {:width => 10, :class => "visibility-btn"}) %></td></tr>
+    <tr data-layer-uid="{{ right_uid }}"><td class="select-layer">{{ right_layer }}</td><td><%= image_tag("visibility-small.png", {:width => 10, :class => "visibility-btn"}) %></td></tr>
   </table>
 </script>
 
