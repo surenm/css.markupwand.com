@@ -32,7 +32,7 @@
 </div>
 </script>
 <script id="intersection-item" type="text/template">
-  <div class="intersection-item" data-left-uid="{{ left_uid }}" data-right-uid="{{ right_uid }}" data-right-name="{{ right_layer }}" data-left-name="{{ left_layer }}">
+  <div class="intersection-item" data-cid="{{ cid }}" data-left-uid="{{ left_uid }}" data-right-uid="{{ right_uid }}" data-right-name="{{ right_layer }}" data-left-name="{{ left_layer }}">
   <div class="top-head-item">{{ left_layer }} ∩ {{ right_layer }}</div>
   <div class="actions">
     <a href="#" class="remove-panel-btn" alt="Remove layer" title="Remove layer"><%= image_tag("remove-small.png") %></a>
@@ -58,5 +58,5 @@
 </script>
 
 <script id="crop-panel" type="text/template">
-  Crop layers 
+  Intersection type is <code>{{ type }}</code> Crop layers 
 </script>

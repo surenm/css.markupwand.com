@@ -103,7 +103,7 @@ class BoundingBox
       "uni"
     elsif no_points == 0
       # Could be no intersect or cross intersect
-      "unknown"
+      "unknown #{self.to_s}, #{other_box.to_s}" 
     end
   end
 

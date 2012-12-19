@@ -45,12 +45,17 @@ class IntersectionView extends Backbone.View
     $('#intersections-list .intersection-item[data-right-uid="' + layer_uid + '"]').remove()
 
   get_template_data: (target)->
-    container_node = this.get_container(target) 
+    container_node = this.get_container(target)
+    cid            = container_node.data('cid')
+
+    #Intersection type. Fetch the cid and get the type directly from model
+    type           = this.model.getByCid(cid).get('type')
 
     left_uid:    container_node.data('left-uid')
     right_uid:   container_node.data('right-uid')
     left_layer:  container_node.data('left-name')
     right_layer: container_node.data('right-name')
+    type:        type
 
   get_link_node: (target)->
     if target.nodeName.toLowerCase() == "a"
@@ -170,6 +175,7 @@ class IntersectionView extends Backbone.View
       for intersecting_pair in intersecting_pairs_list
         left       = intersecting_pair.get('left')
         right      = intersecting_pair.get('right')
+        cid        = intersecting_pair.cid
         right_name = window.design.layers.get(right).get('name')
         left_name  = window.design.layers.get(left).get('name')
         template_data = 
@@ -177,6 +183,7 @@ class IntersectionView extends Backbone.View
           right_layer: right_name
           left_uid   : left
           right_uid  : right
+          cid        : cid
         
         content  = _.template($('#intersection-item').html(), template_data)
         list_node.append($(content))
