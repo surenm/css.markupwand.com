@@ -1067,6 +1067,7 @@ function createEvent(eventName) {
 				eventCache.x = event.offsetX;
 				eventCache.y = event.offsetY;
 				eventCache.type = helperEventName;
+				eventCache.jquery_event = event
 				$elem.drawLayers(TRUE);
 				event.preventDefault();
 			});
@@ -1090,10 +1091,11 @@ function checkEvents(elem, ctx, layer) {
 		over = ctx.isPointInPath(eventCache.x, eventCache.y),
 		transforms = data.transforms,
 		x, y, angle;
-		
+	
 	// Allow callback functions to retrieve the mouse coordinates
 	layer.mouseX = eventCache.x;
 	layer.mouseY = eventCache.y;
+	layer.event = eventCache.jquery_event
 	
 	// Adjust coordinates to match current canvas transformation
 	
