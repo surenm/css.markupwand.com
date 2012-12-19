@@ -13,10 +13,10 @@ class CanvasHelper
     if events
       $(@canvas_element).jCanvas
         fromCenter: false
-        click: EditorViewEvents.click_handler
-        dblclick: EditorViewEvents.double_click_handler
-        mouseover: EditorViewEvents.mouse_over_handler
-        mouseout: EditorViewEvents.mouse_out_handler
+        click: EditorAreaEvents.click_handler
+        dblclick: EditorAreaEvents.double_click_handler
+        mouseover: EditorAreaEvents.mouse_over_handler
+        mouseout: EditorAreaEvents.mouse_out_handler
     else
       $(@canvas_element).jCanvas
         fromCenter: false

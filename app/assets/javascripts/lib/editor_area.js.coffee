@@ -1,10 +1,9 @@
-class EditorCanvas
-  COLORS = 
-    BLUE: "#0000ff"
-    ORANGE: "#ff6723" 
-    FILL_BLUE: "rgba(245, 245, 245, 0.2)"
-    FILL_RED: "#d87272"
-  
+#= require '../lib/editor_area_events'
+#= require '../lib/canvas_helper'
+
+class EditorArea
+  el: "#editor"
+
   constructor: () ->
     $this = this
 
@@ -76,72 +75,16 @@ class EditorCanvas
       width: bounds.right - bounds.left + 4
       height: bounds.bottom - bounds.top + 4
 
-    this.draw_bounds_markers bounds, stroke_style, animate
+  get_selected_layers: ->
+    layers = []
+    for selected_layer in @selected_layers
+     layers.push @design.get_layer(selected_layer) 
 
-  draw_filled_rectangle: (bounds, fill_color = COLORS.FILL_BLUE, animate = false) ->
-    $canvas = @events_canvas
-    if animate
-      $canvas = @animate_canvas
+    return layers
 
-    $($canvas).drawRect
-      fillStyle: fill_color
-      x: bounds.left
-      y: bounds.top
-      width: bounds.right - bounds.left,
-      height: bounds.bottom - bounds.top
-
-  create_gradient: (gradient, bounds) ->
-    fillStyle = null
-    if gradient.type == 'linear'
-      y2 = bounds.top * Math.sin(gradient.angle * 3.14 / 180)
-      y1 = bounds.bottom * Math.sin(gradient.angle * 3.14 / 180)
-      x2 = bounds.left * Math.cos(gradient.angle * 3.14 /180)
-      x1 = bounds.right * Math.cos(gradient.angle * 3.14 / 180)
-
-      gradient_args = 
-        x1: Math.round x1
-        y1: Math.round y1
-        x2: Math.round x2
-        y2: Math.round y2
-      
-      color_stops = []
-      pos = 1
-      for color_stop in gradient.color_stops
-        tokens = color_stop.split ' '
-        color = tokens[0]
-        stop = tokens[1].split('%')[0]/100
-        gradient_args["c#{pos}"] = color
-        gradient_args["s#{pos}"] = stop
-        pos++
-
-      fillStyle = $(@design_canvas).createGradient gradient_args
-
-    return fillStyle
-
-  render_layers: () ->
-    $(@design_canvas).drawLayers()
-
-  add_grouping_box: (grouping_box) ->
-    canvas_data = grouping_box.to_canvas_data()
-    
-    if not canvas_data?
-      return
-    
-    $this = this
-    $canvas_element = @design_canvas
-    $($canvas_element).addLayer
-      method: 'drawRect'
-      group: 'groupingBox'
-      name: canvas_data.name
-      index: 0
-      x: canvas_data.bounds.left
-      y: canvas_data.bounds.top
-      width: canvas_data.width
-      height: canvas_data.height
-      click: $this.dummyHandler
-      dblclick: $this.dummyHandler
-      mouseover: $this.dummyHandler
-      mouseout: $this.dummyHandler
+  # On disabling multiselect, reset selected layers array
+  reset_selected_layers: () ->
+    @selected_layers = []
 
   add_layer: (layer) ->
     canvas_data = layer.to_canvas_data this
@@ -218,4 +161,4 @@ class EditorCanvas
 
   dummy_handler: (canvas_layer) ->
 
-window.EditorCanvas = EditorCanvas
+window.EditorArea = EditorArea

@@ -27,8 +27,10 @@
 //= require lib/tree.jquery
 //= require lib/jquery.jeditable
 //= require lib/bootstrap-modal
+//= require lib/color
 //= require lib/jcanvas
-//= require lib/editor_canvas
+//= require lib/canvas_helper
+//= require lib/editor_area
 //= require lib/helper
 
 //= require twitter/bootstrap

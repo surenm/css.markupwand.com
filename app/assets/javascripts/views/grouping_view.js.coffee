@@ -21,7 +21,7 @@ class GroupingView extends Backbone.View
 
   initialize: ->
     @grouping_type = null
-    @editor_canvas = window.app.editor_canvas
+    @editor_area = window.app.editor_area
     this.render()
 
   get_iframe_src: ->
@@ -60,18 +60,18 @@ class GroupingView extends Backbone.View
       $("#flip-grouping-box").removeClass 'disabled'
     else
       $("#flip-grouping-box").addClass 'disabled'
-    @editor_canvas.clear()
-    @editor_canvas.draw_bounds grouping_box.bounds
+    @editor_area.events_canvas.clear()
+    @editor_area.events_canvas.draw_bounds grouping_box.bounds
 
   handle_multiple_grouping_box_selection: (grouping_boxes) ->
-    @editor_canvas.clear()
+    @editor_area.clear()
     bounding_boxes = []
     for grouping_box in grouping_boxes
-      @editor_canvas.draw_filled_rectangle grouping_box.bounds
+      @editor_area.events_canvas.draw_filled_rectangle grouping_box.bounds
       bounding_boxes.push grouping_box.bounds
 
     super_bounds = BoundingBox.getSuperBounds bounding_boxes
-    @editor_canvas.draw_bounds super_bounds
+    @editor_area.events_canvas.draw_bounds super_bounds
 
   reset_context_area: ->
     @grouping_type = null
@@ -117,7 +117,7 @@ class GroupingView extends Backbone.View
 
     switch @grouping_type
       when GroupingTypes.NEW_GROUPING_BOX
-        @editor_canvas.clear()
+        @editor_area.clear()
         $(@tree_element).tree('disableMultiSelectMode')      
       else 
         console.log "unhandled grouping type"

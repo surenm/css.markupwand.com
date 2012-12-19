@@ -89,7 +89,7 @@ class LayerModel extends Backbone.Model
 
     return style_string
 
-  getShapeFillStyle: (editor_canvas) ->
+  getShapeFillStyle: (canvas) ->
 
     styles = this.get('styles')
 
@@ -97,11 +97,11 @@ class LayerModel extends Backbone.Model
     if styles['solid_overlay']?
       fillStyle = styles['solid_overlay']
     else if styles['gradient_overlay']?
-      fillStyle = editor_canvas.createGradient styles['gradient_overlay'], this.get('bounds')
+      fillStyle = canvas.create_gradient styles['gradient_overlay'], this.get('bounds')
     else if styles['solid_fill']?
       fillStyle = styles['solid_fill']
     else if styles['gradient_fill']?
-      fillStyle = editor_canvas.createGradient styles['gradient_fill'], this.get('bounds')
+      fillStyle = canvas.create_gradient styles['gradient_fill'], this.get('bounds')
     return fillStyle
 
 window.LayerModel = LayerModel
