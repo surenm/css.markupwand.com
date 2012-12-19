@@ -19,10 +19,9 @@ class IntersectionView extends Backbone.View
 
   events:
     "click .top-head-item"     : "focus_intersection_item"
-    "click a.remove-layer-btn" : "delete_layer_panel"
-    "click a.visibility-btn"   : "visibility_panel"
-    "click a.crop-btn"         : "crop_panel"
-    "click .layer-item"        : "focus_deletable_item"
+    "click a.remove-panel-btn" : "delete_layer_panel"
+    "click a.visibility-panel-btn"   : "visibility_panel"
+    "click a.crop-panel-btn"         : "crop_panel"
 
   collapse_all: ->
     $('.intersection-item .actions').hide()
@@ -32,11 +31,9 @@ class IntersectionView extends Backbone.View
   clear_selected: ->
     $('.intersection-item a.selected').removeClass('selected')
 
-  focus_deletable_item: (e)->
-    layer_uid = $(e.target).parent().data('layer-uid')
+  focus_layer: (layer_id)->
     @editor_canvas.clear()
-    this.draw_layer_bounds layer_uid
-    e.stopPropagation()
+    this.draw_layer_bounds layer_id
 
   delete_involving_intersections: (layer_uid)->
     for intersecting_pair in @intersecting_pairs.models
@@ -74,27 +71,47 @@ class IntersectionView extends Backbone.View
     $(container).find('.action-panel').show()
     $(link).addClass('selected')
 
-
   crop_panel: (e)->
     this.fill_show_action_panel(e.target, "#crop-panel")
     return false
 
   visibility_panel: (e)->
-    this.fill_show_action_panel(e.target, "#visibility-panel")
+    this.fill_show_action_panel(e.target, "#visibility-panel")    
+    container    = this.get_container(e.target)
+    visibility_nodes = $(container).find('.action-panel td img.visibility-btn')
+    focus_nodes  = $(container).find('.action-panel td.select-layer')
+    intersection_view = this
+
+    $(visibility_nodes).click(this.toggle_visibility)
+    $(focus_nodes).click((e)->
+      layer_id = $(e.target).parent().data('layer-uid')
+      intersection_view.focus_layer(layer_id)
+    )
+
     return false    
 
   delete_layer_panel: (e)->
     this.fill_show_action_panel(e.target, "#delete-panel")
 
     container    = this.get_container(e.target)
-    delete_nodes = $(container).find('.action-panel td img')
     intersection_view = this
-    $(delete_nodes).click(this.delete_layer) 
+
+    delete_nodes = $(container).find('.action-panel td img.delete-btn')
+    focus_nodes  = $(container).find('.action-panel td.select-layer')
+
+    $(delete_nodes).click(this.delete_layer)
+    $(focus_nodes).click((e)->
+      layer_id = $(e.target).parent().data('layer-uid')
+      intersection_view.focus_layer(layer_id)
+    )
+
     return false
 
   delete_layer: (e)->
+    layer_uid = $(e.target).parent().parent().data('layer-uid')
+
+    intersection_view.focus_layer(layer_uid)
     if confirm('Delete layer?')
-      layer_uid = $(e.target).parent().parent().data('layer-uid')
       window.app.editor_canvas.design_canvas.removeLayer("l_" + layer_uid)      
       window.app.editor_canvas.design_canvas.drawLayers()
       window.app.editor_canvas.clear()
@@ -105,6 +122,16 @@ class IntersectionView extends Backbone.View
     url = '/design/' + @design.id + '/delete-layer'
     $.post url, {uid : uid}, ->
       console.log("Posted") 
+
+  toggle_visibility: (e)->
+    layer_uid = $(e.target).parent().parent().data('layer-uid')
+    layer     = window.app.editor_canvas.design_canvas.getLayer("l_" + layer_uid)
+    if layer.visible == true
+      layer.visible = false
+    else
+      layer.visible = true
+
+    window.app.editor_canvas.design_canvas.drawLayers()
 
   draw_layer_bounds: (uid)->
     bounds = @design.layers.get(uid).get('bounds')
