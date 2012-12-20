@@ -257,6 +257,40 @@ class Layer
     end
   end
 
+  def crop_image_by_bounds(left_offset, top_offset, width, height)
+    if self.type != Layer::LAYER_NORMAL
+      return
+    else
+      local_image_path = self.extracted_image_path
+      current_image    = Image.read(local_image_path).first
+      current_image.crop!(left_offset, top_offset, width, height)
+      current_image.write(local_image_path)
+      Store::save_to_store self.extracted_image_path, File.join(design.store_extracted_key, self.image_asset_path)
+    end
+  end
+
+  # The current layer gets cropped
+  def crop_layer(other_layer, crop_type)
+    if crop_type == "uni"
+      Log.info "Uni dimension intersection"
+      # More cases have to be handled.
+      Log.info "Cropping #{self.bounds} using #{other_layer.bounds}"
+      new_bounds = self.bounds.outer_crop other_layer.bounds
+      Log.info "New bounds = #{new_bounds}"
+      if self.type == Layer::LAYER_NORMAL
+        left_offset = new_bounds.left - self.left
+        top_offset  = new_bounds.top  - self.top
+        self.crop_image_by_bounds(left_offset, top_offset, new_bounds.width, new_bounds.height)
+        Log.info "Cropped image #{self.extracted_image_path}"
+      end
+      
+      self.bounds = new_bounds
+      self.design.sif.reset_calculated_data
+      self.design.sif.save!
+      self.design.regroup
+    end
+  end
+
   ##########################################################
   # Layer styles related functions
   ##########################################################
