@@ -138,6 +138,25 @@ class GroupingBox < Tree::TreeNode
 
     return grouping_box_layer_groups
   end
+
+  def get_bounds_from_layers
+    layer_bounds = self.non_style_layers.collect { |layer| layer.bounds }
+    layer_group_bounds = self.layer_groups.collect {|group| group.bounds }
+    
+    groupable_bounds = layer_bounds + layer_group_bounds
+
+    if self.layer_groups.size == 1
+      layer_group_key = Utils::get_group_key_from_layers self.layer_groups.first.layers 
+      layers_key = Utils::get_group_key_from_layers self.non_style_layers
+      
+      if layers_key == layer_group_key
+        groupable_bounds = layer_bounds
+      end
+    end
+
+    return groupable_bounds
+  end
+
   def bounds
     self.content[:bounds]
   end
@@ -189,7 +208,7 @@ class GroupingBox < Tree::TreeNode
 
   def groupify
     # All layer boundaries to get the gutters
-    bounding_boxes = GroupingBox.get_bounds_from_layers self.non_style_layers
+    bounding_boxes = self.get_bounds_from_layers
 
     # Get the vertical and horizontal gutters at this level
     vertical_gutters   = GroupingBox.get_vertical_gutters bounding_boxes
