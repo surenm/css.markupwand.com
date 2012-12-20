@@ -274,9 +274,7 @@ class Layer
     if crop_type == "uni"
       Log.info "Uni dimension intersection"
       # More cases have to be handled.
-      Log.info "Cropping #{self.bounds} using #{other_layer.bounds}"
       new_bounds = self.bounds.outer_crop other_layer.bounds
-      Log.info "New bounds = #{new_bounds}"
       if self.type == Layer::LAYER_NORMAL
         left_offset = new_bounds.left - self.bounds.left
         top_offset  = new_bounds.top  - self.bounds.top
@@ -289,6 +287,34 @@ class Layer
       self.design.sif.reset_calculated_data
       self.design.sif.save!
       self.design.regroup
+    end
+  end
+
+  # The current layer is the base layer for cropping
+  def merge_layer(other_layer)
+    if self.type == Layer::LAYER_NORMAL and
+      other_layer.type == Layer::LAYER_NORMAL
+
+      top  = [self.bounds.top, other_layer.bounds.top].min
+      left = [self.bounds.left, other_layer.bounds.left].min
+      bottom = [self.bounds.bottom, other_layer.bounds.bottom].max
+      right  = [self.bounds.right, other_layer.bounds.right].max
+      width  = right - left
+      height = bottom - top
+
+      slate = Image.new(width, height)  { self.background_color = "none" }
+      self_image  = Image.read(self.extracted_image_path).first
+      other_image = Image.read(other_layer.extracted_image_path).first
+
+      self_top_offset     = self.bounds.top - top
+      self_left_offset    = self.bounds.left - left
+      other_top_offset    = other_layer.bounds.top - top
+      other_left_offset = other_layer.bounds.left - left
+
+      slate.composite!(self_image, self_left_offset, self_top_offset, Magick::OverCompositeOp)
+      slate.composite!(other_image, other_left_offset, other_top_offset, Magick::OverCompositeOp)
+      Log.info "Done writing"
+      slate.write('/tmp/merge-testing.png')
     end
   end
 

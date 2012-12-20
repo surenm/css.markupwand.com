@@ -74,7 +74,6 @@ class DesignController < ApplicationController
   def merge_layer
     left      = params[:left]
     right     = params[:right]
-    crop_type = params[:type]
     left_layer  = @design.layers[left.to_i]
     right_layer = @design.layers[right.to_i]
 
@@ -83,6 +82,8 @@ class DesignController < ApplicationController
     else
       right_layer.merge_layer left_layer
     end
+
+    return :json => {:status => 'OK'}
   end
   
   def set_rating
