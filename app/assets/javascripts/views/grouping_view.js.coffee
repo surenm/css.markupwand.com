@@ -19,6 +19,7 @@ class GroupingView extends Backbone.View
   initialize: ->
     @grouping_type = null
     @editor_area = window.app.editor_area
+    @design = window.design
     this.render()
 
   get_iframe_src: ->
@@ -72,7 +73,9 @@ class GroupingView extends Backbone.View
     @editor_area.events_canvas.draw_bounds super_bounds
 
   group_layers_handler: (event) ->
-    console.log @editor_area.get_selected_layers()
+    layer_ids = (layer.get('id') for layer in @editor_area.get_selected_layers())
+    $.post "/design/#{@design.get('id')}/group-layers", {layers: layer_ids}, (data) ->
+      console.log data
 
   editor_click_handler: (event) ->
     if @editor_area.get_selected_layers().length > 1
