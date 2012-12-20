@@ -112,4 +112,12 @@ CSS
     tokens = pixel_string.split 'p'
     return tokens[0].to_i
   end
+
+  def Utils::get_group_key_from_layers(layers)
+    layer_ids = layers.collect {|layer| layer.uid}
+    layer_ids.sort!
+    
+    key = layer_ids.join '-'
+    return key
+  end
 end

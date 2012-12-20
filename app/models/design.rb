@@ -390,10 +390,7 @@ class Design
   # Actual jobs to be run on designs
   ########################################################## 
   def add_new_layer_group(layers)
-    layer_ids = layers.collect {|layer| layer.uid}
-    layer_ids.sort!
-    
-    key = layer_ids.join '-'
+    key = Utils::get_group_key_from_layers layers
     
     layer_groups = self.layer_groups
     layer_groups = Hash.new if layer_groups.nil?
