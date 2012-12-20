@@ -53,6 +53,34 @@ class GroupingBox < Tree::TreeNode
     end
   end
 
+  # Assumes that all nodes belong in a same tree
+  def self.get_common_ancestor(grouping_boxes)
+    # first get all the parentages of the grouping boxes in root first order
+    grouping_box_parentages = grouping_boxes.collect do |grouping_box| 
+      grouping_box.parentage.reverse
+    end
+    
+    # Algorithm to get the common ancestor. 
+    # Keep iterating parentage array until parentages differ or we exhaust parentage arrays
+    pos = 0
+    while true
+      pos_grouping_boxes = grouping_box_parentages.collect do |parentage| 
+        gb = parentage.fetch pos, nil
+        gb.bounds if not gb.nil?
+      end
+
+      uniq_boxes = pos_grouping_boxes.uniq
+
+      break if uniq_boxes.size > 1
+      break if uniq_boxes.size == 1 and uniq_boxes.first.nil?
+
+      pos += 1
+    end
+
+    common_ancestor = grouping_box_parentages.first[pos - 1]
+    return common_ancestor
+  end
+
   def initialize(args)
     bounds = args.fetch :bounds
     @design = args.fetch :design
