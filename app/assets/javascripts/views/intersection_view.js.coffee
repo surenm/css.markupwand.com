@@ -80,6 +80,11 @@ class IntersectionView extends Backbone.View
 
   crop_panel: (e)->
     this.fill_show_action_panel(e.target, "#crop-panel")
+    container   = this.get_container(e.target)
+    crop_button = $(container).find('.action-panel .crop-btn')
+    intersection_view = this
+
+    $(crop_button).click(this.crop_layer)
     return false
 
   merge_panel: (e)->
@@ -133,7 +138,19 @@ class IntersectionView extends Backbone.View
   delete_layer_sync: (uid)->
     url = '/design/' + @design.id + '/delete-layer'
     $.post url, {uid : uid}, ->
-      console.log("Posted") 
+      console.log("Posted")
+
+  crop_layer: (e)->
+    cid   = $(e.target).parent().parent().parent().data('cid')
+    model = intersection_view.model.getByCid(cid)
+    post_data = 
+      left: model.get('left')
+      right: model.get('right')
+      type: model.get('type')
+
+    url = '/design/' + intersection_view.design.id + '/crop-layer'
+    $.post url, post_data, ->
+      console.log("Cropped layer") 
 
   toggle_visibility: (e)->
     layer_uid = $(e.target).parent().parent().data('layer-uid')
