@@ -292,6 +292,6 @@ class Sif
       self.layers[layer_id]
     end
 
-    layer_group = LayerGroup.new group_layers
+    layer_group = LayerGroup.new grouped_layers
   end
 end
