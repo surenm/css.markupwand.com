@@ -150,10 +150,7 @@ class GroupingBox < Tree::TreeNode
   end
 
   def non_style_layers
-    all_layers = self.layers
-    non_style_layers = all_layers.select do |layer|
-      layer.bounds != self.bounds
-    end
+    self.layers - self.style_layers
   end
 
   def style_layers
