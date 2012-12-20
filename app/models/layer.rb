@@ -278,8 +278,8 @@ class Layer
       new_bounds = self.bounds.outer_crop other_layer.bounds
       Log.info "New bounds = #{new_bounds}"
       if self.type == Layer::LAYER_NORMAL
-        left_offset = new_bounds.left - self.left
-        top_offset  = new_bounds.top  - self.top
+        left_offset = new_bounds.left - self.bounds.left
+        top_offset  = new_bounds.top  - self.bounds.top
         self.crop_image_by_bounds(left_offset, top_offset, new_bounds.width, new_bounds.height)
         Log.info "Cropped image #{self.extracted_image_path}"
       end
