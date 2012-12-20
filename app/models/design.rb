@@ -277,6 +277,23 @@ class Design
   end
   
   ##########################################################
+  # Automation related functions
+  ##########################################################
+  def normalize_layers
+    if self.width < 1024
+      return
+    end
+
+    start_x = (self.width/2) - 512
+    end_x = start_x + 1024
+    selected_layers = self.layers.values.select do |layer|
+      layer.bounds.left >= start_x and layer.bounds.right <= end_x
+    end
+    not_selected_layers = self.layers.values - selected_layers
+    Log.fatal not_selected_layers
+  end
+
+  ##########################################################
   # Store related functions
   ##########################################################
   def safe_name_prefix
