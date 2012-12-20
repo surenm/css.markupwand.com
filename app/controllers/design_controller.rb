@@ -68,7 +68,7 @@ class DesignController < ApplicationController
       right_layer.crop_layer left_layer, crop_type
     end
 
-    return :json => {:status => 'OK'}
+    render :json => {:status => 'OK'}
   end
 
   def merge_layer
@@ -83,7 +83,7 @@ class DesignController < ApplicationController
       right_layer.merge_layer left_layer
     end
 
-    return :json => {:status => 'OK'}
+    render :json => {:status => 'OK'}
   end
   
   def set_rating
