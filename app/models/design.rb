@@ -396,6 +396,7 @@ class Design
     layer_groups = Hash.new if layer_groups.nil?
 
     layer_groups[key] = LayerGroup.new layers
+    @sif.layer_groups = layer_groups
     @sif.save!
   end
 
