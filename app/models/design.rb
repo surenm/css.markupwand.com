@@ -479,6 +479,9 @@ class Design
     end
 
     common_ancestor = GroupingBox.get_common_ancestor grouping_boxes
+    common_ancestor.remove_all!
+    common_ancestor.groupify
+
     return
   end
 
