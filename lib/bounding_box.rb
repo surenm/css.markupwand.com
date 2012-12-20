@@ -96,14 +96,22 @@ class BoundingBox
 
   def crop_type(other_box)
     # If there is only one point inside the bound, it is multi-dimension intersect.
-    no_points = points_inside(other_box)
-    if no_points == 1
+    self_points  = points_inside(other_box)
+    other_points = other_box.points_inside(self)
+    if self_points == 1
       "multi"
-    elsif no_points == 2
+    elsif self_points == 2
       "uni"
-    elsif no_points == 0
-      # Could be no intersect or cross intersect
-      "unknown #{self.to_s}, #{other_box.to_s}" 
+    elsif self_points == 0
+      if (self.top == other_box.top and self.bottom == other_box.bottom) or
+         (self.left == other_box.left and self.right == other_box.right) 
+        "exact_overlap"
+      elsif other_points == 2
+        "uni"
+      else
+        # Could be no intersect or cross intersect
+        "Unknown #{self.to_s}, #{other_box.to_s}, (Self points: #{self_points}, Other points: #{other_points})" 
+      end
     end
   end
 
