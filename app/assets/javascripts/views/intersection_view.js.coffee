@@ -96,6 +96,10 @@ class IntersectionView extends Backbone.View
     right_layer = window.design.layers.get(right_id)
     if left_layer.get('type') == 'normal' and right_layer.get('type') == 'normal'
       this.fill_show_action_panel(e.target, "#merge-panel")
+      merge_btn = $(container).find('.action-panel .merge-btn')
+      intersection_view = this
+      $(merge_btn).click(this.merge_layer)
+
     else
       this.fill_show_action_panel(e.target, "#merge-notpossible")
 
@@ -149,6 +153,18 @@ class IntersectionView extends Backbone.View
     url = '/design/' + @design.id + '/delete-layer'
     $.post url, {uid : uid}, ->
       console.log("Posted")
+
+
+  merge_layer: (e)->
+    cid   = $(e.target).parent().parent().parent().data('cid')
+    model = intersection_view.model.getByCid(cid)
+    post_data = 
+      left: model.get('left')
+      right: model.get('right')
+
+    url = '/design/' + intersection_view.design.id + '/merge-layer'
+    $.post url, post_data, ->
+      console.log("Merged layer") 
 
   crop_layer: (e)->
     cid   = $(e.target).parent().parent().parent().data('cid')
