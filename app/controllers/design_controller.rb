@@ -59,8 +59,8 @@ class DesignController < ApplicationController
     left      = params[:left]
     right     = params[:right]
     crop_type = params[:type]
-    left_layer  = @design.layers[left]
-    right_layer = @design.layers[right]
+    left_layer  = @design.layers[left.to_i]
+    right_layer = @design.layers[right.to_i]
 
     if left_layer.zindex < right_layer.zindex
       left_layer.crop_layer right_layer, crop_type
