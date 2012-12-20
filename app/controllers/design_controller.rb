@@ -54,6 +54,22 @@ class DesignController < ApplicationController
     @design.regroup
     render :json => {:status => 'OK'}
   end
+
+  def crop_layer
+    left      = params[:left]
+    right     = params[:right]
+    crop_type = params[:type]
+    left_layer  = @design.layers[left]
+    right_layer = @design.layers[right]
+
+    if left_layer.zindex < right_layer.zindex
+      left_layer.crop_layer right_layer, crop_type
+    else
+      right_layer.crop_layer left_layer, crop_type
+    end
+
+    return :json => {:status => 'OK'}
+  end
   
   def set_rating
     if params[:rate] == "true"
