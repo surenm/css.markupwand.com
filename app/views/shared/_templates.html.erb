@@ -37,6 +37,7 @@
   <div class="actions">
     <a href="#" class="remove-panel-btn" alt="Remove layer" title="Remove layer"><%= image_tag("remove-small.png") %></a>
     <a href="#" class="crop-panel-btn" alt="Crop layers" title="Crop layers"><%= image_tag("crop-small.png") %></a>
+    <a href="#" class="merge-panel-btn" alt="Merge both layers" title="Merge both layers"><%= image_tag("merge-small.png") %></a>
     <a href="#" class="visibility-panel-btn" alt="Toggle layer visibility" title="Toggle layer visibility"><%= image_tag("visibility-small.png") %></a>
   </div>
   <div class="action-panel">
@@ -58,5 +59,11 @@
 </script>
 
 <script id="crop-panel" type="text/template">
-  Intersection type is <code>{{ type }}</code> Crop layers 
+  Intersection type is <code>{{ type }}</code> 
+  <div><div class="btn btn-small">Crop</div></div>
+</script>
+
+<script id="merge-panel" type="text/template">
+  Intersection type is <code>{{ type }}</code>. 
+  <div><div class="btn btn-small">Merge</div></div>
 </script>
