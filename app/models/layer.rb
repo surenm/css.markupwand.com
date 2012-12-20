@@ -30,8 +30,7 @@ class Layer
   LAYER_TEXT               = "text"
   LAYER_SHAPE              = "shape" 
   LAYER_NORMAL             = "normal"
- 
-
+  
   ### Relational references ###
   # Belongs to a design
   attr_accessor :design

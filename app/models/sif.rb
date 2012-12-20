@@ -14,6 +14,7 @@ class Sif
   attr_accessor :design
   attr_accessor :header
   attr_accessor :layers
+  attr_accessor :layer_groups
   attr_accessor :root_grid
   attr_accessor :root_grouping_box
   
@@ -57,6 +58,7 @@ class Sif
     begin
       self.parse_header
       self.parse_layers
+      self.parse_layer_groups
       self.parse_grouping_boxes
       self.parse_grids
       self.validate
@@ -86,6 +88,19 @@ class Sif
       layer = self.create_layer serialized_layer_data
       @layers[uid] = layer
     end
+  end
+
+  def parse_layer_groups
+    serialized_layer_groups_arr = @sif_data[:layer_groups]
+    if serialized_layer_groups_arr.nil?
+      return
+    end
+
+    @layer_groups = Hash.new
+    serialized_layer_groups_arr.each do |key, serialized_layer_set_data|
+      @layer_groups[key] = self.create_layer_group serialized_layer_set_data
+    end
+
   end
 
   def parse_grouping_boxes
@@ -158,6 +173,12 @@ class Sif
 
     serialized_layers = @layers.values.collect do |layer|
       layer.attribute_data
+    end
+
+    if not @layer_groups.nil?
+      serialized_layer_groups = @layer_groups.values.collect do |layer_group|
+        layer_group.attribute_data
+      end
     end
 
     sif_document = {
@@ -261,5 +282,14 @@ class Sif
     end
 
     grid
+  end
+
+  def create_layer_group(serialized_data)
+    layer_ids = serialized_data[:layers]
+    grouped_layers = layer_ids.collect do |layer_id|
+      self.layers[layer_id]
+    end
+
+    layer_group = LayerGroup.new group_layers
   end
 end

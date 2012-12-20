@@ -293,6 +293,11 @@ class Design
     @sif.layers
   end
 
+  def layer_groups
+    self.init_sif
+    @sif.layer_groups
+  end
+
   def root_grouping_box
     self.init_sif
     @sif.root_grouping_box
