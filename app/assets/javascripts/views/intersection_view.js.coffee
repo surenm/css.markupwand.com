@@ -22,6 +22,8 @@ class IntersectionView extends Backbone.View
     "click a.remove-panel-btn" : "delete_layer_panel"
     "click a.visibility-panel-btn"   : "visibility_panel"
     "click a.crop-panel-btn"         : "crop_panel"
+    "click a.merge-panel-btn"         : "merge_panel"
+
 
   collapse_all: ->
     $('.intersection-item .actions').hide()
@@ -79,6 +81,11 @@ class IntersectionView extends Backbone.View
   crop_panel: (e)->
     this.fill_show_action_panel(e.target, "#crop-panel")
     return false
+
+  merge_panel: (e)->
+      this.fill_show_action_panel(e.target, "#merge-panel")
+      return false
+
 
   visibility_panel: (e)->
     this.fill_show_action_panel(e.target, "#visibility-panel")    
