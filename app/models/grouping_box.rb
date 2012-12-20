@@ -124,6 +124,20 @@ class GroupingBox < Tree::TreeNode
     self.content[:layers]
   end
 
+  def layer_groups
+    return [] if @design.layer_groups.nil?
+    
+    layers_set = self.layers.to_set
+    grouping_box_layer_groups = Array.new
+        
+    @design.layer_groups.each do |key, layer_group|
+      if layer_group.layers.to_set.subset? layers_set
+        grouping_box_layer_groups.push layer_group
+      end
+    end
+
+    return grouping_box_layer_groups
+  end
   def bounds
     self.content[:bounds]
   end
