@@ -70,6 +70,20 @@ class DesignController < ApplicationController
 
     return :json => {:status => 'OK'}
   end
+
+  def merge_layer
+    left      = params[:left]
+    right     = params[:right]
+    crop_type = params[:type]
+    left_layer  = @design.layers[left.to_i]
+    right_layer = @design.layers[right.to_i]
+
+    if left_layer.zindex < right_layer.zindex
+      left_layer.merge_layer right_layer
+    else
+      right_layer.merge_layer left_layer
+    end
+  end
   
   def set_rating
     if params[:rate] == "true"

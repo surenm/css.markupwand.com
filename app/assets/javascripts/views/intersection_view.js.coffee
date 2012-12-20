@@ -88,8 +88,18 @@ class IntersectionView extends Backbone.View
     return false
 
   merge_panel: (e)->
+    container = this.get_container(e.target)
+    left_id = $(container).data('left-uid')
+    right_id = $(container).data('right-uid')
+
+    left_layer = window.design.layers.get(left_id)
+    right_layer = window.design.layers.get(right_id)
+    if left_layer.get('type') == 'normal' and right_layer.get('type') == 'normal'
       this.fill_show_action_panel(e.target, "#merge-panel")
-      return false
+    else
+      this.fill_show_action_panel(e.target, "#merge-notpossible")
+
+    return false
 
 
   visibility_panel: (e)->
