@@ -1,10 +1,5 @@
 class GroupingBox < Tree::TreeNode
 
-  def self.get_bounds_from_layers(layers)
-    bounds_list = layers.collect do |layer| layer.bounds end  
-    bounds_list
-  end
-
   def self.get_vertical_gutters(bounding_boxes)
     vertical_lines  = bounding_boxes.collect{|bb| bb.left}
     vertical_lines += bounding_boxes.collect{|bb| bb.right}
