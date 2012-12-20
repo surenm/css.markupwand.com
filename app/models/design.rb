@@ -468,6 +468,9 @@ class Design
 
     # Get all the needed layers
     grouped_layers = layer_ids.collect {|layer_id| self.layers[layer_id.to_i]}
+
+    # add a new layer group to design
+    self.add_new_layer_group grouped_layers
     
     # Get all the parent grouping boxes for those parents
     grouping_boxes = grouped_layers.collect do |layer|
