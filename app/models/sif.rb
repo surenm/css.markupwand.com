@@ -91,13 +91,13 @@ class Sif
   end
 
   def parse_layer_groups
-    serialized_layer_groups_arr = @sif_data[:layer_groups]
-    if serialized_layer_groups_arr.nil?
+    serialized_layer_groups = @sif_data[:layer_groups]
+    if serialized_layer_groups.nil?
       return
     end
 
     @layer_groups = Hash.new
-    serialized_layer_groups_arr.each do |key, serialized_layer_set_data|
+    serialized_layer_groups.each do |key, serialized_layer_set_data|
       @layer_groups[key] = self.create_layer_group serialized_layer_set_data
     end
 
@@ -176,14 +176,16 @@ class Sif
     end
 
     if not @layer_groups.nil?
-      serialized_layer_groups = @layer_groups.values.collect do |layer_group|
-        layer_group.attribute_data
+      serialized_layer_groups = Hash.new 
+      @layer_groups.each do |key, layer_group|
+        serialized_layer_groups[key] = layer_group.attribute_data
       end
     end
 
     sif_document = {
       :header => @header,
       :layers => serialized_layers,
+      :layer_groups => serialized_layer_groups,
       :root_grouping_box => serialized_root_grouping_box,
       :root_grid => serialized_root_grid,
     }
