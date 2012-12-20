@@ -404,61 +404,7 @@ class Design
     Log.info "Successfully created all grouping_boxes."
   end
 
-  def merge_grouping_boxes(bounds)
-    self.init_sif
-    
-    grouping_boxes = bounds.collect do |bound|
-      GroupingBox.get_node self.root_grouping_box, bound.to_s
-    end
-
-    # Get the super bounds to be set as bounds for the new grouping box 
-    super_bounds = BoundingBox.get_super_bounds bounds
-
-    # Get the layers that belong to all the children
-    layers = grouping_boxes.collect do |grouping_box|
-      grouping_box.layers
-    end
-    layers.flatten!
-
-    # Assumption is that all the selected grouping boxes belong to the same parent
-    # TODO: Validate the assumption and throw the error if not the case
-    parent_grouping_box = grouping_boxes.first.parent
-    orientation = parent_grouping_box.orientation
-    
-    # Sort the children order depending upon orientation
-    grouping_boxes.sort! { |a, b| 
-      if orientation == Constants::GRID_ORIENT_NORMAL
-        a.bounds.top <=> b.bounds.top
-      else
-        a.bounds.left <=> b.bounds.left
-      end
-    }
-
-    new_grouping_box = GroupingBox.new :layers => layers, :bounds => super_bounds, :design => self
-    insert_position = parent_grouping_box.get_child_index grouping_boxes.first
-    parent_grouping_box.add new_grouping_box, insert_position
-
-    grouping_boxes.each do |grouping_box|
-      parent_grouping_box.remove! grouping_box
-      new_grouping_box.add grouping_box
-    end
-
-    @sif.root_grouping_box = self.root_grouping_box
-    @sif.save!
-  end
-
-  def flip_grouping_box(grouping_box_name)
-    grouping_box = GroupingBox.get_node self.root_grouping_box, grouping_box_name
-    grouping_box.content[:enable_alternate_grouping] = true
-
-    grouping_box.remove_all!
-    grouping_box.groupify
-
-    @sif.root_grouping_box = self.root_grouping_box
-    @sif.reset_grids
-    @sif.save!
-  end
-
+  
   def get_intersecting_pairs
     intersecting_pairs = []
 
@@ -588,8 +534,7 @@ config
 
     css_contents
   end
-
-
+  
   def write_css_files(scss_content, base_folder)
     Log.info "Writing css (compass) file..."    
 
