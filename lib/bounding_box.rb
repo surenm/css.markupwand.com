@@ -95,7 +95,7 @@ class BoundingBox
   end
 
   def crop_type(other_box)
-    # If there is only one point inside the bound, it is multi-dimension intersect.
+    # Types: http://cl.ly/image/3F0T0F322B2v
     self_points  = points_inside(other_box)
     other_points = other_box.points_inside(self)
     if self_points == 1
