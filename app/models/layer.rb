@@ -265,8 +265,12 @@ class Layer
       current_image    = Image.read(local_image_path).first
       current_image.crop!(left_offset, top_offset, width, height)
       current_image.write(local_image_path)
-      Store::save_to_store self.extracted_image_path, File.join(design.store_extracted_key, self.image_asset_path)
+      self.sync_image_to_store
     end
+  end
+
+  def sync_image_to_store
+    Store::save_to_store self.extracted_image_path, File.join(design.store_extracted_key, self.image_asset_path)
   end
 
   # The current layer gets cropped
@@ -295,26 +299,47 @@ class Layer
     if self.type == Layer::LAYER_NORMAL and
       other_layer.type == Layer::LAYER_NORMAL
 
+      # Calculate all the new dimensions for the new canvas
       top  = [self.bounds.top, other_layer.bounds.top].min
       left = [self.bounds.left, other_layer.bounds.left].min
       bottom = [self.bounds.bottom, other_layer.bounds.bottom].max
       right  = [self.bounds.right, other_layer.bounds.right].max
       width  = right - left
       height = bottom - top
+      new_bounds = BoundingBox.new top, left, bottom, right
 
+      # Create a transparent slate, prepare the composite images to be applied
       slate = Image.new(width, height)  { self.background_color = "none" }
       self_image  = Image.read(self.extracted_image_path).first
       other_image = Image.read(other_layer.extracted_image_path).first
 
+      # Calculate all the offsets to be composited.
       self_top_offset     = self.bounds.top - top
       self_left_offset    = self.bounds.left - left
       other_top_offset    = other_layer.bounds.top - top
-      other_left_offset = other_layer.bounds.left - left
+      other_left_offset   = other_layer.bounds.left - left
 
+      # Apply composites
       slate.composite!(self_image, self_left_offset, self_top_offset, Magick::OverCompositeOp)
       slate.composite!(other_image, other_left_offset, other_top_offset, Magick::OverCompositeOp)
-      Log.info "Done writing"
-      slate.write('/tmp/merge-testing.png')
+      
+      # Sync it to store
+      slate.write(self.extracted_image_path)
+      self.sync_image_to_store
+
+      # Set new bounds
+      self.bounds = new_bounds
+      self.initial_bounds = new_bounds
+
+      # Delete the merged layer
+      self.design.sif.layers.delete other_layer.uid
+      
+      # Recalculate everything
+      self.design.sif.reset_calculated_data
+      self.design.sif.save!
+      self.design.regroup
+      Log.info "Merge complete"
+
     end
   end
 
