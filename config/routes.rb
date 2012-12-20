@@ -84,9 +84,9 @@ TransformersWeb::Application.routes.draw do
       # intersections
       match 'intersecting-pairs' => 'design#intersecting_pairs'
       match 'delete-layer' => 'design#delete_layer', :via => :post
-
+      match 'crop-layer' => 'design#crop_layer', :via => :post
+      match 'merge-layer' => 'design#merge_layer', :via => :post
     end
-
   end
 
   # Proxy method to view generated files
