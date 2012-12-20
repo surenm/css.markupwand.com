@@ -98,6 +98,7 @@ body {
           font-size: 10px;
           background-color: $selected_panel;
           padding-left: 10px;
+          padding-bottom: 5px;
           margin-right: 10px;
 
           .delete-btn {
@@ -107,9 +108,12 @@ body {
           .visibility-btn {
             padding-left: 10px;
           }
+
+          .btn-small {
+            box-shadow: none;
+          }
         }
       }
-
     }
   }
 }
