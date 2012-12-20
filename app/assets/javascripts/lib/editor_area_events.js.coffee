@@ -1,4 +1,5 @@
 class EditorAreaEvents
+
   # Event handlers for various events on the canvas
   @click_handler: (canvas_layer) ->
     shift_key_pressed = canvas_layer.event.shiftKey
@@ -23,8 +24,21 @@ class EditorAreaEvents
       $editor_area.events_canvas.draw_selection super_bounds, Color.BLUE
     else
       layers = $editor_area.get_selected_layers()
-      $editor_area.events_canvas.draw_selection layers[0].get('bounds'), Color.BLUE    
-    
+      $editor_area.events_canvas.draw_selection layers[0].get('bounds'), Color.BLUE
+
+    event = $.Event('editor.clicked')
+    event.data =
+      layer: layer
+    $("#editor").trigger(event)
+
+  @double_click_handler: (canvas_layer) ->
+    $editor_area = app.editor_area
+    layer = $editor_area.get_object_from_name canvas_layer.name
+    event = $.Event('editor.double_clicked')
+    event.data =
+      layer: layer
+    $("#editor").trigger(event)
+  
   @mouse_over_handler: (canvas_layer) ->
     $editor_area = app.editor_area
     layer = $editor_area.get_object_from_name canvas_layer.name
@@ -33,8 +47,6 @@ class EditorAreaEvents
   @mouse_out_handler: (canvas_layer) ->
     $editor_area = app.editor_area
     $editor_area.animate_canvas.clear()
-
-  @double_click_handler: (canvas_layer) ->
 
   @dummy_handler: (canvas_layer) ->
 
