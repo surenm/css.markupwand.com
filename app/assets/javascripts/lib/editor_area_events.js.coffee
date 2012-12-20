@@ -24,7 +24,8 @@ class EditorAreaEvents
       $editor_area.events_canvas.draw_selection super_bounds, Color.BLUE
     else
       layers = $editor_area.get_selected_layers()
-      $editor_area.events_canvas.draw_selection layers[0].get('bounds'), Color.BLUE
+      if layers.length > 0
+        $editor_area.events_canvas.draw_selection layers[0].get('bounds'), Color.BLUE
 
     event = $.Event('editor.clicked')
     event.data =

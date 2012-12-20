@@ -76,7 +76,6 @@ class GroupingView extends Backbone.View
 
   editor_click_handler: (event) ->
     if @editor_area.get_selected_layers().length > 1
-      console.log $("#group-layers")
       $("#group-layers").removeClass 'disabled'
     else
       $("#group-layers").addClass 'disabled'
