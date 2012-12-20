@@ -110,27 +110,15 @@ class GroupingBox < Tree::TreeNode
   end
 
   def has_alternate_grouping
-    if self.content[:has_alternate_grouping].nil?
-      return false
-    else 
-      return self.content[:has_alternate_grouping]
-    end
+    return self.content.fetch :has_alternate_grouping, false
   end
 
   def has_intersecting_layers
-    if self.content[:has_intersecting_layers].nil?
-      return false
-    else
-      return self.content[:has_intersecting_layers]
-    end
+    return self.content.fetch :has_intersecting_layers, false
   end
 
   def enable_alternate_grouping
-    if self.content[:enable_alternate_grouping].nil?
-      return false
-    else 
-      return self.content[:enable_alternate_grouping]
-    end
+    return self.content.fetch :enable_alternate_grouping, false
   end
 
   def non_style_layers
