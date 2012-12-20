@@ -389,6 +389,19 @@ class Design
   ##########################################################
   # Actual jobs to be run on designs
   ########################################################## 
+  def add_new_layer_group(layers)
+    layer_ids = layers.collect {|layer| layer.uid}
+    layer_ids.sort!
+    
+    key = layer_ids.join '-'
+    
+    layer_groups = self.layer_groups
+    layer_groups = Hash.new if layer_groups.nil?
+
+    layer_groups[key] = LayerGroup.new layers
+    @sif.save!
+  end
+
   def create_grouping_boxes
     self.init_sif
 
