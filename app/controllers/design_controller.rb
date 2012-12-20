@@ -352,7 +352,7 @@ class DesignController < ApplicationController
 
   def group_layers
     layers = params[:layers]
-    
+    @design.group_layers layers
     render :json => {:status => :success}
   end
 

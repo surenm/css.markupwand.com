@@ -447,6 +447,22 @@ class Design
     return
   end
 
+  def group_layers(layer_ids)
+    self.init_sif
+
+    # Get all the needed layers
+    grouped_layers = layer_ids.collect {|layer_id| self.layers[layer_id.to_i]}
+    
+    # Get all the parent grouping boxes for those parents
+    grouping_boxes = grouped_layers.collect do |layer|
+      grouping_box_name = layer.grouping_box.to_s
+      GroupingBox.get_node self.root_grouping_box, grouping_box_name
+    end
+
+    common_ancestor = GroupingBox.get_common_ancestor grouping_boxes
+    return
+  end
+
   # This usually called after changing CSS class names
   def write_html_and_css
     Log.info "Writing HTML and CSS..."
