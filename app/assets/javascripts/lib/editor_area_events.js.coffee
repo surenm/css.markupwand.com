@@ -27,7 +27,7 @@ class EditorAreaEvents
       if layers.length > 0
         $editor_area.events_canvas.draw_selection layers[0].get('bounds'), Color.BLUE
 
-    event = $.Event('editor.clicked')
+    event = $.Event('click.editor')
     event.data =
       layer: layer
     $("#editor").trigger(event)
@@ -35,7 +35,7 @@ class EditorAreaEvents
   @double_click_handler: (canvas_layer) ->
     $editor_area = app.editor_area
     layer = $editor_area.get_object_from_name canvas_layer.name
-    event = $.Event('editor.double_clicked')
+    event = $.Event('double_click.editor')
     event.data =
       layer: layer
     $("#editor").trigger(event)
