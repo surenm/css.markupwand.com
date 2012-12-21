@@ -471,17 +471,8 @@ class Design
 
     # add a new layer group to design
     self.add_new_layer_group grouped_layers
-    
-    # Get all the parent grouping boxes for those parents
-    grouping_boxes = grouped_layers.collect do |layer|
-      grouping_box_name = layer.grouping_box.to_s
-      GroupingBox.get_node self.root_grouping_box, grouping_box_name
-    end
 
-    common_ancestor = GroupingBox.get_common_ancestor grouping_boxes
-    common_ancestor.remove_all!
-    common_ancestor.groupify
-
+    Resque.enqueue GroupingBoxJob, self.id
     return
   end
 
