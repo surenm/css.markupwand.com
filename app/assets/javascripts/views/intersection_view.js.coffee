@@ -11,6 +11,7 @@ class IntersectionView extends Backbone.View
 
     @design        = window.design
     @editor_area   = window.app.editor_area
+    @app           = window.app
     @intersecting_pairs = this.model
     $("#animate-canvas").css("display", "none")
     this.render()
@@ -108,7 +109,7 @@ class IntersectionView extends Backbone.View
       $(merge_btn).click(this.merge_layer)
 
     else
-      this.fill_show_action_panel(e.target, "#merge-notpossible")
+      this.fill_show_action_panel(e.target, "#merge-not-possible")
 
     return false
 
@@ -152,18 +153,20 @@ class IntersectionView extends Backbone.View
     if confirm('Delete layer?')
       intersection_view.editor_area.design_canvas.canvas_element.removeLayer("l_" + layer_uid)      
       intersection_view.editor_area.design_canvas.canvas_element.drawLayers()
+      intersection_view.app.show_notification('Deleting layer')
       intersection_view.delete_layer_sync(layer_uid)
       intersection_view.delete_involving_intersections(layer_uid)
       intersection_view.clear_canvas()
 
   delete_layer_sync: (uid)->
     url = '/design/' + @design.id + '/delete-layer'
+    intersection_view = this
     $.post url, {uid : uid}, ->
-      console.log("Posted")
-
+      intersection_view.app.hide_notification('Done deleting')
 
   merge_layer: (e)->
     cid   = $(e.target).parent().parent().parent().data('cid')
+    intersection_view.app.show_notification("Merging layers")
     model = intersection_view.model.getByCid(cid)
     post_data = 
       left: model.get('left')
@@ -171,9 +174,11 @@ class IntersectionView extends Backbone.View
 
     url = '/design/' + intersection_view.design.id + '/merge-layer'
     $.post url, post_data, ->
-      console.log("Merged layer") 
+      intersection_view.app.hide_notification("Done merging")
+      # Change the layer bounds and remove the intersection itself 
 
   crop_layer: (e)->
+    intersection_view.app.show_notification("Cropping layers")
     cid   = $(e.target).parent().parent().parent().data('cid')
     model = intersection_view.model.getByCid(cid)
     post_data = 
@@ -181,9 +186,11 @@ class IntersectionView extends Backbone.View
       right: model.get('right')
       type: model.get('type')
 
+
     url = '/design/' + intersection_view.design.id + '/crop-layer'
     $.post url, post_data, ->
-      console.log("Cropped layer") 
+      intersection_view.app.hide_notification("Done cropping")
+      # Change the layer bounds and remove the intersection itself
 
   toggle_visibility: (e)->
     layer_uid = $(e.target).parent().parent().data('layer-uid')
