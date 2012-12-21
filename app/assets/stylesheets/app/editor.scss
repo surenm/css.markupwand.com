@@ -12,6 +12,10 @@ body {
     position: absolute;
   }
 
+  canvas#design-canvas {
+    background: url('/assets/transparent.png');
+  }
+
   #editor-notifications {
     position: fixed;
     display: inline-block;
