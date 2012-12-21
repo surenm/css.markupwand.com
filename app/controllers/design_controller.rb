@@ -56,11 +56,13 @@ class DesignController < ApplicationController
   end
 
   def crop_layer
-    left      = params[:left]
-    right     = params[:right]
+    left      = params[:left].to_i
+    right     = params[:right].to_i
     crop_type = params[:type]
-    left_layer  = @design.layers[left.to_i]
-    right_layer = @design.layers[right.to_i]
+    left_layer  = @design.layers[left]
+    right_layer = @design.layers[right]
+
+    old_bounds  = {:left => left_layer.bounds, :right => right_layer.bounds}
 
     if left_layer.zindex < right_layer.zindex
       left_layer.crop_layer right_layer, crop_type
@@ -68,7 +70,19 @@ class DesignController < ApplicationController
       right_layer.crop_layer left_layer, crop_type
     end
 
-    render :json => {:status => 'OK'}
+    @design.sif.reset_calculated_data
+    @design.sif.save!
+    @design.regroup
+
+    if old_bounds[:left] != @design.layers[left].bounds
+      data = { :left => @design.layers[left].bounds }
+    elsif old_bounds[:right] != @design.layers[right].bounds
+      data = { :left => @design.layers[left].bounds }
+    else
+      data = {}
+    end
+
+    render :json => {:status => 'OK', :data => data}
   end
 
   def merge_layer
