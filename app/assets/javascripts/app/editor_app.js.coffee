@@ -30,6 +30,19 @@ class EditorApp
     #for i in [0..grouping_boxes.length-1]
     #  this.editor_area.addGroupingBox grouping_boxes[i]
 
+  show_notification: (message)->
+    notif = $("#editor-notifications")
+    notif.html(message)
+    notif.show()
+
+  hide_notification: (message)->
+    notif = $("#editor-notifications")
+    if message == undefined
+      notif.hide()
+    else
+      notif.html(message)
+      setTimeout((->notif.hide()), 1000)
+
   load_intersection_view: ->
     @intersecting_pairs = new IntersectingPairsCollection()
     @intersecting_pairs.attr('design_id', @design.id)
