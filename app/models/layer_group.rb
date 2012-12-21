@@ -17,4 +17,8 @@ class LayerGroup
     bounding_boxes = layers.collect {|layer| layer.bounds}
     BoundingBox.get_super_bounds bounding_boxes
   end
+
+  def to_s
+    "#{Utils::get_group_key_from_layers self.layers}"
+  end
 end
