@@ -8,6 +8,13 @@ class DesignModel extends Backbone.Model
     @grouping_boxes = new GroupingBoxCollection()
     @grouping_boxes.reset sif_data['grouping_boxes']
 
+  get_bounds: () ->
+    bounds = 
+      top: 0
+      left: 0
+      bottom: this.get('height') 
+      right: this.get('width')
+
   get_assets_root: ->
     return "published/#{this.get('safe_name')}/assets"
 

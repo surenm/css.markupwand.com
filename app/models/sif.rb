@@ -14,6 +14,7 @@ class Sif
   attr_accessor :design
   attr_accessor :header
   attr_accessor :layers
+  attr_accessor :layer_groups
   attr_accessor :root_grid
   attr_accessor :root_grouping_box
   
@@ -57,6 +58,7 @@ class Sif
     begin
       self.parse_header
       self.parse_layers
+      self.parse_layer_groups
       self.parse_grouping_boxes
       self.parse_grids
       self.validate
@@ -86,6 +88,19 @@ class Sif
       layer = self.create_layer serialized_layer_data
       @layers[uid] = layer
     end
+  end
+
+  def parse_layer_groups
+    serialized_layer_groups = @sif_data[:layer_groups]
+    if serialized_layer_groups.nil?
+      return
+    end
+
+    @layer_groups = Hash.new
+    serialized_layer_groups.each do |key, serialized_layer_set_data|
+      @layer_groups[key] = self.create_layer_group serialized_layer_set_data
+    end
+
   end
 
   def parse_grouping_boxes
@@ -160,9 +175,17 @@ class Sif
       layer.attribute_data
     end
 
+    if not @layer_groups.nil?
+      serialized_layer_groups = Hash.new 
+      @layer_groups.each do |key, layer_group|
+        serialized_layer_groups[key] = layer_group.attribute_data
+      end
+    end
+
     sif_document = {
       :header => @header,
       :layers => serialized_layers,
+      :layer_groups => serialized_layer_groups,
       :root_grouping_box => serialized_root_grouping_box,
       :root_grid => serialized_root_grid,
     }
@@ -203,14 +226,20 @@ class Sif
     orientation = serialized_data[:orientation]
     bounds = BoundingBox.create_from_attribute_data serialized_data[:bounds]
     has_intersecting_layers = serialized_data.fetch :has_intersecting_layers, false
-    alternate_grouping_boxes = serialized_data.fetch :alternate_grouping_boxes, nil
+    has_alternate_grouping = serialized_data.fetch :has_alternate_grouping, false
+    enable_alternate_grouping = serialized_data.fetch :enable_alternate_grouping, false
     
     layers = layer_keys.collect do |layer_uid| 
       @layers[layer_uid] 
     end
 
-    grouping_box = GroupingBox.new :layers => layers, :bounds => bounds, :orientation => orientation, :design => @design,
-      :has_intersecting_layers => has_intersecting_layers, :alternate_grouping_boxes => alternate_grouping_boxes
+    grouping_box = GroupingBox.new :layers => layers, 
+      :bounds => bounds, 
+      :orientation => orientation, 
+      :design => @design,
+      :has_intersecting_layers => has_intersecting_layers, 
+      :has_alternate_grouping => has_alternate_grouping,
+      :enable_alternate_grouping => enable_alternate_grouping
 
     serialized_data[:children].each do |child_data|
       child_grouping_box = self.create_grouping_box child_data
@@ -255,5 +284,14 @@ class Sif
     end
 
     grid
+  end
+
+  def create_layer_group(serialized_data)
+    layer_ids = serialized_data[:layers]
+    grouped_layers = layer_ids.collect do |layer_id|
+      self.layers[layer_id]
+    end
+
+    layer_group = LayerGroup.new grouped_layers
   end
 end

@@ -3,15 +3,12 @@
 class GroupingView extends Backbone.View
   el: "#app"
   left_sidebar: "#left-sidebar"
-  context_area: "#context-area"
-  action_panel: "#action-panel"
+  top_bar: "#top-bar"
+  editor: "#editor"
 
   events: {
-    "click #add-new-grouping-box": "add_grouping_box_handler"
-    "click #move-grouping-box": "move_grouping_box_handler"
-    "click #flip-grouping-box": "flip_grouping_box_handler"
-    "click #done": "done_handler"
-    "click #cancel": "cancel_handler"
+    "click #group-layers": "group_layers_handler"
+    "editor.clicked #editor": "editor_click_handler"
   }
   
   GroupingTypes = 
@@ -21,7 +18,8 @@ class GroupingView extends Backbone.View
 
   initialize: ->
     @grouping_type = null
-    @editor_canvas = window.app.editor_canvas
+    @editor_area = window.app.editor_area
+    @design = window.design
     this.render()
 
   get_iframe_src: ->
@@ -33,10 +31,11 @@ class GroupingView extends Backbone.View
     $design = this.model
     $this = this
 
-    template = $("#grouping-left-sidebar-template").html()
-    $(this.left_sidebar).html(template)
+    left_sidebar_template = $("#grouping-left-sidebar-template").html()
+    $(this.left_sidebar).html(left_sidebar_template)
 
-    this.reset_context_area()
+    top_bar_template = $("#grouping-top-bar-template").html()
+    $(this.top_bar).html(top_bar_template)
 
     @tree_element = $(this.left_sidebar).find('#grouping-tree')
     
@@ -56,64 +55,31 @@ class GroupingView extends Backbone.View
       $this.handle_multiple_grouping_box_selection grouping_boxes
 
   handle_grouping_box_selection: (grouping_box) ->
-    @editor_canvas.clear()
-    @editor_canvas.drawBounds grouping_box.bounds
+    if grouping_box.has_alternate_grouping
+      $("#flip-grouping-box").removeClass 'disabled'
+    else
+      $("#flip-grouping-box").addClass 'disabled'
+    @editor_area.events_canvas.clear()
+    @editor_area.events_canvas.draw_bounds grouping_box.bounds
 
   handle_multiple_grouping_box_selection: (grouping_boxes) ->
-    @editor_canvas.clear()
+    @editor_area.clear()
     bounding_boxes = []
     for grouping_box in grouping_boxes
-      @editor_canvas.drawFilledRectangle grouping_box.bounds
+      @editor_area.events_canvas.draw_filled_rectangle grouping_box.bounds
       bounding_boxes.push grouping_box.bounds
 
     super_bounds = BoundingBox.getSuperBounds bounding_boxes
-    @editor_canvas.drawBounds super_bounds
+    @editor_area.events_canvas.draw_bounds super_bounds
 
-  reset_context_area: ->
-    @grouping_type = null
-    $(this.context_area).html("")
+  group_layers_handler: (event) ->
+    layer_ids = (layer.get('id') for layer in @editor_area.get_selected_layers())
+    $.post "/design/#{@design.get('id')}/group-layers", {layers: layer_ids}, (data) ->
+      console.log data
 
-  add_grouping_box_handler: (event) ->
-    event.stopPropagation()
-    @grouping_type = GroupingTypes.NEW_GROUPING_BOX
-    $(@tree_element).tree('enableMultiSelectMode')
-
-    template = $("#grouping-context-area-template").html()
-    $(this.context_area).html(template)
-
-  move_grouping_box_handler: (event) ->
-    event.stopPropagation()
-
-  flip_grouping_box_handler: (event) ->
-    event.stopPropagation()
-
-  done_handler: (event) ->
-    event.stopPropagation()
-    
-    switch @grouping_type
-      when GroupingTypes.NEW_GROUPING_BOX
-        selected_nodes = $(@tree_element).tree('getSelectedNodes')
-        
-        serialized_nodes = (node.bounds for node in selected_nodes)
-
-        $design = this.model
-        $.post "/design/#{$design.get('id')}/merge", {nodes: serialized_nodes}, (data) ->
-          window.location.reload()
-      else
-        console.log "unhandled grouping type"
-
-    this.reset_context_area()
-
-  cancel_handler: (event) ->
-    event.stopPropagation()
-
-    switch @grouping_type
-      when GroupingTypes.NEW_GROUPING_BOX
-        @editor_canvas.clear()
-        $(@tree_element).tree('disableMultiSelectMode')      
-      else 
-        console.log "unhandled grouping type"
-
-    this.reset_context_area()
-
+  editor_click_handler: (event) ->
+    if @editor_area.get_selected_layers().length > 1
+      $("#group-layers").removeClass 'disabled'
+    else
+      $("#group-layers").addClass 'disabled'
 window.GroupingView = GroupingView

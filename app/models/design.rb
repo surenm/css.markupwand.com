@@ -95,15 +95,13 @@ class Design
     sif_serialized_data = @sif.get_serialized_data
 
     # Get grouping boxes in an array as well
-    grouping_boxes = Hash.new
+    grouping_boxes = Array.new
     self.root_grouping_box.each do |grouping_box|
       grouping_box_data = grouping_box.attribute_data
-      children_ids = grouping_box.children.collect { |child| child.unique_identifier }
-      grouping_box_data[:children] = children_ids
-      grouping_boxes[grouping_box.unique_identifier] = grouping_box_data
+      grouping_box_data[:children] = nil
+      grouping_boxes.push grouping_box_data
     end
-
-    sif_serialized_data[:grouping_boxes] = grouping_boxes.values
+    sif_serialized_data[:grouping_boxes] = grouping_boxes
     return sif_serialized_data
   end
   
@@ -295,6 +293,11 @@ class Design
     @sif.layers
   end
 
+  def layer_groups
+    self.init_sif
+    @sif.layer_groups
+  end
+
   def root_grouping_box
     self.init_sif
     @sif.root_grouping_box
@@ -386,6 +389,17 @@ class Design
   ##########################################################
   # Actual jobs to be run on designs
   ########################################################## 
+  def add_new_layer_group(layers)
+    key = Utils::get_group_key_from_layers layers
+    
+    layer_groups = self.layer_groups
+    layer_groups = Hash.new if layer_groups.nil?
+
+    layer_groups[key] = LayerGroup.new layers
+    @sif.layer_groups = layer_groups
+    @sif.save!
+  end
+
   def create_grouping_boxes
     self.init_sif
 
@@ -400,54 +414,13 @@ class Design
     root_grouping_box.groupify
 
     @sif.root_grouping_box = root_grouping_box
+    @sif.reset_grids
     @sif.save!
 
     Log.info "Successfully created all grouping_boxes."
   end
 
-  def merge_grouping_boxes(bounds)
-    self.init_sif
-    
-    grouping_boxes = bounds.collect do |bound|
-      GroupingBox.get_node self.root_grouping_box, bound.to_s
-    end
-
-    # Get the super bounds to be set as bounds for the new grouping box 
-    super_bounds = BoundingBox.get_super_bounds bounds
-
-    # Get the layers that belong to all the children
-    layers = grouping_boxes.collect do |grouping_box|
-      grouping_box.layers
-    end
-    layers.flatten!
-
-    # Assumption is that all the selected grouping boxes belong to the same parent
-    # TODO: Validate the assumption and throw the error if not the case
-    parent_grouping_box = grouping_boxes.first.parent
-    orientation = parent_grouping_box.orientation
-    
-    # Sort the children order depending upon orientation
-    grouping_boxes.sort! { |a, b| 
-      if orientation == Constants::GRID_ORIENT_NORMAL
-        a.bounds.top <=> b.bounds.top
-      else
-        a.bounds.left <=> b.bounds.left
-      end
-    }
-
-    new_grouping_box = GroupingBox.new :layers => layers, :bounds => super_bounds, :design => self
-    insert_position = parent_grouping_box.get_child_index grouping_boxes.first
-    parent_grouping_box.add new_grouping_box, insert_position
-
-    grouping_boxes.each do |grouping_box|
-      parent_grouping_box.remove! grouping_box
-      new_grouping_box.add grouping_box
-    end
-
-    @sif.root_grouping_box = self.root_grouping_box
-    @sif.save!
-  end
-
+  
   def get_intersecting_pairs
     intersecting_pairs = []
 
@@ -487,6 +460,19 @@ class Design
     self.init_sif(true)
     self.write_html_and_css
     Log.info "Successfully completed generating #{self.name}"
+    return
+  end
+
+  def group_layers(layer_ids)
+    self.init_sif
+
+    # Get all the needed layers
+    grouped_layers = layer_ids.collect {|layer_id| self.layers[layer_id.to_i]}
+
+    # add a new layer group to design
+    self.add_new_layer_group grouped_layers
+
+    Resque.enqueue GroupingBoxJob, self.id
     return
   end
 
@@ -577,8 +563,7 @@ config
 
     css_contents
   end
-
-
+  
   def write_css_files(scss_content, base_folder)
     Log.info "Writing css (compass) file..."    
 

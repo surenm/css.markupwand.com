@@ -44,6 +44,7 @@ gem 'jquery-rails', '2.0.2'
 # File upload related gems
 gem 'carrierwave'
 gem 'carrierwave-mongoid'
+gem 'dropbox-api'
 
 # Login and user management 
 gem 'devise'

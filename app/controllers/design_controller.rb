@@ -388,13 +388,10 @@ class DesignController < ApplicationController
     end
   end
 
-  def merge
-    raw_bounds = params[:nodes].values
-    bounds = raw_bounds.collect do |raw_bound|
-      BoundingBox.new raw_bound["top"].to_i, raw_bound["left"].to_i, raw_bound["bottom"].to_i, raw_bound["right"].to_i
-    end
-    
-    @design.merge_grouping_boxes bounds
+  def group_layers
+    layers = params[:layers]
+    @design.group_layers layers
     render :json => {:status => :success}
   end
+
 end

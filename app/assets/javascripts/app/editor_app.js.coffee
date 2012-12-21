@@ -6,7 +6,7 @@
 class EditorApp
   constructor: () ->
     @design = window.design
-    @editor_canvas = new EditorCanvas()
+    @editor_area = new EditorArea()
 
     $this = this
 
@@ -14,7 +14,7 @@ class EditorApp
     dfd.done (images) ->
       # Load all grouping boxes, layers and intersections all at once
       $this.add_canvas_layers()
-      $this.editor_canvas.renderLayers()
+      $this.editor_area.render_layers()
 
     dfd.progress (isBroken, $images, $proper, $broken) ->
       console.log( 'Loading progress: ' + ( $proper.length + $broken.length ) + ' out of ' + $images.length );
@@ -23,12 +23,12 @@ class EditorApp
     # first of all show all photoshop layers
     layers = @design.layers.toArray().reverse()
     for i in [0..layers.length-1]
-      this.editor_canvas.addLayer layers[i]  
+      this.editor_area.add_layer layers[i]  
 
     # Second show all grouping boxes
     grouping_boxes = @design.grouping_boxes.toArray()
     #for i in [0..grouping_boxes.length-1]
-    #  this.editor_canvas.addGroupingBox grouping_boxes[i]
+    #  this.editor_area.addGroupingBox grouping_boxes[i]
 
   load_intersection_view: ->
     @intersecting_pairs = new IntersectingPairsCollection()

@@ -1,10 +1,5 @@
 class GroupingBox < Tree::TreeNode
 
-  def self.get_bounds_from_layers(layers)
-    bounds_list = layers.collect do |layer| layer.bounds end  
-    bounds_list
-  end
-
   def self.get_vertical_gutters(bounding_boxes)
     vertical_lines  = bounding_boxes.collect{|bb| bb.left}
     vertical_lines += bounding_boxes.collect{|bb| bb.right}
@@ -53,6 +48,34 @@ class GroupingBox < Tree::TreeNode
     end
   end
 
+  # Assumes that all nodes belong in a same tree
+  def self.get_common_ancestor(grouping_boxes)
+    # first get all the parentages of the grouping boxes in root first order
+    grouping_box_parentages = grouping_boxes.collect do |grouping_box| 
+      grouping_box.parentage.reverse
+    end
+    
+    # Algorithm to get the common ancestor. 
+    # Keep iterating parentage array until parentages differ or we exhaust parentage arrays
+    pos = 0
+    while true
+      pos_grouping_boxes = grouping_box_parentages.collect do |parentage| 
+        gb = parentage.fetch pos, nil
+        gb.bounds if not gb.nil?
+      end
+
+      uniq_boxes = pos_grouping_boxes.uniq
+
+      break if uniq_boxes.size > 1
+      break if uniq_boxes.size == 1 and uniq_boxes.first.nil?
+
+      pos += 1
+    end
+
+    common_ancestor = grouping_box_parentages.first[pos - 1]
+    return common_ancestor
+  end
+
   def initialize(args)
     bounds = args.fetch :bounds
     @design = args.fetch :design
@@ -73,17 +96,17 @@ class GroupingBox < Tree::TreeNode
     self.children.each do |child|
       children_tree.push child.attribute_data
     end
-        
+
     {
       :name => self.name,
       :label => self.name,
-      :id => self.unique_identifier,
       :bounds => self.bounds,
       :orientation => self.orientation,
       :layers => layer_keys,
       :children => children_tree,
-      :alternate_grouping => self.content[:alternate_grouping_boxes],
-      :has_intersecting_layers => self.content[:has_intersecting_layers]
+      :has_alternate_grouping => self.has_alternate_grouping,
+      :has_intersecting_layers => self.has_intersecting_layers,
+      :enable_alternate_grouping => self.enable_alternate_grouping
     }
   end
 
@@ -101,6 +124,54 @@ class GroupingBox < Tree::TreeNode
     self.content[:layers]
   end
 
+  def layer_groups
+    return [] if @design.layer_groups.nil?
+    
+    layers_set = self.layers.to_set
+    grouping_box_layer_groups = Array.new
+        
+    @design.layer_groups.each do |key, layer_group|
+      if layer_group.layers.to_set.proper_subset? layers_set
+        grouping_box_layer_groups.push layer_group
+      end
+    end
+
+    this_level_layer_groups = Array.new
+    grouping_box_layer_groups.each do |gb_a|
+      flag = true
+      grouping_box_layer_groups.each do |gb_b|
+        if gb_a.layers.to_set.proper_subset? gb_b.layers.to_set
+          flag = false
+          break
+        end
+      end
+
+      if flag
+        this_level_layer_groups.push gb_a
+      end
+    end
+    
+    return this_level_layer_groups
+  end
+
+  def get_bounds_from_layers
+    layer_bounds = self.non_style_layers.collect { |layer| layer.bounds }
+    layer_group_bounds = self.layer_groups.collect {|group| group.bounds }
+    
+    groupable_bounds = layer_bounds + layer_group_bounds
+
+    if self.layer_groups.size == 1
+      layer_group_key = Utils::get_group_key_from_layers self.layer_groups.first.layers 
+      layers_key = Utils::get_group_key_from_layers self.non_style_layers
+      
+      if layers_key == layer_group_key
+        groupable_bounds = layer_bounds
+      end
+    end
+
+    return groupable_bounds
+  end
+
   def bounds
     self.content[:bounds]
   end
@@ -109,11 +180,20 @@ class GroupingBox < Tree::TreeNode
     self.content[:orientation]
   end
 
+  def has_alternate_grouping
+    return self.content.fetch :has_alternate_grouping, false
+  end
+
+  def has_intersecting_layers
+    return self.content.fetch :has_intersecting_layers, false
+  end
+
+  def enable_alternate_grouping
+    return self.content.fetch :enable_alternate_grouping, false
+  end
+
   def non_style_layers
-    all_layers = self.layers
-    non_style_layers = all_layers.select do |layer|
-      layer.bounds != self.bounds
-    end
+    self.layers - self.style_layers
   end
 
   def style_layers
@@ -143,7 +223,7 @@ class GroupingBox < Tree::TreeNode
 
   def groupify
     # All layer boundaries to get the gutters
-    bounding_boxes = GroupingBox.get_bounds_from_layers self.non_style_layers
+    bounding_boxes = self.get_bounds_from_layers
 
     # Get the vertical and horizontal gutters at this level
     vertical_gutters   = GroupingBox.get_vertical_gutters bounding_boxes
@@ -210,28 +290,28 @@ class GroupingBox < Tree::TreeNode
       
     else
       # case 3
-      # TODO: figure out if normal first of left first orientation
-      #h_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, horizontal_bounds, :horizontal
-      #v_gutter_widths = BoundingBox.get_gutter_widths bounding_boxes, vertical_bounds, :vertical
-  
-      # case 3a
-      vertical_bound = [vertical_gutters.first, vertical_gutters.last]
-      self.content[:orientation] = Constants::GRID_ORIENT_NORMAL
-      horizontal_bounds.each do |horizontal_bound|
-        grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
-        grouping_box_layers = self.get_layers_in_region grouping_box_bounds
-        child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, :design => @design
-        self.add child_grouping_box
-      end
+      self.content[:has_alternate_grouping] = true
 
-      # case 3b
-      self.content[:alternate_grouping_boxes] = Array.new
-      horizontal_bound = [horizontal_gutters.first, horizontal_gutters.last]
-
-      vertical_bounds.each do |vertical_bound|
-        grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
-        grouping_box_layers = self.get_layers_in_region grouping_box_bounds
-        self.content[:alternate_grouping_boxes].push grouping_box_bounds
+      if not self.enable_alternate_grouping
+        # case 3a
+        vertical_bound = [vertical_gutters.first, vertical_gutters.last]
+        self.content[:orientation] = Constants::GRID_ORIENT_NORMAL
+        horizontal_bounds.each do |horizontal_bound|
+          grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+          grouping_box_layers = self.get_layers_in_region grouping_box_bounds
+          child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, :design => @design
+          self.add child_grouping_box
+        end
+      else
+        # case 3b
+        horizontal_bound = [horizontal_gutters.first, horizontal_gutters.last]
+        self.content[:orientation] = Constants::GRID_ORIENT_LEFT
+        vertical_bounds.each do |vertical_bound|
+          grouping_box_bounds = BoundingBox.create_from_bounds horizontal_bound, vertical_bound
+          grouping_box_layers = self.get_layers_in_region grouping_box_bounds
+          child_grouping_box = GroupingBox.new :layers => grouping_box_layers, :bounds => grouping_box_bounds, :design => @design
+          self.add child_grouping_box
+        end
       end
     end
     
