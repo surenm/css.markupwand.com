@@ -378,8 +378,8 @@ class DesignController < ApplicationController
     @sif = @design.get_serialized_sif_data
     if @design.width < 1200
       @scaling = 1
-      @width = @design.width
-      @height = @design.height
+      @width = @design.width + 100
+      @height = @design.height + 100
     else
       @scaling = Float(1200)/@design.width
       
