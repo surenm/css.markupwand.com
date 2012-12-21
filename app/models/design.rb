@@ -122,7 +122,38 @@ class Design
       :width => self.width
     }
   end
-  
+
+  def init_sif(forced = false)
+    @sif = Sif.new(self) if @sif == nil or forced
+    self.height = @sif.header[:design_metadata][:height]
+    self.width  = @sif.header[:design_metadata][:width]
+    @sif
+  end
+
+  def bounds 
+    BoundingBox.new 0, 0, self.height, self.width
+  end
+
+  def layers
+    self.init_sif
+    @sif.layers
+  end
+
+  def layer_groups
+    self.init_sif
+    @sif.layer_groups
+  end
+
+  def root_grouping_box
+    self.init_sif
+    @sif.root_grouping_box
+  end
+
+  def root_grid
+    self.init_sif
+    @sif.root_grid
+  end
+
   def get_serialized_sif_data
     self.init_sif
     sif_serialized_data = @sif.get_serialized_data
@@ -165,7 +196,19 @@ class Design
     self.save!
   end
 
-  # FIXME PSDJS
+  def get_css_counter
+    if self.css_counter.nil?
+      self.css_counter = 0
+    else
+      self.css_counter += 1
+    end
+    return self.css_counter
+  end
+
+
+  ##################################
+  # Fonts related activities
+  ##################################
   def webfonts_snippet
     return ''
     self.font_map.google_webfonts_snippet
@@ -272,52 +315,7 @@ class Design
     safe_basename = Store::get_safe_name File.basename(self.name, ".psd")
     File.join self.store_key_prefix, "#{safe_basename}.sif"
   end
-
-  def get_sif_data
-    Store::fetch_data_from_store(self.get_sif_file_path)
-  end
-
-  ##########################################################
-  # SIF related functions
-  ##########################################################
-
-  def init_sif(forced = false)
-    @sif = Sif.new(self) if @sif == nil or forced
-    self.height = @sif.header[:design_metadata][:height]
-    self.width  = @sif.header[:design_metadata][:width]
-    @sif
-  end
   
-  def grids
-    self.init_sif
-    @sif.grids
-  end
-  
-  def layers
-    self.init_sif
-    @sif.layers
-  end
-
-  def layer_groups
-    self.init_sif
-    @sif.layer_groups
-  end
-
-  def root_grouping_box
-    self.init_sif
-    @sif.root_grouping_box
-  end
-
-  def root_grid
-    self.init_sif
-    @sif.root_grid
-  end
-  
-  def save_grid(grid)
-    self.init_sif
-    @sif.set_grid grid
-  end
-
   ##########################################################
   # Helper methods for running jobs on designs
   ##########################################################
