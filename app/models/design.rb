@@ -444,8 +444,8 @@ class Design
     # add a new layer group to design
     self.add_new_layer_group grouped_layers
 
-    Resque.enqueue GroupingBoxJob, self.id
-    return
+    # Create grouping boxes yet again
+    self.create_grouping_boxes
   end
 
   # This usually called after changing CSS class names
