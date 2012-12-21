@@ -27,7 +27,7 @@
   <div class="contents">
     <div id="app">
       <div id="left-sidebar"> </div>
-      <div id="editor" style="height: <%= @height %>px">
+      <div id="editor" style="height: <%= (@height + 42) %>px">
         <div class="navbar">
           <div id="top-bar" class="navbar-inner">
           </div>
@@ -40,7 +40,7 @@
     </div>
   </div>
   <div class="extra">
-    <div id="layers" />
+    <div id="layers"> </div>
     <div id="design-images" style="display:none">
       <% @sif[:layers].each do |layer| %>
         <% if layer[:type] == 'normal' %>

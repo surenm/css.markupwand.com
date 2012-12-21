@@ -36,10 +36,12 @@ body {
 
     #editor {
       float: left;
-      margin: 0px 10px;
+      margin: 10px 10px;
+      margin-bottom: 50px;
       width: 1200px;
       border: 1px solid #ccc;
-      @include box-shadow(rgba(white, 0.4) 0 0px 15px, rgba(white, 0.4) 0 0 25px inset);
+      @include box-shadow(rgba(white, 0.4) 0 5px 25px, rgba(white, 0.4) 0 5px 25px inset);
+      padding: 1px;
 
       .navbar {
         margin-bottom: 0px;
