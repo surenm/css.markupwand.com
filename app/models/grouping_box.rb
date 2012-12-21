@@ -131,7 +131,7 @@ class GroupingBox < Tree::TreeNode
     grouping_box_layer_groups = Array.new
         
     @design.layer_groups.each do |key, layer_group|
-      if layer_group.layers.to_set.subset? layers_set
+      if layer_group.layers.to_set.proper_subset? layers_set
         grouping_box_layer_groups.push layer_group
       end
     end
