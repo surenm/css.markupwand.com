@@ -136,7 +136,22 @@ class GroupingBox < Tree::TreeNode
       end
     end
 
-    return grouping_box_layer_groups
+    this_level_layer_groups = Array.new
+    grouping_box_layer_groups.each do |gb_a|
+      flag = true
+      grouping_box_layer_groups.each do |gb_b|
+        if gb_a.layers.to_set.proper_subset? gb_b.layers.to_set
+          flag = false
+          break
+        end
+      end
+
+      if flag
+        this_level_layer_groups.push gb_a
+      end
+    end
+    
+    return this_level_layer_groups
   end
 
   def get_bounds_from_layers
