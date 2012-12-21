@@ -168,28 +168,7 @@ class Design
     sif_serialized_data[:grouping_boxes] = grouping_boxes
     return sif_serialized_data
   end
-  
-  def get_grid_tree    
-    root_node = self.get_root_grid
-    dom = root_node.get_tree
-    return dom
-  end
-  
-  def get_root_grid
-    root_grids = []
-    self.grids.each do |id, grid|
-      root_grids.push grid if grid.root == true
-    end
 
-    Log.fatal "More than one root node in design???" if root_grids.size > 1
-
-    return root_grids.last
-  end
-  
-  def bounds 
-    BoundingBox.new 0, 0, self.height, self.width
-  end
-    
   def set_status(status)
     Log.info "Setting status == #{status}"
     self.status = status
@@ -204,7 +183,6 @@ class Design
     end
     return self.css_counter
   end
-
 
   ##################################
   # Fonts related activities
@@ -256,15 +234,6 @@ class Design
     end
 
     return fonts_css
-  end
-  
-  def get_css_counter
-    if self.css_counter.nil?
-      self.css_counter = 0
-    else
-      self.css_counter += 1
-    end
-    return self.css_counter
   end
   
   ##########################################################
