@@ -73,6 +73,39 @@ class Design
   attr_accessor :sif
 
   mount_uploader :file, DesignUploader
+
+  ############################################
+  # Admin related activities
+  ############################################
+
+  def vote_class
+    case self.rating
+    when true
+      return 'good'
+    when false
+      return 'bad'
+    when nil
+      return 'none'
+    end
+  end
+
+  def get_conversion_time
+    if self.status == Design::STATUS_COMPLETED
+      completed_time = self.updated_at.to_i
+      queued         = self.versions.select { |version| version.status == :queued }  
+      if not queued.empty?
+        queued_time = queued.first.updated_at.to_i
+        time_taken  = (completed_time - queued_time)
+        time_taken_string = "%02d:%02d" % [(time_taken / 60), (time_taken % 60)]
+        return distance_of_time_in_words(time_taken) + "(#{time_taken_string}m)"
+      else
+        return "invalid"
+      end
+    else
+      return "invalid"
+    end
+  end
+
   
   ##########################################################
   # Design Object helper functions
@@ -182,17 +215,6 @@ class Design
     return fonts_css
   end
   
-  def vote_class
-    case self.rating
-    when true
-      return 'good'
-    when false
-      return 'bad'
-    when nil
-      return 'none'
-    end
-  end
-
   def get_css_counter
     if self.css_counter.nil?
       self.css_counter = 0
@@ -249,23 +271,6 @@ class Design
   def get_sif_file_path
     safe_basename = Store::get_safe_name File.basename(self.name, ".psd")
     File.join self.store_key_prefix, "#{safe_basename}.sif"
-  end
-
-  def get_conversion_time
-    if self.status == Design::STATUS_COMPLETED
-      completed_time = self.updated_at.to_i
-      queued         = self.versions.select { |version| version.status == :queued }  
-      if not queued.empty?
-        queued_time = queued.first.updated_at.to_i
-        time_taken  = (completed_time - queued_time)
-        time_taken_string = "%02d:%02d" % [(time_taken / 60), (time_taken % 60)]
-        return distance_of_time_in_words(time_taken) + "(#{time_taken_string}m)"
-      else
-        return "invalid"
-      end
-    else
-      return "invalid"
-    end
   end
 
   def get_sif_data
