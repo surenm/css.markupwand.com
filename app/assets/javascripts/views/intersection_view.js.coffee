@@ -181,24 +181,28 @@ class IntersectionView extends Backbone.View
     intersection_view.app.show_notification("Cropping layers")
     cid   = $(e.target).parent().parent().parent().data('cid')
     model = intersection_view.model.getByCid(cid)
+    left_id  = model.get('left')
+    right_id = model.get('right')
+
     post_data = 
-      left: model.get('left')
-      right: model.get('right')
+      left: left_id
+      right: right_id
       type: model.get('type')
 
     url = '/design/' + intersection_view.design.id + '/crop-layer'
     $.post url, post_data, (data)->
       if data['data'].hasOwnProperty 'left'
         left_bounds  = data['data']['left']
-        intersection_view.design.layers.get(post_data['left']).set('bounds', left_bounds)
+        intersection_view.design.layers.get(left_id).set('bounds', left_bounds)
       else
         right_bounds = data['data']['right']
-        intersection_view.design.layers.get(post_data['right']).set('bounds', right_bounds)
-    
-      intersection_view.editor_area.events_canvas.clear()
-      intersection_view.draw_layer_bounds(post_data['left'])
-      intersection_view.draw_layer_bounds(post_data['right'])
+        intersection_view.design.layers.get(right_id).set('bounds', right_bounds)
 
+      intersection_view.editor_area.events_canvas.clear()
+      intersection_view.draw_layer_bounds(left_id)
+      intersection_view.draw_layer_bounds(right_id)
+
+      $('#intersections-list .intersection-item[data-left-uid="' + left_id + '"][data-right-uid="' + right_id + '"]').remove()
 
       intersection_view.app.hide_notification("Done cropping")
       # Change the layer bounds and remove the intersection itself
