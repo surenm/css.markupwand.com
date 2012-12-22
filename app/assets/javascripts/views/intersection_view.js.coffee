@@ -168,12 +168,25 @@ class IntersectionView extends Backbone.View
     cid   = $(e.target).parent().parent().parent().data('cid')
     intersection_view.app.show_notification("Merging layers")
     model = intersection_view.model.getByCid(cid)
+    left_id  = model.get('left')
+    right_id = model.get('right')
+
     post_data = 
-      left: model.get('left')
-      right: model.get('right')
+      left: left_id
+      right: right_id
 
     url = '/design/' + intersection_view.design.id + '/merge-layer'
-    $.post url, post_data, ->
+    $.post url, post_data, (data)->
+      deleted_id = data['data']['deleted']
+      left_out_id = data['data']['left_out']
+      new_bounds  = data['data']['new_bounds']
+
+      intersection_view.design.layers.remove(deleted_id)
+      intersection_view.design.layers.get(left_out_id).set('bounds', new_bounds)
+      intersection_view.editor_area.events_canvas.clear()
+      intersection_view.draw_layer_bounds(left_out_id)
+
+      $('#intersections-list .intersection-item[data-left-uid="' + left_id + '"][data-right-uid="' + right_id + '"]').remove()
       intersection_view.app.hide_notification("Done merging")
       # Change the layer bounds and remove the intersection itself 
 

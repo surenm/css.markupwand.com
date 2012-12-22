@@ -93,11 +93,17 @@ class DesignController < ApplicationController
 
     if left_layer.zindex < right_layer.zindex
       left_layer.merge_layer right_layer
+      deleted = right_layer.uid
+      left_out = left_layer.uid
+      new_bounds = left_layer.bounds 
     else
       right_layer.merge_layer left_layer
+      deleted = left_layer.uid
+      left_out = right_layer.uid
+      new_bounds = left_layer.bounds
     end
 
-    render :json => {:status => 'OK'}
+    render :json => {:status => 'OK', :data => {:deleted => deleted, :left_out => left_out, :new_bounds => new_bounds}}
   end
   
   def set_rating
