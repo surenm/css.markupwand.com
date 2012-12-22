@@ -287,9 +287,6 @@ class Layer
       
       self.bounds = new_bounds
       self.initial_bounds = new_bounds
-      self.design.sif.reset_calculated_data
-      self.design.sif.save!
-      self.design.regroup
     end
   end
 
