@@ -73,6 +73,39 @@ class Design
   attr_accessor :sif
 
   mount_uploader :file, DesignUploader
+
+  ############################################
+  # Admin related activities
+  ############################################
+
+  def vote_class
+    case self.rating
+    when true
+      return 'good'
+    when false
+      return 'bad'
+    when nil
+      return 'none'
+    end
+  end
+
+  def get_conversion_time
+    if self.status == Design::STATUS_COMPLETED
+      completed_time = self.updated_at.to_i
+      queued         = self.versions.select { |version| version.status == :queued }  
+      if not queued.empty?
+        queued_time = queued.first.updated_at.to_i
+        time_taken  = (completed_time - queued_time)
+        time_taken_string = "%02d:%02d" % [(time_taken / 60), (time_taken % 60)]
+        return distance_of_time_in_words(time_taken) + "(#{time_taken_string}m)"
+      else
+        return "invalid"
+      end
+    else
+      return "invalid"
+    end
+  end
+
   
   ##########################################################
   # Design Object helper functions
@@ -89,7 +122,38 @@ class Design
       :width => self.width
     }
   end
-  
+
+  def init_sif(forced = false)
+    @sif = Sif.new(self) if @sif == nil or forced
+    self.height = @sif.header[:design_metadata][:height]
+    self.width  = @sif.header[:design_metadata][:width]
+    @sif
+  end
+
+  def bounds 
+    BoundingBox.new 0, 0, self.height, self.width
+  end
+
+  def layers
+    self.init_sif
+    @sif.layers
+  end
+
+  def layer_groups
+    self.init_sif
+    @sif.layer_groups
+  end
+
+  def root_grouping_box
+    self.init_sif
+    @sif.root_grouping_box
+  end
+
+  def root_grid
+    self.init_sif
+    @sif.root_grid
+  end
+
   def get_serialized_sif_data
     self.init_sif
     sif_serialized_data = @sif.get_serialized_data
@@ -104,35 +168,25 @@ class Design
     sif_serialized_data[:grouping_boxes] = grouping_boxes
     return sif_serialized_data
   end
-  
-  def get_grid_tree    
-    root_node = self.get_root_grid
-    dom = root_node.get_tree
-    return dom
-  end
-  
-  def get_root_grid
-    root_grids = []
-    self.grids.each do |id, grid|
-      root_grids.push grid if grid.root == true
-    end
 
-    Log.fatal "More than one root node in design???" if root_grids.size > 1
-
-    return root_grids.last
-  end
-  
-  def bounds 
-    BoundingBox.new 0, 0, self.height, self.width
-  end
-    
   def set_status(status)
     Log.info "Setting status == #{status}"
     self.status = status
     self.save!
   end
 
-  # FIXME PSDJS
+  def get_css_counter
+    if self.css_counter.nil?
+      self.css_counter = 0
+    else
+      self.css_counter += 1
+    end
+    return self.css_counter
+  end
+
+  ##################################
+  # Fonts related activities
+  ##################################
   def webfonts_snippet
     return ''
     self.font_map.google_webfonts_snippet
@@ -180,26 +234,6 @@ class Design
     end
 
     return fonts_css
-  end
-  
-  def vote_class
-    case self.rating
-    when true
-      return 'good'
-    when false
-      return 'bad'
-    when nil
-      return 'none'
-    end
-  end
-
-  def get_css_counter
-    if self.css_counter.nil?
-      self.css_counter = 0
-    else
-      self.css_counter += 1
-    end
-    return self.css_counter
   end
   
   ##########################################################
@@ -250,69 +284,7 @@ class Design
     safe_basename = Store::get_safe_name File.basename(self.name, ".psd")
     File.join self.store_key_prefix, "#{safe_basename}.sif"
   end
-
-  def get_conversion_time
-    if self.status == Design::STATUS_COMPLETED
-      completed_time = self.updated_at.to_i
-      queued         = self.versions.select { |version| version.status == :queued }  
-      if not queued.empty?
-        queued_time = queued.first.updated_at.to_i
-        time_taken  = (completed_time - queued_time)
-        time_taken_string = "%02d:%02d" % [(time_taken / 60), (time_taken % 60)]
-        return distance_of_time_in_words(time_taken) + "(#{time_taken_string}m)"
-      else
-        return "invalid"
-      end
-    else
-      return "invalid"
-    end
-  end
-
-  def get_sif_data
-    Store::fetch_data_from_store(self.get_sif_file_path)
-  end
-
-  ##########################################################
-  # SIF related functions
-  ##########################################################
-
-  def init_sif(forced = false)
-    @sif = Sif.new(self) if @sif == nil or forced
-    self.height = @sif.header[:design_metadata][:height]
-    self.width  = @sif.header[:design_metadata][:width]
-    @sif
-  end
   
-  def grids
-    self.init_sif
-    @sif.grids
-  end
-  
-  def layers
-    self.init_sif
-    @sif.layers
-  end
-
-  def layer_groups
-    self.init_sif
-    @sif.layer_groups
-  end
-
-  def root_grouping_box
-    self.init_sif
-    @sif.root_grouping_box
-  end
-
-  def root_grid
-    self.init_sif
-    @sif.root_grid
-  end
-  
-  def save_grid(grid)
-    self.init_sif
-    @sif.set_grid grid
-  end
-
   ##########################################################
   # Helper methods for running jobs on designs
   ##########################################################
@@ -472,8 +444,8 @@ class Design
     # add a new layer group to design
     self.add_new_layer_group grouped_layers
 
-    Resque.enqueue GroupingBoxJob, self.id
-    return
+    # Create grouping boxes yet again
+    self.create_grouping_boxes
   end
 
   # This usually called after changing CSS class names

@@ -8,7 +8,7 @@ class GroupingView extends Backbone.View
 
   events: {
     "click #group-layers": "group_layers_handler"
-    "editor.clicked #editor": "editor_click_handler"
+    "click.editor #editor": "editor_click_handler"
   }
   
   GroupingTypes = 
