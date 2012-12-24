@@ -7,6 +7,11 @@ class DesignModel extends Backbone.Model
 
     # Reset collections
     this.reset_collection_data()
+
+    # everytime the model changes, reset collection data
+    this.on "change", () ->
+      this.reset_collection_data()
+
   reset_collection_data: () ->
     sif_data = this.get('sif')
     @layers.reset sif_data['layers']

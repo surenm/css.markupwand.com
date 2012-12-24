@@ -20,7 +20,12 @@ class GroupingView extends Backbone.View
     @grouping_type = null
     @editor_area = window.app.editor_area
     @design = window.design
+
     this.render()
+
+    $view = this
+    this.model.bind 'change', () ->
+      $view.render()
 
   get_iframe_src: ->
     $design = this.model
@@ -38,7 +43,8 @@ class GroupingView extends Backbone.View
     $(this.top_bar).html(top_bar_template)
 
     @tree_element = $(this.left_sidebar).find('#grouping-tree')
-    
+    $(@tree_element).unbind()
+
     $(@tree_element).tree
       data: [@design.get('sif').root_grouping_box]
       autoOpen: 0
