@@ -96,8 +96,9 @@ class LayerModel extends Backbone.Model
     fillStyle = null
     if styles['solid_overlay']?
       fillStyle = styles['solid_overlay']
-    else if styles['gradient_overlay']?
-      fillStyle = canvas.create_gradient styles['gradient_overlay'], this.get('bounds')
+#   TODO Gradient fill is broken, for eligible web 4. The splitting of color stops is broken.
+#    else if styles['gradient_overlay']?
+#      fillStyle = canvas.create_gradient styles['gradient_overlay'], this.get('bounds')
     else if styles['solid_fill']?
       fillStyle = styles['solid_fill']
     else if styles['gradient_fill']?
