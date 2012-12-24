@@ -80,12 +80,14 @@ class GroupingView extends Backbone.View
 
   group_layers_handler: (event) ->
     layer_ids = (layer.get('id') for layer in @editor_area.get_selected_layers())
+    $design = @design
     $.post "/design/#{@design.get('id')}/group-layers", {layers: layer_ids}, (data) ->
-      console.log data
+      $design.fetch()
 
   editor_click_handler: (event) ->
     if @editor_area.get_selected_layers().length > 1
       $("#group-layers").removeClass 'disabled'
     else
       $("#group-layers").addClass 'disabled'
+
 window.GroupingView = GroupingView
