@@ -40,7 +40,7 @@ class GroupingView extends Backbone.View
     @tree_element = $(this.left_sidebar).find('#grouping-tree')
     
     $(@tree_element).tree
-      data: [root_grouping_box]
+      data: [@design.get('sif').root_grouping_box]
       autoOpen: 0
       dragAndDrop: true
       selectable: true
