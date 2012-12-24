@@ -134,6 +134,31 @@ class Design
     BoundingBox.new 0, 0, self.height, self.width
   end
 
+  def scaling
+    if self.width <= 1200
+      scaling = 1
+    else 
+      scaling = Float(1200)/self.width
+    end
+    return scaling
+  end
+
+  def scaled_height
+    if self.width <= 1200
+      height = self.height + 100
+    else
+      height = (self.height * self.scaling).round
+    end
+  end
+
+  def scaled_width
+    if self.width <= 1200
+      width = self.width + 100
+    else
+      width = 1200
+    end
+  end
+
   def layers
     self.init_sif
     @sif.layers
