@@ -71,6 +71,13 @@ class CanvasHelper
       width: bounds.right - bounds.left,
       height: bounds.bottom - bounds.top
 
+  rgb_to_hex: (r,g,b)->
+    r_hex = Number(r).toString(16)
+    g_hex = Number(g).toString(16)
+    b_hex = Number(b).toString(16)
+
+    "##{r_hex}#{g_hex}#{b_hex}"
+
   create_gradient: (gradient, bounds) ->
     fillStyle = null
     if gradient.type == 'linear'
@@ -88,11 +95,19 @@ class CanvasHelper
       color_stops = []
       pos = 1
       for color_stop in gradient.color_stops
-        tokens = color_stop.split ' '
-        color = tokens[0]
-        stop = tokens[1].split('%')[0]/100
-        gradient_args["c#{pos}"] = color
-        gradient_args["s#{pos}"] = stop
+        if color_stop.indexOf("rgba") != -1
+          tokens = color_stop.split ')'
+          color_rgba = tokens[0]
+          color_split = color_rgba.match(/([0-9])*([0-9])*([0-9])/gi)
+          stop   = Number(tokens[1].split("%")[0])/100
+          gradient_args["c#{pos}"] = @rgb_to_hex(color_split[0], color_split[1], color_split[2])
+          gradient_args["s#{pos}"] = stop
+        else
+          tokens = color_stop.split ' '
+          color = tokens[0]
+          stop = tokens[1].split('%')[0]/100
+          gradient_args["c#{pos}"] = color
+          gradient_args["s#{pos}"] = stop
         pos++
 
       fillStyle = $(@canvas_element).createGradient gradient_args
