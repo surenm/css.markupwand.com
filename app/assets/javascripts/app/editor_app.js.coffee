@@ -63,7 +63,7 @@ $(window).load ->
     threshold: 10
 
   # design_data and sif_data are defined in import.html.erb
-  window.design = new DesignModel(design_data, sif_data)
+  window.design = new DesignModel(design_data)
 
   # initiate editor app
   window.app = new EditorApp()

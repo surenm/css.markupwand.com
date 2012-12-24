@@ -1,7 +1,9 @@
 class DesignModel extends Backbone.Model
   urlRoot: "/design"
 
-  initialize: (design_data, sif_data) ->
+  initialize: (design_data) ->
+    sif_data = this.get('sif')
+
     @layers = new LayerCollection()
     @layers.reset sif_data['layers']
 

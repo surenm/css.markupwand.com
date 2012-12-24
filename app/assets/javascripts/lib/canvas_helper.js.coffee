@@ -1,12 +1,12 @@
 # Class to handle maninpulations specific to a canvas
 class CanvasHelper
 
-  constructor: (@canvas_element, events = false) ->
+  constructor: (@canvas_element, scaling, events = false) ->
     $(@canvas_element).scaleCanvas 
       x: 0
       y: 0
-      scaleX: window.scaling
-      scaleY: window.scaling
+      scaleX: scaling
+      scaleY: scaling
 
     $this = this
 
