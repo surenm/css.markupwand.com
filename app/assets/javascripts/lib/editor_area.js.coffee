@@ -8,9 +8,9 @@ class EditorArea
     $this = this
 
     @design = window.design
-    @design_canvas = new CanvasHelper(this.get_canvas('design-canvas'), true)
-    @events_canvas = new CanvasHelper(this.get_canvas('events-canvas'))
-    @animate_canvas = new CanvasHelper(this.get_canvas('animate-canvas'))
+    @design_canvas = new CanvasHelper this.get_canvas('design-canvas'), @design.get('scaling'), true
+    @events_canvas = new CanvasHelper this.get_canvas('events-canvas'), @design.get('scaling')
+    @animate_canvas = new CanvasHelper this.get_canvas('animate-canvas'), @design.get('scaling')
 
     @selected_layers = []
 

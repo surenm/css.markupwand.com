@@ -20,7 +20,14 @@ class GroupingView extends Backbone.View
     @grouping_type = null
     @editor_area = window.app.editor_area
     @design = window.design
+
     this.render()
+
+    $view = this
+    this.model.bind 'change', () ->
+      $.blockUI({message: "Reloading design"})
+      $view.render()
+      $.unblockUI()
 
   get_iframe_src: ->
     $design = this.model
@@ -38,9 +45,10 @@ class GroupingView extends Backbone.View
     $(this.top_bar).html(top_bar_template)
 
     @tree_element = $(this.left_sidebar).find('#grouping-tree')
-    
+    $(@tree_element).unbind()
+
     $(@tree_element).tree
-      data: [root_grouping_box]
+      data: [@design.get('sif').root_grouping_box]
       autoOpen: 0
       dragAndDrop: true
       selectable: true
@@ -74,12 +82,17 @@ class GroupingView extends Backbone.View
 
   group_layers_handler: (event) ->
     layer_ids = (layer.get('id') for layer in @editor_area.get_selected_layers())
+    $design = @design
+
+    $.blockUI({message: "Grouping boxes..."})
     $.post "/design/#{@design.get('id')}/group-layers", {layers: layer_ids}, (data) ->
-      console.log data
+      $design.fetch()
+      $.unblockUI()
 
   editor_click_handler: (event) ->
     if @editor_area.get_selected_layers().length > 1
       $("#group-layers").removeClass 'disabled'
     else
       $("#group-layers").addClass 'disabled'
+
 window.GroupingView = GroupingView

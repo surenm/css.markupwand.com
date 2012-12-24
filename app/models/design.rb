@@ -110,7 +110,7 @@ class Design
   ##########################################################
   # Design Object helper functions
   ##########################################################
-  def attribute_data(minimal=false)
+  def attribute_data
     return {
       :name => self.name,
       :psd_file_path => self.psd_file_path,
@@ -123,6 +123,21 @@ class Design
     }
   end
 
+  def json_data
+    return {
+      :name => self.name,
+      :psd_file_path => self.psd_file_path,
+      :id => self.safe_name,
+      :status => self.status,
+      :safe_name => self.safe_name,
+      :safe_name_prefix => self.safe_name_prefix,
+      :height => self.scaled_height,
+      :width => self.scaled_width,
+      :scaling => self.scaling,
+      :sif => self.get_serialized_sif_data
+    }
+  end
+
   def init_sif(forced = false)
     @sif = Sif.new(self) if @sif == nil or forced
     self.height = @sif.header[:design_metadata][:height]
@@ -132,6 +147,31 @@ class Design
 
   def bounds 
     BoundingBox.new 0, 0, self.height, self.width
+  end
+
+  def scaling
+    if self.width <= 1200
+      scaling = 1
+    else 
+      scaling = Float(1200)/self.width
+    end
+    return scaling
+  end
+
+  def scaled_height
+    if self.width <= 1200
+      height = self.height + 100
+    else
+      height = (self.height * self.scaling).round
+    end
+  end
+
+  def scaled_width
+    if self.width <= 1200
+      width = self.width + 100
+    else
+      width = 1200
+    end
   end
 
   def layers

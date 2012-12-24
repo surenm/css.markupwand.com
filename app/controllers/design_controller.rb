@@ -206,7 +206,7 @@ class DesignController < ApplicationController
     @completed = (@design.status == Design::STATUS_COMPLETED)
     respond_to do |format|
       format.html
-      format.json { render :json => @design.attribute_data(true) }
+      format.json { render :json => @design.json_data }
     end
   end
 
@@ -395,17 +395,8 @@ class DesignController < ApplicationController
   end
 
   def editor
-    @sif = @design.get_serialized_sif_data
-    if @design.width < 1200
-      @scaling = 1
-      @width = @design.width + 100
-      @height = @design.height + 100
-    else
-      @scaling = Float(1200)/@design.width
-      
-      @width = 1200
-      @height = (@design.height * @scaling).round
-    end
+    @height = @design.scaled_height
+    @width = @design.scaled_width
   end
 
   def group_layers

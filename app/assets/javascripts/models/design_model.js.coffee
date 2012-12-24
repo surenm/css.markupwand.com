@@ -1,11 +1,20 @@
 class DesignModel extends Backbone.Model
   urlRoot: "/design"
 
-  initialize: (design_data, sif_data) ->
+  initialize: (design_data) ->
     @layers = new LayerCollection()
-    @layers.reset sif_data['layers']
-
     @grouping_boxes = new GroupingBoxCollection()
+
+    # Reset collections
+    this.reset_collection_data()
+
+    # everytime the model changes, reset collection data
+    this.on "change", () ->
+      this.reset_collection_data()
+
+  reset_collection_data: () ->
+    sif_data = this.get('sif')
+    @layers.reset sif_data['layers']
     @grouping_boxes.reset sif_data['grouping_boxes']
 
   get_bounds: () ->
