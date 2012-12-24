@@ -186,7 +186,7 @@ class DesignController < ApplicationController
     @completed = (@design.status == Design::STATUS_COMPLETED)
     respond_to do |format|
       format.html
-      format.json { render :json => @design.attribute_data(true) }
+      format.json { render :json => @design.json_data }
     end
   end
 
