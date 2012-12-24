@@ -123,6 +123,21 @@ class Design
     }
   end
 
+  def json_data
+    return {
+      :name => self.name,
+      :psd_file_path => self.psd_file_path,
+      :id => self.safe_name,
+      :status => self.status,
+      :safe_name => self.safe_name,
+      :safe_name_prefix => self.safe_name_prefix,
+      :height => self.scaled_height,
+      :width => self.scaled_width,
+      :scaling => self.scaling,
+      :sif => self.get_serialized_sif_data
+    }
+  end
+
   def init_sif(forced = false)
     @sif = Sif.new(self) if @sif == nil or forced
     self.height = @sif.header[:design_metadata][:height]
