@@ -22,7 +22,7 @@ class DropboxBatchUpload
 
   def self.upload_from_localhost(folder_name)
     Dir["#{folder_name}/**/*.psd"].each do |file|
-      self.create_design_from_file folder_name
+      self.create_design_from_file file
     end
   end
 
