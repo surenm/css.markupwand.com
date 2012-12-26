@@ -73,6 +73,7 @@ class Layer
       :text    => self.text,
       :shape   => self.shape,
       :styles  => self.styles,
+      :style_rules => self.get_style_rules,
       :design  => self.design.id,
       :style_layer => self.style_layer,
       :grouping_box => grouping_box_data
