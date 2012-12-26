@@ -279,7 +279,14 @@ class Design
   ##########################################################
   # Automation related functions
   ##########################################################
-  def normalize_layers
+  def build_sif
+    design_folder = Store.fetch_from_store self.store_key_prefix
+    extracted_folder = Rails.root.join 'tmp', 'store', self.store_extracted_key
+    extracted_file = Rails.root.join extracted_folder, "#{self.safe_name_prefix}.json"
+    SifBuilder.build_from_extracted_file self, extracted_file
+  end
+
+  def normalized_bounds
     if self.width < 1024
       return
     end
@@ -289,8 +296,14 @@ class Design
     selected_layers = self.layers.values.select do |layer|
       layer.bounds.left >= start_x and layer.bounds.right <= end_x
     end
-    not_selected_layers = self.layers.values - selected_layers
-    Log.fatal not_selected_layers
+
+    selected_layers_bounds = selected_layers.collect do |selected_layer| selected_layer.bounds end
+    normalized_design_bounds =  BoundingBox.get_super_bounds selected_layers_bounds
+    Log.fatal self.layers.values - selected_layers
+    Log.fatal normalized_design_bounds
+    Log.fatal normalized_design_bounds.width
+    
+    return normalized_design_bounds
   end
 
   ##########################################################
