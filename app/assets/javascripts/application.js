@@ -33,6 +33,11 @@
 //= require lib/canvas_helper
 //= require lib/editor_area
 //= require lib/helper
+//= require lib/codemirror
+//= require lib/codemirror-modes/css/css.js
+//= require lib/codemirror-modes/htmlmixed/htmlmixed
+//= require lib/codemirror-modes/htmlembedded/htmlembedded
+ 
 
 //= require twitter/bootstrap
 //= require app/tutorial
