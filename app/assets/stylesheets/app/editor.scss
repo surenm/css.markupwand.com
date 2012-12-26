@@ -59,7 +59,8 @@ body {
     }
 
     #right-sidebar {
-      float: right;
+      float: left;
+      margin-left: 10px;
       width: 380px;
       height: 800px;
       overflow: auto;
@@ -70,7 +71,7 @@ body {
       font-size: 12px;
 
       textarea {
-        width: 320px;
+        width: 350px;
         resize: none;
       }
     }
