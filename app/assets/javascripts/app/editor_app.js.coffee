@@ -55,6 +55,9 @@ class EditorApp
     
   load_grouping_view: ->
     @grouping_view = new GroupingView({model: @design})
+
+  load_layers_view: ->
+    @layers_view = new LayersView({model: @design})
     
 $(window).load ->
 
