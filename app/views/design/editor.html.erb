@@ -12,23 +12,16 @@
 
 
 <%= content_for :content do %>
-  <div class="meny">
-    <ul>
-      <li> <a href="#/grouping"> Grouping editor </a> </li>
-      <li> <a href="#/layers"> Remove layers </a> </li>
-      <li> <a href="#/intersection"> Intersection editor </a> </li>
-      <li> <a href="#/fonts"> Fonts upload </a> </li>
-    </ul>
-  </div>
   <div id="editor-notifications"></div>
   <div class="contents">
+    <div class="navbar">
+      <div id="top-bar" class="navbar-inner">
+      </div>
+    </div>
     <div id="app">
       <div id="left-sidebar"> </div>
       <div id="editor" style="height: <%= (@height + 42) %>px">
-        <div class="navbar">
-          <div id="top-bar" class="navbar-inner">
-          </div>
-        </div>
+        
         <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>"></canvas>
         <canvas id="animate-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>
         <canvas id="events-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>

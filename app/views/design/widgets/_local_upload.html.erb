@@ -1,4 +1,4 @@
-  <div id="design-upload-page" class="container">
+  <div id="design-upload-page">
     <div id="file-upload-form">
       <%= form_for @new_design, :url => :uploaded_callback, :html => {:multipart => true} do |f| %>
         <div id="file-select-zone">
@@ -10,7 +10,6 @@
             <%= f.hidden_field :file_cache %>
           </div>
         </div>
-          <button id="file-upload-submit">Get HTML <span class="ampersand">&</span> CSS »</button>
       <% end %>
     </div>
   </div>

@@ -1,13 +1,7 @@
 <%= content_for :content do %>
   <%= render 'shared/header' %>
-  <div class="container content-area-box">
+  <div class="container-narrow">
     <%= render 'design/upload' %>
-    <% if @designs.empty? %>
-      <%= render 'design/widgets/view_tutorial_new_user' %>
-    <% else %>
-      <%= render 'design/widgets/view_tutorial_existing_user' %>
-      <div class="horizontal-separator"></div>
-      <%= render 'design/gallery' %>
-    <% end %>
+    <%= render 'design/gallery' %>
   </div>
 <% end %>

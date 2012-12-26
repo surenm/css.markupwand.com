@@ -5,8 +5,8 @@
     <% if current_user.nil? %>
     <li><a href="/login" class="login">Login</a></li>
     <% else %>
-    <li> <a href="/designs" class="btn btn-primary">Dashboard</a> </li>
-    <li> <a href="/logout" class="btn"> <%= image_tag "logout.png", {:alt => "Logout"} %> </a> </li>
+    <li> <a href="/designs">Dashboard</a> </li>
+    <li> <a href="/logout" class="login">Log out </a> </li>
     <% end %>
   </ul>
   <h3 class="muted"><a href="/"><em>css</em> : markupwand</a></h3>
