@@ -41,7 +41,13 @@ body {
   color: #556270;
 }
 
+h3.muted {
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+}
+
 .muted {
+
   em {
     color: #FF6B6B;
     font-style: normal;
@@ -60,8 +66,11 @@ a.login {
 }
 
 .top-menu {
-  .nav {
-    padding-top: 5px;
+  margin: 0px 10px 25px 10px;
+  border-bottom: 2px solid #eee;
+
+  ul {
+    margin-bottom: 0px
   }
 }
 
@@ -86,9 +95,6 @@ a.login {
 .container-narrow {
   margin: 0 auto;
   max-width: 830px;
-}
-.container-narrow > hr {
-  margin: 20px 0;
 }
 
 /* Main marketing message and sign up button */

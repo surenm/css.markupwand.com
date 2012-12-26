@@ -14,14 +14,15 @@
 <%= content_for :content do %>
   <div id="editor-notifications"></div>
   <div class="contents">
-    <div class="navbar">
-      <div id="top-bar" class="navbar-inner">
-      </div>
-    </div>
+    <%= render 'shared/header' %>
     <div id="app">
-      <div id="right-sidebar"> </div>
+      <div id="right-sidebar">
+        <textarea> 
+          @include border-radius(2px);
+          color: #ffff;
+        </textarea>
+      </div>
       <div id="editor" style="height: <%= (@height + 42) %>px">
-        
         <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>"></canvas>
         <canvas id="animate-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>
         <canvas id="events-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>

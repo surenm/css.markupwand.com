@@ -59,18 +59,22 @@ body {
     }
 
     #right-sidebar {
-      background: url('/assets/low_contrast_linen.jpg');
       float: right;
       width: 380px;
       height: 800px;
       overflow: auto;
-      margin: 5px;
       
-      color: #fff;
-      border-left: 1px solid #999;
+      color: #333;
 
       font-family: "museo-sans", sans-serif;
       font-size: 12px;
+
+      textarea {
+        font-family: "inconsolata",sans-serif;
+        font-size: 12px;
+        width: 350px;
+        resize: none;
+      }
     }
 
     #intersections-sidebar {
