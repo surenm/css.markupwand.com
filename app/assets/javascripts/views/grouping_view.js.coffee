@@ -2,7 +2,7 @@
 
 class GroupingView extends Backbone.View
   el: "#app"
-  left_sidebar: "#left-sidebar"
+  sidebar: "#right-sidebar"
   top_bar: "#top-bar"
   editor: "#editor"
 
@@ -38,13 +38,13 @@ class GroupingView extends Backbone.View
     $design = this.model
     $this = this
 
-    left_sidebar_template = $("#grouping-left-sidebar-template").html()
-    $(this.left_sidebar).html(left_sidebar_template)
+    sidebar_template = $("#grouping-left-sidebar-template").html()
+    $(this.sidebar).html(sidebar_template)
 
     top_bar_template = $("#grouping-top-bar-template").html()
     $(this.top_bar).html(top_bar_template)
 
-    @tree_element = $(this.left_sidebar).find('#grouping-tree')
+    @tree_element = $(this.sidebar).find('#grouping-tree')
     $(@tree_element).unbind()
 
     $(@tree_element).tree

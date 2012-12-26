@@ -57,10 +57,6 @@ class EditorApp
     @grouping_view = new GroupingView({model: @design})
     
 $(window).load ->
-  meny = Meny.create
-    menuElement: document.querySelector '.meny' 
-    contentsElement: document.querySelector '.contents'
-    threshold: 10
 
   # design_data and sif_data are defined in import.html.erb
   window.design = new DesignModel(design_data)
