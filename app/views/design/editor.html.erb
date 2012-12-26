@@ -16,16 +16,15 @@
   <div class="contents">
     <%= render 'shared/header' %>
     <div id="app">
-      <div id="right-sidebar">
-        <textarea id="nonsense"> 
-@include border-radius(2px);
-color: #ffff;
-        </textarea>
-      </div>
+      
       <div id="editor" style="height: <%= (@height + 42) %>px">
         <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>"></canvas>
         <canvas id="animate-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>
         <canvas id="events-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>
+      </div>
+      <div id="right-sidebar">
+        <textarea> 
+        </textarea>
       </div>
       <div class="clearfix"> </div>
     </div>
