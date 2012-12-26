@@ -48,10 +48,8 @@ TransformersWeb::Application.routes.draw do
     scope ':id' do
       # get, put and edit designs
       match ''                 => 'design#show'
-      match 'edit'             => 'design#edit'
       match 'images'           => 'design#images', :via => [:post, :get]
       match 'replace-dom'      => 'design#replace_dom', :via => [:post, :get]
-      match 'save_edits'       => 'design#save_edits', :via => :post
       match 'preview'          => 'design#preview'
       match 'download'         => 'design#download'
       match 'update'           => 'design#update'
@@ -64,14 +62,10 @@ TransformersWeb::Application.routes.draw do
       match 'reprocess'         => 'design#reprocess'
       match 'reextract'         => 'design#reextract'
       match 'regroup'           => 'design#regroup'
-      match 'reparse'           => 'design#reparse'
-      match 'regenerate'        => 'design#regenerate'
       match 'download-psd'      => 'design#download_psd'
-      match 'increase-priority' => 'design#increase_priority'
+      match 'full-conversion'   => 'design#conversion'
       
       # convinience methods to view logs, dom
-      match 'view-logs'  => 'design#view_logs'
-      match 'view-dom'   => 'design#view_dom'
       match 'view-json'  => 'design#view_json'
       match 'view-serialized-data' => 'design#view_serialized_data'
 
@@ -95,7 +89,6 @@ TransformersWeb::Application.routes.draw do
   match 'admin/su'         => 'admin#su'
   match 'admin/save_tag'   => 'admin#save_tag', :via => :post
   match 'admin/stats'      => 'admin#stats'
-
  
   mount Resque::Server.new, :at => "/resque"
   

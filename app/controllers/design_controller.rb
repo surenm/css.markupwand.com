@@ -2,8 +2,8 @@ require 'zip/zip'
 
 class DesignController < ApplicationController
   before_filter :require_login, :except => [:upload_danger]
-  before_filter :is_user_design, :except => [:new, :uploaded, :local_new, :local_uploaded, :index, :upload_danger]
-  before_filter :require_admin_login, :only => [:download_psd, :increase_priority]
+  before_filter :is_user_design, :except => [:new, :uploaded, :local_new, :local_uploaded, :index]
+  before_filter :require_admin_login, :only => [:download_psd]
 
   private
   def is_user_design
@@ -202,53 +202,6 @@ class DesignController < ApplicationController
     @new_design = Design.new
   end
   
-  def show
-    @completed = (@design.status == Design::STATUS_COMPLETED)
-    respond_to do |format|
-      format.html
-      format.json { render :json => @design.json_data }
-    end
-  end
-
-  def edit
-    @grids  = {}
-    @layers = {}
-
-    @design.grids.each do |id, data|
-      @grids[id]  = { :id    => id,
-                      :class => data.style.generated_selector,
-                      :type  => 'grid',
-                      :tag   => data.tag,
-                      :css   => data.style.normal_css }
-    end
-
-    @design.layers.each do |id, data|
-      @layers[id] = { :id    => id,
-                      :class => data.generated_selector,
-                      :type  => 'grid',
-                      :tag   => data.tag_name }
-    end
-  end
-
-  def save_edits
-    dom_json = JSON.parse params['dom_json']
-    layers   = dom_json['layer']
-    grids    = dom_json['grid']
-    layers.each do |id, layer_data|
-      @design.layers[id.to_i].generated_selector = layer_data['class']
-    end
-
-    grids.each do |id, grid_data|
-      @design.grids[id].style.generated_selector = grid_data['class']
-      @design.grids[id].style.normal_css         = grid_data['css']
-    end
-
-    @design.save_sif!
-    @design.push_to_generation_queue
-  
-    redirect_to :action => :show, :id => @design.safe_name
-  end
-  
   def preview
     if @design.status != Design::STATUS_COMPLETED
       redirect_to :action => :show, :id => @design.safe_name
@@ -258,7 +211,6 @@ class DesignController < ApplicationController
       @next = Design.where(:created_at.lt => @design.created_at, :status=> 'completed').order_by([[:created_at, :desc]]).first
       @prev = Design.where(:created_at.gt => @design.created_at, :status=> 'completed').order_by([[:created_at, :asc]]).first
     end
-
   end
 
   def fonts_upload
@@ -322,11 +274,6 @@ class DesignController < ApplicationController
     send_file file, :disposition => 'inline'
   end
       
-  def update
-    GeneratorJob.perform @design.id
-    render :json => {:status => :success}
-  end
-  
   def delete
     @design.delete
     redirect_to dashboard_path
@@ -364,30 +311,16 @@ class DesignController < ApplicationController
     redirect_to :action => :show, :id => @design.safe_name
   end
   
-  def reparse
-    @design.reparse
+  def conversion
+    Resque.enqueue ConversionJob, @design.id
     redirect_to :action => :show, :id => @design.safe_name
   end
 
-  def regenerate
-    @design.regenerate
-    redirect_to :action => :show, :id => @design.safe_name
-  end
-  
-  def view_logs
-    render :text => "Adingu! Ellaame udane venumaa! Logs will come soon in this page."
-  end
-  
   def view_json
     remote_file_path = @design.get_sif_file_path
     sif_file = Store::fetch_object_from_store remote_file_path
 
     send_file sif_file, :disposition => 'inline', :type => 'application/json'
-  end
-
-  def increase_priority
-    @design.move_to_priority_queue
-    redirect_to :action => :show, :id => @design.safe_name
   end
 
   def view_serialized_data
@@ -404,5 +337,4 @@ class DesignController < ApplicationController
     @design.group_layers layers
     render :json => {:status => :success}
   end
-
 end

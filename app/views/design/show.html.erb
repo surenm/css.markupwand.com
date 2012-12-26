@@ -68,11 +68,10 @@
   Admin Actions: 
   <a class="btn btn-large btn-danger" href="/design/<%= @design.safe_name %>/reextract"> Reextract PSD </a>
   <a class="btn btn-large btn-danger" href="/design/<%= @design.safe_name %>/regroup"> Regroup Layers</a>
+  <a class="btn btn-large btn-danger" href="/design/<%= @design.safe_name %>/full-conversion"> Full conversion </a>
   <a class="btn btn-large btn-danger" href="/design/<%= @design.safe_name %>/images"> Rename images </a>
  
-  <br>  
-  <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/view-logs"> View Logs </a>
-  <a class="btn btn-large btn-success" href="/design/<%= @design.safe_name %>/view-dom"> View DOM </a>
+  <br>
   <a class="btn btn-large btn-success" target="_new" href="/design/<%= @design.safe_name %>/view-json"> View SIF file</a>
 </div>
 <% end %>
