@@ -1,41 +1,14 @@
-<% user_logged_in = !current_user.nil? %>
-<div id="header" class="navbar">
-  <div class="row container">
-
+<div class="top-menu">
+  <ul class="nav nav-pills pull-right">
+    <li><a href="/about">About</a></li>
+    <li><a href="/faq">FAQ</a></li>
     <% if current_user.nil? %>
-      <a class="brand" href="/" alt="Markupwand">
+    <li><a href="/login" class="login">Login</a></li>
     <% else %>
-      <a class="brand" href="/designs" alt="Markupwand">
+    <li> <a href="/designs" class="btn btn-primary">Dashboard</a> </li>
+    <li> <a href="/logout" class="btn"> <%= image_tag "logout.png", {:alt => "Logout"} %> </a> </li>
     <% end %>
-      <%= image_tag "logo-small-monocolor.png", {:alt => "Markupwand", :title => "Markupwand"} %> 
-      <span class="label label-default" style="vertical-align: top;">beta</span>
-
-    </a>
-
-    <% if current_user.nil? %>
-      <div class="pull-right nav-item">
-        <div class="navbar-buttons btn-group">
-          <a href="/login" class="btn btn-secondary">Login</a>
-          <a href="/signup" class="btn btn-primary ">Sign Up</a>
-        </div>
-      </div>
-    <% else %>
-      <ul class="pull-right navbar-buttons nav-item btn-group">
-        <a href="/designs" class="btn btn-primary">Dashboard</a>
-        <% if current_user.admin %>
-          <a href="/admin" class="btn btn-success">Admin</a>
-        <% end %>
-        <a href="/designs" class="btn"><%= current_user.email %></a>
-        <a href="/logout" class="btn">
-          <%= image_tag "logout.png", {:alt => "Logout"} %>
-        </a>
-      </ul>
-    <% end %>
-    <ul class="pull-right nav nav-item">
-      <li><a href="/about">About</a></li>
-      <li><a href="/faq">FAQ</a></li>
-      <li><a href="/limitations">Limitations</a></li>
-    </ul>
-
-  </div>
+  </ul>
+  <h3 class="muted"><a href="/"><em>css</em> : markupwand</a></h3>
 </div>
+<hr>

@@ -1,28 +1,14 @@
-<% if Constants::invite_gated? #closed beta or not?  %>
-  <% heading = "Markupwand is invite only!" %>
-  <% main_widget = "devise/shared/invite" %>
-  <% show_secondary_widget = false %>
-<% else %>
-  <% heading = "Create new account" %>
-  <% main_widget = "devise/shared/signup" %>
-  <% show_secondary_widget = true %>
-<% end %>
 <%= content_for :content do %>
-  <%= render 'shared/header' %>
   <%= stylesheet_link_tag "app/login", :media => "all" %>
-  <div class="container login-area">
-    <div class="section-heading">
-      <%= heading %>
-    </div>
-    <div class="main-form">
-      <%= render main_widget %>
-    </div>
-    <% if show_secondary_widget %>
-      <div class="alt-separator">OR</div>
-      <div class="secondary-form">
-        <%= render 'devise/shared/google_connect' %>
-      </div>
-      <a href="/login">Already have an account?</a>
-    <% end %>
-  </div>
+  <%= render 'shared/header_small' %>
+  <div class="container-extra-narrow colored">
+    <form class="form-signin">
+      <input name="email" type="text" class="input-block-level" placeholder="Email address">
+      <input name="password" type="password" class="input-block-level" placeholder="Password">
+      <center><button class="btn btn-large btn-success" type="submit">Sign up</button></center>
+    </form>
+    <div class="center"> <a href="/login"> Already have an account? </a></div>
+  </div> 
+
+
 <% end %>

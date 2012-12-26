@@ -1,17 +1,16 @@
 <%= content_for :content do %>
-  <%= render 'shared/header' %>
   <%= stylesheet_link_tag "app/login", :media => "all" %>
-  <div class="container login-area">
-    <div class="section-heading">
-      Log In
-    </div>
-    <div class="main-form">
-      <%= render 'devise/shared/signin' %>
-    </div>
-    <div class="alt-separator">OR</div>
-    <div class="secondary-form">
-      <%= render 'devise/shared/google_connect' %>
-    </div>
-    <a href="/signup">Don't have an account yet?</a>
-  </div>
+  <%= render 'shared/header_small' %>
+  <div class="container-extra-narrow colored">
+    <form class="form-signin">
+      <input name="email" type="text" class="input-block-level" placeholder="Email address">
+      <input name="password" type="password" class="input-block-level" placeholder="Password">
+      <label class="checkbox">
+        <input type="checkbox" value="remember-me"> Remember me
+      </label>
+      
+      <center><button class="btn btn-large btn-success" type="submit">Sign up</button></center>
+    </form>
+    <div class="center"> Don't have an account? <a href="/signup"> Signup </a> for free! </a></div>
+  </div> 
 <% end %>

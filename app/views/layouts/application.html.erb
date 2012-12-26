@@ -1,53 +1,34 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <%= raw analytical.head_prepend_javascript %>
-  <title>Markupwand | Magically convert Photoshop designs to valid HTML markup</title>
-  <%= stylesheet_link_tag "application", :media => "all" %>
-  <%= yield :css %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
-  <% if not Rails.env.development? %>
-  <%= raw analytical.head_append_javascript %>
-    <script type="text/javascript" src="//use.typekit.net/ssc7nzy.js"></script>
-    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-  <% end %>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>css:markupwand | Convert Photoshop to CSS3</title>
+    <meta name="description" content="Convert your Photoshop designs to clean and maintainable HTML and CSS"/>
+    <meta name="keywords" content="photoshop,design,psd to html,psd2html,psd,html,css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <%= yield :javascript %>
-  <% if @pretty_print %>
-  <%= stylesheet_link_tag "lib/prettify", :media => "all" %>
-  <%= javascript_include_tag "lib/prettify" %>
-  <% end %>
-  <meta name="description" content="Convert your Photoshop designs to clean and maintainable HTML and CSS"/>
-  <meta name="keywords" content="photoshop,design,psd to html,psd2html,psd,html,css"/>
-  <link rel="shortcut icon" href="/favicon.ico"/>
-  <% analytical.identify(current_user.email, :email=>current_user.email) if current_user %>
-</head>
-<% if @pretty_print %>
-<body onload="prettyPrint()">
-<% else %>
-<body>
-<% end %>
-<div class="wrapper">
-  <% if not Rails.env.development? %>
-    <%= raw analytical.body_prepend_javascript %>
-  <% end %>
+    <script type="text/javascript" src="//use.typekit.net/eqq0eqs.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    <%= stylesheet_link_tag "application", :media => "all" %>
+    <link rel="shortcut icon" href="../assets/ico/favicon.png">
+  </head>
 
-  <% if not Rails.env.production? %>
-    <%= render 'shared/env' %>
-  <% end %>
+  <body>
+    <!-- Part 1: Wrap all page content here -->
+    <div id="wrap">
 
-  <% if current_user and current_user.admin? %>
-      <%= yield :admin_content %>
-  <% end %>
+      <!-- Begin page content -->
+      <div class="container-narrow">
+        <%= yield :content %>
+      </div>
+      <div id="push"></div>
+    </div>
 
-  <%= yield :content %>
-  <div class="push"></div>
-</div>
+    <div id="footer">
+      <div class="container-narrow">
+        Goyaka Inc
+      </div>
+    </div>
 
-<%= render 'shared/footer' %>
-<% if not Rails.env.development? %>
-  <%= raw analytical.body_append_javascript %>
-<% end %>
-</body>
+  </body>
 </html>
