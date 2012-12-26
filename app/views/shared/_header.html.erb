@@ -1,14 +1,14 @@
 <div class="top-menu">
   <ul class="nav nav-pills pull-right">
+    <% if current_user.nil? %>
     <li><a href="/about">About</a></li>
     <li><a href="/faq">FAQ</a></li>
-    <% if current_user.nil? %>
     <li><a href="/login" class="login">Login</a></li>
     <% else %>
-    <li> <a href="/designs">Dashboard</a> </li>
-    <li> <a href="/logout" class="login">Log out </a> </li>
+    <li> <a href="/designs"> Hello, <%= current_user.first_name %> </a> </li>
+    <li> <a href="/logout">Log out </a> </li>
     <% end %>
   </ul>
   <h3 class="muted"><a href="/"><em>css</em> : markupwand</a></h3>
+  <div class="clearfix"> </div>
 </div>
-<hr>
