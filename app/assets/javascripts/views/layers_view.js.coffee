@@ -6,15 +6,24 @@ class LayersView extends Backbone.View
   top_bar: "#top-bar"
   editor: "#editor"
 
+  events: 
+    "layer-selected.editor #editor": "editor_click_handler"
+
   initialize: ->
-    text_area = $(this.sidebar).find('textarea')[0]
-    editor = CodeMirror.fromTextArea text_area, {
-      lineNumbers: true,
-      theme: 'ambiance',
+    @text_area = $(this.sidebar).find('textarea')[0]
+    @code_editor = CodeMirror.fromTextArea @text_area, {
+      lineNumbers: false
+      theme: 'ambiance'
       mode: 'css'
+      textWrapping: true
+      width: 380
     }
 
-    editor.setSize 350, 300
-    editor.defaultTextheight 16
+  editor_click_handler: (event) ->
+    layer = event.layer
+    style_rules = layer.get('style_rules').join ';\n'
+    style_rules += ';\n'
+    @code_editor.setValue style_rules
+
 
 window.LayersView = LayersView

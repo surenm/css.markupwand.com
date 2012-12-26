@@ -6,10 +6,10 @@ class GroupingView extends Backbone.View
   top_bar: "#top-bar"
   editor: "#editor"
 
-  events: {
+  events: 
     "click #group-layers": "group_layers_handler"
     "click.editor #editor": "editor_click_handler"
-  }
+  
   
   GroupingTypes = 
     NEW_GROUPING_BOX: "new-grouping-box"
