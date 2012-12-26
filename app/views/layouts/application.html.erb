@@ -10,17 +10,15 @@
     <script type="text/javascript" src="//use.typekit.net/eqq0eqs.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
     <%= stylesheet_link_tag "application", :media => "all" %>
+    <%= yield :css %>
     <link rel="shortcut icon" href="../assets/ico/favicon.png">
+    
   </head>
 
   <body>
     <!-- Part 1: Wrap all page content here -->
     <div id="wrap">
-
-      <!-- Begin page content -->
-      <div class="container-narrow">
-        <%= yield :content %>
-      </div>
+      <%= yield :content %>
       <div id="push"></div>
     </div>
 
@@ -31,4 +29,6 @@
     </div>
 
   </body>
+  <%= javascript_include_tag "application" %>
+  <%= yield :javascript %>
 </html>
