@@ -8,6 +8,10 @@ body {
   background: #ffffff;
   padding: 0;
 
+  .navbar {
+    margin-bottom: 5px;
+  }
+
   canvas {
     position: absolute;
   }
@@ -36,15 +40,13 @@ body {
   }
 
   #app {
-    background: url('/assets/low_contrast_linen.jpg');
 
     #editor {
-      float: right;
-      margin: 10px 10px;
-      margin-bottom: 50px;
-      width: 1200px;
+      float: left;
+      margin-left: 10px;
+      width: 1024px;
       border: 1px solid #ccc;
-      @include box-shadow(rgba(white, 0.4) 0 5px 25px, rgba(white, 0.4) 0 5px 25px inset);
+      @include box-shadow(rgba(black, 0.4) 2px 5px 25px);
       padding: 1px;
 
       .navbar {
@@ -57,12 +59,12 @@ body {
     }
 
     #right-sidebar {
+      background: url('/assets/low_contrast_linen.jpg');
       float: right;
-      width: 190px;
+      width: 380px;
       height: 800px;
       overflow: auto;
-      margin: 50px 5px;
-      max-height: 700px;
+      margin: 5px;
       
       color: #fff;
       border-left: 1px solid #999;

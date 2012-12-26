@@ -150,16 +150,16 @@ class Design
   end
 
   def scaling
-    if self.width <= 1200
+    if self.width <= 1024
       scaling = 1
     else 
-      scaling = Float(1200)/self.width
+      scaling = Float(1024)/self.width
     end
     return scaling
   end
 
   def scaled_height
-    if self.width <= 1200
+    if self.width <= 1024
       height = self.height + 100
     else
       height = (self.height * self.scaling).round
@@ -167,10 +167,10 @@ class Design
   end
 
   def scaled_width
-    if self.width <= 1200
+    if self.width <= 1024
       width = self.width + 100
     else
-      width = 1200
+      width = 1024
     end
   end
 
