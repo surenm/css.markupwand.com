@@ -41,7 +41,7 @@ class SifBuilder
     bounds     = BoundingBox.new raw_bounds[:top], raw_bounds[:left], raw_bounds[:bottom], raw_bounds[:right]
 
     layer = {
-      :design  => design,
+      :design  => design.id,
       :name    => raw_layer_data[:name],
       :type    => raw_layer_data[:type],
       :uid     => raw_layer_data[:uid],
