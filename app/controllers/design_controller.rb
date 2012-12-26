@@ -201,6 +201,14 @@ class DesignController < ApplicationController
     #In case the user wants to upload a new design...
     @new_design = Design.new
   end
+
+  def show
+    @completed = (@design.status == Design::STATUS_COMPLETED)
+    respond_to do |format|
+      format.html
+      format.json { render :json => @design.json_data }
+    end
+  end
   
   def preview
     if @design.status != Design::STATUS_COMPLETED
