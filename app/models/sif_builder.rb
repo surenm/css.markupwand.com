@@ -45,6 +45,7 @@ class SifBuilder
       :name    => raw_layer_data[:name],
       :type    => raw_layer_data[:type],
       :uid     => raw_layer_data[:uid],
+      :idx     => raw_layer_data[:idx],
       :zindex  => raw_layer_data[:zindex],
       :bounds  => bounds.attribute_data,
       :opacity => raw_layer_data[:opacity],
