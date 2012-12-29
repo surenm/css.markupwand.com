@@ -401,18 +401,22 @@ class Design
   end
   
   def get_processing_queue_message
+    normal_layers = []
+    self.layers.values.each do |layer|
+      if layer.type == Layer::LAYER_NORMAL
+        normal_layers.push layer.idx
+      end
+    end
+
     message = Hash.new
     if Constants::store_remote?
-      message[:location] = "remote"
       message[:bucket] = Store::get_S3_bucket_name
     else 
-      message[:location] = "local"
       message[:bucket]   = "store_local"
     end
-    
-    message[:user]   = self.user.email
-    message[:design] = self.safe_name
-    message[:design_id] = self.id.to_s
+
+    message[:design_folder] = self.store_key_prefix
+    message[:layers] = normal_layers.join '-'
 
     return message
   end
@@ -422,7 +426,7 @@ class Design
     self.save!
     
     message = self.get_processing_queue_message
-    Resque.enqueue ProcessorJob, message
+    Resque.enqueue ImagesJob, message
   end
 
   def push_to_extraction_queue
