@@ -13,9 +13,6 @@ class ExtractorJob
     design_folder  = Store.fetch_from_store design.store_key_prefix
     photoshop_file = Rails.root.join 'tmp', 'store', design.psd_file_path
     psd_file_root  = File.basename design.psd_file_path, '.psd'
-
-    exports_source = design.store_processed_key
-    Store.copy_within_store_recursively exports_source, File.join(design.store_extracted_key, "assets", "images")
     
     extracted_folder = Rails.root.join 'tmp', 'store', design.store_extracted_key
     assets_folder = File.join extracted_folder, "assets"
