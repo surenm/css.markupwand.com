@@ -202,6 +202,7 @@ class Sif
     layer.type = sif_layer_data[:type]
     layer.uid = sif_layer_data[:uid]
     layer.zindex = sif_layer_data[:zindex]
+    layer.idx = sif_layer_data[:idx]
     if sif_layer_data[:initial_bounds].nil?
       layer.initial_bounds = BoundingBox.create_from_attribute_data sif_layer_data[:bounds]
     else

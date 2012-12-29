@@ -39,6 +39,7 @@ class Layer
   attr_accessor :grouping_box
 
   # Layer's imported data
+  attr_accessor :idx
   attr_accessor :uid # (String)
   attr_accessor :name # (String)
   attr_accessor :type # (String)
@@ -64,6 +65,7 @@ class Layer
     attr_data = {
       :uid     => self.uid,
       :id      => self.uid,
+      :idx     => self.idx,
       :name    => self.name,
       :type    => self.type,
       :zindex  => self.zindex,
