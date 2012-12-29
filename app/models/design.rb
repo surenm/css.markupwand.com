@@ -404,7 +404,7 @@ class Design
       message[:bucket]   = "store_local"
     end
 
-    message[:design_folder] = self.store_key_prefix
+    message[:design_file] = self.psd_file_path
     message[:layers] = normal_layers.join '-'
 
     return message
