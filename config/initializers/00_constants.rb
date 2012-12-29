@@ -31,6 +31,8 @@ module Constants
     end
   end
 
+  Constants::COMPASS_CONFIG = Rails.application.config.compass.sass_load_paths
+
   # Round to nearest 5
   def Constants::round_to_nearest_five(num)
     (((num + 5 )/5)-1)*5
