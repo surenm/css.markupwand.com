@@ -9,6 +9,9 @@
   
     <script type="text/javascript" src="//use.typekit.net/eqq0eqs.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    <% if not Rails.env.development? %>
+    <%= raw analytical.head_append_javascript %>
+    <% end %>
     <%= stylesheet_link_tag "application", :media => "all" %>
     <%= yield :css %>
     <link rel="shortcut icon" href="../assets/ico/favicon.png">
@@ -16,6 +19,7 @@
   </head>
 
   <body>
+
     <!-- Part 1: Wrap all page content here -->
     <div id="wrap">
       <%= yield :content %>
@@ -29,6 +33,10 @@
     </div>
 
   </body>
+
+  <% if not Rails.env.development? %>
+  <%= raw analytical.body_append_javascript %>
+  <% end %>
   <%= javascript_include_tag "application" %>
   <%= yield :javascript %>
 
