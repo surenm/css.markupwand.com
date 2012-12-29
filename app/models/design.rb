@@ -372,17 +372,6 @@ class Design
   end
 
   def reprocess
-    sif_file = self.get_sif_file_path
-    processed_folder = self.store_processed_key
-    extracted_folder = self.store_extracted_key
-
-    Store.delete_from_store sif_file
-    Store.delete_from_store extracted_folder
-
-    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
-    FileUtils.rm_rf tmp_folder
-    
-    self.set_status Design::STATUS_QUEUED
     self.push_to_processing_queue
   end
 
