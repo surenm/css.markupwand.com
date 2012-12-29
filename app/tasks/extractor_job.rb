@@ -78,7 +78,7 @@ class ExtractorJob
     Log.info "Building SIF File from extracted file..."
     SifBuilder.build_from_extracted_file design, extracted_file
     Log.info "Successfully built SIF file."
-    
-    Resque.enqueue GroupingBoxJob, design.id
+
+    design.push_to_processing_queue
   end
 end
