@@ -17,10 +17,7 @@ $(document).ready ->
       file_name
 
   $("#file-select-zone").click ->
-    Analytical.event "file_upload", "attempted"
     filepicker.getFile '*/*', {'multiple': false, 'modal': true, 'location': filepicker.SERVICES.DROPBOX,  'services' : [filepicker.SERVICES.COMPUTER, filepicker.SERVICES.DROPBOX]}, (url, data) ->
-    
-      Analytical.event "file_upload", "selected"
       file_url_field.attr "value", url
       file_name_field.attr "value", data.filename
       form_submit_button.removeAttr "disabled"

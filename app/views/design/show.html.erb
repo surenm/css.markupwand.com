@@ -14,16 +14,16 @@
         </div>
         
         <div style="text-align: center; font-size: 18px; margin: 20px">
-          <a onclick="Analytical.event('design_page', 'edit');" class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/editor#grouping"> 
+          <a class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/editor#grouping"> 
             <i class="icon-pencil icon-white"> &nbsp;</i> Edit
           </a>
         </div>
         <center> <strong> or </strong> </center>
         <div>
-          <a onclick="Analytical.event('design_page', 'preview')" class="btn btn-large" href="/design/<%= @design.safe_name %>/preview"> 
+          <a class="btn btn-large" href="/design/<%= @design.safe_name %>/preview"> 
             <i class="icon-zoom-in icon-white"> &nbsp;</i> Preview
           </a>
-          <a onclick="Analytical.event('design_page', 'download')" href="/design/<%= @design.safe_name %>/download" class="btn btn-large">
+          <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large">
             <i class="icon-download icon-white"> &nbsp;</i> Download Markup
           </a>
         </div>
