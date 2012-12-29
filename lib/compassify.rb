@@ -1,5 +1,6 @@
 module Compassify
   class << self
+
     def get_scss(key, style_object)
       if Compassify.respond_to? key
         style_string = (Compassify.send key, style_object)
@@ -95,6 +96,26 @@ module Compassify
       end
 
       return styles_array
+    end
+
+    def scss_to_css(styles_array)
+      scss_style_string = <<BEGIN
+@import "compass";
+@import "compass/css3";
+@import "compass/css3/box-shadow";
+@import "compass/css3/border-radius";
+
+.element { 
+BEGIN
+      styles_array.each do |style_line|
+        scss_style_string += style_line + ";\n"
+      end
+      scss_style_string += "}"
+
+      scss_engine = Sass::Engine.new scss_style_string, {:load_paths => Constants::COMPASS_CONFIG, :syntax => :scss}
+      
+      css_style_rules = scss_engine.render
+      /\.element {([.\s]*)}/.match(css_style_rules)
     end
   end
 end
