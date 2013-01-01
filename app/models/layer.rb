@@ -414,4 +414,17 @@ class Layer
     Log.info "#{spaces}#{prefix} (layer) #{self.name} #{@bounds.to_s}"
   end
 
+  def to_scss
+    scss_style_string = "";
+
+    self.get_style_rules.each do |style_line|
+      scss_style_string += style_line + ";\n"
+    end
+
+    return scss_style_string
+  end
+
+  def to_css
+    Compassify::scss_to_css self.get_style_rules 
+  end
 end
