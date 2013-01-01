@@ -8,8 +8,10 @@ class Design
   include Mongoid::Document::Taggable
   include ActionView::Helpers::DateHelper
 
-  belongs_to :user
+  # keep only atmost 5 versions
+  max_versions 5
 
+  belongs_to :user
   embeds_one :font_map
   
   # Design status types
