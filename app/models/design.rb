@@ -341,6 +341,10 @@ class Design
   def store_extracted_key
     File.join self.store_key_prefix, "extracted"
   end
+
+  def store_images_key
+    File.join self.store_key_prefix, "images"
+  end
   
   def offset_box_key
     "#{self.id}-offset_box"
