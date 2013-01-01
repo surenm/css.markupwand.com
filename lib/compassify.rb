@@ -112,10 +112,19 @@ BEGIN
       end
       scss_style_string += "}"
 
-      scss_engine = Sass::Engine.new scss_style_string, {:load_paths => Constants::COMPASS_CONFIG, :syntax => :scss}
+      scss_engine = Sass::Engine.new scss_style_string, { 
+        :load_paths => Constants::COMPASS_CONFIG, 
+        :syntax => :scss, 
+        :cache_location => Rails.root.join('tmp').to_s
+      }
       
       css_style_rules = scss_engine.render
-      /\.element {([.\s]*)}/.match(css_style_rules)
+      matches = /\.element {(?<css>[\s\S]*)}/.match(css_style_rules)
+      if not matches.nil?
+        return matches["css"]
+      end
+
+      return ""
     end
   end
 end
