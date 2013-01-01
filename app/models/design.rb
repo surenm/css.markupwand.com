@@ -407,6 +407,8 @@ class Design
     end
 
     message = Hash.new
+    message[:design_id] = self.id
+    
     if Constants::store_remote?
       message[:bucket] = Store::get_S3_bucket_name
     else 
