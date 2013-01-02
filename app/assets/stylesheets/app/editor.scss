@@ -45,20 +45,18 @@ body {
       float: left;
       margin-left: 10px;
       width: 1024px;
-      border: 1px solid #ccc;
-      @include box-shadow(rgba(black, 0.4) 2px 5px 25px);
       padding: 1px;
 
-      .navbar {
-        margin-bottom: 0px;
+      #topbar {
+      }
 
-        .navbar-inner {
-          border-bottom: none;
-        }
+      .canvas-area {
+        border: 1px solid #ccc;
+        @include box-shadow(rgba(black, 0.4) 2px 5px 25px);
       }
     }
 
-    #right-sidebar {
+    #sidebar {
       right: 0;
       margin: 0px 10px;
       width: 370px;

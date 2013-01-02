@@ -2,8 +2,8 @@
 
 class GroupingView extends Backbone.View
   el: "#app"
-  sidebar: "#right-sidebar"
-  top_bar: "#top-bar"
+  sidebar: "#sidebar"
+  topbar: "#topbar"
   editor: "#editor"
 
   events: 
