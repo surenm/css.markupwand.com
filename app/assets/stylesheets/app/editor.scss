@@ -59,11 +59,12 @@ body {
     }
 
     #right-sidebar {
-      float: left;
-      margin-left: 10px;
-      width: 380px;
+      right: 0;
+      margin: 0px 10px;
+      width: 370px;
       height: 800px;
       overflow: auto;
+      position: fixed;
       
       color: #333;
 
