@@ -200,6 +200,13 @@ class Design
     self.init_sif
     sif_serialized_data = @sif.get_serialized_data
 
+    # replace layers with json data instead of attribute data
+    layers = Array.new
+    self.layers.each do |uid, layer|
+      layers.push layer.json_data
+    end
+    sif_serialized_data[:layers] = layers
+
     # Get grouping boxes in an array as well
     if not self.root_grouping_box.nil?
       grouping_boxes = Array.new

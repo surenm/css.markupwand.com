@@ -21,7 +21,7 @@ class LayerModel extends Backbone.Model
     color = this.get('text').chunks[0].styles.color
 
     canvas_data =
-      name: "l_#{this.get('uid')}"
+      name: "l_#{this.get('id')}"
       text: text_content
       bounds: bounds
       width: bounds.right - bounds.left
@@ -34,11 +34,11 @@ class LayerModel extends Backbone.Model
   normal_canvas_data: ->
     assets_path = window.app.design.get_assets_root()
     image_name = this.get('image_name')
-    image_src = $("##{this.get('uid')}")[0]
+    image_src = $("##{this.get('id')}")[0]
     bounds = this.get('bounds')
 
     canvas_data =
-      name: "l_#{this.get('uid')}"
+      name: "l_#{this.get('id')}"
       src: image_src
       bounds: bounds
 
@@ -66,7 +66,7 @@ class LayerModel extends Backbone.Model
     fillStyle = this.getShapeFillStyle(canvas_element)
     
     canvas_data = 
-      name: "l_#{this.get('uid')}"
+      name: "l_#{this.get('id')}"
       bounds: bounds
       width: bounds.right - bounds.left
       height: bounds.bottom - bounds.top

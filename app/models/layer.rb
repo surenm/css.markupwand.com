@@ -64,7 +64,6 @@ class Layer
     grouping_box_data = self.grouping_box.attribute_data if not self.grouping_box.nil?
     attr_data = {
       :uid     => self.uid,
-      :id      => self.uid,
       :idx     => self.idx,
       :name    => self.name,
       :type    => self.type,
@@ -86,6 +85,32 @@ class Layer
     end
 
     return Utils::prune_null_items attr_data
+  end
+
+  def json_data
+    grouping_box_data = self.grouping_box.attribute_data if not self.grouping_box.nil?
+    json_data = {
+      :id => self.uid,
+      :idx => self.idx,
+      :name => self.name,
+      :type => self.type,
+      :zindex => self.zindex,
+      :bounds => self.bounds.attribute_data,
+      :opacity => self.opacity,
+      :style_rules => self.get_style_rules,
+      :style_layer => self.style_layer,
+      :grouping_box => grouping_box_data,
+      :text => self.text,
+      :shape => self.shape,
+      :styles => self.styles,
+      :design => self.design.id
+    }
+
+    if self.type == Layer::LAYER_NORMAL
+      json_data[:image_name] = self.image_name
+    end
+
+    return json_data
   end
 
   def clone(parent_grid)
