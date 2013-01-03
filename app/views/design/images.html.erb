@@ -1,4 +1,7 @@
 <%= content_for :javascript do %>
+  <script type="text/javascript">
+    window.design_name = "<%= @design.safe_name %>";
+  </script>
   <%= javascript_include_tag "app/images" %>
 <% end %>
 
@@ -28,7 +31,7 @@
               </div>
 
               <div class="layer-name input-append">
-                <input type="text" name="layer[<%= layer.uid %>]" value="<%= layer.image_name(false) %>">
+                <input type="text" data-original-id="<%= layer.uid %>" value="<%= layer.image_name(false) %>">
                 <span class="add-on">.png</span>
               </div>
             </div>
