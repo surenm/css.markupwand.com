@@ -177,7 +177,7 @@ class DesignController < ApplicationController
       final_name    = params[:image_name] + ".png"
       
       if original_name != final_name
-        @design.layers[uid.to_i].image_name = final_name
+        @design.sif.layers[uid.to_i].image_name = final_name
         Store::rename_file File.join(@design.store_extracted_key, "assets", "images", original_name), File.join(@design.store_extracted_key, "assets", "images", final_name)
         Store::rename_file File.join(@design.store_generated_key, "assets", "images", original_name), File.join(@design.store_generated_key, "assets", "images", final_name)
         Store::rename_file File.join(@design.store_published_key, "assets", "images", original_name), File.join(@design.store_published_key, "assets", "images", final_name)
