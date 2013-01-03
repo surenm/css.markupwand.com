@@ -199,8 +199,12 @@ class Layer
   # Normal Layer helper functions
   ########################################################## 
   
-  def image_name
-    "#{self.uid}.png"
+  def image_name(extension = true)
+    if extension
+      "#{self.uid}.png"
+    else
+      "#{self.uid}"
+    end
   end
 
   def copy_layer_image_to_store
