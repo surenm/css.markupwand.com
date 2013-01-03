@@ -1,3 +1,7 @@
+<%= content_for :javascript do %>
+  <%= javascript_include_tag "app/images" %>
+<% end %>
+
 <%= content_for :content do %>
   <%= render 'shared/header' %>
   <div class="container content-area-box" id="images-editor">
@@ -37,9 +41,4 @@
       </div>
     </form>
   </div>
-  <script type="text/javascript">
-  $('.layer-name').focus(function(e) {
-    $(this).select();
-  })
-  </script>
 <% end %>
