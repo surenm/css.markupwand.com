@@ -1,28 +1,37 @@
 <%= content_for :content do %>
   <%= render 'shared/header' %>
   <div class="container content-area-box" id="images-editor">
-  <div class="row">
-    <div class="span5">
-        <a class="btn pull-left back" href="/design/<%= @design.safe_name %>">← Back to Design page</a>
+    <div class="row back-to-design">
+      <div class="span5">
+          <a class="btn pull-left back" href="/design/<%= @design.safe_name %>">← Back to Design page</a>
+      </div>
     </div>
-  </div>
 
-  <% if @success %>
-  <div class="alert alert-success">
-    Successfully renamed <%= @renamed_files.join "," %>
-  </div>
-  <% end %>
-  <%= form_tag("/design/#{@design.safe_name}/images", :method => "post") %>
-    <table class="table">
-    <tr><th>Image name</th><th>Thumbnail</th></tr>
-    <% @design.layers.each do |uid, layer| %>
-      <% if layer.type == Layer::LAYER_NORMAL %>
-        <tr><td><input class="layer-name" type="text" name="layer[<%= layer.uid %>]" value="<%= layer.image_name %>"></td><td><img class="layer-image" src="/published/<%= @design.safe_name %>/<%= layer.image_path %>"></td></tr>
-      <% end %>
+    <% if @success %>
+    <div class="alert alert-success">
+      Successfully renamed <%= @renamed_files.join "," %>
+    </div>
     <% end %>
-    </table>
-    <input type="submit" class="save-names btn btn-large btn-primary" value="Save image names">
-  </form>
+    <% i = 0 %>
+    <%= form_tag("/design/#{@design.safe_name}/images", :method => "post") %>
+      <div class="row">
+        <% @design.layers.each do |uid, layer| %>
+          <% if layer.type == Layer::LAYER_NORMAL %>
+            <% i = i + 1 %>
+            <div class="span2 imageblock">
+              <div class="layer-image">
+                <img src="/published/<%= @design.safe_name %>/<%= layer.image_path %>">
+              </div>
+              <input class="layer-name" type="text" name="layer[<%= layer.uid %>]" value="<%= layer.image_name %>">
+            </div>
+            <% if (i % 5) == 0 %>
+              </div>
+              <div class="row">
+            <% end %>
+          <% end %> 
+        <% end %>
+      </div>
+    </form>
   </div>
   <script type="text/javascript">
   $('.layer-name').focus(function(e) {

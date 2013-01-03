@@ -1,31 +1,30 @@
 #images-editor {
+  .back-to-design {
+    margin-bottom: 15px;  
+  }
 
-  table {
-    width: 500px;
-    margin: 0 auto;
+  .imageblock {
+    height: 200px;
+    min-height: 200px;
+    max-height: 200px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    margin-bottom: 10px;
 
-    img.layer-image {
-       max-height:100px;
+    .layer-image {
+      height:171px;
     }
-  }
 
-  .save-names {
-    margin-left: 300px;
-    text-align: center;
-  }
-}
-
-table {
-  tr:hover {
-    td,th {
-      background-color: inherit; 
+    .layer-name {
+      width: 158px;
+      margin-left: -1px;
+      border-radius:5px;
+      border: 1px solid #333;
     }
-  } 
 
-  input[type="text"] {
-    color: #444;
-    background-color: #fff;
+
   }
+
 }
 
 
