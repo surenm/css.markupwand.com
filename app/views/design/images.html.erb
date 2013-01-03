@@ -27,7 +27,7 @@
             <% i = i + 1 %>
             <div class="span2 imageblock">
               <div class="layer-image">
-                <div style="background-image: url('/published/<%= @design.safe_name %>/<%= layer.image_path %>')" class="preview-thumbnail"></div>
+                <div style="background-image: url('/published/<%= @design.safe_name %>/<%= layer.image_path %>'); <% if @bg_contain[uid] %>background-size: contain;<% end %>" class="preview-thumbnail"></div>
               </div>
 
               <div class="layer-name input-append">

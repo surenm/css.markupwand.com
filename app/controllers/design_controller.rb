@@ -196,6 +196,16 @@ class DesignController < ApplicationController
   def images
     remote_file_path = @design.get_sif_file_path
     @sif_file = JSON.parse File.read Store::fetch_object_from_store remote_file_path
+    @bg_contain = {}
+    @design.layers.each do |uid, layer|
+      if layer.type == Layer::LAYER_NORMAL
+        if layer.bounds.width > 170 or layer.bounds.height > 170
+          @bg_contain[uid] = true
+        end
+      else
+        @bg_contain[uid] = false
+      end
+    end
   end
   
   def index
