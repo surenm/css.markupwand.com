@@ -12,16 +12,32 @@
     margin-bottom: 10px;
 
     .layer-image {
-      height:171px;
+      height:171px; 
+      display:table-cell;
+      vertical-align:middle;
+      text-align: center;
+      
+      .preview-thumbnail {
+        height: 171px;
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;       
+      }
     }
 
     .layer-name {
-      width: 158px;
+      width: 170px;
       margin-left: -1px;
-      border-radius:5px;
+      border-radius: 5px;
       border: 1px solid #333;
-    }
+      margin-top: -2px;
 
+      
+      input {
+        width: 118px;
+        text-align: right;
+      }
+    }
 
   }
 
