@@ -48,7 +48,8 @@ TransformersWeb::Application.routes.draw do
     scope ':id' do
       # get, put and edit designs
       match ''                 => 'design#show'
-      match 'images'           => 'design#images', :via => [:post, :get]
+      match 'images'           => 'design#images'
+      match 'image-rename'     => 'design#image_rename', :via => :post
       match 'replace-dom'      => 'design#replace_dom', :via => [:post, :get]
       match 'preview'          => 'design#preview'
       match 'download'         => 'design#download'
