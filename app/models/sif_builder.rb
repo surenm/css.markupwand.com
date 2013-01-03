@@ -49,6 +49,7 @@ class SifBuilder
       :zindex  => raw_layer_data[:zindex],
       :bounds  => bounds.attribute_data,
       :opacity => raw_layer_data[:opacity],
+      :image_name   => raw_layer_data[:image_name],
       :height  => raw_layer_data[:height],
       :width   => raw_layer_data[:width],
       :text    => raw_layer_data[:text],
