@@ -20,7 +20,7 @@ $(window).load ->
 
       $.post url, data, (resp)->
         if resp.status == 'OK'
-          window.notify("Renamed : #{layer_name}")
+          window.notify("Renamed : #{layer_name}.png")
     else
       console.log "Nothing changed"
 

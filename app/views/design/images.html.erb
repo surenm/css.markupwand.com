@@ -7,9 +7,9 @@
 
 <%= content_for :content do %>
   <%= render 'shared/header' %>
-  <div id="loading">
-  </div>
   <div class="container content-area-box" id="images-editor">
+    <div id="loading">
+    </div>
     <div class="row back-to-design">
       <div class="span5">
           <a class="btn pull-left back" href="/design/<%= @design.safe_name %>">← Back to Design page</a>
