@@ -1,4 +1,10 @@
 $(window).load ->
+  window.notify = (message)->
+    $("#loading").html(message)
+    $("#loading").show()
+    setTimeout((-> $("#loading").hide()), 1000)
+
+
   $('.layer-name input').blur (e)->
     layer_id           = $(e.target).data('original-id')
     original_name      = $(e.target).data('original-image-name') + ""
@@ -13,7 +19,8 @@ $(window).load ->
         authenticity_token : authenticity_token
 
       $.post url, data, (resp)->
-        console.log resp
+        if resp.status == 'OK'
+          window.notify("Renamed : #{layer_name}")
     else
       console.log "Nothing changed"
 
