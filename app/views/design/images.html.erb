@@ -20,9 +20,13 @@
             <% i = i + 1 %>
             <div class="span2 imageblock">
               <div class="layer-image">
-                <img src="/published/<%= @design.safe_name %>/<%= layer.image_path %>">
+                <div style="background-image: url('/published/<%= @design.safe_name %>/<%= layer.image_path %>')" class="preview-thumbnail"></div>
               </div>
-              <input class="layer-name" type="text" name="layer[<%= layer.uid %>]" value="<%= layer.image_name %>">
+
+              <div class="layer-name input-append">
+                <input type="text" name="layer[<%= layer.uid %>]" value="<%= layer.image_name(false) %>">
+                <span class="add-on">.png</span>
+              </div>
             </div>
             <% if (i % 5) == 0 %>
               </div>
