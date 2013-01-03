@@ -47,6 +47,8 @@ class Layer
   attr_accessor :opacity #(Integer)
   attr_accessor :initial_bounds #(BoundingBox)
   attr_accessor :bounds #(BoundingBox)
+  attr_accessor :image_name # (String)
+
 
   attr_accessor :text
   attr_accessor :shape
@@ -69,6 +71,7 @@ class Layer
       :type    => self.type,
       :zindex  => self.zindex,
       :initial_bounds => self.initial_bounds.attribute_data,
+      :image_name => self.image_name,
       :bounds  => self.bounds.attribute_data,
       :opacity => self.opacity,
       :text    => self.text,
@@ -200,12 +203,19 @@ class Layer
   ########################################################## 
   
   def image_name(extension = true)
-    if extension
-      "#{self.uid}.png"
+    if @image_name.nil? and self.type == LAYER_NORMAL
+      name = "#{self.uid}.png"
     else
-      "#{self.uid}"
+      name = @image_name
     end
-  end
+
+    if extension
+      name
+    else
+      name.sub(".png", "")
+    end
+  end  
+  
 
   def copy_layer_image_to_store
     image_path = "./assets/images/#{self.image_name}"
