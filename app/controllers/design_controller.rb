@@ -185,6 +185,8 @@ class DesignController < ApplicationController
         @design.reparse
         render :json => {:status => "OK"} 
         return
+      else
+        data = {:message => 'Same image name'}
       end
     end
 
