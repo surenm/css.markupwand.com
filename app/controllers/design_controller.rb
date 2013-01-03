@@ -178,11 +178,12 @@ class DesignController < ApplicationController
       
       if original_name != final_name
         @design.sif.layers[uid.to_i].image_name = final_name
+        @design.sif.save!
+
         Store::rename_file File.join(@design.store_extracted_key, "assets", "images", original_name), File.join(@design.store_extracted_key, "assets", "images", final_name)
         Store::rename_file File.join(@design.store_generated_key, "assets", "images", original_name), File.join(@design.store_generated_key, "assets", "images", final_name)
         Store::rename_file File.join(@design.store_published_key, "assets", "images", original_name), File.join(@design.store_published_key, "assets", "images", final_name)
-        @design.sif.save!
-        @design.regroup
+        
         render :json => {:status => "OK"} 
         return
       else
