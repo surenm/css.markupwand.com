@@ -1,4 +1,18 @@
 #images-editor {
+  #loading {
+      background-color: #F9EDBE;
+      color: #000;
+      font-weight: bold;
+      border: 1px solid #F0C36D;
+      padding: 4px 15px;
+      float:left;
+      position: absolute;
+      left: 40%;
+      top: 50%;
+      display: none;
+  }
+
+
   .back-to-design {
     margin-bottom: 15px;  
   }
