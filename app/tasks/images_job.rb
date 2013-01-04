@@ -1,4 +1,5 @@
 class ImagesJob
+  extend Resque::Plugins::History
   @queue = :processor
   
   def self.perform(message)

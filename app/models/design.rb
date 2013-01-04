@@ -427,7 +427,7 @@ class Design
   end
   
   def push_to_processing_queue
-    self.set_status Design::STATUS_PROCESSING
+    self.photoshop_status = Design::STATUS_PROCESSING
     self.save!
     
     message = self.get_processing_queue_message
@@ -452,10 +452,11 @@ class Design
   end
 
   def create_grouping_boxes
-    self.init_sif
-
     Log.info "Beginning to create grouping boxes for #{self.name}..."    
     
+    self.set_status Design::STATUS_GROUPING
+    self.init_sif(true)
+
     # Layer descriptors of all photoshop layers
     Log.info "Getting layers..."
     layers = self.layers.values
@@ -467,6 +468,7 @@ class Design
     @sif.root_grouping_box = root_grouping_box
     @sif.reset_grids
     @sif.save!
+    self.set_status Design::STATUS_GROUING_DONE
 
     Log.info "Successfully created all grouping_boxes."
   end
@@ -493,9 +495,11 @@ class Design
   end
 
   def create_grids
+    Log.info "Beginning to create grids for #{self.name}"
+
+    self.set_status Design::STATUS_GRIDS
     self.init_sif(true)
 
-    Log.info "Beginning to create grids for #{self.name}"
     root_grid = self.root_grouping_box.create_grid
     
     root_grid.each do |grid|
@@ -504,14 +508,20 @@ class Design
 
     @sif.root_grid = root_grid
     @sif.save!
+    self.set_status Design::STATUS_GRIDS_DONE
+
+    Log.info "Successfully created grids for #{self.name}"
   end
   
   def generate_markup(args={})
     Log.info "Beginning to generate markup and css for #{self.name}..."
+    
+    self.set_status Design::STATUS_MARKUP
     self.init_sif(true)
     self.write_html_and_css
+
+    self.set_status Design::STATUS_COMPLETED    
     Log.info "Successfully completed generating #{self.name}"
-    return
   end
 
   def group_layers(layer_ids)
@@ -524,7 +534,7 @@ class Design
     self.add_new_layer_group grouped_layers
 
     # Create grouping boxes yet again
-    self.create_grouping_boxes
+    Resque.enqueue GroupingBoxJob, self.id
   end
 
   # This usually called after changing CSS class names
