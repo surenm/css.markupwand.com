@@ -222,9 +222,7 @@ class Layer
     src_image_file = Rails.root.join("tmp", "store", self.design.store_extracted_key, image_path).to_s
     Log.fatal src_image_file
     if File.exists? src_image_file
-      generated       = File.join self.design.store_generated_key, "assets", "images", self.image_name
       published       = File.join self.design.store_published_key, "assets", "images", self.image_name
-      Store::save_to_store src_image_file, generated
       Store::save_to_store src_image_file, published
     else
       Log.fatal "#{src_image_file} Missing"

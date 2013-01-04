@@ -181,7 +181,6 @@ class DesignController < ApplicationController
         @design.sif.save!
 
         Store::rename_file File.join(@design.store_extracted_key, "assets", "images", original_name), File.join(@design.store_extracted_key, "assets", "images", final_name)
-        Store::rename_file File.join(@design.store_generated_key, "assets", "images", original_name), File.join(@design.store_generated_key, "assets", "images", final_name)
         Store::rename_file File.join(@design.store_published_key, "assets", "images", original_name), File.join(@design.store_published_key, "assets", "images", final_name)
         
         render :json => {:status => "OK"} 
@@ -250,9 +249,7 @@ class DesignController < ApplicationController
     saveable_fonts.each do |font, data|
       filename = font + '.' + data[:type].to_s
       saveable_fonts[font][:filename] = filename
-      generated_url = File.join @design.store_generated_key, "assets", "fonts", filename
       published_url = File.join @design.store_published_key, "assets", "fonts", filename
-      Store::write_from_url generated_url, data[:url]
       Store::write_from_url published_url, data[:url]
 
       user_font_exists = @user.user_fonts.where(:fontname => font).length > 0
@@ -307,10 +304,6 @@ class DesignController < ApplicationController
   def generated
     if params[:type] == "published"
       base_folder = @design.store_published_key
-    elsif params[:type] == "processed"
-      base_folder = @design.store_processed_key
-    elsif params[:type] == "generated"
-      base_folder = @design.store_generated_key
     elsif params[:type] == "extracted"
       base_folder = @design.store_extracted_key
     elsif params[:type] == "images"

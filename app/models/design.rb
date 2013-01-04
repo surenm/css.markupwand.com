@@ -340,14 +340,6 @@ class Design
     File.join self.user.email, self.safe_name
   end
   
-  def store_generated_key
-    File.join self.store_key_prefix, "generated"
-  end
-  
-  def store_processed_key
-    File.join self.store_key_prefix, "processed"
-  end
-  
   def store_published_key
     File.join self.store_key_prefix, "published"
   end
@@ -402,13 +394,12 @@ class Design
     self.init_sif
     @sif.reset_calculated_data
 
-    generated_folder = self.store_generated_key
     published_folder = self.store_published_key
-    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
-    FileUtils.rm_rf tmp_folder
-    Store.delete_from_store generated_folder
     Store.delete_from_store published_folder
 
+    tmp_folder = Rails.root.join 'tmp', 'store', self.store_key_prefix
+    FileUtils.rm_rf tmp_folder
+    
     Resque.enqueue GroupingBoxJob, self.id
   end
   
@@ -541,7 +532,6 @@ class Design
     Log.info "Writing HTML and CSS..."
 
     # Set the base folder for writing html to
-    generated_folder = self.store_generated_key
     published_folder = self.store_published_key
 
     # Set the root path for this design. That is where all the html and css is saved to.
@@ -566,10 +556,7 @@ COMPASS
     html.gsub! "{webfonts}", self.webfonts_snippet
 
     publish_html = Utils::strip_unwanted_attrs_from_html html
-    self.write_html_files html, generated_folder
-    self.write_css_files scss_content, generated_folder
-    
-    Store.copy_within_store_recursively generated_folder, published_folder
+
     self.write_html_files publish_html, published_folder
     self.write_css_files scss_content, published_folder
   end
