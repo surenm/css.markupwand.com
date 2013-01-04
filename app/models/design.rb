@@ -15,31 +15,37 @@ class Design
   embeds_one :font_map
   
   # Design status types
-  Design::STATUS_QUEUED       = :queued
-  Design::STATUS_UPLOADING    = :uploading
-  Design::STATUS_UPLOADED     = :uploaded
-  Design::STATUS_PROCESSING   = :processing
-  Design::STATUS_EXTRACTING   = :extracting
-  Design::STATUS_GROUPING     = :grouping
-  Design::STATUS_GRIDS        = :grids
-  Design::STATUS_MARKUP       = :markup
-  Design::STATUS_COMPLETED    = :completed
-  Design::STATUS_FAILED       = :failed
+  Design::STATUS_QUEUED = :queued
+  Design::STATUS_UPLOADING = :uploading
+  Design::STATUS_UPLOADED = :uploaded
+  Design::STATUS_EXTRACTING = :extracting
+  Design::STATUS_EXTRACTING_DONE = :extracting_done
+  Design::STATUS_GROUPING = :grouping
+  Design::STATUS_GROUING_DONE = :grouping_done
+  Design::STATUS_GRIDS = :grids
+  Design::STATUS_GRIDS_DONE = :grids_done
+  Design::STATUS_MARKUP = :markup
+  Design::STATUS_COMPLETED = :completed
+  Design::STATUS_FAILED = :failed
+
+  # photoshop status types
+  Design::STATUS_PROCESSING = :processing
+  Design::STATUS_PROCESSING_DONE = :processing_done
 
   Design::STATUS_CLASS = {
-    Design::STATUS_QUEUED       => 'label',
-    Design::STATUS_UPLOADING    => 'label',
-    Design::STATUS_UPLOADED     => 'label',
-    Design::STATUS_PROCESSING   => 'label label-info',
-    Design::STATUS_EXTRACTING   => 'label label-info',
-    Design::STATUS_GROUPING     => 'label label-info',
-    Design::STATUS_GRIDS        => 'label label-info',
-    Design::STATUS_MARKUP       => 'label label-info',
-    Design::STATUS_COMPLETED    => 'label label-success',
-    Design::STATUS_FAILED       => 'label label-important'
+    Design::STATUS_QUEUED => 'label',
+    Design::STATUS_UPLOADING => 'label',
+    Design::STATUS_UPLOADED => 'label',
+    Design::STATUS_EXTRACTING => 'label label-info',
+    Design::STATUS_EXTRACTING_DONE => 'label label-info',
+    Design::STATUS_GROUPING => 'label label-info',
+    Design::STATUS_GROUING_DONE => 'label label-info',
+    Design::STATUS_GRIDS => 'label label-info',
+    Design::STATUS_MARKUP => 'label label-info',
+    Design::STATUS_COMPLETED => 'label label-success',
+    Design::STATUS_FAILED => 'label label-important'
   }
-    
-  
+      
   Design::ERROR_FILE_ABSENT        = "file_absent"
   Design::ERROR_NOT_PHOTOSHOP_FILE = "not_photoshop_file"
   Design::ERROR_SCREENSHOT_FAILED  = "screenshot_failed"
@@ -50,6 +56,7 @@ class Design
   field :psd_file_path, :type => String
   field :sif_file_path, :type => String, :default => nil
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
+  field :images_status, :type => Symbol, :default => nil
   field :softdelete, :type => Boolean, :default => false
   field :width, :type => Integer
   field :height, :type => Integer
