@@ -56,6 +56,7 @@ class Design
   field :psd_file_path, :type => String
   field :sif_file_path, :type => String, :default => nil
   field :status, :type => Symbol, :default => Design::STATUS_QUEUED
+  field :photoshop_status, :type => Symbol, :default => Design::STATUS_QUEUED
   field :images_status, :type => Symbol, :default => nil
   field :softdelete, :type => Boolean, :default => false
   field :width, :type => Integer
@@ -125,6 +126,7 @@ class Design
       :psd_file_path => self.psd_file_path,
       :id => self.safe_name,
       :status => self.status,
+      :photoshop_status => self.photoshop_status,
       :safe_name => self.safe_name,
       :safe_name_prefix => self.safe_name_prefix,
       :height => self.height,

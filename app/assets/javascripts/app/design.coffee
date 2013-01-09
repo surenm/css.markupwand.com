@@ -1,13 +1,13 @@
-update_process_status = ->
-  $.doTimeout 10000, () ->
-    $.get("/design/#{design_id}.json", (data)->
-      if data.status == 'completed'
-        $('.status-box').addClass('hide')
-        $('.completed-box').removeClass('hide')
-      else
-        update_process_status()
-      )
+#= require_tree ../models
+#= require_tree ../collections
+#= require_tree ../views
+#= require_tree ../routers
+
+class DesignView extends Backbone.View
+  el: "#design"
+  initialize: ->
+    
 
 $(document).ready ->
-  if not design? or design.status != "completed"
-    update_process_status()
+  window.design = new DesignModel(design_data)
+  design_view = new DesignView({model: window.design})

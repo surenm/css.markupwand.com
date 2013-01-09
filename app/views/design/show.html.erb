@@ -1,61 +1,13 @@
 <%= content_for :content do %>
 <div class="container-narrow">
   <%= render 'shared/header' %>
-  <div id="design-page">
-    <div class="design content-area-box">
-
-      <div class="completed-box <%= 'hide' if not @completed %>">
-
-        <h2> Design: <%= @design.name %></h2>
-    
-        <div style="font-size: 18px; margin: 20px;"> 
-          Uploaded on <%= @design.created_at.to_formatted_s(:short) %> <br>
-          Status: Completed
-        </div>
-        
-        <div style="text-align: center; font-size: 18px; margin: 20px">
-          <a class="btn btn-large btn-primary" href="/design/<%= @design.safe_name %>/editor#grouping"> 
-            <i class="icon-pencil icon-white"> &nbsp;</i> Edit
-          </a>
-        </div>
-        <center> <strong> or </strong> </center>
-        <div>
-          <a class="btn btn-large" href="/design/<%= @design.safe_name %>/preview"> 
-            <i class="icon-zoom-in icon-white"> &nbsp;</i> Preview
-          </a>
-          <a href="/design/<%= @design.safe_name %>/download" class="btn btn-large">
-            <i class="icon-download icon-white"> &nbsp;</i> Download Markup
-          </a>
-        </div>
-        <br>
-      </div>
-    </div>
-        
-
-    <% if @completed %>
-      <div class="design-thumbnail">
-        <img src="/extracted/<%= @design.safe_name %>/<%= @design.safe_name_prefix %>-fixed.png"/>
-      </div>
-    <% end %>
-        
-    <div class="status-box">
-      <% if not @completed %>
-      <h3 id="design-status"> Converting...</h3>
-      <img class="loading" src="/assets/loading-ninja.gif">
-      <div>It could take 10-15 minutes. We'll send an email to <%= @user.email %> once your page is ready. Closing this page won't affect anything.</div>
-      <% end %>
-    </div>
+  <div id="design">
   </div>
 </div>
 <div class="clearfix"> </div>
 
 <script type="text/javascript">
-  var design_id = '<%=  raw @design.safe_name %>';
-  <% if @design.status == Design::STATUS_COMPLETED %>
-  var design = <%= raw @design.attribute_data.to_json %>;
-  <% else %>
-  var design = null;
-  <% end %>
+  var design_data = <%= raw @design.json_data.to_json %>;
 </script>
 <% end %>
 
