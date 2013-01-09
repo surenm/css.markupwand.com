@@ -33,10 +33,9 @@ TransformersWeb::Application.routes.draw do
   end
 
   # design controller routes
-  match 'designs' => 'design#index', :as => :dashboard
+  match 'designs' => 'design#index', :as => :user_root
   
   scope 'design' do 
-
     if Constants::store_remote?
       match 'new'       => 'design#new'
       match 'uploaded'  => 'design#uploaded', :as => :uploaded_callback

@@ -5,7 +5,7 @@
     <li><a href="/faq">FAQ</a></li>
     <li><a href="/login" class="login">Login</a></li>
     <% else %>
-    <li> <a href="/designs"> Hello, <%= current_user.first_name %> </a> </li>
+    <li> <a href="/designs"> Hi, <%= current_user.get_display_name %> </a> </li>
     <li> <a href="/logout">Log out </a> </li>
     <% end %>
   </ul>

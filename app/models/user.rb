@@ -4,7 +4,7 @@ class User
   include Mongoid::Timestamps::Created
   include Mongoid::Timestamps::Updated
 
-  devise :database_authenticatable, :registerable, :validatable, :rememberable, :trackable, :omniauthable, :timeoutable#, :confirmable, :recoverable
+  devise :database_authenticatable, :registerable, :validatable, :rememberable, :trackable, :omniauthable, :timeoutable, :recoverable #, :confirmable
 
   ## Rememberable
   field :remember_created_at, :type => Time
@@ -18,6 +18,8 @@ class User
   field :confirmed_at,          :type => Time
   field :confirmation_sent_at,  :type => Time
   field :confirmation_token,    :type => String
+  field :reset_password_token,  :type => String
+  field :reset_password_sent_at, :type => Time
 
   field :email, :type => String
   field :name, :type => String
@@ -81,5 +83,15 @@ class User
     end
 
     return user
+  end
+
+  def get_display_name
+    if not self.first_name.nil?
+      return self.first_name
+    elsif not self.name.nil?
+      return self.name
+    else
+      return self.email
+    end
   end
 end

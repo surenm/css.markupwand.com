@@ -11,7 +11,7 @@ class DesignController < ApplicationController
     @design = Design.find design_id
       
     if not @user.admin and (@user != @design.user or @design.softdelete) 
-      redirect_to dashboard_path
+      redirect_to user_path
     end
   end
   
@@ -297,7 +297,7 @@ class DesignController < ApplicationController
       
   def delete
     @design.delete
-    redirect_to dashboard_path
+    redirect_to user_root_path
   end
   
   def generated

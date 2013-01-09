@@ -1,16 +1,31 @@
 <%= content_for :content do %>
-  <%= stylesheet_link_tag "app/login", :media => "all" %>
-  <%= render 'shared/header_small' %>
-  <div class="container-extra-narrow colored">
-    <form class="form-signin">
-      <input name="email" type="text" class="input-block-level" placeholder="Email address">
-      <input name="password" type="password" class="input-block-level" placeholder="Password">
-      <label class="checkbox">
-        <input type="checkbox" value="remember-me"> Remember me
-      </label>
+<%= stylesheet_link_tag "app/login", :media => "all" %>
+<%= render 'shared/header_small' %>
+
+<div class="container-extra-narrow colored">
+<%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => {:class => 'form-signin'}) do |f| %>
+  <%= f.email_field :email, :class => 'input-block-level', :placeholder => 'your email address' %>
+
+  <%= f.password_field :password, :class => 'input-block-level', :placeholder => 'password' %>
+  <% if devise_mapping.rememberable? -%> 
+  <div><%= f.check_box :remember_me %> <%= f.label :remember_me, :style => 'display:inline;' %></div>
+  <% end %>
+
+    <br >
+    <center>
+      <div class='clearfix'></div>
+      <%= f.submit "Sign in", :class => 'btn btn-success ' %> 
+    </center>
+
+    <center>
+      or <br> <br>
+      <div> 
+        <%= link_to image_tag('/assets/google.png', :size => '16x16') + " Sign in with Google OpenID", omniauth_authorize_path(resource_name, :google_openid), :class => "btn btn-large"%>
+      </div>
+    </center>
       
-      <center><button class="btn btn-large btn-success" type="submit">Sign up</button></center>
-    </form>
-    <div class="center"> Don't have an account? <a href="/signup"> Signup </a> for free! </a></div>
-  </div> 
+    
+<% end %>
+
+<%= render "devise/shared/links" %>
 <% end %>

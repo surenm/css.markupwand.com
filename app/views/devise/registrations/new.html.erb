@@ -1,14 +1,26 @@
 <%= content_for :content do %>
-  <%= stylesheet_link_tag "app/login", :media => "all" %>
-  <%= render 'shared/header_small' %>
-  <div class="container-extra-narrow colored">
-    <form class="form-signin">
-      <input name="email" type="text" class="input-block-level" placeholder="Email address">
-      <input name="password" type="password" class="input-block-level" placeholder="Password">
-      <center><button class="btn btn-large btn-success" type="submit">Sign up</button></center>
-    </form>
-    <div class="center"> <a href="/login"> Already have an account? </a></div>
-  </div> 
+<%= stylesheet_link_tag "app/login", :media => "all" %>
+<%= render 'shared/header_small' %>
 
+<div class="container-extra-narrow colored">
+<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => {:class => 'form-signin'}) do |f| %>
+  <%= devise_error_messages! %>
+  <%= f.text_field :name, :class => 'input-block-level', :placeholder => 'Your Name ' %>
+  <%= f.email_field :email, :class => 'input-block-level', :placeholder => 'Your email address' %>
 
+  <%= f.password_field :password, :class => 'input-block-level', :placeholder => 'Password' %>
+  <center>
+    <%= f.submit "Sign up for a Free account", :class => 'btn btn-large btn-block btn-success ' %> 
+  </center>
+  <center>
+      or <br> <br>
+      <div> 
+        <%= link_to image_tag('/assets/google.png', :size => '16x16') + " Sign up with Google OpenID", omniauth_authorize_path(resource_name, :google_openid), :class => "btn btn-large"%>
+        <br>
+        <i> <small> We won't spam you! <br>We just don't want you to remember another password </small> </i>
+      </div>
+    </center>
+<% end %>
+<%= render "devise/shared/links" %>
+</div>
 <% end %>

@@ -22,11 +22,10 @@ div {
 
 .field_with_errors {
   padding: 2px;
-  background-color: red;
-  display: table; }
+  background-color: #FF3E40;
+  }
 
 #error_explanation {
-  width: 450px;
   border: 2px solid red;
   padding: 7px;
   padding-bottom: 0;
@@ -36,11 +35,12 @@ div {
     text-align: left;
     font-weight: bold;
     padding: 5px 5px 5px 15px;
-    font-size: 12px;
+    font-size: 15px;
     margin: -7px;
     margin-bottom: 0px;
     background-color: #c00;
     color: #fff; }
   ul li {
-    font-size: 12px;
+    padding: 10px 0px;
+    font-size: 15px;
     list-style: square; } }
