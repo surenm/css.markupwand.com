@@ -3,10 +3,6 @@ require 'resque-history/server'
 TransformersWeb::Application.routes.draw do
   devise_for :users, :controllers => { :omniauth_callbacks => 'auth' }
 
-  resources :grids
-  # grid controllers
-  match 'grids/update' => 'grids#generate_markup', :via => :post
-  
   # Landing page controller views
   match '/getinvite'   => "landing_page#getinvite"
   match '/about'       => "landing_page#about"
@@ -25,7 +21,6 @@ TransformersWeb::Application.routes.draw do
   match "/users/sign_up" => redirect("/signup")
   match "/users"         => redirect("/signup")
   match "/start"         => redirect("/")
-  match 'unauthorized'   => 'login#unauthorized'
   
   # Dangerous controller route.
   if not Rails.env.production?
