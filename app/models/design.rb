@@ -423,7 +423,9 @@ class Design
     end
 
     message[:design_file] = self.psd_file_path
-    message[:layers] = normal_layers.join '-'
+    if not normal_layers.empty?
+      message[:layers] = normal_layers.join '-'
+    end
 
     return message
   end
@@ -433,7 +435,9 @@ class Design
     self.save!
     
     message = self.get_processing_queue_message
-    Resque.enqueue ImagesJob, message
+    if not message[:layers].nil?
+      Resque.enqueue ImagesJob, message
+    end
   end
 
   def push_to_extraction_queue
