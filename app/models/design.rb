@@ -437,6 +437,9 @@ class Design
     message = self.get_processing_queue_message
     if not message[:layers].nil?
       Resque.enqueue ImagesJob, message
+    else
+      self.photoshop_status = Design::STATUS_PROCESSING_DONE
+      self.save!
     end
   end
 
