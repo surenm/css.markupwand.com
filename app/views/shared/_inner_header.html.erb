@@ -1,0 +1,29 @@
+<%
+  # this is a stupid hack to set fluid to nil if fluid is not defined.
+  fluid = fluid
+  if fluid.nil?
+    fluid = false
+  end 
+%>
+<div class="navbar navbar-inverse">
+  <div class="navbar-inner">
+    <% if not fluid %>
+    <div class="container-narrow">
+    <% end %>
+      <h3 class="muted pull-left"><a href="/"><em>css</em> : markupwand</a></h3>
+      <ul class="nav pull-right">
+        <% if current_user.nil? %>
+        <li><a href="/about">About</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/login" class="login">Login</a></li>
+        <% else %>
+        <li> <a href="/designs"> Hi, <%= current_user.get_display_name %> </a> </li>
+        <li> <a href="/logout">Log out </a> </li>
+        <% end %>
+      </ul>
+      <div class="clearfix"> </div>
+    <% if not fluid %>
+    </div>
+    <% end %>
+  </div>
+</div>

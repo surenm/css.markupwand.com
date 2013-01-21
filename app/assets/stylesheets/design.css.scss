@@ -59,10 +59,72 @@ h3.muted {
   }
 }
 
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  margin: 0 auto -60px;
+}
+
+/* Set the fixed height of the footer here */
+#push, #footer {
+  height: 60px;
+}
+
+#footer {
+  background-color: #f5f5f5;
+}
+
+/* Custom container */
+.container-narrow {
+  margin: 0 auto;
+  max-width: 830px;
+}
+
+h1 {
+  margin: 30px;
+  font-family: "myriad-pro",sans-serif;
+  font-size: 75px;
+  line-height: 1;
+}
+
+h2 {
+  color: #333;
+  text-align: center;
+}
+
+h1, h2, h3, h4, h5 {
+  color: #333;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+
+.center {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.clearfix {
+  clear: both;
+}
+
+small {
+  font-size: 0.8em;
+}
+
+
 
 a:hover {
   color: #005580;
 }
+
 #designs-list-page, #design-page {
   margin-top: 30px;
 }

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>css:markupwand | Convert Photoshop to CSS3</title>
+    <meta name="description" content="Convert your Photoshop designs to clean and maintainable HTML and CSS"/>
+    <meta name="keywords" content="photoshop,design,psd to html,psd2html,psd,html,css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <script type="text/javascript" src="//use.typekit.net/eqq0eqs.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+    <% if not Rails.env.development? %>
+    <%= raw analytical.head_append_javascript %>
+    <% end %>
+    <%= stylesheet_link_tag "design", :media => "all" %>
+    <%= yield :css %>
+    <link rel="shortcut icon" href="../assets/ico/favicon.png">
+    
+  </head>
+
+  <body>
+    <!-- Part 1: Wrap all page content here -->
+    <div id="wrap">
+      <%= yield :content %>
+      <div id="push"></div>
+    </div>
+
+    <div id="footer">
+      <div class="container-narrow">
+        Goyaka Inc
+      </div>
+    </div>
+
+  </body>
+
+  <% if not Rails.env.development? %>
+  <%= raw analytical.body_append_javascript %>
+  <% end %>
+  <%= javascript_include_tag "application" %>
+  <%= yield :javascript %>
+
+</html>
