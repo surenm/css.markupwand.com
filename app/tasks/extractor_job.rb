@@ -77,6 +77,8 @@ class ExtractorJob
     SifBuilder.build_from_extracted_file design, extracted_file
     Log.info "Successfully built SIF file."
 
-    design.push_to_processing_queue
+    if design.photoshop_status != Design::STATUS_PROCESSING_DONE
+      design.push_to_images_queue
+    end
   end
 end

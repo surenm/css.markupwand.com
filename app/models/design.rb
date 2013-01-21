@@ -389,7 +389,7 @@ class Design
   end
 
   def reprocess
-    self.push_to_processing_queue
+    self.push_to_images_queue
   end
 
   def regroup
@@ -430,7 +430,7 @@ class Design
     return message
   end
   
-  def push_to_processing_queue
+  def push_to_images_queue
     self.photoshop_status = Design::STATUS_PROCESSING
     self.save!
     
