@@ -54,9 +54,10 @@ h3.muted {
   }
 
   a {
-    color: inherit;
+    color: rgb(153, 153, 153);
     text-decoration: none;
   }
+
 }
 
 #wrap {
@@ -80,6 +81,10 @@ h3.muted {
 .container-narrow {
   margin: 0 auto;
   max-width: 830px;
+}
+
+.navbar .nav {
+  margin: 5px 10px 0 0;
 }
 
 h1 {
@@ -117,12 +122,6 @@ h1, h2, h3, h4, h5 {
 
 small {
   font-size: 0.8em;
-}
-
-
-
-a:hover {
-  color: #005580;
 }
 
 #designs-list-page, #design-page {
