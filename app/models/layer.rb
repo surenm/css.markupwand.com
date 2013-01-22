@@ -92,6 +92,12 @@ class Layer
 
   def json_data
     grouping_box_data = self.grouping_box.attribute_data if not self.grouping_box.nil?
+    if self.type == Layer::LAYER_TEXT
+      all_layer_style_rules = self.get_style_rules + self.get_text_styles
+    else
+      all_layer_style_rules = self.get_style_rules
+    end
+
     json_data = {
       :id => self.uid,
       :idx => self.idx,
@@ -100,7 +106,7 @@ class Layer
       :zindex => self.zindex,
       :bounds => self.bounds.attribute_data,
       :opacity => self.opacity,
-      :style_rules => self.get_style_rules,
+      :style_rules => all_layer_style_rules,
       :style_layer => self.style_layer,
       :grouping_box => grouping_box_data,
       :text => self.text,
@@ -429,6 +435,19 @@ class Layer
       end
     end
     return true
+  end
+
+  def get_text_styles
+    chunk = self.text_chunks.first
+    text_styles = Array.new
+    chunk[:styles].each do |key, value|
+      if key == :'font-family'
+        text_styles.push "#{key}: '#{value}'"
+      else
+        text_styles.push "#{key}: #{value}"
+      end
+    end
+    return text_styles
   end
 
   ##########################################################
