@@ -28,7 +28,9 @@ class LayersView extends Backbone.View
   editor_click_handler: (event) ->
     layer = event.layer
     style_rules = layer.get('style_rules').join ';\n'
-    style_rules += ';\n'
+    if style_rules != ''
+      style_rules += ';\n'
+      
     @code_editor.setValue style_rules
 
 
