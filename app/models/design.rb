@@ -320,10 +320,6 @@ class Design
 
     selected_layers_bounds = selected_layers.collect do |selected_layer| selected_layer.bounds end
     normalized_design_bounds =  BoundingBox.get_super_bounds selected_layers_bounds
-    Log.fatal self.layers.values - selected_layers
-    Log.fatal normalized_design_bounds
-    Log.fatal normalized_design_bounds.width
-    
     return normalized_design_bounds
   end
 

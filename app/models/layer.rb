@@ -220,7 +220,6 @@ class Layer
   def copy_layer_image_to_store
     image_path = "./assets/images/#{self.image_name}"
     src_image_file = Rails.root.join("tmp", "store", self.design.store_extracted_key, image_path).to_s
-    Log.fatal src_image_file
     if File.exists? src_image_file
       published       = File.join self.design.store_published_key, "assets", "images", self.image_name
       Store::save_to_store src_image_file, published
