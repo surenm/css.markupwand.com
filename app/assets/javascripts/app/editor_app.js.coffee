@@ -4,10 +4,16 @@
 #= require_tree ../routers
 
 class EditorApp
+  el: "#editor"
+
   constructor: () ->
     @design = window.design
-    @editor_area = new EditorArea()
 
+    # populate the editor
+    editor_area_html = $("#editor-template").html()
+    $(this.el).html editor_area_html
+
+    @editor_area = new EditorArea()
     $this = this
 
     dfd = $("#design-images").imagesLoaded()
