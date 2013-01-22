@@ -1,7 +1,6 @@
 require 'open3'
 class ExtractorJob
   extend Resque::Plugins::History
-  
   @queue = :worker
   
   def self.perform(design_id)
@@ -78,7 +77,9 @@ class ExtractorJob
     Log.info "Successfully built SIF file."
 
     if design.photoshop_status != Design::STATUS_PROCESSING_DONE
+      Log.info "Images processing isn't complete. Queuing up for images extraction..."
       design.push_to_images_queue
     end
+    
   end
 end
