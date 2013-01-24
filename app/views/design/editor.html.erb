@@ -15,7 +15,8 @@
   <%= render 'shared/inner_header', :fluid => true %>
   <div id="editor-notifications"></div>
   <div class="contents">  
-    <div id="app">
+    <div id="app" style="min-height: <%= @height %>px">
+      <div id="topbar"></div>
       <div id="editor"></div>
       <div id="sidebar"></div>
       <div class="clearfix"> </div>

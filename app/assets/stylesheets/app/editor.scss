@@ -16,7 +16,7 @@ body {
     position: absolute;
   }
 
-  canvas#design-canvas {
+  .canvas-area {
     background: url('/assets/transparent.png');
   }
 
@@ -41,14 +41,15 @@ body {
 
   #app {
 
+    #topbar {
+      margin: 0px 12px;
+    }
+
     #editor {
       float: left;
       margin-left: 10px;
       width: 1024px;
       padding: 1px;
-
-      #topbar {
-      }
 
       .canvas-area {
         border: 1px solid #ccc;
@@ -57,21 +58,44 @@ body {
     }
 
     #sidebar {
-      right: 0;
-      margin: 0px 10px;
-      width: 370px;
-      height: 800px;
-      overflow: auto;
-      position: fixed;
       
-      color: #333;
-
       font-family: "museo-sans", sans-serif;
       font-size: 12px;
 
-      textarea {
-        width: 350px;
-        resize: none;
+      .sidebar {
+        overflow: auto;
+        width: 390px;
+        height: 100%;
+        float: left;
+        margin: 0px 5px;
+        color: #333;
+
+        .code-area {
+          padding: 5px 10px;
+
+          .nav {
+            @include border-top-radius(5px);        
+            margin-bottom: 0px;
+            background: #ccc;
+            padding: 5px;
+
+            a {
+              color: #333;
+            }
+            .active {
+              a {
+                background: #333;
+                color: #fff;
+                @include border-radius(15px);
+              }
+            }
+          }
+        }
+
+        textarea {
+          width: 380px;
+          resize: none;
+        }
       }
     }
 

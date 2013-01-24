@@ -1,5 +1,4 @@
 <script id="editor-template" type="text/template">
-  <div id="topbar"></div>
   <div class="canvas-area" style="height: <%= @height %>px">
     <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>"></canvas>
     <canvas id="animate-canvas" height="<%= @height %>" width="<%= @width %>" style="pointer-events: none;"></canvas>
@@ -21,20 +20,28 @@
 </script>
 
 <script id="layers-sidebar-template" type="text/template">
-  <ul class="nav nav-tabs">
-    <li class="active"> <a href=""> SCSS </a></li>
-    <li> <a href=""> CSS </a></li>
-  </ul>
-  <textarea></textarea>
+  <div class="sidebar">
+    <div class="code-area">
+      <ul class="nav nav-pills">
+        <li class="active"> <a href=""> SCSS </a></li>
+        <li> <a href=""> CSS </a></li>
+        <li class="pull-right"></a>
+      </ul>
+      <textarea></textarea>
+    </div>
+  </div>
 </script>
 
 <script id="layers-topbar-template" type="text/template">
-  <div class="topbar">
-    <ul class="nav nav-pills">
-      <li><a href="#layers">Home</a></li>
+<div class="navbar">
+  <div class="navbar-inner">
+    <ul class="nav">
+      <li class="active"><a href="#layers">Home</a></li>
       <li><a href="#images">Images</a></li>
       <li><a href="#typography">Typography</a></li>
     </ul>
+  </div>
+  <div class="clearfix"></div>
 </div>
 </script>
 

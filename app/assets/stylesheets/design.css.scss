@@ -47,17 +47,16 @@ h3.muted {
 }
 
 .muted {
-
+  @include text-shadow(rgba(#333, 0.9) 1px 1px 0);
   em {
-    color: #FF6B6B;
+    color:#f09000;
     font-style: normal;
   }
 
   a {
-    color: rgb(153, 153, 153);
+    color: #fff;
     text-decoration: none;
   }
-
 }
 
 #wrap {
@@ -65,7 +64,7 @@ h3.muted {
   height: auto !important;
   height: 100%;
   /* Negative indent footer by it's height */
-  margin: 0 auto -60px;
+  margin: 0 auto -30px;
 }
 
 /* Set the fixed height of the footer here */
@@ -84,7 +83,7 @@ h3.muted {
 }
 
 .navbar .nav {
-  margin: 5px 10px 0 0;
+  margin: 0px 10px;
 }
 
 h1 {
@@ -100,6 +99,7 @@ h2 {
 }
 
 h1, h2, h3, h4, h5 {
+  margin: 0 auto;
   color: #333;
 }
 
@@ -199,7 +199,6 @@ small {
   .design {
     min-height: 100px;
     padding: 25px;
-    margin-top: 10px;
   }
   
   .design-thumbnail {
