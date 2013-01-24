@@ -37,6 +37,7 @@
 //= require lib/codemirror-modes/css/css.js
 //= require lib/codemirror-modes/htmlmixed/htmlmixed
 //= require lib/codemirror-modes/htmlembedded/htmlembedded
+//= require lib/ZeroClipboard
  
 
 //= require twitter/bootstrap
