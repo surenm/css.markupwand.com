@@ -1,14 +1,18 @@
-<div class="top-menu">
-  <ul class="nav nav-pills pull-right">
-    <% if current_user.nil? %>
-    <li><a href="/about">About</a></li>
-    <li><a href="/faq">FAQ</a></li>
-    <li><a href="/login" class="login">Login</a></li>
-    <% else %>
-    <li> <a href="/designs"> Hi, <%= current_user.get_display_name %> </a> </li>
-    <li> <a href="/logout">Log out </a> </li>
-    <% end %>
-  </ul>
-  <h3 class="muted"><a href="/"><em>css</em> : markupwand</a></h3>
-  <div class="clearfix"> </div>
+<div id="header">
+  <div class="container-narrow">
+    <div class="top-menu">
+      <ul class="nav nav-pills pull-right">
+        <% if current_user.nil? %>
+        <li><a href="/about">About</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/login" class="login">Login</a></li>
+        <% else %>
+        <li> <a href="/designs"> Hi, <%= current_user.get_display_name %> </a> </li>
+        <li> <a href="/logout">Log out </a> </li>
+        <% end %>
+      </ul>
+      <h3 class="muted"><a href="/"><em>css</em> : markupwand</a></h3>
+      <div class="clearfix"> </div>
+    </div>
+  </div>
 </div>

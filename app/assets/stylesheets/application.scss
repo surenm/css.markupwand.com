@@ -17,7 +17,6 @@
  *= require lib/codemirror-theme
  *= require app/scaffolds
  *= require app/buttons
- *= require app/designs
  *= require app/landing_page
  *= require app/upload
  *= require app/preview
@@ -39,23 +38,23 @@ html, body {
 body {
   font-family: "ubuntu",sans-serif;
   font-size: 14px;
-  color: #556270;
 }
 
 h3.muted {
+  font-size: 24px;
   padding-bottom: 0px;
   margin-bottom: 0px;
 }
 
 .muted {
-
+  @include text-shadow(rgba(#333, 0.9) 1px 1px 0);
   em {
-    color: #FF6B6B;
+    color:#f09000;
     font-style: normal;
   }
 
   a {
-    color: inherit;
+    color: #fff;
     text-decoration: none;
   }
 }
@@ -66,14 +65,27 @@ a.login {
 
 }
 
+#header {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid #aaa;
+}
+
 .top-menu {
-  margin: 0px 10px 25px 10px;
-  border-bottom: 2px solid #eee;
+  margin: 0px 10px 0px 10px;
+  padding-top: 10px;
+  height: 50px;
 
   ul {
-    margin-bottom: 0px
+    margin-bottom: 0px;
+    a {
+      color: #fff;
+      font-size: 16px;
+    }
   }
+
+
 }
+
 
 #wrap {
   min-height: 100%;
@@ -99,12 +111,16 @@ a.login {
 }
 
 /* Main marketing message and sign up button */
+.main-content {
+  @include background(image_url('/assets/blur-background.jpg'));
+  background-size: cover;
+}
 .message {
-  margin: 60px 0;
+  padding: 100px;
   text-align: center;
-
+  color: #fff;
+  
   h1 {
-    
     font-size: 72px;
     line-height: 1;
   }
@@ -121,7 +137,6 @@ a.login {
 
 
 h1 {
-  margin: 30px;
   font-family: "myriad-pro",sans-serif;
   font-size: 75px;
   line-height: 1;
@@ -133,7 +148,7 @@ h2 {
 }
 
 h1, h2, h3, h4, h5 {
-  color: #333;
+  margin: 0 auto;
 }
 
 .left {
