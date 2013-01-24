@@ -14,14 +14,15 @@
 <%= content_for :content do %>
   <%= render 'shared/inner_header', :fluid => true %>
   <div id="editor-notifications"></div>
-  <div class="contents">  
-    <div id="app" style="min-height: <%= @height %>px">
-      <div id="topbar"></div>
+  <div id="app" style="min-height: <%= @height %>px">
+    <div id="topbar"></div>
+    <div id="content">
       <div id="editor"></div>
       <div id="sidebar"></div>
       <div class="clearfix"> </div>
     </div>
   </div>
+
   <div class="extra">
     <div id="layers"> </div>
     <div id="design-images" style="display:none">
