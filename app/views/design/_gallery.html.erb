@@ -6,11 +6,11 @@
         <div class="design">
           <div class="center">
             <div class="name">
-              <a href="/design/<%= design.safe_name %>" title="<%= design.name %>">  <%= DesignsHelper::short_form(design.name, 20) %> </a> <br>
+              <a href="/design/<%= design.safe_name %>/editor" title="<%= design.name %>">  <%= DesignsHelper::short_form(design.name, 20) %> </a> <br>
             </div>
           </div>
           <div class="image center">
-            <a href="/design/<%= design.safe_name %>"><div style="background-image: url('/extracted/<%= design.safe_name %>/<%= Store::get_safe_name File.basename(design.psd_file_path) %>-thumbnail.png')" class="preview-thumbnail"></div></a>
+            <a href="/design/<%= design.safe_name %>/editor"><div style="background-image: url('/extracted/<%= design.safe_name %>/<%= Store::get_safe_name File.basename(design.psd_file_path) %>-thumbnail.png')" class="preview-thumbnail"></div></a>
             <div class="<%= @status_class[design.status.to_sym] %>">
               <%= DesignsHelper::status_display_name  design.status.to_sym %>
             </div>
