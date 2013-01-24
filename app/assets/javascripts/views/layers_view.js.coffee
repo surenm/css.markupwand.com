@@ -18,7 +18,7 @@ class LayersView extends Backbone.View
 
     @text_area = $(this.sidebar).find('textarea')[0]
     @code_editor = CodeMirror.fromTextArea @text_area, {
-      lineNumbers: false
+      lineNumbers: true
       theme: 'ambiance'
       mode: 'css'
       textWrapping: true
