@@ -47,16 +47,19 @@ h3.muted {
 }
 
 .muted {
-  @include text-shadow(rgba(#333, 0.9) 1px 1px 0);
   em {
     color:#f09000;
     font-style: normal;
   }
 
   a {
-    color: #fff;
+    color: #666;
     text-decoration: none;
   }
+}
+
+#header {
+  margin-bottom: 20px;
 }
 
 #wrap {
