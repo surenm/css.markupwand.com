@@ -175,14 +175,16 @@ class Design
     else
       height = (self.height * self.scaling).round
     end
+    return height
   end
 
   def scaled_width
     if self.width <= 1024
-      width = self.width + 100
+      width = self.width
     else
       width = 1024
     end
+    return width
   end
 
   def layers
