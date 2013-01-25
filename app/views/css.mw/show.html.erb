@@ -20,9 +20,11 @@
   <div class="extra">
     <div id="layers"> </div>
     <div id="design-images" style="display:none">
-      <% @design.json_data[:sif][:layers].each do |layer| %>
-        <% if layer[:type] == 'normal' %>
-          <img src="/images/<%= @design.safe_name %>/<%= layer[:image_name] %>" id="<%= layer[:id] %>">
+      <% if not @design.json_data[:sif].nil? and @design.photoshop_status == Design::STATUS_PROCESSING_DONE %>
+        <% @design.json_data[:sif][:layers].each do |layer| %>
+          <% if layer[:type] == 'normal' %>
+            <img src="/images/<%= @design.safe_name %>/<%= layer[:image_name] %>" id="<%= layer[:id] %>">
+          <% end %>
         <% end %>
       <% end %>
     </div>
