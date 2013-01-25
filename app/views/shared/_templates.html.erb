@@ -1,3 +1,41 @@
+<script id="layers-view-template" type="text/template">
+  <div id="topbar">
+    <div class="design-name pull-right">
+      Design: <%= @design.name %>
+    </div>
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#layers"> CSS Styles</a></li>
+      <li><a href="#images">Images</a></li>
+      <li><a href="#typography">Fonts</a></li>
+    </ul>
+    <div class="clearfix"></div>
+  </div>
+
+  <div id="content">
+    
+    <div id="editor"></div>
+    
+    <div id="sidebar">
+      <div class="sidebar">
+        <div class="code-area">
+          <ul class="nav nav-pills">
+            <li class="active"> <a href=""> SCSS </a></li>
+            <li> <a href=""> CSS </a></li>
+            <li class="pull-right"> 
+              <a id="copy-to-clipboard" class="btn btn-mini" href="#"> 
+                <i class="icon-clipboard"> </i>Copy to clipboard 
+              </a>
+            </li>
+          </ul>
+          <textarea></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="clearfix"> </div>
+  </div>
+</script>
+
 <script id="editor-template" type="text/template">
   <div class="canvas-area" style="height: <%= @height %>px">
     <canvas id="design-canvas" height="<%= @height %>" width="<%= @width %>"></canvas>
@@ -17,36 +55,6 @@
 <script id="grouping-context-area-template" type="text/template">
   <a id="done" class="btn btn-small btn-primary"> Done </a>
   <a id="cancel" class="btn btn-small"> Cancel </a>
-</script>
-
-<script id="layers-sidebar-template" type="text/template">
-  <div class="sidebar">
-    <div class="code-area">
-      <ul class="nav nav-pills">
-        <li class="active"> <a href=""> SCSS </a></li>
-        <li> <a href=""> CSS </a></li>
-        <li class="pull-right"> 
-          <a id="copy-to-clipboard" class="btn btn-mini" href="#"> 
-            <i class="icon-clipboard"> </i>Copy to clipboard 
-          </a>
-
-        </li>
-      </ul>
-      <textarea></textarea>
-    </div>
-  </div>
-</script>
-
-<script id="layers-topbar-template" type="text/template">
-    <div class="design-name pull-right">
-      Design: <%= @design.name %>
-    </div>
-    <ul class="nav nav-tabs">
-      <li class="active"><a href="#layers"> CSS Styles</a></li>
-      <li><a href="#images">Images</a></li>
-      <li><a href="#typography">Fonts</a></li>
-    </ul>
-  <div class="clearfix"></div>
 </script>
 
 <!-- Intersections Templates -->
