@@ -2,15 +2,25 @@
 #= require '../lib/canvas_helper'
 
 class EditorArea
-  el: "#editor"
+  constructor: (@el) ->
+    # first instantiate the editor html inside the html element passed in.
+    $(this.el).html $("#editor-template").html()
 
-  constructor: () ->
-    $this = this
-
+    # instantiate CanvasHelpers for all canvases
     @design = window.design
     @design_canvas = new CanvasHelper this.get_canvas('design-canvas'), @design.get('scaling'), true
     @events_canvas = new CanvasHelper this.get_canvas('events-canvas'), @design.get('scaling')
     @animate_canvas = new CanvasHelper this.get_canvas('animate-canvas'), @design.get('scaling')
+
+    # wait for all design images to be loaded into the page and then render all layers
+    $this = this
+    dfd = $("#design-images").imagesLoaded()
+    dfd.done (images) ->
+      $this.init_design_layers()
+      $this.render_layers()
+
+    dfd.progress (isBroken, $images, $proper, $broken) ->
+      console.log( 'Loading progress: ' + ( $proper.length + $broken.length ) + ' out of ' + $images.length );
 
     @selected_layers = []
 
@@ -18,6 +28,13 @@ class EditorArea
   get_canvas: (canvas_name) ->
     canvas = $("##{canvas_name}").first()
     return canvas
+
+  # Given a design, add all its layers to the editor canvas.
+  # Assumes all assets are loaded for the same
+  init_design_layers: () ->
+    layers = @design.layers.toArray().reverse()
+    for i in [0..layers.length-1]
+      this.add_layer layers[i]
 
   # When multi selecting, add a layer to selected layers
   add_to_selected_layers: (layer) ->
