@@ -5,12 +5,27 @@ class DesignModel extends Backbone.Model
     @layers = new LayerCollection()
     @grouping_boxes = new GroupingBoxCollection()
 
-    # Reset collections
-    this.reset_collection_data()
-
-    # everytime the model changes, reset collection data
-    this.on "change", () ->
+    $design = this
+    
+    # Reset collections is design is ready
+    if this.is_ready()
       this.reset_collection_data()
+    else  
+      $.doTimeout 100, () ->
+        $design.fetch()
+
+    # everytime the model changes, if the design is ready to be rendered, reset collection data
+    this.on "change", () ->
+      if this.is_ready() 
+        this.reset_collection_data()
+
+    this.on "sync", () ->
+      if not this.is_ready()
+        console.log "still processing..."
+        $.doTimeout 1000, () ->
+          $design.fetch()
+      else
+        window.location.reload()
 
   reset_collection_data: () ->
     sif_data = this.get('sif')
@@ -32,5 +47,9 @@ class DesignModel extends Backbone.Model
 
   get_grouping_box: (grouping_box_id) ->
     return @grouping_boxes.get(grouping_box_id)
+
+  is_ready: () ->
+    return (this.get('status') == 'extracting_done') and (this.get('photoshop_status') == 'processing_done')
+
 
 window.DesignModel = DesignModel

@@ -1,15 +1,23 @@
 class LayersView extends Backbone.View
   el: "#app"
+  content: "#content"
   topbar: "#topbar"
   sidebar: "#sidebar"
   editor: "#editor"
   
   initialize: ->
-    # populate the app html
-    app_html = $("#layers-view-template").html()
-    $(this.el).html app_html
+    @design = window.design
 
-  change_child_view: (view) ->  
+    # populate the app html
+    $(this.el).html $("#layers-view-template").html()
+
+    if not @design.is_ready()
+      $(this.content).html $("#loading-template").html()
+
+  change_child_view: (view) ->
+    if not @design.is_ready()
+      return
+
     $(this.topbar).find("a[href='##{view}']").tab('show')
 
     if @child_view?
