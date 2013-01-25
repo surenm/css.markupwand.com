@@ -13,7 +13,7 @@ class LayersView extends Backbone.View
     $(this.topbar).find("a[href='##{view}']").tab('show')
 
     if @child_view?
-      @child_view.remove()
+      @child_view.stopListening()
 
     if view == 'styles'
       @child_view = new StylesView()
