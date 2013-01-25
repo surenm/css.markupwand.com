@@ -348,11 +348,6 @@ class DesignController < ApplicationController
     render :json => @design.get_serialized_sif_data
   end
 
-  def editor
-    @height = @design.scaled_height
-    @width = @design.scaled_width
-  end
-
   def group_layers
     layers = params[:layers]
     @design.group_layers layers
