@@ -10,12 +10,14 @@ class LayersView extends Backbone.View
     "layer-selected.editor #editor": "editor_click_handler"
 
   initialize: ->
-    sidebar_template = $("#layers-sidebar-template").html()
-    $(this.sidebar).html(sidebar_template)
+    # populate the app html
+    app_html = $("#layers-view-template").html()
+    $(this.el).html app_html
 
-    topbar_template = $("#layers-topbar-template").html()
-    $(this.topbar).html(topbar_template)
+    # instantiate the editor area
+    window.app.init_editor_area this.editor
 
+    # Populate side bar view with codemirror editor
     @text_area = $(this.sidebar).find('textarea')[0]
     @code_editor = CodeMirror.fromTextArea @text_area, {
       lineNumbers: true
@@ -25,13 +27,16 @@ class LayersView extends Backbone.View
       width: 380
     }
 
+    # Implement copy to clipboard using zeroclipboard
     $clip = new ZeroClipboard $("#copy-to-clipboard"), {
       moviePath: "/assets/lib/ZeroClipboard.swf"
     }
 
     $clip.on "complete", (client, args) ->
       # show a notification saying copied to clipboard
+      console.log "Successfully copied to clip board"
 
+    # Update clipboard text if code_editor changes
     $code_editor = @code_editor
     $code_editor.on "change", (instance, changeObj) ->
       $clip.setText $code_editor.getValue()
