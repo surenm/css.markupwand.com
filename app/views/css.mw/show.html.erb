@@ -1,0 +1,30 @@
+<%= content_for :css do %>
+  <%= stylesheet_link_tag "app/editor", :media => "all" %>
+<% end %>
+
+<%= content_for :javascript do %>
+  <%= render "shared/templates" %>
+  <script type="text/javascript">
+    var design_data = <%= raw @design.json_data.to_json %>
+  </script>
+  <%= javascript_include_tag "app/css_markupwand_app" %>
+<% end %>
+
+
+<%= content_for :content do %>
+  <%= render 'shared/inner_header', :fluid => true %>
+  <div id="editor-notifications"></div>
+  <div id="app" style="min-height: <%= @height %>px">
+  </div>
+
+  <div class="extra">
+    <div id="layers"> </div>
+    <div id="design-images" style="display:none">
+      <% @design.json_data[:sif][:layers].each do |layer| %>
+        <% if layer[:type] == 'normal' %>
+          <img src="/images/<%= @design.safe_name %>/<%= layer[:image_name] %>" id="<%= layer[:id] %>">
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
