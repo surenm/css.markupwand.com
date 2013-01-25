@@ -7,6 +7,12 @@ class StylesView extends Backbone.View
     "layer-selected.editor #editor": "editor_click_handler"
 
   initialize: ->
+    this.render()
+
+  render: ->
+    # populate editor and sidebar
+    $(this.el).html $("#styles-view-template").html()
+
     # instantiate the editor area
     window.app.init_editor_area this.editor
 
