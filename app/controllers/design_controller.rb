@@ -29,7 +29,7 @@ class DesignController < ApplicationController
     design.save!
     
     Resque.enqueue UploaderJob, design.id, design_data
-    redirect_to :action => :editor, :id => design.safe_name
+    redirect_to :action => :show, :id => design.safe_name
   end
 
   def intersecting_pairs
@@ -151,7 +151,7 @@ class DesignController < ApplicationController
     
     design.push_to_extraction_queue
     
-    redirect_to :action => :editor, :id => design.safe_name
+    redirect_to :action => :show, :id => design.safe_name
   end
 
   def replace_dom
