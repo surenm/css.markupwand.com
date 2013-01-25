@@ -135,18 +135,31 @@ class Design
   end
 
   def json_data
-    return {
+    json_data = {
       :name => self.name,
-      :psd_file_path => self.psd_file_path,
       :id => self.safe_name,
       :status => self.status,
+      :photoshop_status => self.photoshop_status,
       :safe_name => self.safe_name,
       :safe_name_prefix => self.safe_name_prefix,
-      :height => self.scaled_height,
-      :width => self.scaled_width,
-      :scaling => self.scaling,
-      :sif => self.get_serialized_sif_data
     }
+
+    unextracted_states = [ 
+      Design::STATUS_QUEUED, 
+      Design::STATUS_UPLOADING,
+      Design::STATUS_UPLOADED,
+      Design::STATUS_EXTRACTING,
+    ]
+
+    if not unextracted_states.include? self.status
+      json_data[:psd_file_path] = self.psd_file_path
+      json_data[:height] = self.scaled_height
+      json_data[:width] = self.scaled_width
+      json_data[:scaling] = self.scaling
+      json_data[:sif] = self.get_serialized_sif_data
+    end
+
+    return json_data
   end
 
   def init_sif(forced = false)
@@ -170,6 +183,8 @@ class Design
   end
 
   def scaled_height
+    return 600 if self.height.nil?
+
     if self.width <= 1024
       height = self.height + 100
     else
@@ -179,6 +194,7 @@ class Design
   end
 
   def scaled_width
+    return 1024 if self.width.nil?
     if self.width <= 1024
       width = self.width
     else
