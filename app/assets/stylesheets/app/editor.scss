@@ -97,6 +97,10 @@ body {
 
             a {
               color: #333;
+
+              &:hover {
+                @include border-radius(15px);
+              }
             }
             
             .active {
