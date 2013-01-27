@@ -5,6 +5,7 @@ class StylesView extends Backbone.View
 
   events: 
     "layer-selected.editor #editor": "editor_click_handler"
+    "click .code-area .nav a": "styles_tab_handler"
 
   initialize: ->
     this.render()
@@ -17,6 +18,7 @@ class StylesView extends Backbone.View
     window.app.init_editor_area this.editor
 
     # Populate side bar view with codemirror editor
+    @language_tabbar = $(this.sidebar).find('.nav')[0]
     @text_area = $(this.sidebar).find('textarea')[0]
     @code_editor = CodeMirror.fromTextArea @text_area, {
       lineNumbers: true
@@ -41,11 +43,30 @@ class StylesView extends Backbone.View
       $clip.setText $code_editor.getValue()
 
   editor_click_handler: (event) ->
-    layer = event.layer
-    style_rules = layer.get('style_rules').join ';\n'
-    if style_rules != ''
-      style_rules += ';\n'
+    @selected_layer = event.layer
+    currently_selected_tab = $(".code-area").find(".active").find('a')
+    lang = $(currently_selected_tab).data('lang')
+    this.show_styles_code(lang)
+
+  styles_tab_handler: (event) ->
+    current_tab_element = event.srcElement
+    $(current_tab_element).tab('show')
+
+    lang = $(current_tab_element).data('lang')
+    this.show_styles_code(lang)
+    return false
+
+  show_styles_code: (lang) ->
+    if not @selected_layer
+      return
       
+    if lang == 'scss'
+      style_rules = @selected_layer.getSCSS()
+    else if lang == 'css'
+      style_rules = @selected_layer.getCSS()
+
     @code_editor.setValue style_rules
+
+
 
 window.StylesView = StylesView
