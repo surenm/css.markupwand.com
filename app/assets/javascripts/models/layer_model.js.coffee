@@ -104,4 +104,14 @@ class LayerModel extends Backbone.Model
       fillStyle = canvas.create_gradient styles['gradient_fill'], this.get('bounds')
     return fillStyle
 
+  getSCSS: () ->
+    style_rules = this.get('style_rules').join ';\n'
+    if style_rules != ''
+      style_rules += ';\n'
+
+    return style_rules
+
+  getCSS: () ->
+    style_rules = "bimbilikki bilaapi"
+    return style_rules
 window.LayerModel = LayerModel
