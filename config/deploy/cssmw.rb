@@ -28,7 +28,11 @@ end
 
 namespace :heroku do
   task :status do
-    system "heroku ps --app css.mw"
+    system "heroku ps --app css-markupwand"
+  end
+
+  task :config do 
+    system "heroku config --app css-markupwand"
   end
 end
 

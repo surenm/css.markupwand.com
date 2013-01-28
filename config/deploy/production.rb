@@ -30,6 +30,10 @@ namespace :heroku do
   task :status do
     system "heroku ps --app markupwand"
   end
+
+  task :config do 
+    system "heroku config --app markupwand"
+  end
 end
 
 after 'deploy:create_symlink', 'deploy:copy_prod_configs'
