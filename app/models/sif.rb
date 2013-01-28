@@ -217,6 +217,7 @@ class Sif
     layer.style_layer = sif_layer_data[:style_layer]
     layer.image_name   = sif_layer_data[:image_name]
     
+    layer.css_rules = sif_layer_data[:css_rules]
     if not sif_layer_data[:grouping_box].nil?
       layer.grouping_box = BoundingBox.create_from_attribute_data sif_layer_data[:grouping_box]
     end

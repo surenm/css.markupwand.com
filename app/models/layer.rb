@@ -53,9 +53,10 @@ class Layer
   attr_accessor :text
   attr_accessor :shape
   attr_accessor :styles
-
   attr_accessor :style_layer # (Boolean)
   
+  attr_accessor :css_rules # (css for this layer)
+
   ##########################################################
   # Layer initialize and serialize functions
   ##########################################################
@@ -64,6 +65,7 @@ class Layer
 
   def attribute_data
     grouping_box_data = self.grouping_box.attribute_data if not self.grouping_box.nil?
+    css_rules = Array.new if self.css_rules.nil?
     attr_data = {
       :uid     => self.uid,
       :idx     => self.idx,
@@ -77,10 +79,10 @@ class Layer
       :text    => self.text,
       :shape   => self.shape,
       :styles  => self.styles,
-      :style_rules => self.get_style_rules,
+      :css_rules => self.css_rules,
       :design  => self.design.id,
       :style_layer => self.style_layer,
-      :grouping_box => grouping_box_data
+      :grouping_box => grouping_box_data,
     }
 
     if self.type == Layer::LAYER_NORMAL
@@ -92,11 +94,7 @@ class Layer
 
   def json_data
     grouping_box_data = self.grouping_box.attribute_data if not self.grouping_box.nil?
-    if self.type == Layer::LAYER_TEXT
-      all_layer_style_rules = self.get_style_rules + self.get_text_styles
-    else
-      all_layer_style_rules = self.get_style_rules
-    end
+
 
     json_data = {
       :id => self.uid,
@@ -106,13 +104,14 @@ class Layer
       :zindex => self.zindex,
       :bounds => self.bounds.attribute_data,
       :opacity => self.opacity,
-      :style_rules => all_layer_style_rules,
       :style_layer => self.style_layer,
       :grouping_box => grouping_box_data,
       :text => self.text,
       :shape => self.shape,
       :styles => self.styles,
-      :design => self.design.id
+      :design => self.design.id,
+      :scss => self.to_scss,
+      :css => self.to_css,
     }
 
     if self.type == Layer::LAYER_NORMAL
@@ -477,16 +476,27 @@ class Layer
   end
 
   def to_scss
-    scss_style_string = "";
-
-    self.get_style_rules.each do |style_line|
+    scss_style_string = ""
+    all_layer_style_rules = self.get_style_rules 
+    if self.type == Layer::LAYER_TEXT
+      all_layer_style_rules += self.get_text_styles
+    elsif self.type == Layer::LAYER_NORMAL
+      all_layer_style_rules += self.get_image_styles
+    end
+    
+    all_layer_style_rules.each do |style_line|
       scss_style_string += style_line + ";\n"
     end
-
+  
     return scss_style_string
   end
 
   def to_css
-    Compassify::scss_to_css self.get_style_rules 
+    css_style_string = ""
+    if not self.css_rules.nil?
+      css_style_string += self.css_rules
+    end
+    
+    return css_style_string
   end
 end
