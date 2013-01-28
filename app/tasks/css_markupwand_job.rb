@@ -5,31 +5,41 @@ class CssMarkupwandJob
   def self.perform(design_id)
     design = Design.find design_id
 
-    layers_scss = ""
+    layers_scss = '@import "compass";'
     layer_class_names = {
       Layer::LAYER_TEXT => 'text',
       Layer::LAYER_SHAPE => 'wrapper',
       Layer::LAYER_NORMAL => 'image'
     }
     
-    design.layers.values.each_with_index do |layer, index|
-      scss_style_string = ""
-      all_layer_style_rules = layer.get_style_rules 
-      if layer.type == Layer::LAYER_TEXT
-        all_layer_style_rules += layer.get_text_styles
-      elsif layer.type == Layer::LAYER_NORMAL
-        all_layer_style_rules += layer.get_image_styles
-      end
-      
-      all_layer_style_rules.each do |style_line|
-        scss_style_string += "  " + style_line + ";\n"
-      end
-
+    design.layers.each do |uid, layer|
       layers_scss += <<SCSS
-.#{layer_class_names[layer.type]}-#{index} {
-#{scss_style_string}
+.#{layer_class_names[layer.type]}-#{uid} {
+#{layer.to_scss}
 }
 SCSS
     end
+    
+    scss_engine = Sass::Engine.new layers_scss, { 
+      :load_paths => Constants::COMPASS_CONFIG, 
+      :syntax => :scss, 
+      :cache_location => Rails.root.join('tmp').to_s
+    }
+    
+    layers_css = scss_engine.render
+    css_parser = CssParser::Parser.new
+    css_parser.add_block! layers_css
+    
+    design.layers.each do |uid, layer|
+      layer_class_name = ".#{layer_class_names[layer.type]}-#{layer.uid}"
+      css = css_parser.find_by_selector layer_class_name
+      if not css.first.nil?
+        design.sif.layers[uid].css_rules = css.first.gsub! '; ', ";\n"
+      end
+    end
+    design.sif.save!
+    return
   end
+
+  
 end
