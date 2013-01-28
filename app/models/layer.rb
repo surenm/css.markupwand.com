@@ -384,6 +384,10 @@ class Layer
     end
   end
 
+  def get_image_styles
+    return Array.new
+  end
+
   ##########################################################
   # Layer styles related functions
   ##########################################################
