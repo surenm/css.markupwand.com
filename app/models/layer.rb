@@ -445,12 +445,15 @@ class Layer
     chunk = self.text_chunks.first
     text_styles = Array.new
     chunk[:styles].each do |key, value|
-      if key == :'font-family'
-        text_styles.push "#{key}: '#{value}'"
-      else
-        text_styles.push "#{key}: #{value}"
+      if self.allow_chunk_styles?(key)
+        if key == :'font-family'
+          text_styles.push "#{key}: '#{value}'"
+        else
+          text_styles.push "#{key}: #{value}"
+        end
       end
     end
+
     return text_styles
   end
 
