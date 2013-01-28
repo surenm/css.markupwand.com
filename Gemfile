@@ -91,9 +91,5 @@ group :development do
   gem 'ruby-prof'
 end
 
-# monitoring and profiling
-gem 'newrelic_rpm'
-gem 'rpm_contrib'
-
 # Analytics
 gem 'analytical', :git => 'git://github.com/Goyaka/analytical.git'
