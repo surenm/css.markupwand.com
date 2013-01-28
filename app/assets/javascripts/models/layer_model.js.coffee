@@ -105,13 +105,9 @@ class LayerModel extends Backbone.Model
     return fillStyle
 
   getSCSS: () ->
-    style_rules = this.get('style_rules').join ';\n'
-    if style_rules != ''
-      style_rules += ';\n'
-
-    return style_rules
+    return this.get('scss')
 
   getCSS: () ->
-    style_rules = "bimbilikki bilaapi"
-    return style_rules
+    return this.get('css')
+
 window.LayerModel = LayerModel
