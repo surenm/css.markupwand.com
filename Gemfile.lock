@@ -98,6 +98,9 @@ GEM
       sass (~> 3.2.0.alpha.93)
     compass-rails (1.0.3)
       compass (>= 0.12.2, < 0.14)
+    css_parser (1.2.6)
+      addressable
+      rdoc
     devise (2.1.2)
       bcrypt-ruby (~> 3.0)
       orm_adapter (~> 0.1)
@@ -361,6 +364,7 @@ DEPENDENCIES
   coffee-rails (~> 3.2.2)
   compass
   compass-rails
+  css_parser
   devise
   dropbox-api
   execjs
