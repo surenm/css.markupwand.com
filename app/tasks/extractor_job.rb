@@ -81,5 +81,6 @@ class ExtractorJob
       design.push_to_images_queue
     end
     
+    CssMarkupwandJob.perform design.id    
   end
 end
