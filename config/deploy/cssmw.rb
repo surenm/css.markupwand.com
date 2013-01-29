@@ -8,7 +8,7 @@ set :heroku_remote, "css.mw"
 
 set :shell_user, `whoami`
 
-server "css-worker.markupwand.com", :web, :app, :resque_worker
+server "beta-worker.markupwand.com", :web, :app, :resque_worker
 set :workers, { "worker" => 2 }
 
 namespace :deploy do
