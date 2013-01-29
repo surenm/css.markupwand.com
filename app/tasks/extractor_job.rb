@@ -79,6 +79,8 @@ class ExtractorJob
     if design.photoshop_status != Design::STATUS_PROCESSING_DONE
       Log.info "Images processing isn't complete. Queuing up for images extraction..."
       design.push_to_images_queue
+    else
+      ImagesCompletedJob.perform design.id 
     end
     
     CssMarkupwandJob.perform design.id    
