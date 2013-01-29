@@ -196,6 +196,50 @@ body {
         }
       }
     }
+
+    #images {
+      padding: 15px 5px;
+
+      .imageblock {
+        height: 200px;
+        min-height: 200px;
+        max-height: 200px;
+        border: 1px solid #999;
+        margin-bottom: 10px;
+
+        .layer-image {
+          @include background(image-url('/assets/transparent.png'));
+          vertical-align:middle;
+          text-align: center;
+          
+          
+          .preview-thumbnail {
+            width: 170px;
+            height: 171px;
+            background-repeat: no-repeat;
+            background-position: center;
+          }
+        }
+
+        .layer-name {
+          width: 170px;
+          margin-top: -2px;
+          margin-left: -1px;
+          border: 1px solid #999;
+
+          input {
+            width: 118px;
+            text-align: right;
+          }
+
+          input:focus {
+            border: 1px solid #333;
+            font-weight: bold;
+            color: #333;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -205,3 +249,5 @@ body {
   text-align: center;
   width: 100%;
 }
+
+
