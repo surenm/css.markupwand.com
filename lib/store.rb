@@ -11,7 +11,7 @@ module Store
   end
   
   def Store::get_S3_bucket_name
-    "store_#{Rails.env}"
+    ENV["STORE"]
   end
   
   def Store::get_remote_store
