@@ -25,9 +25,7 @@ class GroupingView extends Backbone.View
 
     $view = this
     this.model.bind 'change', () ->
-      $.blockUI({message: "Reloading design"})
       $view.render()
-      $.unblockUI()
 
   get_iframe_src: ->
     $design = this.model
@@ -84,10 +82,8 @@ class GroupingView extends Backbone.View
     layer_ids = (layer.get('id') for layer in @editor_area.get_selected_layers())
     $design = @design
 
-    $.blockUI({message: "Grouping boxes..."})
     $.post "/design/#{@design.get('id')}/group-layers", {layers: layer_ids}, (data) ->
       $design.fetch()
-      $.unblockUI()
 
   editor_click_handler: (event) ->
     if @editor_area.get_selected_layers().length > 1
