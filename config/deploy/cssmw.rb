@@ -1,6 +1,6 @@
 set :application, "markupwand"
 set :domain, "css.markupwand.com" unless exists?(:domain)
-set :branch, "master" unless exists?(:branch)
+set :branch, "css.markupwand.com" unless exists?(:branch)
 set :deploy_to, "/opt/#{domain}"
 
 set :heroku_app, "css-markupwand"
