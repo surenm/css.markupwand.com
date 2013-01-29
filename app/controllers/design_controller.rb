@@ -173,26 +173,27 @@ class DesignController < ApplicationController
 
   def image_rename
     if params[:uid] and params[:image_name]
-      uid = params[:uid]
-      
-      original_name = @design.layers[uid.to_i].image_name
-      final_name    = params[:image_name] + ".png"
-      
+      uid = params[:uid].to_i
+      original_name = @design.layers[uid].image_name
+      final_name = params[:image_name] + ".png"
+
       if original_name != final_name
-        @design.sif.layers[uid.to_i].image_name = final_name
-        @design.sif.save!
+       @design.sif.layers[uid].image_name = final_name
+       @design.sif.save! 
 
-        Store::rename_file File.join(@design.store_extracted_key, "assets", "images", original_name), File.join(@design.store_extracted_key, "assets", "images", final_name)
-        Store::rename_file File.join(@design.store_published_key, "assets", "images", original_name), File.join(@design.store_published_key, "assets", "images", final_name)
-        
-        render :json => {:status => "OK"} 
-        return
+       src_file = File.join @design.store_extracted_key, "images", original_name
+       destination_file = File.join @design.store_extracted_key, "images", final_name
+       Store::rename_file src_file, destination_file
+
+       data = {:status => "OK"}
       else
-        data = {:message => 'Same image name'}
+       data = { :status => "OK", :message => 'Same image name'}
       end
+    else
+      data = {:status => "FAILED"}
     end
-
-    render :json => {:status => "FAILED"} 
+    
+    render :json => data
   end
 
   def images
