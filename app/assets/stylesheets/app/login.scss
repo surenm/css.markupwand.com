@@ -11,6 +11,13 @@ body {
 
 .top-menu {
   margin-top: 50px;
+
+  a {
+    color: #333;
+    &:hover{
+      text-decoration: none;
+    }
+  }
 }
 
 .form-signin {
