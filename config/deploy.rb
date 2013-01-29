@@ -23,6 +23,10 @@ namespace :deploy do
         logger.info "Skipping asset pre-compilation because there were no asset changes"
       end
     end
+
+    task :precompile, :roles => :web, :except => { :no_release => true } do
+      run %Q{cd #{latest_release} && #{rake} RAILS_ENV=#{rails_env} assets:precompile}
+    end
   end
 end
 
