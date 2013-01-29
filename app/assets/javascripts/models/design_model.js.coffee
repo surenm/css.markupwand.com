@@ -42,6 +42,9 @@ class DesignModel extends Backbone.Model
   get_assets_root: ->
     return "published/#{this.get('safe_name')}/assets"
 
+  get_images_rename_url: ->
+    return "/design/#{this.get('safe_name')}/image-rename"
+
   get_layer: (layer_id) ->
     return @layers.get(layer_id)
 
