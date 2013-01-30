@@ -34,8 +34,13 @@ class StylesView extends Backbone.View
     }
 
     $clip.on "complete", (client, args) ->
-      # show a notification saying copied to clipboard
-      console.log "Successfully copied to clip board"
+      if args.text == ""
+        $("#copy-to-clipboard").html('<i class="icon-ban-circle"> </i>Empty').addClass('btn-link')
+      else
+        $("#copy-to-clipboard").html('<i class="icon-ok"> </i>Copied').addClass('btn-link')
+
+      $("#copy-to-clipboard").switchClass 'btn-link', 'btn', 1000, 'linear', () ->
+        $("#copy-to-clipboard").html('<i class="icon-clipboard"> </i>Copy to clipboard')
 
     # Update clipboard text if code_editor changes
     $code_editor = @code_editor
@@ -66,7 +71,5 @@ class StylesView extends Backbone.View
       style_rules = @selected_layer.getCSS()
 
     @code_editor.setValue style_rules
-
-
 
 window.StylesView = StylesView
