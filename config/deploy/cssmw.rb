@@ -36,6 +36,13 @@ namespace :heroku do
   end
 end
 
+namespace :worker do
+  task :start do
+    run "god start -c /opt/css.markupwand.com/current/script/worker.god"
+  end
+end
+
+
 after 'deploy:create_symlink', 'deploy:copy_cssmw_configs'
 after 'deploy:copy_prod_configs', 'worker:force_restart'
 after 'worker:force_restart', 'deploy:complete'
