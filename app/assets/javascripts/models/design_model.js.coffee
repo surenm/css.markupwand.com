@@ -40,7 +40,7 @@ class DesignModel extends Backbone.Model
       right: this.get('width')
 
   get_assets_root: ->
-    return "published/#{this.get('safe_name')}/assets"
+    return "/extracted/#{this.get('safe_name')}/images"
 
   get_images_rename_url: ->
     return "/design/#{this.get('safe_name')}/image-rename"

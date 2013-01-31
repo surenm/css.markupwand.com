@@ -52,6 +52,10 @@ class StylesView extends Backbone.View
     currently_selected_tab = $(".code-area").find(".active").find('a')
     lang = $(currently_selected_tab).data('lang')
     this.show_styles_code(lang)
+    this.reset_image_area()
+
+    if @selected_layer.get('type') == 'normal'
+      this.show_layer_image()
 
   styles_tab_handler: (event) ->
     current_tab_element = event.srcElement
@@ -59,6 +63,7 @@ class StylesView extends Backbone.View
 
     lang = $(current_tab_element).data('lang')
     this.show_styles_code(lang)
+    this.reset_image_area()
     return false
 
   show_styles_code: (lang) ->
@@ -71,5 +76,15 @@ class StylesView extends Backbone.View
       style_rules = @selected_layer.getCSS()
 
     @code_editor.setValue style_rules
+
+  show_layer_image: () ->
+    image_name = @selected_layer.get('image_name')
+    image_src = "#{window.design.get_assets_root()}/#{image_name}"
+    image_template =  _.template $("#image-template").html()
+    html = image_template({image_src: image_src})
+    $(this.sidebar).find('.image-area').html(html)
+
+  reset_image_area: () ->
+    $(this.sidebar).find('.image-area').html("")
 
 window.StylesView = StylesView
