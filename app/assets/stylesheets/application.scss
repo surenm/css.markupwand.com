@@ -36,8 +36,12 @@ html, body {
 }
 
 body {
-  font-family: "ubuntu",sans-serif;
+  font-family: "museo-slab", serif;
   font-size: 14px;
+}
+
+.btn {
+  font-family: "myriad-pro", sans-serif;
 }
 
 h3.muted {
@@ -47,6 +51,7 @@ h3.muted {
 }
 
 .muted {
+  font-family: "ubuntu", sans-serif;
   @include text-shadow(rgba(#333, 0.9) 1px 1px 0);
   em {
     color:#f09000;
@@ -75,6 +80,13 @@ a.login {
   padding-top: 10px;
   height: 50px;
 
+  .nav > li > a {
+    &:hover {
+      background: transparent;
+      text-decoration: underline;
+    }
+  }
+
   ul {
     margin-bottom: 0px;
     a {
@@ -82,8 +94,6 @@ a.login {
       font-size: 16px;
     }
   }
-
-
 }
 
 
@@ -120,7 +130,7 @@ a.login {
   background-size: cover;
 }
 .message {
-  padding: 100px;
+  padding: 45px;
   text-align: center;
   color: #fff;
   
@@ -130,7 +140,8 @@ a.login {
   }
 
   .lead {
-    margin-top: 50px;
+    font-size: 25px;
+    margin: 50px 10px;
   }
 
  .btn {
@@ -141,7 +152,6 @@ a.login {
 
 
 h1 {
-  font-family: "myriad-pro",sans-serif;
   font-size: 75px;
   line-height: 1;
 }
@@ -151,7 +161,12 @@ h2 {
   text-align: center;
 }
 
+h3 {
+  font-size: 20px;
+}
+
 h1, h2, h3, h4, h5 {
+  font-family: "myriad-pro", sans-serif;
   margin: 0 auto;
   font-weight: 500;
 }
@@ -175,4 +190,50 @@ h1, h2, h3, h4, h5 {
 
 small {
   font-size: 0.8em;
+}
+
+
+.features {
+  padding: 100px 0px;
+
+  .feature {
+    text-align: center;
+    font-size: 16px;
+    color: #999;
+    img {
+      padding: 10px 0px;
+    }
+
+    h3 {
+      font-size: 22px;
+      color: #666;
+      padding-bottom: 10px;
+    }
+  }
+
+   .featurette-divider {
+      margin: 80px 0;
+    }
+    .featurette {
+      padding-top: 120px; 
+      overflow: hidden; 
+    }
+    .featurette-image {
+      margin-top: -120px;
+    }
+
+    .featurette-image.pull-left {
+      margin-right: 40px;
+    }
+    .featurette-image.pull-right {
+      margin-left: 40px;
+    }
+
+    .featurette-heading {
+      font-size: 50px;
+      font-weight: 300;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
 }

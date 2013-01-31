@@ -3,14 +3,38 @@
     <%= render 'shared/header' %>
     <div class="container">
       <div class="message">
-        <h1>Photoshop styles to CSS3</h1>
+        <h1>Photoshop styles to CSS</h1>
         <p class="lead">
-          Completely web based &nbsp;&nbsp;●&nbsp;&nbsp;  No photoshop required  &nbsp;&nbsp;●&nbsp;&nbsp;  Completely Automatic
+          Turn photoshop styles into CSS3 right in the browser
         </p>
 
         <a class="btn btn-large btn-success" href="/signup"> Try it now</a>
       </div>
-      <div class="row-fluid marketing"></div>
+      
+    </div>
+  </div>
+  <div class="container">
+    <div class="row features">
+      <div class="feature span3">
+        <img src="/assets/no-ps.png">
+        <h3> No photoshop needed</h3>
+        Completely web based, no longer need PS as web developer
+      </div>
+      <div class="feature span3">
+        <img src="/assets/css3.png">
+        <h3>Generates CSS3 styles</h3>
+        Translates layer effects into CSS3 using SCSS & Compass
+      </div>
+      <div class="feature span3"> 
+        <img src="http://dummyimage.com/128x128/999/333.png">
+        <h3> Extracts Image Assets  </h3>
+        Automatically get web ready images from PSD file
+      </div>
+      <div class="feature span3">
+        <img src="/assets/scale.png">
+        <h3> Measure pixels easily </h3>
+        Writing pixel perfect CSS was never this easy!
+      </div>
     </div>
   </div>
 <% end %>
