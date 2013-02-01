@@ -110,4 +110,10 @@ class LayerModel extends Backbone.Model
   getCSS: () ->
     return this.get('css')
 
+  getImageName: () ->
+    if this.get('image_name').indexOf('.') != -1
+      pos = this.get('image_name').lastIndexOf('.')
+      image_name = this.get('image_name').substring(0, pos)
+      return image_name
+
 window.LayerModel = LayerModel

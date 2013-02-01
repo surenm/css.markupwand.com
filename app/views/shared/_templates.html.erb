@@ -48,8 +48,12 @@
 <script id="image-template" type="text/template">
 <div class="imageblock">
   <div class="layer-image">
-    <div style="background-image: url('{{image_src}}');" class="preview-thumbnail">
-    </div>
+    <div style="background-image: url('{{image_src}}');" class="preview-thumbnail"></div>
+  </div>
+
+  <div class="layer-name input-append">
+    <span> <input type="text" data-original-image-name="{{ layer.getImageName() }}" data-layer-id="{{ layer.get('uid') }}" value="{{ layer.getImageName() }}"> </span>
+    <span class="add-on">.png</span>
   </div>
 </div>
 </script>
@@ -60,14 +64,16 @@
   <% if not @design.json_data[:sif].nil? and @design.photoshop_status == Design::STATUS_PROCESSING_DONE %>
     <% @design.layers.each do |uid, layer| %>
       <% if layer.type == Layer::LAYER_NORMAL %>
-      <div class="span2 imageblock">
+      <div class="span3 imageblock">
         <div class="layer-image">
           <div style="background-image: url('/extracted/<%= @design.safe_name %>/images/<%= layer.image_name %>');" class="preview-thumbnail">
           </div>
         </div>
 
         <div class="layer-name input-append">
-          <input type="text" data-original-image-name="<%= layer.image_name(false) %>" data-layer-id="<%= layer.uid %>" value="<%= layer.image_name(false) %>">
+          <span>
+            <input type="text" data-original-image-name="<%= layer.image_name(false) %>" data-layer-id="<%= layer.uid %>" value="<%= layer.image_name(false) %>">
+          </span>
           <span class="add-on">.png</span>
         </div>
       </div>

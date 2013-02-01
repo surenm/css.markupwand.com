@@ -202,7 +202,7 @@ body {
     }
 
     #images {
-      padding: 15px 5px;
+      padding: 15px 85px;
     }
   }
 }
@@ -246,20 +246,28 @@ body {
   }
 
   .layer-name {
-    width: 170px;
     margin-top: -2px;
     margin-left: -1px;
     border: 1px solid #999;
+    display: table;
+
+    span {
+      display: table-cell;
+      width: 100%;
+    }
 
     input {
-      width: 118px;
       text-align: right;
+      width: 98%;
+      padding-left: 1%;
+      padding-right: 1%;
+
+      &:focus {
+        border: 1px solid #333;
+        font-weight: bold;
+        color: #333;
+      }
     }
 
-    input:focus {
-      border: 1px solid #333;
-      font-weight: bold;
-      color: #333;
-    }
   }
 }
