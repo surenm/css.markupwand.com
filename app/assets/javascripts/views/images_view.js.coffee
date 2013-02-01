@@ -19,8 +19,8 @@ class ImagesView extends Backbone.View
   render: () ->
     $(this.el).html $("#images-view-template").html()    
     $(".image-name-editable").editable()
-#    $(".image-name-editable").first().editable('toggle')
-#    $(".image-name-editable").first().parent().find('.editable-input input').focus()
+    $(".image-name-editable").first().editable('toggle')
+    $(".image-name-editable").first().parent().find('.editable-input input').focus()
 
 
   layer_name_changed_handler: (event) ->
