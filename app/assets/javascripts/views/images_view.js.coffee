@@ -2,13 +2,26 @@ class ImagesView extends Backbone.View
   el: "#content"
 
   events: 
-    "change input": "layer_name_changed_handler"
+    "change inputasdfa": "layer_name_changed_handler"
+#    "keydown .editable-input input" : "handle_tab"
 
   initialize: () ->
+    $.fn.editable.defaults.mode = 'inline';
     this.render()
 
+  handle_tab: (e) ->
+    if (e.keyCode == 9)
+      e.preventDefault();
+      $(e.target).parent().parent().parent().parent().parent().parent().parent().parent().next().find('.image-name-editable').editable('toggle')
+    window.input = $(e.target)
+
+
   render: () ->
-    $(this.el).html $("#images-view-template").html()
+    $(this.el).html $("#images-view-template").html()    
+    $(".image-name-editable").editable()
+#    $(".image-name-editable").first().editable('toggle')
+#    $(".image-name-editable").first().parent().find('.editable-input input').focus()
+
 
   layer_name_changed_handler: (event) ->
     input_el = event.target
