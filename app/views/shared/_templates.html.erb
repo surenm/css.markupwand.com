@@ -65,17 +65,15 @@
     <% @design.layers.each do |uid, layer| %>
       <% if layer.type == Layer::LAYER_NORMAL %>
       <div class="span3 imageblock">
-        <div class="layer-image">
+        <div class="image-thumb">
           <div style="background-image: url('/extracted/<%= @design.safe_name %>/images/<%= layer.image_name %>');" class="preview-thumbnail">
           </div>
         </div>
 
-        <div class="layer-name input-append">
-          <span>
-            <input type="text" data-original-image-name="<%= layer.image_name(false) %>" data-layer-id="<%= layer.uid %>" value="<%= layer.image_name(false) %>">
-          </span>
-          <span class="add-on">.png</span>
+        <div class="image-name">
+          <a href="#" class="image-name-editable" data-type="text" data-pk="1" data-url="/post" data-original-title="Enter image name"><%= layer.image_name %></a>
         </div>
+
       </div>
       <% end %>
     <% end %>
