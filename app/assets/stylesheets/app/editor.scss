@@ -64,6 +64,10 @@ body {
       @include background(image-url('/assets/noise.png') #eee);
     }
 
+    #action-bar {
+      padding: 10px 5px 0px 5px;
+    }
+
     #editor {
       float: left;
       width: 1024px;

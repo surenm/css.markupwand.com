@@ -6,6 +6,7 @@ class StylesView extends Backbone.View
   events: 
     "layer-selected.editor #editor": "editor_click_handler"
     "click .code-area .nav a": "styles_tab_handler"
+    "click #actual-size": "zoom_level_handler"
 
   initialize: ->
     this.render()
@@ -16,6 +17,7 @@ class StylesView extends Backbone.View
 
     # instantiate the editor area
     window.app.init_editor_area this.editor
+    @editor_area = window.app.editor_area
 
     # Populate side bar view with codemirror editor
     @language_tabbar = $(this.sidebar).find('.nav')[0]
@@ -86,5 +88,8 @@ class StylesView extends Backbone.View
 
   reset_image_area: () ->
     $(this.sidebar).find('.image-area').html("")
+
+  zoom_level_handler: () ->
+    @editor_area.set_zoom()
 
 window.StylesView = StylesView
