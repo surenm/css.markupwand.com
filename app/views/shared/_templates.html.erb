@@ -71,7 +71,7 @@
         </div>
 
         <div class="image-name">
-          <a href="#" class="image-name-editable" data-type="text" data-pk="1" data-url="/post" data-original-title="Enter image name"><%= layer.image_name %></a>
+          <a href="#" class="image-name-editable" data-type="text" data-pk="<%= layer.uid %>" data-name="<%= layer.uid %>" data-url="/design/<%= @design.safe_name %>/image-rename" data-original-title="Enter image name"><%= layer.image_name %></a>
         </div>
 
       </div>

@@ -172,10 +172,10 @@ class DesignController < ApplicationController
   end
 
   def image_rename
-    if params[:uid] and params[:image_name]
-      uid = params[:uid].to_i
+    if params[:pk] and params[:value]
+      uid = params[:pk].to_i
       original_name = @design.layers[uid].image_name
-      final_name = params[:image_name] + ".png"
+      final_name = params[:value]
 
       if original_name != final_name
        @design.sif.layers[uid].image_name = final_name
