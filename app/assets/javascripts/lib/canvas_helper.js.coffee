@@ -1,7 +1,7 @@
 # Class to handle maninpulations specific to a canvas
 class CanvasHelper
 
-  constructor: (@canvas_element, scaling, events = false) ->
+  constructor: (@canvas_element, @scaling, events = false) ->
     $(@canvas_element).scaleCanvas 
       x: 0
       y: 0
@@ -22,6 +22,19 @@ class CanvasHelper
         fromCenter: false
         strokeWidth: 1
 
+  change_scale: (scaling) ->
+    $(@canvas_element).removeLayers()
+    this.clear()
+
+    reset_scale = (1*scaling)/@scaling 
+
+    $(@canvas_element).scaleCanvas(
+      x: 0
+      y: 0
+      scaleX: reset_scale
+      scaleY: reset_scale
+    )
+    
   # Render all jcanvas layers in this layer
   draw_layers: () ->
     $(@canvas_element).drawLayers()

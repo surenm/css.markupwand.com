@@ -86,5 +86,14 @@ class EditorArea
       when 'g'
         object = app.design.get_grouping_box(id)
 
+  set_zoom: (scale = 1) ->
+    @design_canvas.change_scale scale
+    @events_canvas.change_scale scale
+    @animate_canvas.change_scale scale
+
+    this.init_design_layers()
+    this.render_layers()
+
+
 
 window.EditorArea = EditorArea
