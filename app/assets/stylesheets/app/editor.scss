@@ -228,12 +228,28 @@ body {
 
 }
 
+.imageblock:hover {
+  
+  .btn-group {
+    visibility: visible;
+  }
+}
+
 .imageblock {
-  height: 204px;
-  min-height: 204px;
-  max-height: 204px;
-  border: 1px solid #999;
-  margin-bottom: 10px;
+  margin-bottom: 50px;
+
+  .btn-group {
+    margin-left: 50px;
+    visibility: hidden;
+  }
+
+  .imageblock-inner {
+    height: 204px;
+    min-height: 204px;
+    max-height: 204px;
+    border: 1px solid #999;
+  }
+
 
   .image-thumb {
     @include background(image-url('/assets/transparent.png'));

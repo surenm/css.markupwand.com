@@ -294,6 +294,19 @@ class DesignController < ApplicationController
 
     send_file zip_file, :disposition => 'inline'
   end
+
+  def download_image
+    if not params[:layer_id]
+      render :text => "FAILURE"
+    else
+      @design.init_sif
+      image_name  = @design.layers[params[:layer_id].to_i].image_name
+      image_file  = File.join @design.store_extracted_key, "images", image_name
+      copied_dest = Store::fetch_object_from_store(image_file)
+
+      send_file copied_dest, :disposition => 'download', :filename => image_name
+    end
+  end
   
   def download_psd
     file = Store::fetch_object_from_store(@design.psd_file_path)

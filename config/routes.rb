@@ -47,6 +47,7 @@ TransformersWeb::Application.routes.draw do
       match 'replace-dom'      => 'design#replace_dom', :via => [:post, :get]
       match 'preview'          => 'design#preview'
       match 'download'         => 'design#download'
+      match 'download-image/:layer_id'   => 'design#download_image'
       match 'update'           => 'design#update'
       match 'fonts'            => 'design#fonts'
       match 'fonts_upload'     => 'design#fonts_upload'

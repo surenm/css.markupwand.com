@@ -4,10 +4,18 @@ class ImagesView extends Backbone.View
   events: 
     "change inputasdfa": "layer_name_changed_handler"
     "keydown .editable-input input" : "handle_tab"
+    "click .rename-btn" : "rename_click"
 
   initialize: () ->
     $.fn.editable.defaults.mode = 'inline';
     this.render()
+
+
+  rename_click: (e)->
+    layer_id = $(e.target).closest('.imageblock').data('layer')
+    $('#rename-' + layer_id).editable('toggle')
+    return false
+
 
   handle_tab: (e) ->
     if (e.keyCode == 9)
@@ -23,7 +31,7 @@ class ImagesView extends Backbone.View
           value : $(e.target).val()
       )
       $(link).html($(e.target).val())
-      $(e.target).parent().parent().parent().parent().parent().parent().parent().parent().next().find('.image-name-editable').editable('toggle')
+      $(e.target).closest('.imageblock').next().find('.image-name-editable').editable('toggle')
 
   render: () ->
     $(this.el).html $("#images-view-template").html()    
