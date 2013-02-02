@@ -69,17 +69,12 @@ class StylesView extends Backbone.View
     else
       target = $(e.target)
 
-    console.log $(target).data('layer-id')
     layer_id = target.data('layer-id')
     window.location.hash = 'images'
 
     setTimeout(->
       $('#imagename-' + layer_id).editable('toggle')
     , 50)
-
-    # TODO : This doesn't change the url hash
-    # app.layers_view.change_child_view('images')
-    # $('#imagename-' + layer_id).editable('toggle')
 
     false
 
