@@ -2,14 +2,7 @@
 class CanvasHelper
 
   constructor: (@canvas_element, @scaling, events = false) ->
-    $(@canvas_element).scaleCanvas 
-      x: 0
-      y: 0
-      scaleX: scaling
-      scaleY: scaling
-
-    $this = this
-
+    @fit_scaling = @scaling
     if events
       $(@canvas_element).jCanvas
         fromCenter: false
@@ -22,17 +15,29 @@ class CanvasHelper
         fromCenter: false
         strokeWidth: 1
 
+    $(@canvas_element).saveCanvas()
+
+    $(@canvas_element).scaleCanvas 
+      x: 0
+      y: 0
+      scaleX: @scaling
+      scaleY: @scaling
+
   change_scale: (scaling) ->
+    # clear all layers
     $(@canvas_element).removeLayers()
     this.clear()
 
-    reset_scale = (1*scaling)/@scaling 
-
+    # restore canvas to default scale
+    $(@canvas_element).restoreCanvas()
+  
+    # now scale to required scaling
+    @scaling = parseFloat(scaling)/100
     $(@canvas_element).scaleCanvas(
       x: 0
       y: 0
-      scaleX: reset_scale
-      scaleY: reset_scale
+      scaleX: @scaling
+      scaleY: @scaling
     )
     
   # Render all jcanvas layers in this layer
