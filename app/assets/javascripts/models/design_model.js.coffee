@@ -52,7 +52,7 @@ class DesignModel extends Backbone.Model
     return @grouping_boxes.get(grouping_box_id)
 
   is_ready: () ->
-    return (this.get('status') == 'extracting_done') and (this.get('photoshop_status') == 'processing_done')
+    return (this.get('status') == 'extracting_done')
 
   to_canvas_data: () ->
     assets_path = window.app.design.get_assets_root()
