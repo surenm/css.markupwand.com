@@ -16,6 +16,16 @@ class StylesView extends Backbone.View
     # populate editor and sidebar
     $(this.el).html $("#styles-view-template").html()
 
+    # instantiate elements top action bar
+    $("#zoom-slider").slider
+      range: "min"
+      min: 50
+      max: 150
+      value: 100
+      slide: (event, slider) ->
+        console.log slider.value
+
+
     # instantiate the editor area
     window.app.init_editor_area this.editor
     @editor_area = window.app.editor_area
