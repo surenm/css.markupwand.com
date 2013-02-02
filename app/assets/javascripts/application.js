@@ -12,7 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require lib/jquery-ui-1.8.20.min
+//= require lib/jquery-ui-1.9.2.custom.min
 
 //= require lib/underscore
 //= require lib/backbone
