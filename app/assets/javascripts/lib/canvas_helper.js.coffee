@@ -38,6 +38,8 @@ class CanvasHelper
     else
       @scaling = parseFloat(scaling)/100
     
+    @design.set 'editor_scaling', @scaling
+
     # reset canvas dimensions
     this.reset_canvas_dimensions()
 

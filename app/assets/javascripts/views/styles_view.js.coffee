@@ -12,6 +12,11 @@ class StylesView extends Backbone.View
 
   initialize: ->
     @design = window.design
+
+    @design.bind 'change:editor_scaling', () ->
+      slider_percentage = Math.round this.get('editor_scaling') * 100
+      $("#zoom-slider").slider 'option', 'value', slider_percentage
+    
     this.render()
 
   render: ->
@@ -22,7 +27,7 @@ class StylesView extends Backbone.View
     $this = this
     $("#zoom-slider").slider
       range: "min"
-      min: 50
+      min: 40
       max: 250
       value: 100
       step: 10
