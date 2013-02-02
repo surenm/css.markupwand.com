@@ -70,6 +70,19 @@ body {
 
     #action-bar {
       padding: 10px 5px 0px 5px;
+      vertical-align: middle;
+
+      #zoom-slider {
+        width: 100px;
+        display: inline-block;
+
+        .ui-corner-all {
+          height: 20px;
+          width: 20px;
+          @include border-radius(10px);
+          margin-top: -3px;
+        }
+      }
     }
 
     #editor {
