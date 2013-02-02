@@ -5,13 +5,6 @@ class CanvasHelper
     @canvas_element = $("##{canvas_element_id}").first()
     @canvas_dom_element = document.getElementById canvas_element_id
 
-    @parent_height = $(@canvas_element).parent().height()
-    @parent_width = $(@canvas_element).parent().width()
-    if @parent_width < @design.get('width')
-      @fit_scaling = (@parent_width * 100)/ @design.get('width')
-    else
-      @fit_scaling = 100
-
     $(@canvas_element).jCanvas
         fromCenter: false
   
@@ -23,7 +16,7 @@ class CanvasHelper
     $(@canvas_element).saveCanvas()
 
     # change scaling of canvas to default fit size
-    this.change_scale @fit_scaling
+    this.change_scale @design.get('scaling')
 
   destroy: () ->
     $(@canvas_element).removeLayers()
@@ -33,15 +26,15 @@ class CanvasHelper
     scaled_height = Math.ceil @scaling * @design.get('height')
     scaled_width = Math.ceil @scaling * @design.get('width')
 
-    height = Math.max scaled_height, @parent_height
-    width = Math.max scaled_width, @parent_width
+    height = Math.max scaled_height, @design.get('editor_height')
+    width = Math.max scaled_width, @design.get('editor_width')
 
     @canvas_dom_element.height = height
     @canvas_dom_element.width = width
 
   change_scale: (scaling) ->
     if scaling == -1 
-      @scaling = @fit_scaling/100
+      @scaling = @design.get('scaling')/100
     else
       @scaling = parseFloat(scaling)/100
     

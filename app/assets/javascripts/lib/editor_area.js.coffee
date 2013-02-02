@@ -6,8 +6,20 @@ class EditorArea
     # first instantiate the editor html inside the html element passed in.
     $(this.el).html $("#editor-template").html()
 
-    $(".canvas-area").height($("#editor").height())
-    $(".canvas-area").width($("#editor").width())
+    @design = window.design
+
+    @design.set 'editor_height', $("#editor").height()
+    @design.set 'editor_width', $("#editor").width()
+
+    $(".canvas-area").height @design.get('editor_height')
+    $(".canvas-area").width @design.get('editor_width')
+
+    if @design.get('editor_width') < @design.get('width')
+      editor_fit_scaling = (@design.get('editor_width') * 100)/ @design.get('width')
+    else
+      editor_fit_scaling = 100
+
+    @design.set 'scaling', editor_fit_scaling
 
     # instantiate CanvasHelpers for all canvases
     @design = window.design
