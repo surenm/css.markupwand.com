@@ -24,7 +24,7 @@
   <div id="action-bar" class="btn-toolbar">
       <div id="zoom" class="btn-group">
         <button class="btn" data-zoom-size=100><i class="icon-resize-full"></i> Actual</button>
-        <button class="btn" data-zoom-size=<%= (@design.scaling * 100).to_i%>><i class="icon-resize-small"></i> Fit </button>
+        <button class="btn" data-zoom-size=-1><i class="icon-resize-small"></i> Fit </button>
         <div class="btn "><i class="icon-zoom-out"></i> <div id="zoom-slider"></div> <i class="icon-zoom-in"></i></div>
       </div>
 
@@ -33,27 +33,29 @@
       </div>
     <div class="clearfix"></div>
   </div>
-  <div id="editor"></div>
-  <div id="sidebar">
-    <div class="sidebar">
-      <div class="code-area">
-        <ul class="nav nav-pills">
-          <li class="active"> <a href="#scss" data-lang="scss"> SCSS </a></li>
-          <li> <a href="#" data-lang="css"> CSS </a></li>
-          <li class="pull-right"> 
-            <a id="copy-to-clipboard" class="btn btn-mini" href="#"> 
-              <i class="icon-clipboard"> </i>Copy to clipboard 
-            </a>
-          </li>
-        </ul>
-        <textarea></textarea>
-      </div>
-      <div class="image-area">
+  <div class="row-fluid">
+    <div class="pull-left" id="editor"></div>
+    <div class="pull-left" id="sidebar">
+      <div class="sidebar">
+        <div class="code-area">
+          <ul class="nav nav-pills">
+            <li class="active"> <a href="#scss" data-lang="scss"> SCSS </a></li>
+            <li> <a href="#" data-lang="css"> CSS </a></li>
+            <li class="pull-right"> 
+              <a id="copy-to-clipboard" class="btn btn-mini" href="#"> 
+                <i class="icon-clipboard"> </i>Copy to clipboard 
+              </a>
+            </li>
+          </ul>
+          <textarea></textarea>
+        </div>
+        <div class="image-area">
 
+        </div>
       </div>
     </div>
+    <div class="clearfix"> </div>
   </div>
-  <div class="clearfix"> </div>
 </script>
 
 <script id="image-template" type="text/template">
