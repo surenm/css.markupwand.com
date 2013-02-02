@@ -21,7 +21,6 @@ class CropView extends Backbone.View
       if height < 400
         difference = 400 - height
         $("#crop-image-container").css('margin-top', difference/2)
-      console.log "Image size #{height} #{width}"
 
     new_img.src = img
 
@@ -29,7 +28,6 @@ class CropView extends Backbone.View
     $('.jcrop-holder').remove()
     $crop_view = app.layers_view.child_view.crop_view;
     $crop_view.jcrop_api = null 
-    console.log $crop_view.update_coords
     $("#crop-image").Jcrop(
       bgColor   : 'black',
       bgOpacity : .4,
@@ -44,6 +42,7 @@ class CropView extends Backbone.View
       image_src  : '/extracted/' + window.design.id + '/images/' + name
       layer_id   : layer_id
 
+    @current_layer = layer_id
     @set_dimensions(render_data['image_src'])
     @render(render_data)
     @initiate_crop()
@@ -76,6 +75,8 @@ class CropView extends Backbone.View
       src = $('#crop-image').attr('src')
       src = src + '?' + (new Date()).getTime()
       $('#crop-image').attr('src', src)
+      $('*[data-layer="' + $crop_view.current_layer + '"] .preview-thumbnail').css('background-image',"url('" + src + "')")
+
       $('#crop-image').on('load', ->
         app.layers_view.child_view.crop_view.set_dimensions(src)
       )
@@ -86,7 +87,6 @@ class CropView extends Backbone.View
       setTimeout($crop_view.initiate_crop, 1000)
     else
       $('#crop-loading').html('Failed!')
-
 
   crop_save: (e)->
     @show_loading('Cropping..')
