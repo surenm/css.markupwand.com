@@ -1,7 +1,17 @@
 # Class to handle maninpulations specific to a canvas
 class CanvasHelper
 
-  constructor: (@canvas_element, fit_scaling, @enable_events = false) ->
+  constructor: (canvas_element_id, @design, @enable_events = false) ->
+    @canvas_element = $("##{canvas_element_id}").first()
+    @canvas_dom_element = document.getElementById canvas_element_id
+
+    @parent_height = $(@canvas_element).parent().height()
+    @parent_width = $(@canvas_element).parent().width()
+    if @parent_width < @design.get('width')
+      @fit_scaling = (@parent_width * 100)/ @design.get('width')
+    else
+      @fit_scaling = 100
+
     $(@canvas_element).jCanvas
         fromCenter: false
   
@@ -12,19 +22,36 @@ class CanvasHelper
     # save pristine state of canvas
     $(@canvas_element).saveCanvas()
 
-    # change scaling of canvas to default fit scaling
-    this.change_scale fit_scaling * 100
+    # change scaling of canvas to default fit size
+    this.change_scale @fit_scaling
 
   destroy: () ->
     $(@canvas_element).removeLayers()
     this.clear()
 
+  reset_canvas_dimensions:  ->
+    scaled_height = Math.ceil @scaling * @design.get('height')
+    scaled_width = Math.ceil @scaling * @design.get('width')
+
+    height = Math.max scaled_height, @parent_height
+    width = Math.max scaled_width, @parent_width
+
+    @canvas_dom_element.height = height
+    @canvas_dom_element.width = width
+
   change_scale: (scaling) ->
+    if scaling == -1 
+      @scaling = @fit_scaling/100
+    else
+      @scaling = parseFloat(scaling)/100
+    
+    # reset canvas dimensions
+    this.reset_canvas_dimensions()
+
     # restore canvas to pristine state
     $(@canvas_element).restoreCanvas()
   
     # now scale to required scaling
-    @scaling = parseFloat(scaling)/100
     $(@canvas_element).scaleCanvas(
       x: 0
       y: 0

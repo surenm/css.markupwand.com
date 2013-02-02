@@ -6,11 +6,14 @@ class EditorArea
     # first instantiate the editor html inside the html element passed in.
     $(this.el).html $("#editor-template").html()
 
+    $(".canvas-area").height($("#editor").height())
+    $(".canvas-area").width($("#editor").width())
+
     # instantiate CanvasHelpers for all canvases
     @design = window.design
-    @design_canvas = new CanvasHelper this.get_canvas('design-canvas'), @design.get('scaling'), true
-    @events_canvas = new CanvasHelper this.get_canvas('events-canvas'), @design.get('scaling')
-    @animate_canvas = new CanvasHelper this.get_canvas('animate-canvas'), @design.get('scaling')
+    @design_canvas = new CanvasHelper 'design-canvas', @design, true
+    @events_canvas = new CanvasHelper 'events-canvas', @design
+    @animate_canvas = new CanvasHelper 'animate-canvas', @design
 
     # wait for all design images to be loaded into the page and then render all layers
     $this = this
@@ -37,7 +40,7 @@ class EditorArea
 
   # Get a canvas element given its ID
   get_canvas: (canvas_name) ->
-    canvas = $("##{canvas_name}").first()
+    
     return canvas
 
   # Given a design, add all its layers to the editor canvas.
