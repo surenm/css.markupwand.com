@@ -24,11 +24,11 @@
 <script id="styles-view-template" type="text/template">
   <div id="action-bar">
       <div class="btn-group">
-        <button class="btn"><i class="icon-zoom-in"> </i> Zoom in </button>
-        <button class="btn"><i class="icon-zoom-out"> </i>Zoom out</button>
-        <button class="btn" id="actual-size"><i class="icon-fullscreen"></i> 100% </button>
+        <button class="btn" id="actual-size"><i class="icon-resize-full"></i> Actual</button>
+        <button class="btn" id="fit-size"><i class="icon-resize-small"></i> Fit </button>
+        <div class="btn "><i class="icon-zoom-out"></i> <div id="zoom-slider"></div> <i class="icon-zoom-in"></i></div>
       </div>
-    </div>
+    <div class="clearfix"></div>
   </div>
   <div id="editor"></div>
   <div id="sidebar">
