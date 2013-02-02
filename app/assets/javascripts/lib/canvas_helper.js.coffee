@@ -1,34 +1,26 @@
 # Class to handle maninpulations specific to a canvas
 class CanvasHelper
 
-  constructor: (@canvas_element, @scaling, events = false) ->
-    @fit_scaling = @scaling
-    if events
-      $(@canvas_element).jCanvas
+  constructor: (@canvas_element, fit_scaling, @enable_events = false) ->
+    $(@canvas_element).jCanvas
         fromCenter: false
-        click: EditorAreaEvents.click_handler
-        dblclick: EditorAreaEvents.double_click_handler
-        mouseover: EditorAreaEvents.mouse_over_handler
-        mouseout: EditorAreaEvents.mouse_out_handler
-    else
+  
+    if not @enable_events
       $(@canvas_element).jCanvas
-        fromCenter: false
         strokeWidth: 1
 
+    # save pristine state of canvas
     $(@canvas_element).saveCanvas()
 
-    $(@canvas_element).scaleCanvas 
-      x: 0
-      y: 0
-      scaleX: @scaling
-      scaleY: @scaling
+    # change scaling of canvas to default fit scaling
+    this.change_scale fit_scaling * 100
 
-  change_scale: (scaling) ->
-    # clear all layers
+  destroy: () ->
     $(@canvas_element).removeLayers()
     this.clear()
 
-    # restore canvas to default scale
+  change_scale: (scaling) ->
+    # restore canvas to pristine state
     $(@canvas_element).restoreCanvas()
   
     # now scale to required scaling
@@ -145,52 +137,85 @@ class CanvasHelper
       font: canvas_data.font
       text: canvas_data.text
 
-  add_shape_layer: (canvas_data) ->
-    $(@canvas_element).addLayer
-      method: 'drawRect'
-      group: 'shape'
-      name: canvas_data.name
-      x: canvas_data.bounds.left
-      y: canvas_data.bounds.top
-      width: canvas_data.width
-      height: canvas_data.height
-      fillStyle: canvas_data.fillStyle
-      strokeStyle: canvas_data.strokeStyle
-      strokeWidth: canvas_data.strokeWidth
-      cornerRadius: canvas_data.cornerRadius
+  add_shape_layer: (canvas_data, enable_events = @enable_events) ->
+    if enable_events
+      $(@canvas_element).addLayer
+        method: 'drawRect'
+        group: 'shape'
+        name: canvas_data.name
+        x: canvas_data.bounds.left
+        y: canvas_data.bounds.top
+        width: canvas_data.width
+        height: canvas_data.height
+        fillStyle: canvas_data.fillStyle
+        strokeStyle: canvas_data.strokeStyle
+        strokeWidth: canvas_data.strokeWidth
+        cornerRadius: canvas_data.cornerRadius
+        click: EditorAreaEvents.click_handler
+        dblclick: EditorAreaEvents.double_click_handler
+        mouseover: EditorAreaEvents.mouse_over_handler
+        mouseout: EditorAreaEvents.mouse_out_handler
+    else 
+      $(@canvas_element).addLayer
+        method: 'drawRect'
+        group: 'shape'
+        name: canvas_data.name
+        x: canvas_data.bounds.left
+        y: canvas_data.bounds.top
+        width: canvas_data.width
+        height: canvas_data.height
+        fillStyle: canvas_data.fillStyle
+        strokeStyle: canvas_data.strokeStyle
+        strokeWidth: canvas_data.strokeWidth
+        cornerRadius: canvas_data.cornerRadius
 
-  add_image_layer: (canvas_data) ->
-    $(@canvas_element).addLayer
-      method: 'drawImage'
-      group: 'image'
-      name: canvas_data.name
-      source: canvas_data.src
-      x: canvas_data.bounds.left
-      y: canvas_data.bounds.top
 
-  add_meta_layer: (canvas_data) ->
-    $(@canvas_element).addLayer
-      method: 'drawRect'
-      group: 'layer'
-      name: canvas_data.name
-      x: canvas_data.bounds.left
-      y: canvas_data.bounds.top
-      width: canvas_data.width
-      height: canvas_data.height
-      fillStyle: 'rgba(255, 255, 255, 0)'
+  add_image_layer: (canvas_data, enable_events = @enable_events) ->
+    if enable_events
+      $(@canvas_element).addLayer
+        method: 'drawImage'
+        group: 'image'
+        name: canvas_data.name
+        source: canvas_data.src
+        x: canvas_data.bounds.left
+        y: canvas_data.bounds.top
+        click: EditorAreaEvents.click_handler
+        dblclick: EditorAreaEvents.double_click_handler
+        mouseover: EditorAreaEvents.mouse_over_handler
+        mouseout: EditorAreaEvents.mouse_out_handler
+    else
+      $(@canvas_element).addLayer
+        method: 'drawImage'
+        group: 'image'
+        name: canvas_data.name
+        source: canvas_data.src
+        x: canvas_data.bounds.left
+        y: canvas_data.bounds.top
 
-  add_eventless_image_layer: (canvas_data) ->
-    $(@canvas_element).addLayer
-      method: 'drawImage'
-      group: 'static-image'
-      name: canvas_data.name
-      source: canvas_data.src
-      x: canvas_data.bounds.left
-      y: canvas_data.bounds.top
-      fromCenter: false
-      click: null
-      dblclick: null
-      mouseover: null
-      mouseout: null
+  add_meta_layer: (canvas_data, enable_events = @enable_events) ->
+    if enable_events
+      $(@canvas_element).addLayer
+        method: 'drawRect'
+        group: 'layer'
+        name: canvas_data.name
+        x: canvas_data.bounds.left
+        y: canvas_data.bounds.top
+        width: canvas_data.width
+        height: canvas_data.height
+        fillStyle: 'rgba(255, 255, 255, 0)'
+        click: EditorAreaEvents.click_handler
+        dblclick: EditorAreaEvents.double_click_handler
+        mouseover: EditorAreaEvents.mouse_over_handler
+        mouseout: EditorAreaEvents.mouse_out_handler
+    else
+      $(@canvas_element).addLayer
+        method: 'drawRect'
+        group: 'layer'
+        name: canvas_data.name
+        x: canvas_data.bounds.left
+        y: canvas_data.bounds.top
+        width: canvas_data.width
+        height: canvas_data.height
+        fillStyle: 'rgba(255, 255, 255, 0)'
 
 window.CanvasHelper = CanvasHelper
