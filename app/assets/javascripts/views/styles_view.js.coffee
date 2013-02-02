@@ -128,7 +128,15 @@ class StylesView extends Backbone.View
     @editor_area.set_zoom zoom_level
 
   measure_handler: (event) ->
-    @editor_area.disable_events()
+    measureit_button = event.currentTarget
 
+    if $(measureit_button).hasClass 'active btn-warning'
+      $(this.sidebar).animate {opacity: 1}, 'slow'
+      @editor_area.enable_events()
+      $(measureit_button).removeClass 'active btn-warning'
+    else
+      $(this.sidebar).animate {opacity: 0.2}, 'slow'
+      @editor_area.disable_events()
+      $(measureit_button).addClass 'active btn-warning'
 
 window.StylesView = StylesView
