@@ -25,6 +25,8 @@ class EditorArea
 
   disable_events: () ->
     @design_canvas.destroy()
+    @animate_canvas.clear()
+    @events_canvas.clear()
     this.init_design_layers(false)
     this.render_layers()
 
