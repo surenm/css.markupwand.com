@@ -7,6 +7,7 @@ class StylesView extends Backbone.View
     "layer-selected.editor #editor": "editor_click_handler"
     "click .code-area .nav a": "styles_tab_handler"
     "click #actual-size": "zoom_level_handler"
+    "click #image-tab-btn" : "move_to_image_tab"
 
   initialize: ->
     this.render()
@@ -48,6 +49,26 @@ class StylesView extends Backbone.View
     $code_editor = @code_editor
     $code_editor.on "change", (instance, changeObj) ->
       $clip.setText $code_editor.getValue()
+
+  move_to_image_tab: (e)->
+    if e.target.nodeName == 'I'
+      target = $(e.target).parent()
+    else
+      target = $(e.target)
+
+    console.log $(target).data('layer-id')
+    layer_id = target.data('layer-id')
+    window.location.hash = 'images'
+
+    setTimeout(->
+      $('#imagename-' + layer_id).editable('toggle')
+    , 50)
+
+    # TODO : This doesn't change the url hash
+    # app.layers_view.change_child_view('images')
+    # $('#imagename-' + layer_id).editable('toggle')
+
+    false
 
   editor_click_handler: (event) ->
     @selected_layer = event.layer
