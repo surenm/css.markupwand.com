@@ -41,6 +41,8 @@ class LayerModel extends Backbone.Model
       name: "l_#{this.get('id')}"
       src: image_src
       bounds: bounds
+      width: bounds.right - bounds.left
+      height: bounds.bottom - bounds.top
 
     return canvas_data
 

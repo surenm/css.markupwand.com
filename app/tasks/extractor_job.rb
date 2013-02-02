@@ -14,13 +14,10 @@ class ExtractorJob
     psd_file_root  = File.basename design.psd_file_path, '.psd'
     
     extracted_folder = Rails.root.join 'tmp', 'store', design.store_extracted_key
-    assets_folder = File.join extracted_folder, "assets"
-    images_folder = File.join extracted_folder, "assets", "images"
-    FileUtils.mkdir_p images_folder if not Dir.exists? images_folder
+    FileUtils.mkdir_p extracted_folder if not Dir.exists? extracted_folder
 
     extracted_file   = Rails.root.join extracted_folder, "#{design.safe_name_prefix}.json"
     screenshot_file  = Rails.root.join extracted_folder, "#{design.safe_name_prefix}.png"
-    fixed_width_file = Rails.root.join extracted_folder, "#{design.safe_name_prefix}-fixed.png"
     thumbnail_file   = Rails.root.join extracted_folder, "#{design.safe_name_prefix}-thumbnail.png"
     
     psdjs_root_dir   = Rails.root.join 'lib', 'psd.js'
@@ -45,19 +42,14 @@ class ExtractorJob
       raise err
     end
   
-    # Build screenshot, thumbnail files
-    fixed_width_cmd = "convert #{screenshot_file} -thumbnail '600x480>' -unsharp 0x.8 #{fixed_width_file}"
+    # Build, thumbnail files
     thumbnail_cmd   = "convert #{screenshot_file} -thumbnail '180x240>' -unsharp 0x.8 #{thumbnail_file}"
-    
-    Log.info fixed_width_cmd
-    system fixed_width_cmd
     
     Log.info thumbnail_cmd
     system thumbnail_cmd
     
     Store.save_to_store extracted_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}.json")
     Store.save_to_store screenshot_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}.png")
-    Store.save_to_store fixed_width_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}-fixed.png")
     Store.save_to_store thumbnail_file, File.join(design.store_extracted_key, "#{design.safe_name_prefix}-thumbnail.png")
 
     design.set_status Design::STATUS_EXTRACTING_DONE

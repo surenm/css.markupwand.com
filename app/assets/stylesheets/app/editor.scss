@@ -18,6 +18,10 @@ body {
 
   .canvas-area {
     background: url('/assets/transparent.png');
+    width: 1024px;
+    height: 600px;
+    position: absolute;
+    overflow: scroll;
   }
 
   #editor-notifications {
@@ -59,7 +63,7 @@ body {
 
     #content {
       margin-left: 10px;
-      min-height: 600px;
+      min-height: 750px;
       max-width: 1420px;
       @include background(image-url('/assets/noise.png') #eee);
     }

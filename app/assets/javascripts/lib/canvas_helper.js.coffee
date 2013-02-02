@@ -163,4 +163,29 @@ class CanvasHelper
       x: canvas_data.bounds.left
       y: canvas_data.bounds.top
 
+  add_meta_layer: (canvas_data) ->
+    $(@canvas_element).addLayer
+      method: 'drawRect'
+      group: 'layer'
+      name: canvas_data.name
+      x: canvas_data.bounds.left
+      y: canvas_data.bounds.top
+      width: canvas_data.width
+      height: canvas_data.height
+      fillStyle: 'rgba(255, 255, 255, 0)'
+
+  add_eventless_image_layer: (canvas_data) ->
+    $(@canvas_element).addLayer
+      method: 'drawImage'
+      group: 'static-image'
+      name: canvas_data.name
+      source: canvas_data.src
+      x: canvas_data.bounds.left
+      y: canvas_data.bounds.top
+      fromCenter: false
+      click: null
+      dblclick: null
+      mouseover: null
+      mouseout: null
+
 window.CanvasHelper = CanvasHelper

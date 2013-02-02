@@ -14,7 +14,7 @@ class EditorArea
 
     # wait for all design images to be loaded into the page and then render all layers
     $this = this
-    dfd = $("#design-images").imagesLoaded()
+    dfd = $("#design-screenshot").imagesLoaded()
     dfd.done (images) ->
       $this.init_design_layers()
       $this.render_layers()
@@ -32,6 +32,8 @@ class EditorArea
   # Given a design, add all its layers to the editor canvas.
   # Assumes all assets are loaded for the same
   init_design_layers: () ->
+    @design_canvas.add_eventless_image_layer @design.to_canvas_data()
+
     layers = @design.layers.toArray().reverse()
     for i in [0..layers.length-1]
       this.add_layer layers[i]
@@ -63,13 +65,7 @@ class EditorArea
     if not canvas_data?
       return
 
-    switch layer.get('type')
-      when 'text'
-        @design_canvas.add_text_layer canvas_data
-      when 'shape'
-        @design_canvas.add_shape_layer canvas_data
-      when 'normal'
-        @design_canvas.add_image_layer canvas_data
+    @design_canvas.add_meta_layer canvas_data
     return
 
   # Render all layers of the PSD in this editor
