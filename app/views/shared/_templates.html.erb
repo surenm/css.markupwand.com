@@ -66,6 +66,34 @@
 </div>
 </script>
 
+<script id="crop-view-template" type="text/template">
+<div id="crop-modal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Cropping {{ image_name }}</h3>
+  </div>
+  <div class="modal-body">
+    <div id="crop-image-container">
+      <img src="{{ image_src }}" id="crop-image" />
+    </div>
+    <div id="crop-loading">
+      Cropping..
+    </div>
+    <input type="hidden" id="crop-x" name="crop-x">
+    <input type="hidden" id="crop-y" name="crop-y">
+    <input type="hidden" id="crop-w" name="crop-w">
+    <input type="hidden" id="crop-h" name="crop-h">
+    <input type="hidden" id="crop-layer-id" name="crop-layer-id" value="{{ layer_id }}">
+
+  </div>
+  <div class="modal-footer">
+    <a href="#" data-dismiss="modal" class="btn">Cancel</a>
+    <a href="#" id="crop-save" class="btn">Crop & Save </a>
+    <a href="#" id="crop-done" class="btn btn-primary">Done</a>
+  </div>
+</div>
+</script>
+
 <script id="images-view-template" type="text/template">
 <div id="images">
 <%= form_tag "/design/#{@design.safe_name}/images", :method => "post" %>
@@ -80,15 +108,15 @@
           </div>
 
           <div class="image-name">
-            <a href="#" id="rename-<%= layer.uid %>" class="image-name-editable" data-type="text" data-pk="<%= layer.uid %>" data-name="<%= layer.uid %>" data-url="/design/<%= @design.safe_name %>/image-rename" data-original-title="Enter image name"><%= layer.image_name %></a>
+            <a href="#" id="imagename-<%= layer.uid %>" class="image-name-editable" data-type="text" data-pk="<%= layer.uid %>" data-name="<%= layer.uid %>" data-url="/design/<%= @design.safe_name %>/image-rename" data-original-title="Enter image name"><%= layer.image_name %></a>
           </div>
         </div>
 
         <div class="controls">
           <div class="btn-group">
-            <button class="btn btn-small rename-btn">Rename</button>
-            <a href="/design/<%= @design.safe_name %>/download-image/<%= layer.uid %>" class="btn btn-small download-btn">Download</a>
-            <button class="btn btn-small crop-btn">Crop</button>
+            <button class="btn btn-small rename-btn"><i class="icon-pencil"></i>  Rename</button>
+            <a href="/design/<%= @design.safe_name %>/download-image/<%= layer.uid %>" class="btn btn-small download-btn"><i class="icon-download-alt"></i> Download</a>
+            <button class="btn btn-small crop-btn"><img src="/assets/crop-black.png"></i> Crop</button>
           </div>
         </div>
 

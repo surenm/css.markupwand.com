@@ -239,7 +239,7 @@ body {
   margin-bottom: 50px;
 
   .btn-group {
-    margin-left: 50px;
+    margin-left: 18px;
     visibility: hidden;
   }
 
@@ -299,5 +299,27 @@ body {
     .editable-cancel {
       margin-left: 3px;
     }
+  }
+}
+
+#crop-modal {
+  min-width  : 960px;
+  left : 35%;
+  top : 35%;
+  
+  .modal-body {
+    min-height : 400px;
+    text-align: center;
+  }
+
+  #crop-image-container {
+    margin: 0 auto;
+  }
+
+  #crop-loading {
+    font-size: 45px;
+    margin-top: 170px;
+    color : #111;
+    display : none;
   }
 }

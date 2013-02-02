@@ -44,6 +44,7 @@ TransformersWeb::Application.routes.draw do
       match ''                 => 'design#show'
       match 'images'           => 'design#images'
       match 'image-rename'     => 'design#image_rename', :via => :post
+      match 'image-crop'       => 'design#image_crop', :via => :post
       match 'replace-dom'      => 'design#replace_dom', :via => [:post, :get]
       match 'preview'          => 'design#preview'
       match 'download'         => 'design#download'

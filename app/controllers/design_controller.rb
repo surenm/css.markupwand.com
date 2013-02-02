@@ -171,6 +171,29 @@ class DesignController < ApplicationController
 
   end
 
+  def image_crop 
+    if params[:layer_id] and params[:h] and params[:w] and
+      params[:x] and params[:y]
+
+      x = params[:x].to_i
+      y = params[:y].to_i
+      w = params[:w].to_i
+      h = params[:h].to_i
+
+      @design.init_sif
+      image_name  = @design.layers[params[:layer_id].to_i].image_name
+      image_file  = File.join @design.store_extracted_key, "images", image_name
+      current_image_path = Store::fetch_object_from_store(image_file)
+
+      layer = @design.layers[params[:layer_id].to_i]
+      layer.crop_image_by_bounds x, y, w, h
+
+      render :json => {:status => 'SUCCESS'}
+    else
+      render :json => {:status => 'FAILED'}
+    end
+  end
+
   def image_rename
     if params[:pk] and params[:value]
       uid = params[:pk].to_i

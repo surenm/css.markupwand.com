@@ -1,7 +1,7 @@
 <%= content_for :css do %>
   <%= stylesheet_link_tag "app/editor", :media => "all" %>
   <%= stylesheet_link_tag "lib/bootstrap-editable", :media => "all" %>
-
+  <%= stylesheet_link_tag "lib/jquery.Jcrop.min", :media => "all" %>
 <% end %>
 
 <%= content_for :javascript do %>
@@ -11,6 +11,8 @@
   </script>
   <%= javascript_include_tag "app/css_markupwand_app" %>
   <%= javascript_include_tag "lib/bootstrap-editable.min" %>
+  <%= javascript_include_tag "lib/jquery.Jcrop.min" %>
+
 <% end %>
 
 

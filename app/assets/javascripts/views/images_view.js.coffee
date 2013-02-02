@@ -5,6 +5,8 @@ class ImagesView extends Backbone.View
     "change inputasdfa": "layer_name_changed_handler"
     "keydown .editable-input input" : "handle_tab"
     "click .rename-btn" : "rename_click"
+    "click .crop-btn"   : "crop_click"
+
 
   initialize: () ->
     $.fn.editable.defaults.mode = 'inline';
@@ -13,8 +15,19 @@ class ImagesView extends Backbone.View
 
   rename_click: (e)->
     layer_id = $(e.target).closest('.imageblock').data('layer')
-    $('#rename-' + layer_id).editable('toggle')
-    return false
+    $('#imagename-' + layer_id).editable('toggle')
+    false
+
+  crop_click: (e)->
+    layer_id = $(e.target).closest('.imageblock').data('layer')
+    image_name = $('#imagename-'+ layer_id).html()
+    if not @crop_view
+      @crop_view = new CropView()
+
+    @crop_view.show(image_name, layer_id)
+
+
+    false
 
 
   handle_tab: (e) ->
