@@ -8,6 +8,7 @@ class StylesView extends Backbone.View
     "click .code-area .nav a": "styles_tab_handler"
     "click #image-tab-btn" : "move_to_image_tab"
     "click #zoom button": "zoom_level_handler"
+    "click #measureit": "measure_handler"
 
   initialize: ->
     @design = window.design
@@ -125,5 +126,9 @@ class StylesView extends Backbone.View
       zoom_level = event.slider.value
 
     @editor_area.set_zoom zoom_level
+
+  measure_handler: (event) ->
+    @editor_area.disable_events()
+
 
 window.StylesView = StylesView
