@@ -83,7 +83,7 @@ class StylesView extends Backbone.View
     image_name = @selected_layer.get('image_name')
     image_src = "#{window.design.get_assets_root()}/#{image_name}"
     image_template =  _.template $("#image-template").html()
-    html = image_template({image_src: image_src, layer: @selected_layer})
+    html = image_template({image_src: image_src, layer: @selected_layer, design_id : window.design.id})
     $(this.sidebar).find('.image-area').html(html)
 
   reset_image_area: () ->
