@@ -304,7 +304,7 @@ class Layer
     if self.type != Layer::LAYER_NORMAL
       return
     else
-      local_image_path = self.extracted_image_path
+      local_image_path = File.join @design.store_extracted_key, "images", self.image_name
       current_image    = Image.read(local_image_path).first
       current_image.crop!(left_offset, top_offset, width, height)
       current_image.write(local_image_path)

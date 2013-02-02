@@ -186,7 +186,11 @@ class DesignController < ApplicationController
       current_image_path = Store::fetch_object_from_store(image_file)
 
       layer = @design.layers[params[:layer_id].to_i]
-      layer.crop_image_by_bounds x, y, w, h
+
+      current_image    = Image.read(current_image_path).first
+      current_image.crop!(x, y, w, h)
+      current_image.write(current_image_path)
+      Store::save_to_store current_image_path, image_file
 
       render :json => {:status => 'SUCCESS'}
     else

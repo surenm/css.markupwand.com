@@ -13,9 +13,9 @@ class CropView extends Backbone.View
       height = new_img.height
       width  = new_img.width
       $("#crop-image-container").css('width', width)
-      $("#crop-image-container").css('height', height)
-      if $("#crop-modal .modal-body").height() > height
-        difference = $("#crop-modal .modal-body").height() - height
+      $("#crop-image-container").css('height', height) 
+      if height < 400
+        difference = 400 - height
         $("#crop-image-container").css('margin-top', difference/2)
       console.log "Image size #{height} #{width}"
 
