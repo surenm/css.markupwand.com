@@ -54,13 +54,12 @@
 
 <script id="image-template" type="text/template">
 <div class="imageblock" >
-  <div class="layer-image">
-    <div style="background-image: url('{{image_src}}');" class="preview-thumbnail"></div>
+  <div class="btn-group">
+    <a href="#images" class="btn btn-small" id="image-tab-btn" data-layer-id="{{ layer.get('id') }}"><i class="icon-edit"></i>  Edit</button>
+    <a href="/design/{{ design_id }}/download-image/{{ layer.get('id') }}" class="btn btn-small download-btn"><i class="icon-download-alt"></i> Download</a>
   </div>
-
-  <div class="layer-name input-append">
-    <span> <input type="text" data-original-image-name="{{ layer.getImageName() }}" data-layer-id="{{ layer.get('uid') }}" value="{{ layer.getImageName() }}"> </span>
-    <span class="add-on">.png</span>
+  <div class="image-thumb">
+    <div style="background-image: url('{{image_src}}');" class="preview-thumbnail"></div>
   </div>
 </div>
 </script>
@@ -112,7 +111,7 @@
         </div>
 
         <div class="controls">
-          <div class="btn-group">
+          <div class="btn-group image-controls">
             <button class="btn btn-small rename-btn"><i class="icon-pencil"></i>  Rename</button>
             <a href="/design/<%= @design.safe_name %>/download-image/<%= layer.uid %>" class="btn btn-small download-btn"><i class="icon-download-alt"></i> Download</a>
             <button class="btn btn-small crop-btn"><img src="/assets/crop-black.png"></i> Crop</button>
