@@ -4,7 +4,8 @@ class CropView extends Backbone.View
   initialize: () ->
 
   events:
-    "click #crop-save" : "crop_save"
+    "click #crop-save"         : "crop_save"
+    "click #reset-to-original" : "reset_original" 
 
   set_dimensions: (img) ->
     new_img = new Image();
@@ -22,8 +23,7 @@ class CropView extends Backbone.View
         $("#crop-image-container").css('margin-top', difference/2)
       console.log "Image size #{height} #{width}"
 
-    new_img.src = img;
-
+    new_img.src = img
 
   initiate_crop: ->
     $('.jcrop-holder').remove()
@@ -38,9 +38,7 @@ class CropView extends Backbone.View
         $crop_view.jcrop_api = this
     )
 
-
   show: (name, layer_id) ->
-
     render_data = 
       image_name : name 
       image_src  : '/extracted/' + window.design.id + '/images/' + name
@@ -63,8 +61,8 @@ class CropView extends Backbone.View
     $('#crop-w').val(c.w);
     $('#crop-h').val(c.h);
 
-  show_loading: ->
-    $('#crop-loading').html('Cropping..')
+  show_loading: (text)->
+    $('#crop-loading').html(text)
     $('#crop-loading').show()
     $('#crop-image-container').hide()
 
@@ -91,10 +89,15 @@ class CropView extends Backbone.View
 
 
   crop_save: (e)->
-    @show_loading()
+    @show_loading('Cropping..')
     $.post '/design/' + window.design.id + '/image-crop', @post_data(), @crop_cb
-
     false
+
+  reset_original: ->
+    $.post '/design/' + window.design.id + '/image-reset', @post_data(), @crop_cb
+    @show_loading('Cropping..')
+    false
+    
 
   render: (data) ->
     $('#crop-modal').remove()

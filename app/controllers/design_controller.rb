@@ -171,6 +171,24 @@ class DesignController < ApplicationController
 
   end
 
+  def image_reset
+    if params[:layer_id]
+      @design.init_sif
+
+      layer = @design.layers[params[:layer_id].to_i]
+      image_name  = @design.layers[params[:layer_id].to_i].image_name
+
+      destination  = File.join @design.store_extracted_key, "images", image_name
+      source      = File.join @design.store_images_key, "#{layer.uid}.png"
+      
+      Store::copy_within_store source, destination
+      
+      render :json => {:status => 'SUCCESS'}
+    else
+      render :json => {:status => 'FAILED'}
+    end
+  end
+
   def image_crop 
     if params[:layer_id] and params[:h] and params[:w] and
       params[:x] and params[:y]
