@@ -24,13 +24,9 @@
 
   <div class="extra">
     <div id="layers"> </div>
-    <div id="design-images" style="display:none">
-      <% if not @design.json_data[:sif].nil? and @design.photoshop_status == Design::STATUS_PROCESSING_DONE %>
-        <% @design.json_data[:sif][:layers].each do |layer| %>
-          <% if layer[:type] == 'normal' %>
-            <img src="/extracted/<%= @design.safe_name %>/images/<%= layer[:image_name] %>" id="<%= layer[:id] %>">
-          <% end %>
-        <% end %>
+    <div id="design-screenshot" style="display:none">
+      <% if not @design.json_data[:sif].nil? and @design.status == Design::STATUS_EXTRACTING_DONE %>
+        <img src="/extracted/<%= @design.safe_name %>/<%= @design.safe_name_prefix %>.png" id="design-canvas-image">
       <% end %>
     </div>
   </div>

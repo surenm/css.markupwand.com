@@ -54,5 +54,18 @@ class DesignModel extends Backbone.Model
   is_ready: () ->
     return (this.get('status') == 'extracting_done') and (this.get('photoshop_status') == 'processing_done')
 
+  to_canvas_data: () ->
+    assets_path = window.app.design.get_assets_root()
+    image_name = this.get('image_name')
+    image_src = $("#design-canvas-image")[0]
+    bounds = this.get_bounds
+
+    canvas_data =
+      name: "l_#{this.get('id')}"
+      src: image_src
+      bounds: bounds
+
+    return canvas_data
+
 
 window.DesignModel = DesignModel
