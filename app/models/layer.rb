@@ -392,12 +392,6 @@ class Layer
   ##########################################################
 
   def get_style_rules
-    #self.crop_objects_for_cropped_bounds
-
-    if self.type == Layer::LAYER_NORMAL
-      self.copy_layer_image_to_store
-    end
-
     computed_style_rules = Hash.new
     if self.style_layer and self.type == Layer::LAYER_NORMAL
       # this means its a style layer and it has image to be set as background  
