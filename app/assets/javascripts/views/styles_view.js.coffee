@@ -6,10 +6,11 @@ class StylesView extends Backbone.View
   events: 
     "layer-selected.editor #editor": "editor_click_handler"
     "click .code-area .nav a": "styles_tab_handler"
-    "click #actual-size": "zoom_level_handler"
     "click #image-tab-btn" : "move_to_image_tab"
+    "click #zoom button": "zoom_level_handler"
 
   initialize: ->
+    @design = window.design
     this.render()
 
   render: ->
@@ -17,14 +18,16 @@ class StylesView extends Backbone.View
     $(this.el).html $("#styles-view-template").html()
 
     # instantiate elements top action bar
+    $this = this
     $("#zoom-slider").slider
       range: "min"
       min: 50
-      max: 150
+      max: 250
       value: 100
+      step: 10
       slide: (event, slider) ->
-        console.log slider.value
-
+        event.slider = slider
+        $this.zoom_level_handler(event)
 
     # instantiate the editor area
     window.app.init_editor_area this.editor
@@ -112,7 +115,7 @@ class StylesView extends Backbone.View
 
   show_layer_image: () ->
     image_name = @selected_layer.get('image_name')
-    image_src = "#{window.design.get_assets_root()}/#{image_name}"
+    image_src = "#{@design.get_assets_root()}/#{image_name}"
     image_template =  _.template $("#image-template").html()
     html = image_template({image_src: image_src, layer: @selected_layer, design_id : window.design.id})
     $(this.sidebar).find('.image-area').html(html)
@@ -120,7 +123,12 @@ class StylesView extends Backbone.View
   reset_image_area: () ->
     $(this.sidebar).find('.image-area').html("")
 
-  zoom_level_handler: () ->
-    @editor_area.set_zoom()
+  zoom_level_handler: (event) ->
+    if event.type == "click"
+      zoom_level = $(event.currentTarget).data('zoom-size')
+    else if event.type == "slide"
+      zoom_level = event.slider.value
+
+    @editor_area.set_zoom zoom_level
 
 window.StylesView = StylesView
