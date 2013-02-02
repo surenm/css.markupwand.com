@@ -14,12 +14,29 @@ class CropView extends Backbone.View
       width  = new_img.width
       $("#crop-image-container").css('width', width)
       $("#crop-image-container").css('height', height) 
+      $("#crop-image").css('width', width)
+      $("#crop-image").css('height', height) 
+
       if height < 400
         difference = 400 - height
         $("#crop-image-container").css('margin-top', difference/2)
       console.log "Image size #{height} #{width}"
 
     new_img.src = img;
+
+
+  initiate_crop: ->
+    $('.jcrop-holder').remove()
+    $crop_view = app.layers_view.child_view.crop_view;
+    $crop_view.jcrop_api = null 
+    console.log $crop_view.update_coords
+    $("#crop-image").Jcrop(
+      bgColor   : 'black',
+      bgOpacity : .4,
+      onChange  : $crop_view.update_coords,
+      onSelect  : $crop_view.update_coords, ->
+        $crop_view.jcrop_api = this
+    )
 
 
   show: (name, layer_id) ->
@@ -31,11 +48,7 @@ class CropView extends Backbone.View
 
     @set_dimensions(render_data['image_src'])
     @render(render_data)
-    $("#crop-image").Jcrop(
-      bgColor   : 'black',
-      bgOpacity : .4,
-      onSelect  : @update_coords
-    )
+    @initiate_crop()
 
   post_data : ->
     x        : $('#crop-x').val()
@@ -57,17 +70,22 @@ class CropView extends Backbone.View
 
   hide_loading: ->
     $('#crop-loading').hide()
-    $('#crop-image-container').hide()
+    $('#crop-image-container').show()
 
   crop_cb: (data)->
     if data.status == 'SUCCESS'
-        src = $('#crop-image').attr('src')
-        src = src + '?' + (new Date()).getTime()
-        $('#crop-image').attr('src', src)
-        $('#crop-image').on('load', ->
-          app.layers_view.child_view.crop_view.set_dimensions(src)
-        )
-        app.layers_view.child_view.crop_view.hide_loading()
+      $crop_view = app.layers_view.child_view.crop_view 
+      src = $('#crop-image').attr('src')
+      src = src + '?' + (new Date()).getTime()
+      $('#crop-image').attr('src', src)
+      $('#crop-image').on('load', ->
+        app.layers_view.child_view.crop_view.set_dimensions(src)
+      )
+      $crop_view.jcrop_api.destroy()
+      $('#crop-image').css('visibility','visible')
+      $crop_view.hide_loading()
+
+      setTimeout($crop_view.initiate_crop, 1000)
     else
       $('#crop-loading').html('Failed!')
 
