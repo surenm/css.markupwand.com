@@ -239,4 +239,22 @@ class CanvasHelper
         height: canvas_data.height
         fillStyle: 'rgba(255, 255, 255, 0)'
 
+  add_meta_layer_with_custom_events: (canvas_data) ->
+    layer_data = 
+      method: 'drawRect'
+      group: 'layer'
+      name: canvas_data.name
+      x: canvas_data.bounds.left
+      y: canvas_data.bounds.top
+      width: canvas_data.width
+      height: canvas_data.height
+      fillStyle: 'rgba(255, 255, 255, 0)'
+    
+    for event_handler_type, event_handler of canvas_data.event_handlers
+      layer_data[event_handler_type] = event_handler
+    
+    $(@canvas_element).addLayer layer_data
+        
+
+
 window.CanvasHelper = CanvasHelper
