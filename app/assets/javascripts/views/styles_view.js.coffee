@@ -135,13 +135,13 @@ class StylesView extends Backbone.View
   measure_handler: (event) ->
     measureit_button = event.currentTarget
 
-    if $(measureit_button).hasClass 'active btn-warning'
+    if $(measureit_button).hasClass 'active'
       $(this.sidebar).animate {opacity: 1}, 'slow'
-      @editor_area.enable_events()
-      $(measureit_button).removeClass 'active btn-warning'
+      $(measureit_button).removeClass 'active'
+      @editor_area.disable_measureit()
     else
       $(this.sidebar).animate {opacity: 0.2}, 'slow'
-      @editor_area.disable_events()
-      $(measureit_button).addClass 'active btn-warning'
+      $(measureit_button).addClass 'active'
+      @editor_area.enable_measureit()
 
 window.StylesView = StylesView
