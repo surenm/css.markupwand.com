@@ -46,6 +46,19 @@ class EditorArea
     @animate_canvas.clear()
     @events_canvas.clear()
 
+  # set the zoom level for the canvas on every zoom level change
+  set_zoom: (scale = 1) ->
+    this.reset_canvases()
+
+    @design_canvas.change_scale scale
+    @events_canvas.change_scale scale
+    @animate_canvas.change_scale scale
+
+    if @measure_mode
+      this.enable_measureit()
+    else
+      this.init_design_layers()
+
   # just reset all canvases and draw all layers with events enabled, which is the default
   enable_events: () ->
     this.reset_canvases()
@@ -80,6 +93,7 @@ class EditorArea
     @selected_layers.push layer.get('id')
     @selected_layers = @selected_layers.unique()
 
+  # get list of selected layers in editor area
   get_selected_layers: ->
     layers = []
     for selected_layer in @selected_layers
@@ -101,15 +115,57 @@ class EditorArea
       when 'g'
         object = app.design.get_grouping_box(id)
 
-  set_zoom: (scale = 1) ->
-    @animate_canvas.clear()
-    @events_canvas.clear()
+  # enable a measure it plugin along with design image
+  enable_measureit: () ->
+    # enable measureit mode
+    @measure_mode = true
 
-    @design_canvas.change_scale scale
-    @events_canvas.change_scale scale
-    @animate_canvas.change_scale scale
+    #clear all present canvases
+    this.reset_canvases()
 
+    # calculate measureit layer data at this zoom level
+    measureit_layer_data = 
+      name: 'measureit'
+      x: 0
+      y: 0
+      bounds: 
+        top: 0
+        left: 0
+        right: @design.get('width')
+        bottom: @design.get('height')
+      width: @design.get('width')
+      height: @design.get('height')
+      event_handlers:
+        mousedown: EditorAreaEvents.area_select_mouse_down_handler
+        mouseup: EditorAreaEvents.area_select_mouse_up_handler
+        mousemove: EditorAreaEvents.area_select_mouse_move_handler
+        
+    @design_canvas.add_image_layer @design.to_canvas_data(), false
+    @design_canvas.add_meta_layer_with_custom_events measureit_layer_data
+    @design_canvas.draw_layers()
+
+  # clear all canvases and draw back the layers
+  disable_measureit_layer: () ->
+    #disable measureit mode
+    @measure_mode = false
+
+    #clear all present canvases
+    this.reset_canvases()
+
+    # draw back all layers
     this.init_design_layers()
-    this.render_layers()
+
+  # area select start handler
+  set_area_select_start: (start_point) ->
+    @area_select_start = start_point
+
+  set_area_select_change: (current_point) ->
+    if @area_select_start?
+      console.log current_point
+      
+  set_area_select_end: (end_point) ->
+    # reset select start and end points
+    @area_select_start = null
+    @area_select_end = null
 
 window.EditorArea = EditorArea
