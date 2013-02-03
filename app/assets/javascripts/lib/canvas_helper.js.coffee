@@ -20,7 +20,6 @@ class CanvasHelper
 
   destroy: () ->
     $(@canvas_element).removeLayers()
-    this.clear()
 
   reset_canvas_dimensions:  ->
     scaled_height = Math.ceil @scaling * @design.get('height')
