@@ -31,7 +31,7 @@ class EditorArea
     $this = this
     dfd = $("#design-screenshot").imagesLoaded()
     dfd.done (images) ->
-      $this.enable_events()
+      $this.init_design_layers()
 
     dfd.progress (isBroken, $images, $proper, $broken) ->
       console.log( 'Loading progress: ' + ( $proper.length + $broken.length ) + ' out of ' + $images.length );
