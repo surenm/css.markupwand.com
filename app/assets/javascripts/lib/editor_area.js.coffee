@@ -69,6 +69,8 @@ class EditorArea
         continue
       @design_canvas.add_meta_layer canvas_data, enable_events
 
+    @design_canvas.draw_layers()
+
   # When multi selecting, add a layer to selected layers
   add_to_selected_layers: (layer) ->
     if _.isEqual(layer.get('bounds'), @design.get_bounds())
@@ -88,10 +90,6 @@ class EditorArea
   # On disabling multiselect, reset selected layers array
   reset_selected_layers: () ->
     @selected_layers = []
-
-  # Render all layers of the PSD in this editor
-  render_layers: () ->
-    @design_canvas.draw_layers()
 
   get_object_from_name: (object_name) ->
     tokens = object_name.split '_'
