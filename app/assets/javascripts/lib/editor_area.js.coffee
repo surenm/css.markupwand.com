@@ -145,7 +145,7 @@ class EditorArea
     @design_canvas.draw_layers()
 
   # clear all canvases and draw back the layers
-  disable_measureit_layer: () ->
+  disable_measureit: () ->
     #disable measureit mode
     @measure_mode = false
 
@@ -161,9 +161,27 @@ class EditorArea
 
   set_area_select_change: (current_point) ->
     if @area_select_start?
-      console.log current_point
+      @animate_canvas.clear()
+
+      bounds = 
+        left: Math.min @area_select_start.x, current_point.x
+        top: Math.min @area_select_start.y, current_point.y
+        right: Math.max @area_select_start.x, current_point.x
+        bottom: Math.max @area_select_start.y, current_point.y
+      
+      @animate_canvas.draw_filled_rectangle bounds, Color.LIGHTER_BLUE
       
   set_area_select_end: (end_point) ->
+    @animate_canvas.clear()
+
+    bounds = 
+      left: Math.min @area_select_start.x, end_point.x
+      top: Math.min @area_select_start.y, end_point.y
+      right: Math.max @area_select_start.x, end_point.x
+      bottom: Math.max @area_select_start.y, end_point.y
+
+    @animate_canvas.draw_filled_rectangle bounds, Color.LIGHTER_ORANGE
+
     # reset select start and end points
     @area_select_start = null
     @area_select_end = null
