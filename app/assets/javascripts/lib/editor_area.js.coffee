@@ -46,15 +46,15 @@ class EditorArea
     @animate_canvas.clear()
     @events_canvas.clear()
 
+  # just reset all canvases and draw all layers with events enabled, which is the default
   enable_events: () ->
-    @design_canvas.destroy()
+    this.reset_canvases()
     this.init_design_layers()
-    this.render_layers()
-
-  # Get a canvas element given its ID
-  get_canvas: (canvas_name) ->
-    
-    return canvas
+  
+  # just reset all canvases and draw all layers with events disabled
+  disable_events: () ->   
+    this.reset_canvases()
+    this.init_design_layers(false)
 
   # Given a design, add all its layers to the editor canvas.
   # Assumes all assets are loaded for the same
