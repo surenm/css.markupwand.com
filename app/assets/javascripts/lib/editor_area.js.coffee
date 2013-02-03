@@ -38,12 +38,13 @@ class EditorArea
 
     @selected_layers = []
 
-  disable_events: () ->
+  # remove all layers from design canvas and clear all canvases
+  reset_canvases: () ->
     @design_canvas.destroy()
+
+    @design_canvas.clear()    
     @animate_canvas.clear()
     @events_canvas.clear()
-    this.init_design_layers(false)
-    this.render_layers()
 
   enable_events: () ->
     @design_canvas.destroy()
