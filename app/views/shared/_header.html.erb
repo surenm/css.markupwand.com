@@ -5,10 +5,24 @@
         <% if current_user.nil? %>
         <li><a href="/about">About</a></li>
         <li><a href="/faq">FAQ</a></li>
+        <li><a href="/pricing"> Pricing </a></li>
         <li><a href="/login" class="login">Login</a></li>
         <% else %>
-        <li> <a href="/designs"> Hi, <%= current_user.get_display_name %> </a> </li>
-        <li> <a href="/logout">Log out </a> </li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/pricing"> Pricing </a></li>
+        <li> 
+          <div class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"> 
+              Hi, <%= current_user.get_display_name %>! <b class="caret"></b>
+            </a> 
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+              <li> <a href="/designs"> Dashboard </a> </li>
+              <li class="divider"></li>
+              <li> <a href="/logout">Log out </a> </li>
+            </ul>
+          </div>
+        </li>
         <% end %>
       </ul>
       <h3 class="muted"><a href="/"><em>css</em> : markupwand</a></h3>

@@ -72,7 +72,42 @@ a.login {
 
 #header {
   background: rgba(255, 255, 255, 0.4);
-  border: 1px solid #aaa;
+}
+
+.navbar {
+
+  h3.muted {
+    font-size: 20px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+  }
+
+  .muted {
+    @include text-shadow(none);
+    em {
+      color:#f09000;
+      font-style: normal;
+    }
+
+    a {
+      color: #666;
+      text-decoration: none;
+    }
+  }
+
+  .nav {
+    a {
+        float: none;
+        padding: 10px 15px 10px;
+        color: #555555;
+        text-decoration: none;
+        text-shadow: 0 1px 0 #ffffff;
+      }
+
+    .dropdown {
+      padding-top: 10px;
+    }
+  }
 }
 
 .top-menu {
@@ -84,6 +119,20 @@ a.login {
     &:hover {
       background: transparent;
       text-decoration: underline;
+    }
+  }
+
+  .nav {
+    .dropdown {
+     padding-top: 8px;
+     padding-left: 10px;
+
+     .dropdown-menu {
+       a {
+         font-size: 14px;
+         color: #333;
+       }
+     }
     }
   }
 
