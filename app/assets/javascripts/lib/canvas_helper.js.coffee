@@ -251,7 +251,7 @@ class CanvasHelper
       y: canvas_data.bounds.top
       width: canvas_data.width
       height: canvas_data.height
-      fillStyle: Color.LIGHTER_GRAY
+      fillStyle: 'rgba(255, 255, 255, 0.1)'
     
     for event_handler_type, event_handler of canvas_data.event_handlers
       layer_data[event_handler_type] = event_handler
