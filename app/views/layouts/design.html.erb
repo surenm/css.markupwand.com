@@ -50,5 +50,14 @@
 
   <%= javascript_include_tag "application" %>
   <%= yield :javascript %>
+  <script type="text/javascript">
+ window.ausr = {}
+  <% if @current_user %>
+    window.ausr.user    = "<%= @current_user.name %>";
+    window.ausr.email   = "<%= @current_user.email %>";
+  <% end %>
+  window.ausr.product = "css.mw";
+</script>
+<%= javascript_include_tag "//acuteuser.herokuapp.com/assets/acuteuser.js?v=1" %>
 
 </html>
