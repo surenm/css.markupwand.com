@@ -48,3 +48,5 @@ $(document).ajaxSend(function(event, request, settings) {
 _.templateSettings = {
   interpolate : /\{\{(.+?)\}\}/g
 };
+
+$('.dropdown-toggle').dropdown()

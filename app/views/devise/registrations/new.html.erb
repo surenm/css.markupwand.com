@@ -2,6 +2,17 @@
 <%= stylesheet_link_tag "app/login", :media => "all" %>
 <%= render 'shared/header_small' %>
 
+<center>
+  <div> 
+    <%= link_to image_tag('/assets/google.png', :size => '16x16') + " Sign up with Google Account", omniauth_authorize_path(resource_name, :google_openid), :class => "btn btn-large"%>
+    <br>
+    <i> <small> Don't worry! We won't spam you! </small> </i>
+  </div>
+
+  <div class="push-down">
+    or <br> <br>
+  </div>
+</center>
 <div class="container-extra-narrow colored">
 <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => {:class => 'form-signin'}) do |f| %>
   <%= devise_error_messages! %>
@@ -12,14 +23,7 @@
   <center>
     <%= f.submit "Sign up for a Free account", :class => 'btn btn-large btn-block btn-success ' %> 
   </center>
-  <center>
-      or <br> <br>
-      <div> 
-        <%= link_to image_tag('/assets/google.png', :size => '16x16') + " Sign up with Google OpenID", omniauth_authorize_path(resource_name, :google_openid), :class => "btn btn-large"%>
-        <br>
-        <i> <small> We won't spam you! <br>We just don't want you to remember another password </small> </i>
-      </div>
-    </center>
+  
 <% end %>
 <%= render "devise/shared/links" %>
 </div>

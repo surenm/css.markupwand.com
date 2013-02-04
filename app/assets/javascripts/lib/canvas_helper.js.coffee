@@ -102,6 +102,9 @@ class CanvasHelper
       width: bounds.right - bounds.left,
       height: bounds.bottom - bounds.top
 
+  draw_text: (text_data) ->
+    $(@canvas_element).drawText text_data
+
   rgb_to_hex: (r,g,b)->
     r_hex = Number(r).toString(16)
     g_hex = Number(g).toString(16)
@@ -248,7 +251,7 @@ class CanvasHelper
       y: canvas_data.bounds.top
       width: canvas_data.width
       height: canvas_data.height
-      fillStyle: 'rgba(255, 255, 255, 0)'
+      fillStyle: 'rgba(255, 255, 255, 0.1)'
     
     for event_handler_type, event_handler of canvas_data.event_handlers
       layer_data[event_handler_type] = event_handler

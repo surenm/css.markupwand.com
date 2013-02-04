@@ -8,7 +8,7 @@ TransformersWeb::Application.routes.draw do
   match '/about'       => "landing_page#about"
   match '/faq'         => "landing_page#faq"
   match '/limitations' => "landing_page#limitations"
-
+  match '/pricing'     => "landing_page#pricing"
   
   # Switch user
   devise_scope :user do

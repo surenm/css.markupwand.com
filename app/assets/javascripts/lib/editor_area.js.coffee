@@ -162,28 +162,42 @@ class EditorArea
   set_area_select_change: (current_point) ->
     if @area_select_start?
       @animate_canvas.clear()
-
-      bounds = 
-        left: Math.min @area_select_start.x, current_point.x
-        top: Math.min @area_select_start.y, current_point.y
-        right: Math.max @area_select_start.x, current_point.x
-        bottom: Math.max @area_select_start.y, current_point.y
-      
-      @animate_canvas.draw_filled_rectangle bounds, Color.LIGHTER_BLUE
+      this.show_area_selected @area_select_start, current_point  
       
   set_area_select_end: (end_point) ->
-    @animate_canvas.clear()
-
-    bounds = 
-      left: Math.min @area_select_start.x, end_point.x
-      top: Math.min @area_select_start.y, end_point.y
-      right: Math.max @area_select_start.x, end_point.x
-      bottom: Math.max @area_select_start.y, end_point.y
-
-    @animate_canvas.draw_filled_rectangle bounds, Color.LIGHTER_ORANGE
-
+    this.show_area_selected @area_select_start, end_point
+    
     # reset select start and end points
     @area_select_start = null
     @area_select_end = null
+
+  show_area_selected: (start_point, end_point) ->
+    @animate_canvas.clear()
+
+    bounds = 
+      left: Math.min start_point.x, end_point.x
+      top: Math.min start_point.y, end_point.y
+      right: Math.max start_point.x, end_point.x
+      bottom: Math.max start_point.y, end_point.y
+
+    height = Math.round bounds.bottom - bounds.top
+    width = Math.round bounds.right - bounds.left
+
+    if height == 0 and width == 0
+      return
+
+    font_size = Math.round 14 / @design.get('editor_scaling')
+    text_data = 
+      name: "dimensions"
+      fillStyle: "#ff0000"
+      x: bounds.right + 5
+      y: bounds.bottom - 10
+      text: "#{width}px x #{height}px "
+      font: "#{font_size}pt Verdana, sans-serif"
+      fromCenter: false
+
+    @animate_canvas.draw_filled_rectangle bounds, Color.LIGHTER_RED
+    @animate_canvas.draw_text text_data
+
 
 window.EditorArea = EditorArea
