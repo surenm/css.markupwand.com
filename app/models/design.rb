@@ -153,9 +153,8 @@ class Design
 
     if not unextracted_states.include? self.status
       json_data[:psd_file_path] = self.psd_file_path
-      json_data[:height] = self.scaled_height
-      json_data[:width] = self.scaled_width
-      json_data[:scaling] = self.scaling
+      json_data[:height] = self.height
+      json_data[:width] = self.width
       json_data[:sif] = self.get_serialized_sif_data
     end
 
@@ -172,37 +171,7 @@ class Design
   def bounds 
     BoundingBox.new 0, 0, self.height, self.width
   end
-
-  def scaling
-    if self.width <= 1024
-      scaling = 1
-    else 
-      scaling = Float(1024)/self.width
-    end
-    return scaling
-  end
-
-  def scaled_height
-    return 600 if self.height.nil?
-
-    if self.width <= 1024
-      height = self.height + 100
-    else
-      height = (self.height * self.scaling).round
-    end
-    return height
-  end
-
-  def scaled_width
-    return 1024 if self.width.nil?
-    if self.width <= 1024
-      width = self.width
-    else
-      width = 1024
-    end
-    return width
-  end
-
+  
   def layers
     self.init_sif
     @sif.layers

@@ -1,7 +1,10 @@
 # Class to handle maninpulations specific to a canvas
 class CanvasHelper
 
-  constructor: (@canvas_element, fit_scaling, @enable_events = false) ->
+  constructor: (canvas_element_id, @design, @enable_events = false) ->
+    @canvas_element = $("##{canvas_element_id}").first()
+    @canvas_dom_element = document.getElementById canvas_element_id
+
     $(@canvas_element).jCanvas
         fromCenter: false
   
@@ -12,19 +15,37 @@ class CanvasHelper
     # save pristine state of canvas
     $(@canvas_element).saveCanvas()
 
-    # change scaling of canvas to default fit scaling
-    this.change_scale fit_scaling * 100
+    # change scaling of canvas to default fit size
+    this.change_scale @design.get('scaling')
 
   destroy: () ->
     $(@canvas_element).removeLayers()
-    this.clear()
+
+  reset_canvas_dimensions:  ->
+    scaled_height = Math.ceil @scaling * @design.get('height')
+    scaled_width = Math.ceil @scaling * @design.get('width')
+
+    height = Math.max scaled_height, @design.get('editor_height')
+    width = Math.max scaled_width, @design.get('editor_width')
+
+    @canvas_dom_element.height = height
+    @canvas_dom_element.width = width
 
   change_scale: (scaling) ->
+    if scaling == -1 
+      @scaling = @design.get('scaling')/100
+    else
+      @scaling = parseFloat(scaling)/100
+    
+    @design.set 'editor_scaling', @scaling
+
+    # reset canvas dimensions
+    this.reset_canvas_dimensions()
+
     # restore canvas to pristine state
     $(@canvas_element).restoreCanvas()
   
     # now scale to required scaling
-    @scaling = parseFloat(scaling)/100
     $(@canvas_element).scaleCanvas(
       x: 0
       y: 0
@@ -217,5 +238,23 @@ class CanvasHelper
         width: canvas_data.width
         height: canvas_data.height
         fillStyle: 'rgba(255, 255, 255, 0)'
+
+  add_meta_layer_with_custom_events: (canvas_data) ->
+    layer_data = 
+      method: 'drawRect'
+      group: 'layer'
+      name: canvas_data.name
+      x: canvas_data.bounds.left
+      y: canvas_data.bounds.top
+      width: canvas_data.width
+      height: canvas_data.height
+      fillStyle: 'rgba(255, 255, 255, 0)'
+    
+    for event_handler_type, event_handler of canvas_data.event_handlers
+      layer_data[event_handler_type] = event_handler
+    
+    $(@canvas_element).addLayer layer_data
+        
+
 
 window.CanvasHelper = CanvasHelper

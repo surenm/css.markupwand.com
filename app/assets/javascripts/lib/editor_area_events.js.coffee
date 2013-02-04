@@ -52,4 +52,13 @@ class EditorAreaEvents
 
   @dummy_handler: (canvas_layer) ->
 
+  @area_select_mouse_down_handler: (canvas_layer) ->
+    app.editor_area.set_area_select_start {x: canvas_layer._eventX, y: canvas_layer._eventY}
+
+  @area_select_mouse_up_handler: (canvas_layer) ->
+    app.editor_area.set_area_select_end {x: canvas_layer._eventX, y: canvas_layer._eventY}
+
+  @area_select_mouse_move_handler: (canvas_layer) ->
+    app.editor_area.set_area_select_change {x: canvas_layer._eventX, y: canvas_layer._eventY}
+
 window.EditorAreaEvents = EditorAreaEvents

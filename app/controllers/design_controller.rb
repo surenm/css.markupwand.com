@@ -267,8 +267,6 @@ class DesignController < ApplicationController
   end
 
   def show
-    @height = @design.scaled_height
-    @width = @design.scaled_width
     respond_to do |format|
       format.html { render :template => 'css.mw/show' }
       format.json { render :json => @design.json_data }

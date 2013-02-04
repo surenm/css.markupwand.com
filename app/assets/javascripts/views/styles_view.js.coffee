@@ -12,6 +12,11 @@ class StylesView extends Backbone.View
 
   initialize: ->
     @design = window.design
+
+    @design.bind 'change:editor_scaling', () ->
+      slider_percentage = Math.round this.get('editor_scaling') * 100
+      $("#zoom-slider").slider 'option', 'value', slider_percentage
+    
     this.render()
 
   render: ->
@@ -22,7 +27,7 @@ class StylesView extends Backbone.View
     $this = this
     $("#zoom-slider").slider
       range: "min"
-      min: 50
+      min: 40
       max: 250
       value: 100
       step: 10
@@ -130,13 +135,15 @@ class StylesView extends Backbone.View
   measure_handler: (event) ->
     measureit_button = event.currentTarget
 
-    if $(measureit_button).hasClass 'active btn-warning'
+    if $(measureit_button).hasClass 'active'
       $(this.sidebar).animate {opacity: 1}, 'slow'
-      @editor_area.enable_events()
-      $(measureit_button).removeClass 'active btn-warning'
+      $(measureit_button).removeClass 'active'
+      $(this.editor).css 'cursor', 'pointer'
+      @editor_area.disable_measureit()
     else
       $(this.sidebar).animate {opacity: 0.2}, 'slow'
-      @editor_area.disable_events()
-      $(measureit_button).addClass 'active btn-warning'
+      $(measureit_button).addClass 'active'
+      $(this.editor).css 'cursor', 'crosshair'
+      @editor_area.enable_measureit()
 
 window.StylesView = StylesView
