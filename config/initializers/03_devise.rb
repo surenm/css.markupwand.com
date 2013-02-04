@@ -13,7 +13,7 @@ Devise.setup do |config|
   # TODO: Enable github authentication as well
   # config.omniauth :github, Constants::GITHUB['app_id'], Constants::GITHUB['app_secret'], :scope => Constants::GITHUB['app_scope']
   
-  config.mailer_sender = "support@goyaka.com"
+  config.mailer_sender = "support@markupwand.com"
   
   config.case_insensitive_keys = [ :email ]
 
