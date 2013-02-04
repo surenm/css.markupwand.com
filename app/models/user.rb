@@ -45,7 +45,7 @@ class User
   end
 
   def self.user_exists?(email)
-    User.exists? :conditions => {:email => email}
+    User.where(:email => email).exists?
   end
 
   def self.find_or_create_admin_user(access_token)
