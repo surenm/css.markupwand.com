@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-ruby "1.9.2"
+ruby "1.9.3"
 
-gem 'rails', '3.2.0'
+gem 'rails', '3.2.11'
 
 # Base libraries
 gem 'aws-sdk'
@@ -54,6 +54,10 @@ gem 'omniauth-google-apps'
 # Chat notification
 gem 'hipchat'
 
+# analytics and payment
+gem 'analytics'
+gem 'stripe'
+
 # asset gems
 gem 'compass'
 gem 'compass-rails'
@@ -77,19 +81,9 @@ group :deploy do
   gem 'capistrano-resque'
 end
 
-#Testing
-group :test do
-  gem 'rspec-rails'
-  gem 'capybara'
-  gem 'factory_girl_rails', "~> 3.0"
-end
-
 group :development do
   gem 'pry-rails'
   gem 'pry-stack_explorer'
   gem 'pry_debug'
   gem 'ruby-prof'
 end
-
-# Analytics
-gem 'analytical', :git => 'git://github.com/Goyaka/analytical.git'
