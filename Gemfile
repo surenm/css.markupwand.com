@@ -55,10 +55,11 @@ gem 'omniauth-google-apps'
 gem 'hipchat'
 
 # analytics and payment
-gem 'analytics'
+gem 'analytical'
 gem 'stripe'
 
 # asset gems
+gem 'less-rails'
 gem 'compass'
 gem 'compass-rails'
 gem 'sass-rails', '~> 3.2.4'

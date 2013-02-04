@@ -30,7 +30,7 @@ class User
 
   field :enabled, :type => Boolean, :default => !Constants::invite_gated?
 
-  index :email, :unique => true
+  index({email: 1}, {unique: true})
   validates_presence_of :name, :email
   
   has_many :designs

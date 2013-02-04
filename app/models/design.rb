@@ -5,7 +5,6 @@ class Design
   include Mongoid::Timestamps::Created
   include Mongoid::Timestamps::Updated
   include Mongoid::Versioning
-  include Mongoid::Document::Taggable
   include ActionView::Helpers::DateHelper
 
   # keep only atmost 5 versions
