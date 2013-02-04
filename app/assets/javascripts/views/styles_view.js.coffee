@@ -137,12 +137,12 @@ class StylesView extends Backbone.View
 
     if $(measureit_button).hasClass 'active'
       $(this.sidebar).animate {opacity: 1}, 'slow'
-      $(measureit_button).removeClass 'active'
+      $(measureit_button).removeClass 'active btn-info'
       $(this.editor).css 'cursor', 'pointer'
       @editor_area.disable_measureit()
     else
       $(this.sidebar).animate {opacity: 0.2}, 'slow'
-      $(measureit_button).addClass 'active'
+      $(measureit_button).addClass 'active btn-info'
       $(this.editor).css 'cursor', 'crosshair'
       @editor_area.enable_measureit()
 
