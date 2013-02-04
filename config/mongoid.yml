@@ -1,13 +1,23 @@
 development:
-  host: localhost
-  database: transformers_web_development
+  sessions:
+    default:
+      database: transformers_web_development
+      hosts:
+        - localhost:27017
 
 test:
-  host: localhost
-  database: transformers_web_test
+  sessions:
+    default:
+      database: transformers_web_test
+      hosts:
+        - localhost:27017
 
 staging:
-  uri: <%= ENV['MONGOLAB_URI'] %>
+  sessions:
+    default: 
+      uri: <%= ENV['MONGOLAB_URI'] %>
 
 production:
-  uri: <%= ENV['MONGOLAB_URI'] %>
+  sessions:
+    default:
+      uri: <%= ENV['MONGOLAB_URI'] %>
