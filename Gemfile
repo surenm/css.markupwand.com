@@ -23,7 +23,6 @@ gem 'tidy_ffi'
 gem 'therubyracer'
 gem 'xml-simple'
 gem 'rubyzip'
-gem 'bugsnag'
 gem 'rubytree', '~> 0.8.3'
 gem 'css_parser'
 
