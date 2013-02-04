@@ -1,10 +1,8 @@
 <%= content_for :content do %>
-<%= render 'shared/inner_header' %>
-<div id="about" class="container content-area-box faq-type-page faq-page"> 
+<%= render 'shared/header' %>
+<div class="container "> 
 
 <h2>Frequently Asked Questions</h2>
-
-<div class="alert">Hey <%= current_user.get_display_name if not current_user.nil? %>, we currently have few recommendations, please do read it here - <a href="/best-practices">Best Practices</a></div>
 <ol>
   <li> <strong> Why should I use Markupwand? </strong>
   

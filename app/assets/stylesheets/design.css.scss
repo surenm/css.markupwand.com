@@ -60,6 +60,8 @@ h3.muted {
 
 #header {
   margin-bottom: 20px;
+
+
 }
 
 #wrap {
@@ -89,7 +91,7 @@ h3.muted {
   max-width: 830px;
 }
 
-.navbar .nav {
+.navbar {
   margin: 0px 10px;
   
   a {
@@ -102,6 +104,10 @@ h3.muted {
 
   .dropdown {
     padding-top: 10px;
+  }
+
+  .logo {
+    padding-top: 8px;
   }
 }
 
