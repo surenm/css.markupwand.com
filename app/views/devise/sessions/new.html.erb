@@ -2,6 +2,18 @@
 <%= stylesheet_link_tag "app/login", :media => "all" %>
 <%= render 'shared/header_small' %>
 
+<center>
+  <div> 
+    <%= link_to image_tag('/assets/google.png', :size => '16x16') + " Sign in with Google Account", omniauth_authorize_path(resource_name, :google_openid), :class => "btn btn-large"%>
+  </div>
+
+  <div class="push-down">
+  or <br> <br>  
+  </div>
+</center>
+
+
+
 <div class="container-extra-narrow colored">
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => {:class => 'form-signin'}) do |f| %>
   <%= f.email_field :email, :class => 'input-block-level', :placeholder => 'your email address' %>
@@ -15,13 +27,6 @@
     <center>
       <div class='clearfix'></div>
       <%= f.submit "Sign in", :class => 'btn btn-success ' %> 
-    </center>
-
-    <center>
-      or <br> <br>
-      <div> 
-        <%= link_to image_tag('/assets/google.png', :size => '16x16') + " Sign in with Google OpenID", omniauth_authorize_path(resource_name, :google_openid), :class => "btn btn-large"%>
-      </div>
     </center>
       
     
