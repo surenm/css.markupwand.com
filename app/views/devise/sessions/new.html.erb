@@ -1,4 +1,5 @@
 <%= content_for :content do %>
+<% analytical.track '/login' %>
 <%= stylesheet_link_tag "app/login", :media => "all" %>
 <%= render 'shared/header_small' %>
 
