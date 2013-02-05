@@ -28,4 +28,8 @@ class LandingPageController < ApplicationController
 
   def faq
   end
+
+  def pricing
+    @user = get_user
+  end
 end
