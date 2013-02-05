@@ -10,7 +10,7 @@ $(document).ready () ->
       key:         'pk_aRDAInglKtq2Y0w5zglZtRhkrqZkH'
       address:     true
       name:        'CSS:Markupwand'
-      description: 'Limited Plan: Sedan ($10/month) '
+      description: 'Regular ($15/month) '
       panelLabel:  'Register for payment'
       token:       SEDANHandler
       image:       '/assets/wand.png'
@@ -28,7 +28,7 @@ $(document).ready () ->
       key:         'pk_aRDAInglKtq2Y0w5zglZtRhkrqZkH'
       address:     true
       name:        'CSS:Markupwand'
-      description: 'Unlimited Plan: SUV ($16/month) '
+      description: 'Plus ($20/month)'
       panelLabel:  'Register for payment'
       token:        SUVHandler
       image:       '/assets/wand.png'
