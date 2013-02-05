@@ -1,63 +1,35 @@
 <%= content_for :content do %>
 <%= render 'shared/inner_header' %>
-<div class="container "> 
+<div id="faq" class="container-narrow"> 
 
 <h2>Frequently Asked Questions</h2>
 <ol>
-  <li> <strong> Why should I use Markupwand? </strong>
+  <li> <strong> Why CSS:Markupwand? </strong>
+  <p>
+    We believe a developer's productive time shouldn't be spent that fighting their way through Photoshop to build web pages. That is what CSS:Markupwand tries to solve. 
+
+    Upload your photoshop design and with a click you have your CSS styles ready for each layer. 
+  </p>
   
-  <p>
-    Because, converting designs to markup/stylesheets is just mundane translation. All that cutting, slicing, inspecting - we have been there. Its not meant to be done by us. Its just what a computer does best. 
-  </p>
-
-  <p>
-    Because, we want you to spend time solving problems, building a great product, scaling it, satisfying your customers or launch a rocket to mars. We don’t want anyone to fight with the browsers and CSS properties anymore. 
-  </p>
-
-  <p>
-    Because, converting a design to website shouldn’t take 1-2 days. The Linux kernel gets compiled within an hour.
+  <li> <strong>But Why should I use CSS:Markupwand? </strong>
+    <p>
+    Unlike similar tools, CSS:Markupwand is completely web based. <b> We are trying to totally eliminating the need for Photoshop to a web developer. </b>
   </p>
 
 </li>
 <li>
-  <strong> But you are not giving me semantically correct, optimized blah blah blah code? </strong>
-  <p>
-  True, but only just yet. Eventually that is gonna change.
-  </p>
-</li>
-<li>
-<strong>Why isn’t my Photoshop file converted correctly?</strong>
-
-<p>
-Markupwand is still in its very <a href="/limitations">early stages</a>. Our understanding of the Photoshop files is big but still not complete, not even close. We are seeing more photoshop designs everyday and these. We are working on few approaches that will start fixing this.
-</p>
-
-</li>
-<li>
-  <strong> Why does Processing take a lot of time? </strong>
-<p>We wanted to improve the quality of the HTML/CSS we generate first. There are a lot of computation that happens behind every design and at times we try multiple approaches to understand a particular design which ends up taking a lot of time to complete.
-</p>
-
-<p>
-But we realize it is still much slower than we want it to be. We will work on speeding up once the quality is good enough
-</p>
-
-</li>
-<li>
-  <strong>Why do you use Bootstrap/SCSS and not &lt;insert your favourite grids/css framework&gt;?</strong>
-  <p>Bootstrap is really great. If you aren’t using it already, may be you should give it a try. It is just matter of initial choice. We are looking to use other major css frameworks soon.
+  <strong>Why do you use SCSS/Compass and not &lt;insert favourite css framework&gt;?</strong>
+  <p>It is just matter of initial choice. We are looking to use other major css frameworks soon.
   </p>
 </li>
 
 <li>
-<strong>Markupwand doesn’t generate optimal enough for me to use in production</strong>
-
-<p>
-We are really sorry that it doesn’t do so yet. Drop us a mail at <a href="mailto:hackers@markupwand.com">hackers@markupwand.com</a> with what you need in the generated code before you could start using it in production. We would be delighted to work closer with you on this.
-</p>
-
+  <strong>As a webdeveloper, I still need Photoshop for doing X, Y, Z </strong>
+  <p> Really? Let us fix that for you! <a href="mailto:suren@markupwand.com?Subject=Pricing for css:markupwand">
+    Talk to us! </a> </p>
 </li>
 
 </ol>
+
 </div>
 <% end %>
