@@ -9,6 +9,7 @@ TransformersWeb::Application.routes.draw do
   match '/faq'         => "landing_page#faq"
   match '/limitations' => "landing_page#limitations"
   match '/pricing'     => "landing_page#pricing"
+
   
   # Switch user
   devise_scope :user do
@@ -26,6 +27,9 @@ TransformersWeb::Application.routes.draw do
   if not Rails.env.production?
     match 'alaguisadude' => 'application#backdoor'
   end
+
+  # payment related action
+  match 'register-card' => 'application#add_stripe_data', :via => :post
 
   # design controller routes
   match 'designs' => 'design#index', :as => :user_root

@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   analytical :use_session_store => true
+  before_filter :require_login, :only => [:add_stripe_data]
 
   def get_user
     current_user if user_signed_in?
@@ -35,5 +36,17 @@ class ApplicationController < ActionController::Base
 
   def after_sign_up_path_for(resource)
     user_root_path
+  end
+
+  def add_stripe_data
+    @user.stripe_token = params[:id]
+    if params[:plan] == "sedan"
+      @user.plan = User::PLAN_SEDAN
+    elsif params[:plan] == "suv"
+      @user.plan = USER::PLAN_SUV
+    end
+    @user.save!
+    
+    render :json => {:status => :OK}
   end
 end
