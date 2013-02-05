@@ -32,6 +32,9 @@ class User
   field :last_name, :type => String, :default => nil
   field :admin, :type => Boolean, :default => false
 
+  field :plan, :type => Symbol, :default => User::PLAN_FREE
+  field :stripe_token, :type => String, :default => nil
+
   field :enabled, :type => Boolean, :default => !Constants::invite_gated?
 
   index({email: 1}, {unique: true})
