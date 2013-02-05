@@ -58,6 +58,7 @@
   <% end %>
   window.ausr.product = "css.mw";
 </script>
+<% if not Rails.env.development? %>
 <%= javascript_include_tag "//acuteuser.herokuapp.com/assets/acuteuser.js?v=1" %>
-
+<% end %>
 </html>
