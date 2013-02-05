@@ -47,6 +47,7 @@ class ApplicationController < ActionController::Base
     end
     @user.save!
     
+    Resque.enqueue StripeCreateCustomerJob, @user.email
     render :json => {:status => :OK}
   end
 end

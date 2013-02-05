@@ -33,6 +33,7 @@ module Constants
 
   Constants::COMPASS_CONFIG = Rails.application.config.compass.sass_load_paths
   Constants::STRIPE_PUBLISH_TOKEN = ENV['STRIPE_PUBLISH_TOKEN']
+  Stripe.api_key = ENV['STRIPE_SECRET']
 
   # Round to nearest 5
   def Constants::round_to_nearest_five(num)
@@ -44,7 +45,7 @@ module Constants
     return true if Rails.env.production? or Rails.env.staging? or ENV['REMOTE'] == "true"
     return false if Rails.env.development?
   end
-    
+
   def Constants::store_local?
     !Constants::store_remote?
   end
