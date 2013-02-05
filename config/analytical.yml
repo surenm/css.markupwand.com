@@ -2,5 +2,9 @@ production:
   google:
     key: UA-38250747-1
   mixpanel:
-    key:87c44c178fcff6bdebf572fc52692a46
+    key: '87c44c178fcff6bdebf572fc52692a46'
 development:
+  google:
+    key: UA-38250747-1
+  mixpanel:
+    key: '87c44c178fcff6bdebf572fc52692a46'
