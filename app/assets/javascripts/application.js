@@ -19,7 +19,7 @@
 //= require twitter/bootstrap
 
 //= require lib/avgrund
-//= require lib/bootstrap-editable
+//= require lib/bootstrap-editable.min
 //= require lib/canvas_helper
 //= require lib/codemirror
 //= require lib/codemirror-modes/css/css.js
