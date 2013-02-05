@@ -6,6 +6,10 @@ class User
 
   devise :database_authenticatable, :registerable, :validatable, :rememberable, :trackable, :omniauthable, :timeoutable, :recoverable #, :confirmable
 
+  User::PLAN_FREE = :free
+  User::PLAN_SEDAN = :sedan
+  User::PLAN_SUV = :suv
+
   ## Rememberable
   field :remember_created_at, :type => Time
 
