@@ -4,10 +4,7 @@ TransformersWeb::Application.routes.draw do
   devise_for :users, :controllers => { :omniauth_callbacks => 'auth' }
 
   # Landing page controller views
-  match '/getinvite'   => "landing_page#getinvite"
-  match '/about'       => "landing_page#about"
   match '/faq'         => "landing_page#faq"
-  match '/limitations' => "landing_page#limitations"
   match '/pricing'     => "landing_page#pricing"
 
   
