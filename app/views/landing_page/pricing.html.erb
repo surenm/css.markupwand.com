@@ -46,6 +46,7 @@
 
 <%= content_for :javascript do %>
   <% if @user %>
+    <%= javascript_tag "var STRIPE_PUBLISH_TOKEN = #{Constants::STRIPE_PUBLISH_TOKEN};" %>
     <%= javascript_include_tag "https://checkout.stripe.com/v2/checkout.js" %>
     <%= javascript_include_tag "app/pricing" %>
   <% end %>

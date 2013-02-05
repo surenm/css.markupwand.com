@@ -7,7 +7,7 @@ $(document).ready () ->
         console.log data
    
     StripeCheckout.open {
-      key:         'pk_aRDAInglKtq2Y0w5zglZtRhkrqZkH'
+      key:         STRIPE_PUBLISH_TOKEN
       address:     true
       name:        'CSS:Markupwand'
       description: 'Regular ($15/month) '
@@ -25,7 +25,7 @@ $(document).ready () ->
         console.log data
 
     StripeCheckout.open {
-      key:         'pk_aRDAInglKtq2Y0w5zglZtRhkrqZkH'
+      key:         STRIPE_PUBLISH_TOKEN
       address:     true
       name:        'CSS:Markupwand'
       description: 'Plus ($20/month)'
