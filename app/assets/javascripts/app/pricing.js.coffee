@@ -1,7 +1,7 @@
 $(document).ready () ->  
   
   $("#sedan").click () ->
-    SEDANHandler = (stripe_data) ->
+    handler = (stripe_data) ->
       stripe_data.plan = 'regular'
       $.post '/register-card', stripe_data, (data) ->
         console.log data
@@ -12,14 +12,14 @@ $(document).ready () ->
       name:        'CSS:Markupwand'
       description: 'Regular ($15/month) '
       panelLabel:  'Register for payment'
-      token:       SEDANHandler
+      token:       handler
       image:       '/assets/wand.png'
     }
 
     return false
 
   $("#suv").click () ->
-    SUVHandler = (stripe) ->
+    handler = (stripe_data) ->
       stripe_data.plan = 'plus'
       $.post '/register-card', stripe_data, (data) ->
         console.log data
@@ -30,7 +30,7 @@ $(document).ready () ->
       name:        'CSS:Markupwand'
       description: 'Plus ($20/month)'
       panelLabel:  'Register for payment'
-      token:        SUVHandler
+      token:        handler
       image:       '/assets/wand.png'
     }
 
