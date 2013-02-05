@@ -1,6 +1,6 @@
 class StripeCreateCustomerJob 
   extend Resque::Plugins::History
-  @queue = :worker
+  @queue = :uploader
 
   def self.perform(user_email)
     user = User.find_by_email user_email
