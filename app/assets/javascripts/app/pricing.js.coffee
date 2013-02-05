@@ -15,7 +15,7 @@ $(document).ready () ->
       token:       handler
       image:       '/assets/wand.png'
     }
-
+    Analytical.event 'Pricing: Regular plan', {user: stripe_data.id}
     return false
 
   $("#suv").click () ->
@@ -33,7 +33,7 @@ $(document).ready () ->
       token:        handler
       image:       '/assets/wand.png'
     }
-
+    Analytical.event 'Pricing: Plus plan', {user: stripe_data.id}
     return false
 
 

@@ -129,7 +129,8 @@ class Design
       :safe_name => self.safe_name,
       :safe_name_prefix => self.safe_name_prefix,
       :height => self.height,
-      :width => self.width
+      :width => self.width,
+      :user => self.user.email
     }
   end
 
@@ -141,6 +142,7 @@ class Design
       :photoshop_status => self.photoshop_status,
       :safe_name => self.safe_name,
       :safe_name_prefix => self.safe_name_prefix,
+      :user => self.user.email,
     }
 
     unextracted_states = [ 

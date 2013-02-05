@@ -25,8 +25,6 @@ class ImagesView extends Backbone.View
       @crop_view = new CropView()
 
     @crop_view.show(image_name, layer_id)
-
-
     false
 
 

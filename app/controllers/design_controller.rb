@@ -323,7 +323,6 @@ class DesignController < ApplicationController
   def download
     tmp_folder = Store::fetch_from_store @design.store_published_key
     zip_file   = Rails.root.join("tmp", "#{@design.safe_name}.zip")
-    analytical.track "design_download"
     path = tmp_folder.to_s
 
     path.sub!(%r[/$],'')

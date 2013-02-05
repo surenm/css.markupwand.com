@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <% if not Rails.env.development? %><%= raw analytical.head_prepend_javascript %><% end %>
     <meta charset="utf-8">
     <title>css:markupwand | Convert Photoshop to CSS3</title>
     <meta name="description" content="Convert your Photoshop designs to clean and maintainable HTML and CSS"/>
@@ -9,17 +10,15 @@
   
     <script type="text/javascript" src="//use.typekit.net/eqq0eqs.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-    <% if not Rails.env.development? %>
-    <%= raw analytical.head_append_javascript %>
-    <% end %>
+    
     <%= stylesheet_link_tag "application", :media => "all" %>
     <%= yield :css %>
     <link rel="shortcut icon" href="/favicon.ico">
-    
+    <% if not Rails.env.development? %><%= raw analytical.head_append_javascript %><% end %>
   </head>
 
   <body>
-
+    <% if not Rails.env.development? %><%= raw analytical.body_prepend_javascript %><% end %>
     <!-- Part 1: Wrap all page content here -->
     <div id="wrap">
       <%= yield :content %>
@@ -41,25 +40,22 @@
         </div>
       </div>  
     </div>
-
+    <% if not Rails.env.development? %><%= raw analytical.body_append_javascript %><% end %>
   </body>
 
-  <% if not Rails.env.development? %>
-  <%= raw analytical.body_append_javascript %>
-  <% end %>
   <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
   <%= javascript_include_tag "application" %>
   <%= yield :javascript %>
-  <script type="text/javascript">
- window.ausr = {}
-  <% if @current_user %>
-    window.ausr.user    = "<%= @current_user.name %>";
-    window.ausr.email   = "<%= @current_user.email %>";
+  <% analytical.identify(current_user.id, :email=>current_user.email) if current_user %>
+  <% if not Rails.env.development? %>
+    <script type="text/javascript">
+    window.ausr = {}
+    <% if @current_user %>
+      window.ausr.user    = "<%= @current_user.name %>";
+      window.ausr.email   = "<%= @current_user.email %>";
+    <% end %>
+    window.ausr.product = "css.mw";
+    </script>
+    <%= javascript_include_tag "//acuteuser.herokuapp.com/assets/acuteuser.js?v=1" %>
   <% end %>
-  window.ausr.product = "css.mw";
-</script>
-<% if not Rails.env.development? %>
-<%= javascript_include_tag "//acuteuser.herokuapp.com/assets/acuteuser.js?v=1" %>
-<% end %>
-
 </html>

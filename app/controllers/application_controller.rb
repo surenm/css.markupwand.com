@@ -48,6 +48,7 @@ class ApplicationController < ActionController::Base
     @user.save!
     
     Resque.enqueue StripeCreateCustomerJob, @user.email
+    analytical.track "Stripe customer created", {:email => @user.email, :plan => @user.plan}
     render :json => {:status => :OK}
   end
 end
