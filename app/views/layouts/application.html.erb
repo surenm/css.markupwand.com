@@ -47,6 +47,7 @@
   <% if not Rails.env.development? %>
   <%= raw analytical.body_append_javascript %>
   <% end %>
+  <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
   <%= javascript_include_tag "application" %>
   <%= yield :javascript %>
   <script type="text/javascript">
