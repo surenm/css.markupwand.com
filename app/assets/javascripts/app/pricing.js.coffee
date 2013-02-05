@@ -2,7 +2,7 @@ $(document).ready () ->
   
   $("#sedan").click () ->
     SEDANHandler = (stripe_data) ->
-      stripe_data.plan = 'sedan'
+      stripe_data.plan = 'regular'
       $.post '/register-card', stripe_data, (data) ->
         console.log data
    
@@ -20,7 +20,7 @@ $(document).ready () ->
 
   $("#suv").click () ->
     SUVHandler = (stripe) ->
-      stripe_data.plan = 'suv'
+      stripe_data.plan = 'plus'
       $.post '/register-card', stripe_data, (data) ->
         console.log data
 
