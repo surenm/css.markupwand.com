@@ -36,7 +36,7 @@ class User
   field :stripe_token, :type => String, :default => nil
   field :stripe_customer_id, :type => String, :default => nil
 
-  field :enabled, :type => Boolean, :default => !Constants::invite_gated?
+  field :enabled, :type => Boolean, :default => true
 
   index({email: 1}, {unique: true})
   validates_presence_of :name, :email
