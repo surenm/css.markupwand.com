@@ -1,6 +1,9 @@
 TransformersWeb::Application.configure do
-  # Settings specified here will take precedence over those in config/application.rb
 
+  # Settings specified here will take precedence over those in config/application.rb
+  # force ssl usage. I SPENT $10 on it AND I WILL FUCKING FORCE IT ON EVERYONE
+  config.force_ssl = true
+  
   # Code is not reloaded between requests
   config.cache_classes = true
 
