@@ -259,38 +259,48 @@ small {
 #pricing {
   width: 900px;
   margin: 0 auto;
-  font-family: "myriad-pro", sans-serif;
+  
   font-size: 20px;
-  margin-top: 30px;
+  margin-top: 50px;
 
   .plan {
+    font-family: "museo-slab", serif;
     width: 250px;
-    height: 350px;
+    height: 450px;
     padding: 25px 15px;
     margin: 30px 5px;
     float: left;
     text-align: center;
-    background: #ffffff;
-    border: 1px solid #e5e5e5;
-    @include border-radius(10px);
-    @include box-shadow(rgba(0,0,0,.05) 0px 1px 2px);
+    color: #6C6C6C;
+    font-size: 20px;
+    border: 1px solid #eee;
+    @include border-radius(5px);
 
     div {
       padding: 20px;
     }
 
     .name {
+      
       font-size: 28px;
-      margin-bottom: 25px;
       font-weight: bold;
-      color: #333;
+      margin-left: 50px;
+      margin-bottom: 25px;
+      width: 100px;
+      height: 100px;
+      @include border-radius(100px);
+      background: #7888A9;
+      color: #eee;
+      line-height: 90px;
     }
 
     .price {
       vertical-align: middle;
-      height: 50px;
+      padding: 50px 0px;
+      color: #333;
+
       .value {
-        font-size: 60px;
+        font-size: 70px;
         font-weight: bold;
       }
     }
@@ -301,7 +311,30 @@ small {
   }
 
   #popular {
+    height: 500px;
     margin-top: 0px;
+    padding-top: 55px;
+    @include box-shadow(rgba(0, 0, 0, 0.67) 0 0 30px);
+    .name {
+      background: #C0D7F6;
+      color: #333;
+    }
   }
 
+}
+
+#faq {
+  font-size: 16px;
+  color: #999;
+  li {
+    line-height: 2em;
+    margin-top: 30px;
+  }
+
+  strong {
+    color: #333;
+    font-size: 20px;
+    font-family: "museo-slab", serif;
+
+  }
 }
