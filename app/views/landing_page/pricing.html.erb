@@ -8,22 +8,29 @@
     <div class="name" class="img-circle crop"> Moped </div>
     <div class="price"> Free Forever </div>
     <div class="limit"> 2 designs per month</div>
-    <a href="#" class="btn btn-large btn-success"> Signup for FREE </a> 
+    <a href="/signup" class="btn btn-large btn-success"> Signup for FREE </a> 
     <div><small><i> No credit card required </small></i></div>
   </div>
   <div class="plan">
     <div class="name"> Sedan </div>
     <div class="price"> <span class="value">$10</span>/month</div>
     <div class="limit"> 10 designs per month </span> </div>
-    <a href="#" id="sedan" class="btn btn-large btn-success"> FREE for 30 days </a>
+    <a href="/login" id="sedan" class="btn btn-large btn-success"> FREE for 30 days </a>
   </div>
   <div class="plan">
     <div class="name"> SUV</div>
     <div class="price"> <span class="value">$16</span>/month </div>
     <div class="limit"> Unlimited usage </div>
-    <a href="#" id="sedan" class="btn btn-large btn-success"> FREE for 30 days</a>
+    <a href="/login" id="suv" class="btn btn-large btn-success"> FREE for 30 days</a>
   </div>
   <div class="clearfix"></div>
 </div>
+<% end %>
 
+
+<%= content_for :javascript do %>
+  <% if @user %>
+    <%= javascript_include_tag "https://checkout.stripe.com/v2/checkout.js" %>
+    <%= javascript_include_tag "app/pricing" %>
+  <% end %>
 <% end %>
