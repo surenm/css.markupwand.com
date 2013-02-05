@@ -34,6 +34,7 @@ class User
 
   field :plan, :type => Symbol, :default => User::PLAN_FREE
   field :stripe_token, :type => String, :default => nil
+  field :stripe_customer_id, :type => String, :default => nil
 
   field :enabled, :type => Boolean, :default => !Constants::invite_gated?
 
