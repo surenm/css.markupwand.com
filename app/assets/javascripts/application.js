@@ -19,6 +19,7 @@
 //= require twitter/bootstrap
 
 //= require lib/avgrund
+//= require lib/bootstrap-editable
 //= require lib/canvas_helper
 //= require lib/codemirror
 //= require lib/codemirror-modes/css/css.js
@@ -32,6 +33,7 @@
 //= require lib/jquery.client
 //= require lib/jquery.formdefaults
 //= require lib/jquery.imagesloaded
+//= require lib/jquery.Jcrop.min
 //= require lib/json2
 //= require lib/tree.jquery
 //= require lib/utils
