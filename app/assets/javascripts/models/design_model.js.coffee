@@ -21,7 +21,7 @@ class DesignModel extends Backbone.Model
 
     this.on "sync", () ->
       if not this.is_ready()
-        $.doTimeout 1000, () ->
+        $.doTimeout 3000, () ->
           $design.fetch()
       else
         window.location.reload()

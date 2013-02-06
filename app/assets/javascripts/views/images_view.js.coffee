@@ -49,7 +49,7 @@ class ImagesView extends Backbone.View
   render: () ->
     if not @design.is_images_ready()
       $(this.el).html $("#images-loading-template").html()
-      $.doTimeout 10000, () ->
+      $.doTimeout 'images', 10000, () ->
         window.location.reload()
       return
 

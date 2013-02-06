@@ -23,6 +23,9 @@ class LayersView extends Backbone.View
     if @child_view?
       @child_view.stopListening()
 
+    # disable the images timeout
+    $.doTimeout 'images'
+
     if view == 'styles'
       @child_view = new StylesView()
     else if view == 'images'
