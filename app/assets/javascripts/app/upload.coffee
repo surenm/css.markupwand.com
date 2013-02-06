@@ -16,14 +16,17 @@ $(document).ready ->
     else
       file_name
 
-  $("#file-select-zone").click ->
-    filepicker.getFile '*/*', {'multiple': false, 'modal': true, 'location': filepicker.SERVICES.DROPBOX,  'services' : [filepicker.SERVICES.COMPUTER, filepicker.SERVICES.DROPBOX]}, (url, data) ->
-      file_url_field.attr "value", url
-      file_name_field.attr "value", data.filename
-      form_submit_button.removeAttr "disabled"
-      $('.chosen-file').show()
-      $('#file-name').html(short_filename(data.filename))
-      $('.photo-upload-action').hide()
+  $("#upload-design").click ->
+    filepicker_services = [
+      filepicker.SERVICES.COMPUTER
+      filepicker.SERVICES.DROPBOX
+      filepicker.SERVICES.BOX
+      filepicker.SERVICES.GOOGLE_DRIVE
+      filepicker.SERVICES.FTP
+    ]
+    filepicker.getFile '*/*', {'multiple': false, 'modal': true, extension: '.psd', 'location': filepicker.SERVICES.COMPUTER,  'services' : filepicker_services}, (url, data) ->
+      $.post "/design/uploaded", {design: {file_url: url, name: data.filename}}, (success) ->
+        console.log success
     return
   return
   
