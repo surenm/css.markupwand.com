@@ -1,9 +1,52 @@
 <%= content_for :content do %>
   <%= render 'shared/inner_header' %>
-  <div class="container-fluid">
+  <div id="designs" class="container-fluid">
     <div class="row">
-      <div id="upload-area" class="span5"> Upload section </div>
-      <div id="designs-area" class="span7"> user designs section </div>
+      <div id="upload-area" class="span6"> 
+        <div class="instructions">
+          <ul>
+            <li> <span class="badge badge-info">Step 1</span> Upload a photoshop design to begin.</li>
+            <li> <span class="badge badge-info">Step 2</span> Wait for couple of minutes for the design to be processed </li>
+            <li> <span class="badge badge-info">Step 3</span> Once the file is processed, you can
+              <ul> 
+                <li><span class="badge badge-success"> 1 </span> View the styles for each layer by clicking them</li>
+                <li><span class="badge badge-success"> 2 </span> Measure widths and heights using measure tool </li>
+                <li><span class="badge badge-success"> 3 </span> View, rename, crop and download images </li>
+          </ul>
+        </div>
+        <a id="upload-design" href="#" class ="btn btn-large btn-success btn-block">
+          <i class="icon-big-upload"> </i> Upload a Photoshop design 
+        </a>
+      </div>
+      <div id="designs-area" class="span8"> 
+        <h2> Your Designs </h2>
+        <div class="row">
+          <% @designs.first(8).each do |design| %>
+          <div class="span2">
+            <div class="design">
+                <div class="name">
+                  <a href="/design/<%= design.safe_name %>" title="<%= design.name %>">  <%= DesignsHelper::short_form(design.name, 20) %> </a> <br>
+                </div>
+              </div>
+              <div class="image center">
+                <a href="/design/<%= design.safe_name %>"><div style="background-image: url('/extracted/<%= design.safe_name %>/<%= Store::get_safe_name File.basename(design.psd_file_path) %>-thumbnail.png')" class="preview-thumbnail"></div></a>
+                <div class="<%= @status_class[design.status.to_sym] %>">
+                  <%= DesignsHelper::status_display_name  design.status.to_sym %>
+                </div>
+              </div>
+              <div class="center">
+                <% if (Time.now - design.created_at) < (3600*24) %>
+                <small> Uploaded <%= time_ago_in_words(design.created_at) %> ago </small>
+                <% else %>
+                <small> Uploaded on <%= design.created_at.to_formatted_s(:short) %> </small>
+                <% end %>
+              </div>
+              <div class="clearfix"></div>
+            </div>
+          <% end %>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 <% end %>
