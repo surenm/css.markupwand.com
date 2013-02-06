@@ -212,7 +212,8 @@ body {
 }
 
 #copy-to-clipboard {
-  width: 120px;
+  @include border-radius(30px);
+  width: 140px;
   font-size: 12px;
 
   i {
