@@ -21,7 +21,6 @@ class DesignModel extends Backbone.Model
 
     this.on "sync", () ->
       if not this.is_ready()
-        console.log "still processing..."
         $.doTimeout 1000, () ->
           $design.fetch()
       else
@@ -53,6 +52,9 @@ class DesignModel extends Backbone.Model
 
   is_ready: () ->
     return (this.get('status') == 'extracting_done')
+
+  is_images_ready: () ->
+    return (this.get('photoshop_status') == 'processing_done')
 
   to_canvas_data: () ->
     assets_path = window.app.design.get_assets_root()
