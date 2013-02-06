@@ -18,8 +18,7 @@ TransformersWeb::Application.routes.draw do
   match "/users/sign_in" => redirect("/login")
   match "/users/sign_up" => redirect("/signup")
   match "/users"         => redirect("/signup")
-  match "/start"         => redirect("/")
-  
+
   # Dangerous controller route.
   if not Rails.env.production?
     match 'alaguisadude' => 'application#backdoor'
@@ -32,14 +31,9 @@ TransformersWeb::Application.routes.draw do
   match 'designs' => 'design#index', :as => :user_root
   
   scope 'design' do 
-    if Constants::store_remote?
-      match 'new'       => 'design#new'
-      match 'uploaded'  => 'design#uploaded', :as => :uploaded_callback
-    else
-      match 'new'       => 'design#local_new'
-      match 'uploaded'  => 'design#uploaded', :as => :uploaded_callback
-    end
-
+    match 'new'       => 'design#new'
+    match 'uploaded'  => 'design#uploaded', :as => :uploaded_callback
+  
     scope ':id' do
       # get, put and edit designs
       match ''                 => 'design#show'
