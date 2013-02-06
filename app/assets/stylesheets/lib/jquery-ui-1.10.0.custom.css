@@ -581,16 +581,16 @@
 /* Overlays */
 
 .ui-widget-overlay { 
-  background: #aaaaaa url(/assets/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; 
-  opacity: .30;
-  filter:Alpha(Opacity=30); 
+  background: #333;
+  opacity: .60;
+  filter:Alpha(Opacity=60); 
 }
 
 .ui-widget-shadow { 
   margin: -8px 0 0 -8px; 
   padding: 8px; 
-  background: #aaaaaa url(/assets/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; 
-  opacity: .30;filter:Alpha(Opacity=30); 
+  background: #333333 url(/assets/ui-bg_flat_0_aaaaaa_40x100.png) 50% 50% repeat-x; 
+  opacity: .60;filter:Alpha(Opacity=60); 
   -moz-border-radius: 8px; 
   -khtml-border-radius: 8px; 
   -webkit-border-radius: 8px; 
