@@ -37,7 +37,7 @@ TransformersWeb::Application.routes.draw do
       match 'uploaded'  => 'design#uploaded', :as => :uploaded_callback
     else
       match 'new'       => 'design#local_new'
-      match 'uploaded'  => 'design#local_uploaded', :as => :uploaded_callback
+      match 'uploaded'  => 'design#uploaded', :as => :uploaded_callback
     end
 
     scope ':id' do

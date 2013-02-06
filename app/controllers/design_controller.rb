@@ -22,12 +22,14 @@ class DesignController < ApplicationController
 
   def uploaded
     design_data = params[:design]
-    design      = Design.new :name => design_data[:name], :store => Store::get_S3_bucket_name
+    
+    design = Design.new :name => design_data[:name]
+    design = Design.new :name => design_data[:name]
     design.user = @user
     design.save!
     
     Resque.enqueue UploaderJob, design.id, design_data
-    redirect_to :action => :show, :id => design.safe_name
+    render :json => {:design => design.id}
   end
 
   def intersecting_pairs

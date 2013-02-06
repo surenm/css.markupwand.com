@@ -338,7 +338,7 @@ small {
     }
 
     .instructions {
-      padding: 20px 0px;
+      padding: 20px 120px;
       ul {
         list-style: none;
         li {
@@ -350,5 +350,20 @@ small {
 
   #designs-area {
     text-align: center;
+    .design {
+      margin: 20px 0px;
+      .name {
+        font-family: "museo-slab", serif;
+        font-size: 14px;
+        padding: 10px 0px;
+      }
+      
+      .thumbnail {
+         margin: 0 auto;
+         height: 150px;
+         width: 150px;
+         background-repeat: no-repeat;
+       }
+    }
   }
 }
