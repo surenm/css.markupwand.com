@@ -5,8 +5,6 @@ class DesignController < ApplicationController
   before_filter :is_user_design, :except => [:new, :uploaded, :local_new, :local_uploaded, :index]
   before_filter :require_admin_login, :only => [:download_psd]
 
-  layout 'design'
-
   private
   def is_user_design
     design_id = params[:id].split('-').last
