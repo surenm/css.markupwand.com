@@ -26,7 +26,7 @@ class ImagesView extends Backbone.View
       @crop_view = new CropView()
 
     @crop_view.show(image_name, layer_id)
-    Analytical.event('Feature: Cropping used', {design: window.design.get('id')})
+    #Analytical.event('Feature: Cropping used', {design: window.design.get('id')})
     false
 
 

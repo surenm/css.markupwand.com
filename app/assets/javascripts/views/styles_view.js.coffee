@@ -64,7 +64,7 @@ class StylesView extends Backbone.View
       $("#copy-to-clipboard").switchClass 'btn-link', 'btn', 1000, 'linear', () ->
         $("#copy-to-clipboard").html('<i class="icon-clipboard"> </i>Copy to clipboard')
 
-      Analytical.event('Feature: CSS Clipboard used', {design: window.design.get('id')})
+      #Analytical.event('Feature: CSS Clipboard used', {design: window.design.get('id')})
 
     # Update clipboard text if code_editor changes
     $code_editor = @code_editor
@@ -147,6 +147,6 @@ class StylesView extends Backbone.View
       $(measureit_button).addClass 'active btn-info'
       $(this.editor).css 'cursor', 'crosshair'
       @editor_area.enable_measureit()
-      Analytical.event('Feature: Measureit plugin used', {design: window.design.get('id')})
+      #Analytical.event('Feature: Measureit plugin used', {design: window.design.get('id')})
 
 window.StylesView = StylesView
