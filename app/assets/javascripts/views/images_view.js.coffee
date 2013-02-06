@@ -9,6 +9,7 @@ class ImagesView extends Backbone.View
 
 
   initialize: () ->
+    @design = window.design
     $.fn.editable.defaults.mode = 'inline';
     this.render()
 
@@ -46,6 +47,12 @@ class ImagesView extends Backbone.View
       $(e.target).closest('.imageblock').next().find('.image-name-editable').editable('toggle')
 
   render: () ->
+    if not @design.is_images_ready()
+      $(this.el).html $("#images-loading-template").html()
+      $.doTimeout 10000, () ->
+        window.location.reload()
+      return
+
     $(this.el).html $("#images-view-template").html()    
     $(".image-name-editable").editable()
     $(".image-name-editable").first().editable('toggle')
