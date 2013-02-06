@@ -8,37 +8,31 @@
 <div id="header">
   <div class="navbar">
     <div class="navbar-inner">
-      <% if not fluid %>
-      <div class="container-narrow">
-      <% end %>
-        <div class="logo pull-left"><a href="/"><img src="/assets/logo-small.png"></a></div>
-        <ul class="nav pull-right">
-          <li><a href="/faq">FAQ</a></li>
-          <li><a href="/pricing">Pricing</a></li> 
-          
-          <% if not current_user.nil? %>
-          <li> 
-            <div class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#"> 
-                Hi, <%= current_user.get_display_name %>! <b class="caret"></b>
-              </a> 
-              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                <li> <a href="/designs"> Dashboard </a> </li>
-                <li class="divider"></li>
-                <li> <a href="/logout">Log out </a> </li>
-              </ul>
-            </div>
-          </li>
-          <% else %>
-          <li><a href="/login" class="login">Login</a></li>
-          <% end %>
-          
+      <div class="logo pull-left"><a href="/"><img src="/assets/logo-small.png"></a></div>
+      <ul class="nav pull-right">
+        <li><a href="/faq">FAQ</a></li>
+        <li><a href="/pricing">Pricing</a></li> 
+        
+        <% if not current_user.nil? %>
+        <li> 
+          <div class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"> 
+              Hi, <%= current_user.get_display_name %>! <b class="caret"></b>
+            </a> 
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+              <li> <a href="/designs"> Dashboard </a> </li>
+              <li class="divider"></li>
+              <li> <a href="/logout">Log out </a> </li>
+            </ul>
+          </div>
+        </li>
+        <% else %>
+        <li><a href="/login" class="login">Login</a></li>
+        <% end %>
+        
 
-        </ul>
-        <div class="clearfix"> </div>
-      <% if not fluid %>
-      </div>
-      <% end %>
+      </ul>
+      <div class="clearfix"> </div>
     </div>
   </div>
 </div>
