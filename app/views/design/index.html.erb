@@ -33,7 +33,7 @@
           <div class="design">
             <a href="/design/<%= design.safe_name %>" title="<%= design.name %>">
               <div class="name"><%= DesignsHelper::short_form(design.name, 20) %> </div>
-              <div style="background-image: url('/extracted/<%= design.safe_name %>/<%= Store::get_safe_name File.basename(design.psd_file_path) %>-thumbnail.png')" class="thumbnail"></div>
+              <div style="background-image: url('<%= design.get_thumbnail_image %>')" class="thumbnail"></div>
             </a>
             <div class="center">
               <% if (Time.now - design.created_at) < (3600*24) %>

@@ -355,6 +355,14 @@ class Design
     safe_basename = Store::get_safe_name File.basename(self.name, ".psd")
     File.join self.store_key_prefix, "#{safe_basename}.sif"
   end
+
+  def get_thumbnail_image
+    if not self.safe_name.nil? and not self.psd_file_path.nil?
+      "/extracted/#{self.safe_name}/#{Store::get_safe_name File.basename(self.psd_file_path)}-thumbnail.png"
+    else
+      '/assets/loading.gif'
+    end
+  end
   
   ##########################################################
   # Helper methods for running jobs on designs
