@@ -11,6 +11,7 @@
  
  *= require lib/ie
  *= require lib/bootstrap
+ *= require lib/bootstrap-responsive
  *= require lib/bootstrap_and_overrides
  *= require lib/jquery-ui-1.10.0.custom
  *= require lib/jqtree
@@ -371,4 +372,20 @@ small {
        }
     }
   }
+}
+
+.popover-content {
+  padding: 10px 0px 0px 0px;
+  
+  .popover-text {
+    padding: 5px 15px;
+  }
+
+  .popover-navigation {
+    padding: 10px;
+    margin-top: 20px;
+    margin-bottom: 0px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+  } 
 }

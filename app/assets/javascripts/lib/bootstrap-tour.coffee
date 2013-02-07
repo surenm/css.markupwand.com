@@ -191,7 +191,7 @@
 
     # Show step popover
     _showPopover: (step, i) ->
-      content = "#{step.content}<br /><p>"
+      content = "<div class='popover-text'>#{step.content}</div><div class='popover-navigation'>"
 
       options = $.extend {}, @_options
 
@@ -206,12 +206,12 @@
       nav = []
 
       if step.prev >= 0
-        nav.push "<a href='##{step.prev}' class='prev'>#{options.labels.prev}</a>"
+        nav.push "<a href='##{step.prev}' class='prev btn btn-mini'>#{options.labels.prev}</a>"
       if step.next >= 0
-        nav.push "<a href='##{step.next}' class='next'>#{options.labels.next}</a>"
+        nav.push "<a href='##{step.next}' class='next btn btn-mini btn-primary'>#{options.labels.next}</a>"
       content += nav.join(" | ")
 
-      content += "<a href='#' class='pull-right end'>#{options.labels.end}</a>"
+      content += "<a href='#' class='pull-right end btn btn-mini btn-info'>#{options.labels.end}</a>"
 
       $(step.element).popover('destroy').popover({
         placement: step.placement
