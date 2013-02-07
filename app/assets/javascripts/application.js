@@ -12,14 +12,15 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require lib/jquery.cookie
 //= require lib/jquery-ui-1.9.2.custom.min
 
 //= require lib/underscore
 //= require lib/backbone
 //= require twitter/bootstrap
 
-//= require lib/avgrund
 //= require lib/bootstrap-editable.min
+//= require lib/bootstrap-tour
 //= require lib/canvas_helper
 //= require lib/codemirror
 //= require lib/codemirror-modes/css/css.js

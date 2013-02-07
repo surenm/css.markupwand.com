@@ -9,6 +9,7 @@ class StylesView extends Backbone.View
     "click #image-tab-btn" : "move_to_image_tab"
     "click #zoom button": "zoom_level_handler"
     "click #measureit": "measure_handler"
+    "click #tour": "tour_handler"
 
   initialize: ->
     @design = window.design
@@ -148,5 +149,22 @@ class StylesView extends Backbone.View
       $(this.editor).css 'cursor', 'crosshair'
       @editor_area.enable_measureit()
       #Analytical.event('Feature: Measureit plugin used', {design: window.design.get('id')})
+
+  tour_handler: (event) ->
+    tour = new Tour()
+
+    tour.addStep 
+      element: "#zoom"
+      title: "Zoom in and zoom out"
+      content: "Actual size, fit size and somewhere between 50% to 250%"
+      placement: 'bottom'
+
+    tour.addStep 
+      element: "#measureit"
+      title: "Measure "
+      content: "Measure height and width in pixels at any zoom level"
+      placement: 'bottom'
+
+    tour.start(true)
 
 window.StylesView = StylesView
