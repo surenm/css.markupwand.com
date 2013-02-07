@@ -479,7 +479,9 @@ class Layer
     end
     
     all_layer_style_rules.each do |style_line|
-      scss_style_string += style_line + ";\n"
+      if not style_line.nil?
+        scss_style_string += style_line + ";\n"
+      end
     end
   
     return scss_style_string
