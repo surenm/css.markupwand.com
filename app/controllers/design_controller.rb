@@ -3,7 +3,7 @@ require 'zip/zip'
 class DesignController < ApplicationController
   before_filter :require_login, :except => [:upload_danger]
   before_filter :is_user_design, :except => [:new, :uploaded, :local_new, :local_uploaded, :index]
-  before_filter :require_admin_login, :only => [:download_psd]
+  before_filter :require_admin_login, :only => [:download_psd, :delete]
 
   private
   def is_user_design
@@ -257,13 +257,13 @@ class DesignController < ApplicationController
   end
   
   def index
-    @status_class = Design::STATUS_CLASS
     @designs = @user.designs.where(:softdelete => false).sort do |a, b|
       b.created_at <=> a.created_at
     end
 
-    #In case the user wants to upload a new design...
-    @new_design = Design.new
+    ability = Ability.new @user
+    @allow_new_designs = ability.can? :create, Design.new
+    Log.fatal @allow_new_designs
   end
 
   def show
