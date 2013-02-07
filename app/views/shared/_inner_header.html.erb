@@ -28,7 +28,9 @@
               Hi, <%= current_user.get_display_name %>! <b class="caret"></b>
             </a> 
             <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-              <li> <a href="/pricing"> Plan: <%= current_user.plan %> </a> </li>
+              <li> 
+                <a href="/pricing"> Plan: <span class="label label-info"><%= current_user.plan %> </span></a> 
+              </li>
               <li> <a href="/designs"> Dashboard </a> </li>
               <li class="divider"></li>
               <li> <a href="/logout">Log out </a> </li>
