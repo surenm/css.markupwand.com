@@ -8,7 +8,14 @@
 <div id="header">
   <div class="navbar">
     <div class="navbar-inner">
-      <div class="logo pull-left"><a href="/"><img src="/assets/logo-small.png"></a></div>
+      <div class="logo pull-left">
+        <% if current_user.nil? %>
+        <a href="/"><img src="/assets/logo-small.png"></a>
+        <% else %>
+        <a href="/designs"><img src="/assets/logo-small.png"></a>
+        <% end %>
+
+      </div>
       <ul class="nav pull-right">
         <li><a href="/faq">FAQ</a></li>
         <li><a href="/pricing">Pricing</a></li> 
