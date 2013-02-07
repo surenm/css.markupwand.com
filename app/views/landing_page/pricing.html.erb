@@ -1,14 +1,14 @@
 <%= content_for :content do %>
 
 <%= render 'shared/inner_header' %>
-
-<div class="container center">
-<h2> Pricing </h2>
-</div>
-
 <div id="pricing" class="colored">
+<% if @user.nil? %>
+<div class="alert center" style="font-size: 14px; margin-bottom: 20px">
+    <strong> You have to be logged in to choose a paid plan here! </strong>
+</div>
+<% end %>
   
-  <div class="plan">
+  <div class="plan free">
     <div class="name" class="img-circle crop"> Starter </div>
     <div class="price"> <span class="value"> Free </span></div>
     <div class="limit"> 2 designs per month</div>
@@ -16,18 +16,26 @@
     <div><small><i> No credit card required </small></i></div>
   </div>
   
-  <div id="popular" class="plan">
+  <div id="popular" class="plan regular">
     <div class="name"> Regular </div>
     <div class="price"> <span class="value">$15</span>/month</div>
     <div class="limit"> 15 designs per month </span> </div>
+    <% if @user.nil? %>
+    <a href="/login" class="btn btn-large btn-success disabled"> FREE for 30 days</a>
+    <% else %>
     <a href="/login" id="regular" class="btn btn-large btn-success"> FREE for 30 days </a>
+    <% end %>
   </div>
   
-  <div class="plan">
+  <div class="plan plus">
     <div class="name"> Plus </div>
     <div class="price"> <span class="value">$20</span>/month </div>
     <div class="limit"> Unlimited usage </div>
+    <% if @user.nil? %>
+    <a href="/login" class="btn btn-large btn-success disabled"> FREE for 30 days</a>
+    <% else %>
     <a href="/login" id="plus" class="btn btn-large btn-success"> FREE for 30 days</a>
+    <% end %>
   </div>
   <div class="clearfix"></div>
 </div>
@@ -35,19 +43,21 @@
 <div class="container"> 
   <div style="text-align: center">
     <p> We won't charge your credit card without confirming with you!</p>
-    <p> Don't feel the pricing is right? Missing a feature? <a href="mailto:suren@markupwand.com?Subject=Pricing for css:markupwand">
-    Talk to us! </a></p>
+    <p> Don't feel the pricing is right? Missing a feature? Talk to us over <a href="#">Live chat</a> or <a href="mailto:suren@markupwand.com?Subject=Pricing for css:markupwand"> Mail us
+     </a></p>
   </div>  
 </div>
 
 <aside id="pricing-update-popup">
   Finishing up plan update! Please don't refresh the page!
 </aside>
+
 <% end %>
 
 
 <%= content_for :javascript do %>
   <% if @user %>
+    <%= javascript_tag "var user = #{@user.attribute_data.to_json}"; %>
     <%= javascript_tag "var STRIPE_PUBLISH_TOKEN = '#{Constants::STRIPE_PUBLISH_TOKEN}';" %>
     <%= javascript_include_tag "https://checkout.stripe.com/v2/checkout.js" %>
     <%= javascript_include_tag "app/pricing" %>

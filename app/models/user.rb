@@ -95,6 +95,18 @@ class User
     return user
   end
 
+  def attribute_data
+    year = Time.now.year
+    month = Time.now.month
+    this_month_designs = self.designs.where :created_at.gte => "#{year}-#{month}-1"
+    {
+      :name => self.get_display_name,
+      :plan => self.plan,
+      :gravatar => self.get_gravtar_image_url,
+      :designs_count => this_month_designs.count,
+    }
+  end
+
   def get_display_name
     if not self.first_name.nil?
       return self.first_name
