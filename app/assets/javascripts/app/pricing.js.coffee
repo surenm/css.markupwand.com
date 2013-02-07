@@ -1,4 +1,14 @@
 $(document).ready () ->  
+
+  $(".#{user.plan}").popover 
+    animation: true
+    placement: 'top'
+    title: 'Your current plan'
+    content: "You have uploaded #{user.designs_count} designs so far this month!"
+    trigger: 'manual'
+
+  $(".#{user.plan}").popover 'show'
+
   $("#regular").click () ->
     handler = (stripe_data) ->
       stripe_data.plan = 'regular'
@@ -17,6 +27,7 @@ $(document).ready () ->
         $.doTimeout 1000, () ->
           if data.status == "OK"
             $("#pricing-update-popup").dialog 'close'
+            window.location.reload()
 
    
     StripeCheckout.open {
@@ -49,6 +60,7 @@ $(document).ready () ->
         $.doTimeout 1000, () ->
           if data.status == "OK"
             $("#pricing-update-popup").dialog 'close'
+            window.location.reload()
 
     StripeCheckout.open {
       key:         STRIPE_PUBLISH_TOKEN

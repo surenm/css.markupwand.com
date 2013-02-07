@@ -263,7 +263,6 @@ class DesignController < ApplicationController
 
     ability = Ability.new @user
     @allow_new_designs = ability.can? :create, Design.new
-    Log.fatal @allow_new_designs
   end
 
   def show
