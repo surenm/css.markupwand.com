@@ -146,7 +146,6 @@
       step = @getStep(i)
 
       return unless step
-
       @setCurrentStep(i)
 
       # Redirect to step path if not already there
@@ -209,7 +208,7 @@
         nav.push "<a href='##{step.prev}' class='prev btn btn-mini'>#{options.labels.prev}</a>"
       if step.next >= 0
         nav.push "<a href='##{step.next}' class='next btn btn-mini btn-primary'>#{options.labels.next}</a>"
-      content += nav.join(" | ")
+      content += nav.join("  ")
 
       content += "<a href='#' class='pull-right end btn btn-mini btn-info'>#{options.labels.end}</a>"
 
