@@ -107,6 +107,9 @@
 
 <script id="images-view-template" type="text/template">
 <div id="images">
+<div class="images-topbar"> 
+  <a href="/design/<%= @design.safe_name %>/download" class="btn btn-success"> Download all Images </a> 
+</div>
 <%= form_tag "/design/#{@design.safe_name}/images", :method => "post" %>
   <% if not @design.json_data[:sif].nil? and @design.photoshop_status == Design::STATUS_PROCESSING_DONE %>
     <% @design.layers.each do |uid, layer| %>

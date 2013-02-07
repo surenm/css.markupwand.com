@@ -321,8 +321,8 @@ class DesignController < ApplicationController
   end
 
   def download
-    tmp_folder = Store::fetch_from_store @design.store_published_key
-    zip_file   = Rails.root.join("tmp", "#{@design.safe_name}.zip")
+    tmp_folder = Store::fetch_from_store File.join(@design.store_extracted_key, 'images')
+    zip_file   = Rails.root.join("tmp", "#{@design.safe_name_prefix}.zip")
     path = tmp_folder.to_s
 
     path.sub!(%r[/$],'')
