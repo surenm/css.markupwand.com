@@ -158,12 +158,14 @@ class StylesView extends Backbone.View
       title: "Zoom in and zoom out"
       content: "Actual size, fit size and somewhere between 50% to 250%"
       placement: 'bottom'
+      animation: true
 
     tour.addStep 
       element: "#measureit"
       title: "Measure "
       content: "Measure height and width in pixels at any zoom level"
       placement: 'bottom'
+      animation: true
 
     tour.start(true)
 
