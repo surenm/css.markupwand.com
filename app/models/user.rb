@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 class User
   include Mongoid::Document
   include Mongoid::Versioning
@@ -101,5 +103,11 @@ class User
     else
       return self.email
     end
+  end
+
+  def get_gravtar_image_url
+    email_address = self.email.downcase
+    hash = Digest::MD5.hexdigest(email_address)
+    return "http://www.gravatar.com/avatar/#{hash}"
   end
 end
