@@ -48,6 +48,7 @@ GEM
     bson_ext (1.8.2)
       bson (~> 1.8.2)
     builder (3.0.4)
+    cancan (1.6.9)
     capistrano (2.14.1)
       highline
       net-scp (>= 1.0.0)
@@ -323,6 +324,7 @@ DEPENDENCIES
   aws-sdk
   bson
   bson_ext
+  cancan
   capistrano
   capistrano-ext
   capistrano-resque

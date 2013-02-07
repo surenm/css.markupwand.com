@@ -25,6 +25,7 @@ gem 'xml-simple'
 gem 'rubyzip'
 gem 'rubytree', '~> 0.8.3'
 gem 'css_parser'
+gem 'cancan'
 
 # Init command related gems
 gem 'foreman'
