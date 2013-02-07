@@ -21,7 +21,8 @@ class LayersView extends Backbone.View
     $(this.topbar).find("a[href='##{view}']").tab('show')
 
     if @child_view?
-      @child_view.stopListening()
+      @child_view.remove()
+      $("<div id='content'>").insertAfter $(this.topbar)
 
     # disable the images timeout
     $.doTimeout 'images'
