@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
     if params[:plan] == "regular"
       @user.plan = User::PLAN_REGULAR
     elsif params[:plan] == "plus"
-      @user.plan = USER::PLAN_PLUS
+      @user.plan = User::PLAN_PLUS
     end
     @user.save!
     
