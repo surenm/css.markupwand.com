@@ -29,7 +29,7 @@ class DesignController < ApplicationController
     design.save!
     
     Resque.enqueue UploaderJob, design.id, design_data
-    render :json => {:design => design.id}
+    render :json => {:design => design.safe_name}
   end
 
   def intersecting_pairs

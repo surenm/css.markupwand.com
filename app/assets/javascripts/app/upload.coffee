@@ -33,8 +33,15 @@ $(document).ready ->
     success_handler = (url, fpicker_data) ->
       extension = fpicker_data.filename.split('.').pop()
       if extension.toLowerCase() == 'psd'
+        $("#file-upload-success").dialog 
+          modal: true
+          draggable: false
+          resizable: false
+        
         $.post "/design/uploaded", {design: {file_url: url, name: fpicker_data.filename}}, (data) ->
-          console.log data
+          $.doTimeout 1000, () ->
+            window.location = "/design/#{data.design}"
+
       else
         $("#file-type-error-popup").dialog 
           modal: true
