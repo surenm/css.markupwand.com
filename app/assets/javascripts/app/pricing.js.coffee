@@ -1,9 +1,23 @@
 $(document).ready () ->  
-  $("#sedan").click () ->
+  $("#regular").click () ->
     handler = (stripe_data) ->
       stripe_data.plan = 'regular'
+      $("#pricing-update-popup").dialog 
+          modal: true
+          draggable: false
+          resizable: false
+          buttons: [
+            {
+              text: 'Ok'
+              click: () -> $(this).dialog('close')
+              class: 'btn btn-success'
+            }
+          ]
       $.post '/register-card', stripe_data, (data) ->
-        console.log data
+        $.doTimeout 1000, () ->
+          if data.status == "OK"
+            $("#pricing-update-popup").dialog 'close'
+
    
     StripeCheckout.open {
       key:         STRIPE_PUBLISH_TOKEN
@@ -17,11 +31,24 @@ $(document).ready () ->
     
     return false
 
-  $("#suv").click () ->
+  $("#plus").click () ->
     handler = (stripe_data) ->
       stripe_data.plan = 'plus'
+      $("#pricing-update-popup").dialog 
+          modal: true
+          draggable: false
+          resizable: false
+          buttons: [
+            {
+              text: 'Ok'
+              click: () -> $(this).dialog('close')
+              class: 'btn btn-success'
+            }
+          ]
       $.post '/register-card', stripe_data, (data) ->
-        console.log data
+        $.doTimeout 1000, () ->
+          if data.status == "OK"
+            $("#pricing-update-popup").dialog 'close'
 
     StripeCheckout.open {
       key:         STRIPE_PUBLISH_TOKEN
