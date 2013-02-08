@@ -5,7 +5,7 @@ ruby "1.9.3"
 gem 'rails', '3.2.11'
 
 # Base libraries
-gem 'aws-sdk'
+gem 'aws-sdk', "~> 1.8.1.2"
 gem 'bson'
 gem 'bson_ext'
 gem 'execjs'
