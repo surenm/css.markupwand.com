@@ -17,6 +17,7 @@ class Design
   embeds_one :font_map
   accepts_nested_attributes_for :font_map
 
+
   # Design status types
   Design::STATUS_QUEUED = :queued
   Design::STATUS_UPLOADING = :uploading
@@ -64,6 +65,16 @@ class Design
   field :softdelete, :type => Boolean, :default => false
   field :width, :type => Integer
   field :height, :type => Integer
+
+
+  rails_admin do
+    list do
+      field :user
+      field :name
+      field :photoshop_status
+      field :softdelete
+    end
+  end
   
   field :storage, :type => String, :default => "local"
 
