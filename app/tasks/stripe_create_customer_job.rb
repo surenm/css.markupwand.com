@@ -8,5 +8,6 @@ class StripeCreateCustomerJob
     
     user.stripe_customer_id = customer.id
     user.save!
+    Resque.enqueue ChatNotifyJob, "#{user.name.to_s} (#{user.email.to_s}) signed up for #{user.plan} plan"
   end
 end

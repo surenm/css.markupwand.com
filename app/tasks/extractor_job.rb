@@ -5,6 +5,7 @@ class ExtractorJob
   
   def self.perform(design_id)
     design = Design.find design_id
+    user = design.user
     design.set_status Design::STATUS_EXTRACTING
 
     Log.info "Extracting design data from photoshop file #{design.name}..."
@@ -67,6 +68,7 @@ class ExtractorJob
       ImagesCompletedJob.perform design.id 
     end
     
-    CssMarkupwandJob.perform design.id    
+    CssMarkupwandJob.perform design.id
+    Resque.enqueue ChatNotifyJob, "#{user.name.to_s} (#{user.email.to_s})'s design (<a href='http://css.markupwand.com/design/#{design.safe_name.to_s}'>#{design.safe_name_prefix}</a>)"
   end
 end
