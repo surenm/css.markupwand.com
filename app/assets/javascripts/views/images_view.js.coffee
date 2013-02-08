@@ -6,6 +6,8 @@ class ImagesView extends Backbone.View
     "keydown .editable-input input" : "handle_tab"
     "click .rename-btn" : "rename_click"
     "click .crop-btn"   : "crop_click"
+    "mouseover .imageblock" : "show_controls"
+    "mouseout  .imageblock" : "hide_controls"
 
 
   initialize: () ->
@@ -13,6 +15,14 @@ class ImagesView extends Backbone.View
     $.fn.editable.defaults.mode = 'inline';
     this.render()
 
+  show_controls: (e)->
+    imageblock =  $(e.target).closest('.imageblock')
+    imageblock.find('.image-controls').css('visibility', 'visible')
+
+  hide_controls: (e)->
+    imageblock = $(e.target).closest('.imageblock')
+    console.log imageblock.find('.image-controls')[0]
+    imageblock.find('.image-controls').css('visibility', 'hidden')
 
   rename_click: (e)->
     layer_id = $(e.target).closest('.imageblock').data('layer')

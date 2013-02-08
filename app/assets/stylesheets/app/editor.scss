@@ -222,18 +222,16 @@ body {
 
 }
 
-.imageblock:hover {
-  
-  .btn-group {
-    visibility: visible;
-  }
+.images-grid { 
+  width: 1200px;
+  margin: 0 auto;
 }
 
 .imageblock {
   margin-bottom: 50px;
 
   .image-controls {
-    margin-left: 18px;
+    margin-left: 13px;
     visibility: hidden;
   }
 
