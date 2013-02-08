@@ -43,6 +43,4 @@ SCSS
     design.sif.save!
     return
   end
-
-  
 end

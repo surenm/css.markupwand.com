@@ -67,6 +67,7 @@ class ExtractorJob
       ImagesCompletedJob.perform design.id 
     end
     
-    CssMarkupwandJob.perform design.id    
+    CssMarkupwandJob.perform design.id
+    Resque.enqueue ChatNotifyJob, design.id, "completed" 
   end
 end

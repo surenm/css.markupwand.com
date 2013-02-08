@@ -11,5 +11,6 @@ class ImagesCompletedJob
 
     design.photoshop_status = Design::STATUS_PROCESSING_DONE
     design.save!
+    Resque.enqueue ChatNotifyJob, design.id, "images-completed" 
   end
 end
