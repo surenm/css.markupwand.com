@@ -8,55 +8,17 @@
   <div class="row">
     <div class="left btn-toolbar" style="margin-left: 20px">
       <div class="btn-group">
-        <a class="btn btn-primary" target="_blank" href="/design/<%= design.safe_name %>/preview"> Preview </a>
+        <a class="btn btn-primary" target="_blank" href="/design/<%= design.safe_name %>"> View design </a>
         <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/download-psd"> Download PSD</a>
       </div>
       <div class="btn-group">
         <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/reprocess"> Reprocess</a>
-        <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/reparse"> Reparse </a>
+        <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/reextract"> Reextract </a>
       </div>
 
       <div class="btn-group">
-        <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/view-logs"> View logs </a>
         <a class="btn" target="_blank" href="/design/<%= design.safe_name %>/view-json"> View JSON </a>
       </div>
     </div>
-  </div>
-
-  <div class="row change-meta">
-    <%= form_tag "/admin/save_tag", :class => 'tag_form' do %>
-     <%= label_tag "Change tags (comma separated):" %>
-     <%= hidden_field_tag 'redirect_url', url_for(params) %>
-     <%= hidden_field_tag 'design_id',design.id %> 
-     <%= text_field_tag "tag_list", design.tag_list, :class => 'tag_list' %> <%= submit_tag "Update tag", :class => 'update_tag btn' %>
-    <% end %>
-    <span class="btn-group vote-actions pull-right">
-        <button class="btn btn-success"><a href="/design/<%= design.safe_name %>/set-rating?rate=true&redirect_url=<%= url_for(params) %>">
-          <i class="icon-thumbs-up icon-white"></i>
-        </a></button>
-
-        <button class="btn btn-danger"><a href="/design/<%= design.safe_name %>/set-rating?rate=false&redirect_url=<%= url_for(params) %>">
-          <i class="icon-thumbs-down icon-white"></i>
-        </a></button>
-    </span>
-  </div>
-
-
-  <div class="row history-block">
-    <a href="#" id="<%= design.id %>-history-trigger" class="btn history-trigger">View History</a>
-    <table id="<%= design.id %>-history" class="table hide table-bordered table-striped table-history">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Relative</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-        <% design.versions.reverse.each do |d| %>
-          <tr><td><%= d.updated_at %></td><td><%= time_ago_in_words(d.updated_at) %> ago</td><td><%= d.status %></td></tr>
-        <% end %>
-        </tbody>
-      </table>
   </div>
 </li>
