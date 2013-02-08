@@ -48,6 +48,22 @@ class User
   has_many :designs
   has_many :user_fonts  
 
+  rails_admin do
+    list do
+      field :name
+      field :email
+      field :plan
+      field :last_sign_in_at
+      field :sign_in_count
+      field :designs do
+        label "Design count"
+        pretty_value do
+          value.length.to_s
+        end
+      end
+    end
+  end
+
   def self.get_email_domain(email_address)
     return email_address.split('@').last
   end
