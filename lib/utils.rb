@@ -34,7 +34,7 @@ module Utils
   end
 
   def Utils::post_to_chat(message, color = 'gray', notify = true)
-    #return if Rails.env.development?
+    return if Rails.env.development?
     client = HipChat::Client.new(ENV['HIPCHAT_TOKEN'])
     client['css.markupwand'].send('markupwand', message, :notify => notify, :color => color)
   end
