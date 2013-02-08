@@ -11,7 +11,7 @@ class UploaderJob
 
     user = design.user
 
-    Resque.enqueue ChatNotifyJob, design.id, "uploaded"
+    Resque.enqueue ChatNotifyJob, "#{user.name.to_s} (#{user.email.to_s}) uploaded <a href='http://css.markupwand.com/design/#{design.safe_name.to_s}'>#{design.safe_name_prefix}</a>"
     
     safe_basename = Store::get_safe_name File.basename(design_data[:name], ".psd")
   
