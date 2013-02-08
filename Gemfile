@@ -26,6 +26,7 @@ gem 'rubyzip'
 gem 'rubytree', '~> 0.8.3'
 gem 'css_parser'
 gem 'cancan'
+gem 'rails_admin'
 
 # Init command related gems
 gem 'foreman'

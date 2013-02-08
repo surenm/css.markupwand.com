@@ -5,14 +5,18 @@ class Design
   include Mongoid::Timestamps::Created
   include Mongoid::Timestamps::Updated
   include Mongoid::Versioning
+  accepts_nested_attributes_for :versions
+  
   include ActionView::Helpers::DateHelper
-
+  
+  
   # keep only atmost 5 versions
   max_versions 5
 
   belongs_to :user
   embeds_one :font_map
-  
+  accepts_nested_attributes_for :font_map
+
   # Design status types
   Design::STATUS_QUEUED = :queued
   Design::STATUS_UPLOADING = :uploading

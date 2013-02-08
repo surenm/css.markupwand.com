@@ -3,7 +3,8 @@ class DesignGallery
   include Mongoid::Timestamps::Created
   include Mongoid::Timestamps::Updated
   include Mongoid::Versioning
-
+  accepts_nested_attributes_for :versions
+  
   has_many :designs
 
   field :votes, :type => Hash, :default => {}

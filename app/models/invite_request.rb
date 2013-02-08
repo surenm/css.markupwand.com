@@ -1,6 +1,8 @@
 class InviteRequest
   include Mongoid::Document
   include Mongoid::Versioning
+  accepts_nested_attributes_for :versions
+  
   include Mongoid::Timestamps::Created
   include Mongoid::Timestamps::Updated
 

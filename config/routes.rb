@@ -1,6 +1,8 @@
 require 'resque-history/server'
 
 TransformersWeb::Application.routes.draw do
+  mount RailsAdmin::Engine => '/admin/data', :as => 'rails_admin'
+
   devise_for :users, :controllers => { :omniauth_callbacks => 'auth' }
 
   # Landing page controller views
