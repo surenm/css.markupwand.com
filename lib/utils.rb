@@ -121,4 +121,16 @@ CSS
     key = layer_ids.join '-'
     return key
   end
+
+  def Utils::get_snippet(text)
+    snippet = ''
+    if text.size > 25
+      snippet = text.first(25) + '...'
+    else
+      snippet = text
+    end
+    snippet.tr! "\n\t\r", ""
+
+    return snippet
+  end
 end
