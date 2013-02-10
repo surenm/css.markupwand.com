@@ -311,7 +311,7 @@ module Store
 
   def Store::get_store_url_for_object(remote_file_path)
     bucket = Store::get_remote_store
-    file = bucket.objects[source_file_path]
+    file = bucket.objects[remote_file_path]
     url = file.url_for :read, :expires => 5 * 60
     return url
   end
