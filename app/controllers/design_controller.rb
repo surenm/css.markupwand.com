@@ -383,8 +383,9 @@ class DesignController < ApplicationController
     end
 
     remote_file = File.join base_folder, "#{params[:uri]}.#{params[:ext]}"
-    url = Store::get_store_url_for_object remote_file
-    redirect_to url
+    s3_url = Store::get_store_url_for_object remote_file
+    Log.fatal s3_url
+    redirect_to s3_url
   end
   
   def reprocess
