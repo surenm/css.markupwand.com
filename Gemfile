@@ -67,7 +67,6 @@ gem 'compass-rails'
 gem 'sass-rails', '~> 3.2.4'
 gem 'sass', '~> 3.2.4'
 gem 'twitter-bootstrap-rails'
-gem 'asset_sync'
 
 # Gems used only for assets and not required
 # in production environments by default.
