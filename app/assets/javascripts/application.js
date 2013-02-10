@@ -23,7 +23,7 @@
 //= require lib/bootstrap-tour
 //= require lib/canvas_helper
 //= require lib/codemirror
-//= require lib/codemirror-modes/css/css.js
+//= require lib/codemirror-modes/css/css
 //= require lib/codemirror-modes/htmlembedded/htmlembedded
 //= require lib/codemirror-modes/htmlmixed/htmlmixed
 //= require lib/color
@@ -35,12 +35,8 @@
 //= require lib/jquery.formdefaults
 //= require lib/jquery.imagesloaded
 //= require lib/jquery.Jcrop.min
-//= require lib/json2
-//= require lib/tree.jquery
 //= require lib/utils
 //= require lib/ZeroClipboard
-
-//= require mousetrap.min
 
 $(document).ajaxSend(function(event, request, settings) {
   if (typeof(AUTH_TOKEN) == "undefined") return;

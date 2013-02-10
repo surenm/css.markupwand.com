@@ -25,6 +25,7 @@ public/uploads/*
 
 /store/*
 /store_local/*
+/testcases
 
 dump.rdb
 

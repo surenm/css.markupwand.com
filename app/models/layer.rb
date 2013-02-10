@@ -434,20 +434,40 @@ class Layer
     return true
   end
 
-  def get_text_styles
-    chunk = self.text_chunks.first
-    text_styles = Array.new
-    chunk[:styles].each do |key, value|
-      if self.allow_chunk_styles?(key)
-        if key == :'font-family'
-          text_styles.push "#{key}: '#{value}'"
-        else
-          text_styles.push "#{key}: #{value}"
+  def get_text_styles(display = false)
+    text_chunk_styles = ""
+    self.text_chunks.each_with_index do |chunk, index|
+      text_styles = Array.new
+      chunk[:styles].each do |key, value|
+        if self.allow_chunk_styles?(key)
+          if key == :'font-family'
+            text_styles.push "#{key}: '#{value}'"
+          else
+            text_styles.push "#{key}: #{value}"
+          end
         end
+      end
+
+      if not display
+        text_chunk_styles += <<CHUNK
+.text-chunk-#{index} {
+#{self.scss_array_to_string text_styles}
+}
+CHUNK
+      else
+        if chunk[:text].size == 0
+          next
+        end
+        
+        snippet = Utils::get_snippet chunk[:text]
+        text_chunk_styles += <<CHUNK
+/* Style for: #{snippet} */
+#{self.scss_array_to_string text_styles}
+CHUNK
       end
     end
 
-    return text_styles
+    return text_chunk_styles
   end
 
   ##########################################################
@@ -469,22 +489,15 @@ class Layer
     Log.info "#{spaces}#{prefix} (layer) #{self.name} #{@bounds.to_s}"
   end
 
-  def to_scss
-    scss_style_string = ""
-    all_layer_style_rules = self.get_style_rules 
+  def to_scss(to_display = true)
+    all_layer_style_rules = self.scss_array_to_string self.get_style_rules 
     if self.type == Layer::LAYER_TEXT
-      all_layer_style_rules += self.get_text_styles
+      all_layer_style_rules += self.get_text_styles(to_display)
     elsif self.type == Layer::LAYER_NORMAL
-      all_layer_style_rules += self.get_image_styles
+      all_layer_style_rules += self.scss_array_to_string self.get_image_styles
     end
     
-    all_layer_style_rules.each do |style_line|
-      if not style_line.nil?
-        scss_style_string += style_line + ";\n"
-      end
-    end
-  
-    return scss_style_string
+    return all_layer_style_rules
   end
 
   def to_css
@@ -494,5 +507,15 @@ class Layer
     end
     
     return css_style_string
+  end
+
+  def scss_array_to_string(scss_array)
+    scss_string = ""
+    scss_array.each do |style_line|
+      if not style_line.nil?
+        scss_string += style_line + ";\n"
+      end
+    end
+    return scss_string
   end
 end

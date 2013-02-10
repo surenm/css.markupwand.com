@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource)
-    (session[:"user.return_to"].nil?) ? "/" : session[:"user.return_to"].to_s
+    user_root_path
   end
 
   def after_sign_up_path_for(resource)
