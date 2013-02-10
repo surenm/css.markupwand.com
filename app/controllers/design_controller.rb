@@ -383,7 +383,7 @@ class DesignController < ApplicationController
     end
 
     remote_file = File.join base_folder, "#{params[:uri]}.#{params[:ext]}"
-    url = Store::get_store_url_for_object
+    url = Store::get_store_url_for_object remote_file
     redirect_to url
   end
   

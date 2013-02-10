@@ -77,8 +77,9 @@ TransformersWeb::Application.routes.draw do
   end
 
   # Proxy method to view generated files
-  match ':type/:id/*uri.*ext' => 'design#generated'
   match 'url/:type/:id/*uri.*ext' => 'design#url'
+  match ':type/:id/*uri.*ext' => 'design#generated'
+
 
   # admin actions for setting up testing
   match 'admin'            => 'admin#index', :as => :admin_path
