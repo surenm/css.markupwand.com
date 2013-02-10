@@ -27,6 +27,7 @@ gem 'rubytree', '~> 0.8.3'
 gem 'css_parser'
 gem 'cancan'
 gem 'rails_admin'
+gem 'sprockets-image_compressor'
 
 # Init command related gems
 gem 'foreman'
