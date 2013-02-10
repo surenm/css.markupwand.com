@@ -313,6 +313,6 @@ module Store
     bucket = Store::get_remote_store
     file = bucket.objects[remote_file_path]
     url = file.url_for :read, :expires => 5 * 60
-    return url
+    return url.to_s
   end
 end
