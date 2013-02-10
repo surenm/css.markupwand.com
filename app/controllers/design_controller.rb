@@ -369,22 +369,13 @@ class DesignController < ApplicationController
     end
 
     remote_file = File.join base_folder, "#{params[:uri]}.#{params[:ext]}"
-    temp_file   = Store::fetch_object_from_store remote_file
-    send_file temp_file, :disposition => "inline"
-  end
-
-  def url
-    if params[:type] == "published"
-      base_folder = @design.store_published_key
-    elsif params[:type] == "extracted"
-      base_folder = @design.store_extracted_key
-    elsif params[:type] == "images"
-      base_folder = @design.store_images_key
+    if Constants::store_remote?
+      s3_url = Store::get_store_url_for_object remote_file
+      redirect_to s3_url
+    else
+      temp_file   = Store::fetch_object_from_store remote_file
+      send_file temp_file, :disposition => "inline"
     end
-
-    remote_file = File.join base_folder, "#{params[:uri]}.#{params[:ext]}"
-    s3_url = Store::get_store_url_for_object remote_file
-    redirect_to s3_url
   end
   
   def reprocess
