@@ -308,4 +308,11 @@ module Store
       Store::delete_from_local_store remote_file_path
     end
   end
+
+  def Store::get_store_url_for_object(remote_file_path)
+    bucket = Store::get_remote_store
+    file = bucket.objects[remote_file_path]
+    url = file.url_for :read, :expires => 5 * 60
+    return url.to_s
+  end
 end

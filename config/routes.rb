@@ -8,7 +8,6 @@ TransformersWeb::Application.routes.draw do
   # Landing page controller views
   match '/faq'         => "landing_page#faq"
   match '/pricing'     => "landing_page#pricing"
-
   
   # Switch user
   devise_scope :user do
@@ -78,6 +77,7 @@ TransformersWeb::Application.routes.draw do
 
   # Proxy method to view generated files
   match ':type/:id/*uri.*ext' => 'design#generated'
+
 
   # admin actions for setting up testing
   match 'admin'            => 'admin#index', :as => :admin_path
