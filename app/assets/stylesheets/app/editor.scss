@@ -82,6 +82,15 @@ body {
         overflow: auto;
         height: 100%;
         color: #333;
+        
+        .play-area {
+          @include border-bottom-radius(5px);
+          border-width: 0 1px 1px 1px;
+          border-color: #4d4d4d;
+          border-style: solid;
+          background: #fff;
+          padding: 15px;
+        }
 
         .code-area {
           padding: 15px 5px;

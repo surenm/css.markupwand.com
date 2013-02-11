@@ -71,6 +71,10 @@ class StylesView extends Backbone.View
     $code_editor = @code_editor
     $code_editor.on "change", (instance, changeObj) ->
       $clip.setText $code_editor.getValue()
+      $this.update_play($code_editor.getValue())
+
+  update_play: (css) ->
+    $('#play-box').attr('style',css)
 
   move_to_image_tab: (e)->
     if e.target.nodeName == 'I'
