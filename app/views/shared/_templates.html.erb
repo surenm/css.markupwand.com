@@ -59,11 +59,13 @@
             </li>
           </ul>
           <textarea></textarea>
-          <div class="play-area">
+          <% if current_user.admin %>
+            <div class="play-area">
             <div id="play-box">
               Play Content
             </div>
           </div>
+          <% end %>
         </div>
 
         <div class="image-area">
