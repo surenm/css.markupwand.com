@@ -58,7 +58,7 @@
               </a>
             </li>
           </ul>
-          <textarea></textarea>
+          <textarea>Click on a layer in the design area &#13;&#10to view its styles here! &#13;&#10 &#13;&#10or &#13;&#10 &#13;&# take the 10 seconds tour by clicking the link above</textarea>
           <% if current_user.admin %>
             <div class="play-area">
             <div id="play-box">
@@ -124,7 +124,7 @@
 </div>
 <div class="row images-grid">
   <%= form_tag "/design/#{@design.safe_name}/images", :method => "post" %>
-    <% if not @design.json_data[:sif].nil? and @design.photoshop_status == Design::STATUS_PROCESSING_DONE %>
+    <% if not @design.json_data[:sif].nil? and @design.photoshop_status == Design::STATUS_PROCESSING_DONE and not @design.layers.nil? %>
       <% @design.layers.each do |uid, layer| %>
         <% if layer.type == Layer::LAYER_NORMAL %>
         <div class="span3 imageblock" data-layer="<%= layer.uid %>">
