@@ -148,7 +148,6 @@ class User
       design = Design.new :name => design_name
       design.user = self
       design.is_sample_design = true
-      design.psd_file_path = File.join design.store_key_prefix, design.safe_name_prefix
       design.save!
 
       Resque.enqueue SampleJob, design.id
