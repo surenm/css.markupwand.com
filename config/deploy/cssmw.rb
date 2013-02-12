@@ -44,5 +44,5 @@ end
 
 
 after 'deploy:create_symlink', 'deploy:copy_cssmw_configs'
-after 'deploy:copy_prod_configs', 'worker:force_restart'
+after 'deploy:copy_cssmw_configs', 'worker:force_restart'
 after 'worker:force_restart', 'deploy:complete'
