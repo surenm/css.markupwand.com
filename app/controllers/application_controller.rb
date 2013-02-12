@@ -13,6 +13,11 @@ class ApplicationController < ActionController::Base
       # No such user. Redirect to login page.
       redirect_to '/login'
     end
+
+    # hacky fix for people doing passwords to login
+    if @user.designs.count == 0
+      @user.create_sample_designs
+    end
   end
 
   def require_admin_login
