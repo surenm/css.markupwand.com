@@ -102,8 +102,10 @@ CSS
     tabs = 0
     unindented_scss.split("\n").each do |line|
       tabs = tabs - 1  if line.include? '}'
-      white_space = Array.new(tabs, '    ').join
-      scss_code += "#{white_space}#{line}\n"
+      white_space = Array.new(tabs, '    ').join    
+      if line.strip != ""
+        scss_code += "#{white_space}#{line.strip}\n"
+      end
       tabs = tabs + 1 if line.include? '{'
     end
     return scss_code
