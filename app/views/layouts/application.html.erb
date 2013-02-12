@@ -39,6 +39,11 @@
         <div class="left copyright">
          © A Goyaka Labs product, 2013 &nbsp; &nbsp; 
         </div>
+        <div class="center">
+          <div class="viral">
+            <%= render 'shared/snippets/tweet' %>
+            <%= render 'shared/snippets/fbshare' %>
+          </div>
       </div>  
     </div>
     <% if not Rails.env.development? %><%= raw analytical.body_append_javascript %><% end %>
