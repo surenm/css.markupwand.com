@@ -36,26 +36,27 @@ SCSS
     design.layers.each do |uid, layer|
       if layer.type != Layer::LAYER_TEXT
         layer_class_name = ".#{layer_class_names[layer.type]}-#{layer.uid}"
-        css = css_parser.find_by_selector layer_class_name
-        if not css.first.nil?
-          design.sif.layers[uid].css_rules = css.first.gsub "; ", ";\n"
+        css = layers_css.match /#{layer_class_name} {(?<content>[^}]*)}/
+        if not css.nil?
+          design.sif.layers[uid].css_rules = Utils::indent_scss css[:content]
         end
       else 
         text_layer_css = ""
         layer.text_chunks.each_with_index do |chunk, index|
           next if chunk[:text].size == 0
           layer_class_name = ".#{layer_class_names[layer.type]}-#{layer.uid} .text-chunk-#{index}"
-          css = css_parser.find_by_selector layer_class_name
-          if not css.first.nil?
+          css = layers_css.match /#{layer_class_name} {(?<content>[^}]*)}/
+          if not css.nil?
             snippet = Utils::get_snippet chunk[:text]
             text_layer_css += "\n/* Style for: #{snippet} */\n"
-            text_layer_css += css.first.gsub ";", ";\n"
+            text_layer_css += Utils::indent_scss css[:content]
           end
         end
         design.sif.layers[uid].css_rules = text_layer_css
       end
     end
     design.sif.save!
+
     return
   end
 end
