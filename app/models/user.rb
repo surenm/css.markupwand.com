@@ -140,4 +140,25 @@ class User
     hash = Digest::MD5.hexdigest(email_address)
     return "https://www.gravatar.com/avatar/#{hash}"
   end
+
+  def create_sample_designs
+    sample_designs = ["sample.psd"]
+
+    sample_designs.each do |design_name|
+      design = Design.new :name => design_name
+      design.user = self
+      design.is_sample_design = true
+      design.save!
+
+      src_dir = File.join "sample_designs", design.safe_name_prefix
+      destination_dir = design.store_key_prefix
+
+      Store::copy_within_store_recursively src_dir, destination_dir
+      
+      design.psd_file_path = File.join design.store_key_prefix, design.safe_name_prefix
+      design.status = Design::STATUS_EXTRACTING_DONE
+      design.photoshop_status = Design::STATUS_PROCESSING_DONE
+      design.save!
+    end
+  end
 end

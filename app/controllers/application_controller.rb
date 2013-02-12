@@ -35,6 +35,7 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_up_path_for(resource)
+    current_user.create_sample_designs
     user_root_path
   end
 

@@ -24,7 +24,6 @@ class DesignController < ApplicationController
     design_data = params[:design]
     
     design = Design.new :name => design_data[:name]
-    design = Design.new :name => design_data[:name]
     design.user = @user
     design.save!
     

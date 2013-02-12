@@ -9,7 +9,6 @@ class Design
   
   include ActionView::Helpers::DateHelper
   
-  
   # keep only atmost 5 versions
   max_versions 5
 
@@ -65,6 +64,8 @@ class Design
   field :softdelete, :type => Boolean, :default => false
   field :width, :type => Integer
   field :height, :type => Integer
+
+  field :is_sample_design, :type => Boolean, :default => false
 
 
   rails_admin do
