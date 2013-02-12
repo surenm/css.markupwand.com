@@ -12,6 +12,7 @@
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
     
     <%= stylesheet_link_tag "application", :media => "all" %>
+
     <%= yield :css %>
     <link rel="shortcut icon" href="/favicon.ico">
     <% if not Rails.env.development? %><%= raw analytical.head_append_javascript %><% end %>
@@ -45,6 +46,8 @@
 
   <% analytical.identify(current_user.id, :email=>current_user.email) if current_user %>
   <%= javascript_tag "var AUTH_TOKEN = #{form_authenticity_token.inspect};" if protect_against_forgery? %>
+
+  <%= javascript_include_tag "lib" %>
   <%= javascript_include_tag "application" %>
   <%= render 'shared/olark' %>
   <%= yield :javascript %>
