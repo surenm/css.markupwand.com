@@ -6,6 +6,8 @@ class SampleJob
   def self.perform(design_id)
     design = Design.find design_id
     
+    design.psd_file_path = File.join design.store_key_prefix, design.safe_name_prefix
+    
     src_dir = File.join "sample_designs", design.safe_name_prefix
     destination_dir = design.store_key_prefix
 
