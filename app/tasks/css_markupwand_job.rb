@@ -1,6 +1,3 @@
-require 'css_parser'
-include CssParser
-
 class CssMarkupwandJob
   extend Resque::Plugins::History
   @queue = :worker
