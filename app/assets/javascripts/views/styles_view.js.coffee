@@ -159,9 +159,8 @@ class StylesView extends Backbone.View
 
     tour.addStep 
       element: ".canvas-area"
-      title: "Design canvas"
-      content: "Your Photoshop file is converted into a design canvas element with all the layers retained. <br> <br> \
-      <b> Hovering</b> over layers highlights them. <br><br> <b> Clicking </b> layers selects them and you will be able to see their corresponding CSS styles"
+      title: "Design Canvas"
+      content: "<b>Click layers</b> in this canvas"
       placement: "right"
       animation: true
       delay: { show: 1500, hide: 100 }
@@ -169,16 +168,15 @@ class StylesView extends Backbone.View
     tour.addStep 
       element: ".code-area"
       title: "View CSS code for selected layers"
-      content: "You can view Compass enabled SCSS code as well as CSS code for selected layers. <br> <br> \
-      If the layer has image data, you can view/edit/download them below the code area"
+      content: "<b>SCSS</b> appears here (CSS in other tab)"
       placement: 'left'
       animation: true    
       delay: { show: 1500, hide: 100 }
 
     tour.addStep 
       element: "a[href=#images]"
-      title: "View all images"
-      content: "<b>All images</b> associated with this design in one tab. <br> <br>You can <b>rename, crop or download</b> them at one go"
+      title: "All images"
+      content: "<b>Rename, crop or download</b> images in images tab"
       placement: 'bottom'
       animation: true
       delay: { show: 1500, hide: 100 }
@@ -186,8 +184,7 @@ class StylesView extends Backbone.View
     tour.addStep 
       element: "#zoom"
       title: "Zoom"
-      content: "<b>Actual</b>: View design in actual size <br><br> <b>Fit</b>: Fit within window <br><br> \
-               <b>Zoom</b>: View in zoom levels between 40% to 250%"
+      content: "<b>Zoom</b> images for precise measurement"
       placement: 'bottom'
       animation: true
       delay: { show: 1500, hide: 100 }
@@ -195,8 +192,7 @@ class StylesView extends Backbone.View
     tour.addStep 
       element: "#measureit"
       title: "Measure in pixels"
-      content: "<b> Click and drag </b> in the design canvas to view an area's height and width. Use higher zoom levels for smaller areas. <br><br>\
-      Handy to measure margins and paddings"
+      content: "<b> Draw boxes in canvas </b> to measure distances/dimensions."
       placement: 'bottom'
       animation: true
       delay: { show: 1500, hide: 100 }
