@@ -74,7 +74,7 @@ class StylesView extends Backbone.View
       $this.update_play($code_editor.getValue())
 
   update_play: (css) ->
-    $('#play-box').attr('style',css)
+    $('#play-box').attr('style',@selected_layer.getCSS())
 
   move_to_image_tab: (e)->
     if e.target.nodeName == 'I'
