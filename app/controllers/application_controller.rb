@@ -1,4 +1,4 @@
-tclass ApplicationController < ActionController::Base
+class ApplicationController < ActionController::Base
   protect_from_forgery
   analytical :use_session_store => true
   before_filter :require_login, :only => [:add_stripe_data]

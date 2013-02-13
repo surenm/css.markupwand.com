@@ -29,7 +29,7 @@ set :git_enable_submodules, 1
 set :deploy_via, :remote_cache
 
 before 'deploy:update_code', 'deploy:begin'
-#before 'deploy:update_code', 'heroku:push'
+before 'deploy:update_code', 'heroku:push'
 
 # After symlink is created, precompile assets
 after 'deploy:create_symlink', 'deploy:assets:precompile_cached'
