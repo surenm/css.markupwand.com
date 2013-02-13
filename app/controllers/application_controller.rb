@@ -1,4 +1,4 @@
-class ApplicationController < ActionController::Base
+tclass ApplicationController < ActionController::Base
   protect_from_forgery
   analytical :use_session_store => true
   before_filter :require_login, :only => [:add_stripe_data]
@@ -40,7 +40,6 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_up_path_for(resource)
-    current_user.create_sample_designs
     user_root_path
   end
 
