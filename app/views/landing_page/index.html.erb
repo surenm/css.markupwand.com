@@ -4,8 +4,10 @@
     <div class="container">
       <div class="message">
         <h1>Photoshop styles to CSS</h1>
-        <p class="lead">
-          Turn photoshop styles into CSS3 right in the browser
+        
+        <p class="lead"> 
+          <span class="badge badge-success"> 1 </span> Just upload your photoshop file <br>
+          <span class="badge badge-success"> 2 </span> Instantly see CSS styles for corresponding photoshop layers! 
         </p>
 
         <% if current_user.nil? %>
@@ -17,7 +19,12 @@
       
     </div>
   </div>
+
   <div class="container">
+
+    <div class="screenshot" style="border: 2px solid #ccc; padding: 20px 0px; border-radius: 4px">
+      <img src="/assets/screenshot.png">
+    </div>
     <div class="row features">
       <div class="feature span3">
         <img src="/assets/no-ps.png" class="img-circle no-ps">
