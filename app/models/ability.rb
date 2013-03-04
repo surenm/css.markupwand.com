@@ -15,7 +15,7 @@ class Ability
             year = Time.now.year
             month = Time.now.month
             this_month_designs = user.designs.where :created_at.gte => "#{year}-#{month}-1"
-            this_month_designs.count < Ability::PLAN_LIMITS[user.plan]
+            this_month_designs.count < Ability::PLAN_LIMITS[user.plan] + 1
         end
     end
  end

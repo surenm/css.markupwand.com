@@ -376,7 +376,7 @@ class Design
     if not self.safe_name.nil? and not self.psd_file_path.nil?
       "/extracted/#{self.safe_name}/#{Store::get_safe_name File.basename(self.psd_file_path)}-thumbnail.png"
     else
-      '/assets/loading.gif'
+      '/assets/dummy-thumbnail.png'
     end
   end
   

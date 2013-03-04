@@ -150,15 +150,7 @@ class User
       design.is_sample_design = true
       design.save!
 
-      src_dir = File.join "sample_designs", design.safe_name_prefix
-      destination_dir = design.store_key_prefix
-
-      Store::copy_within_store_recursively src_dir, destination_dir
-      
-      design.psd_file_path = File.join design.store_key_prefix, design.safe_name_prefix
-      design.status = Design::STATUS_EXTRACTING_DONE
-      design.photoshop_status = Design::STATUS_PROCESSING_DONE
-      design.save!
+      Resque.enqueue SampleJob, design.id
     end
   end
 end
